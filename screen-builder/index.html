@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Screen Builder</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <div class="brand">
+          <span class="brand__mark"></span>
+          <span class="brand__name">Screen Builder</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <input id="formTitle" class="titleInput" type="text" spellcheck="false" />
+      </div>
+
+      <div class="topbar__right">
+        <button class="btn btn--ghost" id="btnNew">New</button>
+        <button class="btn btn--ghost" id="btnCopyLink">Copy link</button>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="main">
+      <!-- Left panel -->
+      <aside class="panel panel--left">
+        <div class="panel__header">
+          <div class="panel__title">Structure</div>
+        </div>
+
+        <div class="panel__section">
+          <div class="section__header">
+            <div class="section__title">Pages</div>
+            <button class="iconBtn" id="btnAddPage" title="Add page">+</button>
+          </div>
+          <div class="list" id="pageList"></div>
+        </div>
+
+        <div class="panel__section">
+          <div class="section__header">
+            <div class="section__title">Groups</div>
+            <button class="iconBtn" id="btnAddGroup" title="Add group">+</button>
+          </div>
+          <div class="list" id="groupList"></div>
+        </div>
+      </aside>
+
+      <!-- Centre -->
+      <section class="canvas">
+        <div class="canvas__header">
+          <div class="crumbs" id="crumbs"></div>
+
+          <div class="toolbar">
+            <button class="toolBtn" data-add="text">Text</button>
+            <button class="toolBtn" data-add="textarea">Textarea</button>
+            <button class="toolBtn" data-add="select">Select</button>
+          </div>
+        </div>
+
+        <div class="canvas__body" id="canvasBody">
+          <!-- elements render here -->
+        </div>
+      </section>
+
+      <!-- Right panel -->
+      <aside class="panel panel--right">
+        <div class="panel__header">
+          <div class="panel__title">Properties</div>
+        </div>
+
+        <div class="panel__section" id="inspector">
+          <div class="hint">Select an element to edit its properties.</div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Bottom status -->
+    <footer class="statusbar">
+      <div class="statusbar__left" id="statusText">Ready</div>
+      <div class="statusbar__right">
+        <span class="pill" id="shareState">Local</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
