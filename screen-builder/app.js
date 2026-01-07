@@ -1729,20 +1729,34 @@
   // Init
   // -------------------------
 
-  // HARD reset preview state on load (Webflow-safe)
-  // Do NOT rely on HTML or CSS default state
-  preview.open = false;
-  preview.index = 0;
-  preview.steps = [];
-  preview.answers = {};
-  preview.lastError = "";
+  function forceClosePreview() {
+    preview.open = false;
+    preview.index = 0;
+    preview.steps = [];
+    preview.answers = {};
+    preview.lastError = "";
 
-  if (previewBackdrop) {
-    previewBackdrop.hidden = true;
-    previewBackdrop.style.display = "none";
+    if (previewBackdrop) {
+      // HARD override for Webflow / IX / iframe restores
+      previewBackdrop.hidden = true;
+      previewBackdrop.style.display = "none";
+      previewBackdrop.style.visibility = "hidden";
+      previewBackdrop.style.opacity = "0";
+      previewBackdrop.style.pointerEvents = "none";
+    }
+
+    document.body.style.overflow = "";
   }
 
-  document.body.style.overflow = "";
+  // Run immediately
+  forceClosePreview();
+
+  // Run again AFTER Webflow + iframe restore
+  window.addEventListener("load", () => {
+    forceClosePreview();
+    setTimeout(forceClosePreview, 0);
+    setTimeout(forceClosePreview, 50);
+  });
 
   wire();
   renderAll();
