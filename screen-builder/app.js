@@ -265,7 +265,7 @@
   // -------------------------
   // Rendering
   // -------------------------
-  function renderAll() {
+  function renderAll(forceInspector = false) {
     ensureSelection();
 
     // Empty state
@@ -284,7 +284,7 @@
     // CRITICAL: do not rebuild inspector while user is actively typing in a text field (prevents 1-letter bug)
     const ae = document.activeElement;
     const typingNow = ae && ae.closest && ae.closest("#inspector") && isTextEditingElement(ae);
-    if (!typingNow && !isTypingInspector) {
+    if (forceInspector || (!typingNow && !isTypingInspector)) {
       renderInspector();
     }
 
@@ -710,7 +710,9 @@
       q.logic = q.logic || { enabled: false, rules: [] };
       q.logic.enabled = on;
       saveSchema();
-      renderAll();
+      // this changes inspector structure, so force a rebuild
+      isTypingInspector = false;
+      renderAll(true);
     }));
 
     if (q.logic?.enabled) {
@@ -1089,10 +1091,14 @@
         del.type = "button";
         del.className = "btn ghost";
         del.textContent = "Delete rule";
-        del.addEventListener("click", () => {
+        del.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
           q.logic.rules.splice(idx, 1);
           saveSchema();
-          renderAll();
+          // force inspector refresh (otherwise typing-guard can keep stale UI)
+          isTypingInspector = false;
+          renderAll(true);
         });
 
         actions.appendChild(del);
@@ -1109,15 +1115,18 @@
       if (add.disabled) {
         add.title = "Add at least one question before this one to create conditional rules.";
       }
-      add.addEventListener("click", () => {
+      add.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         q.logic.rules.push({
           id: uid("rule"),
-          questionId: earlier[earlier.length - 1]?.id || "",
+          questionId: earlier[0]?.id || "",
           operator: "equals",
           value: "",
         });
         saveSchema();
-        renderAll();
+        isTypingInspector = false;
+        renderAll(true);
       });
 
       list.appendChild(add);
@@ -1444,7 +1453,155 @@
       return;
     }
 
-    // (rest of renderPreview unchanged)
+    // Render the current step
+    const card = document.createElement("div");
+    card.className = "previewCard";
+
+    const qEl = document.createElement("div");
+    qEl.className = "pQ";
+    qEl.textContent = step.title || "Untitled question";
+
+    const helpEl = document.createElement("div");
+    helpEl.className = "pHelp";
+    helpEl.textContent = step.help || "";
+
+    const errEl = document.createElement("div");
+    errEl.className = "pError";
+    errEl.textContent = preview.lastError || "";
+    errEl.style.display = preview.lastError ? "block" : "none";
+
+    const inputWrap = document.createElement("div");
+    inputWrap.className = "pInput";
+
+    // Build input control per type
+    const setAnswer = (v) => {
+      preview.answers[step.id] = v;
+    };
+    const getAnswer = () => preview.answers[step.id];
+
+    if (["text", "email", "number", "date"].includes(step.type)) {
+      const input = document.createElement("input");
+      input.className = "input";
+      input.type = step.type === "text" ? "text" : step.type;
+      input.placeholder = step.placeholder || "";
+      input.value = getAnswer() ?? "";
+      input.addEventListener("input", () => setAnswer(input.value));
+      inputWrap.appendChild(input);
+      setTimeout(() => input.focus(), 0);
+    } else if (step.type === "textarea") {
+      const ta = document.createElement("textarea");
+      ta.className = "textarea";
+      ta.placeholder = step.placeholder || "";
+      ta.value = getAnswer() ?? "";
+      ta.addEventListener("input", () => setAnswer(ta.value));
+      inputWrap.appendChild(ta);
+      setTimeout(() => ta.focus(), 0);
+    } else if (step.type === "yesno") {
+      const row = document.createElement("div");
+      row.style.display = "flex";
+      row.style.gap = "10px";
+
+      const mk = (label, val) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "btn " + (getAnswer() === val ? "primary" : "ghost");
+        b.textContent = label;
+        b.addEventListener("click", () => {
+          setAnswer(val);
+          renderPreview();
+        });
+        return b;
+      };
+
+      row.appendChild(mk("Yes", "Yes"));
+      row.appendChild(mk("No", "No"));
+      inputWrap.appendChild(row);
+    } else if (isOptionType(step.type)) {
+      const opts = Array.isArray(step.options) ? step.options : [];
+
+      if (step.type === "select") {
+        const sel = document.createElement("select");
+        sel.className = "select";
+        const blank = document.createElement("option");
+        blank.value = "";
+        blank.textContent = "— Select —";
+        sel.appendChild(blank);
+        opts.forEach((o) => {
+          const op = document.createElement("option");
+          op.value = o;
+          op.textContent = o;
+          sel.appendChild(op);
+        });
+        sel.value = getAnswer() ?? "";
+        sel.addEventListener("change", () => setAnswer(sel.value));
+        inputWrap.appendChild(sel);
+        setTimeout(() => sel.focus(), 0);
+      }
+
+      if (step.type === "radio") {
+        const list = document.createElement("div");
+        list.style.display = "flex";
+        list.style.flexDirection = "column";
+        list.style.gap = "10px";
+        const cur = getAnswer() ?? "";
+        opts.forEach((o) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "btn " + (cur === o ? "primary" : "ghost");
+          b.textContent = o;
+          b.addEventListener("click", () => {
+            setAnswer(o);
+            renderPreview();
+          });
+          list.appendChild(b);
+        });
+        inputWrap.appendChild(list);
+      }
+
+      if (step.type === "checkboxes") {
+        const list = document.createElement("div");
+        list.style.display = "flex";
+        list.style.flexDirection = "column";
+        list.style.gap = "10px";
+        const cur = Array.isArray(getAnswer()) ? getAnswer() : [];
+        opts.forEach((o) => {
+          const lab = document.createElement("label");
+          lab.style.display = "flex";
+          lab.style.alignItems = "center";
+          lab.style.gap = "10px";
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.checked = cur.includes(o);
+          cb.addEventListener("change", () => {
+            const next = new Set(Array.isArray(getAnswer()) ? getAnswer() : []);
+            if (cb.checked) next.add(o);
+            else next.delete(o);
+            setAnswer(Array.from(next));
+          });
+          const sp = document.createElement("span");
+          sp.textContent = o;
+          lab.appendChild(cb);
+          lab.appendChild(sp);
+          list.appendChild(lab);
+        });
+        inputWrap.appendChild(list);
+      }
+    } else {
+      // fallback
+      const input = document.createElement("input");
+      input.className = "input";
+      input.type = "text";
+      input.value = getAnswer() ?? "";
+      input.addEventListener("input", () => setAnswer(input.value));
+      inputWrap.appendChild(input);
+      setTimeout(() => input.focus(), 0);
+    }
+
+    card.appendChild(qEl);
+    if (step.help) card.appendChild(helpEl);
+    card.appendChild(inputWrap);
+    card.appendChild(errEl);
+    previewStage.appendChild(card);
   }
 
   function renderCompletion() {
@@ -1535,9 +1692,60 @@
     btnAddQuestion.addEventListener("click", addQuestion);
 
     btnPreview.addEventListener("click", () => {
-      // reset preview answers each time? keep. best: keep within session; but start fresh for consistent testing:
       preview.answers = {};
       openPreview();
+    });
+
+    // Preview nav
+    btnPrev.addEventListener("click", () => {
+      if (!preview.open) return;
+      preview.lastError = "";
+      preview.index = clamp(preview.index - 1, 0, Math.max(0, preview.steps.length - 1));
+      renderPreview();
+    });
+
+    btnNext.addEventListener("click", () => {
+      if (!preview.open) return;
+
+      // rebuild steps before validating (logic can change)
+      preview.steps = buildPreviewSteps();
+      preview.index = clamp(preview.index, 0, Math.max(0, preview.steps.length - 1));
+
+      const step = preview.steps[preview.index];
+      if (!step) return;
+
+      // required validation
+      if (step.required) {
+        const ans = preview.answers[step.id];
+        const empty =
+          ans === undefined ||
+          ans === null ||
+          (typeof ans === "string" && ans.trim() === "") ||
+          (Array.isArray(ans) && ans.length === 0);
+        if (empty) {
+          preview.lastError = "This field is required.";
+          renderPreview();
+          return;
+        }
+      }
+
+      preview.lastError = "";
+      if (preview.index >= preview.steps.length - 1) {
+        // show completion
+        previewStage.innerHTML = "";
+        const wrap = document.createElement("div");
+        wrap.className = "previewCard";
+        wrap.innerHTML = `
+          <div class="pQ">All done</div>
+          <div class="pHelp">You reached the end of the preview flow.</div>
+        `;
+        previewStage.appendChild(wrap);
+        btnNext.disabled = true;
+        return;
+      }
+
+      preview.index = clamp(preview.index + 1, 0, preview.steps.length - 1);
+      renderPreview();
     });
 
     btnClosePreview.addEventListener("click", closePreview);
