@@ -3,93 +3,170 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Screen Builder</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <title>Form Builder</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-
-<div class="app">
-
-  <header class="topbar">
-    <div class="topbar-left">
+  <div class="app" id="app">
+    <header class="topbar">
       <div class="brand">
-        <span class="brandMark"></span>
-        <span>Screen Builder</span>
+        <div class="logo" aria-hidden="true">◼︎</div>
+        <div class="brandText">
+          <div class="brandName">Form Builder</div>
+          <div class="brandTag">Typeform-style journeys • Conditional logic • Export/Import</div>
+        </div>
       </div>
 
-      <div class="lobBlock">
-        <div class="lobLabel">Line of Business</div>
-        <!-- Big editable title (NOT an input) -->
-        <div id="lobTitle" class="lobTitle" contenteditable="true" spellcheck="false">Home Insurance</div>
+      <div class="topActions">
+        <button class="btn ghost" id="btnImport" type="button" title="Import a JSON schema">Import</button>
+        <button class="btn ghost" id="btnExport" type="button" title="Export JSON schema">Export</button>
+        <div class="divider"></div>
+        <button class="btn primary" id="btnPreview" type="button">Preview</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- LEFT: Structure -->
+      <aside class="panel panelLeft" aria-label="Structure">
+        <div class="panelHeader">
+          <div class="panelTitle">Structure</div>
+          <button class="btn small" id="btnAddPage" type="button">+ Page</button>
+        </div>
+
+        <div class="lobBlock">
+          <div class="lobLabel">Line of Business</div>
+          <div class="lobTitle" id="lobTitle" role="textbox" aria-label="Line of business title" contenteditable="true" spellcheck="false"></div>
+          <div class="lobHint">Click to edit. This is the headline users see.</div>
+        </div>
+
+        <div class="pages" id="pagesList" aria-label="Pages list"></div>
+      </aside>
+
+      <!-- CENTER: Editor -->
+      <section class="panel panelCenter" aria-label="Editor">
+        <div class="panelHeader">
+          <div class="panelTitle" id="editorTitle">Editor</div>
+
+          <div class="panelHeaderActions">
+            <button class="btn small ghost" id="btnAddGroup" type="button" title="Add group to selected page">+ Group</button>
+            <button class="btn small" id="btnAddQuestion" type="button" title="Add a question to selected group">+ Question</button>
+          </div>
+        </div>
+
+        <div class="emptyState" id="emptyState">
+          <div class="emptyIcon" aria-hidden="true">✦</div>
+          <h2>Build a form that feels like a product</h2>
+          <p>Select a page (left), add a group, then add questions. Use Preview to test the Typeform flow.</p>
+          <div class="emptyActions">
+            <button class="btn primary" id="emptyAddPage" type="button">Create first page</button>
+          </div>
+        </div>
+
+        <div class="editor" id="editor">
+          <div class="editorGrid">
+            <div class="card" id="canvasCard">
+              <div class="cardHeader">
+                <div class="cardTitle">
+                  <span class="muted">Page:</span>
+                  <span id="pageNameDisplay"></span>
+                </div>
+                <div class="cardSub">
+                  <span class="muted">Group:</span>
+                  <span id="groupNameDisplay"></span>
+                </div>
+              </div>
+
+              <div class="canvas" id="canvas" aria-label="Questions canvas"></div>
+            </div>
+
+            <div class="card" id="inspectorCard" aria-label="Inspector">
+              <div class="cardHeader">
+                <div class="cardTitle">Inspector</div>
+                <div class="cardSub" id="inspectorSub">Select something to edit</div>
+              </div>
+
+              <div class="inspector" id="inspector"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Mini Preview / Tips -->
+      <aside class="panel panelRight" aria-label="Tips">
+        <div class="panelHeader">
+          <div class="panelTitle">Quality checklist</div>
+        </div>
+
+        <div class="tips">
+          <div class="tip">
+            <div class="tipTitle">Best practices baked in</div>
+            <ul>
+              <li>Required-field validation in preview</li>
+              <li>Accessible focus and keyboard UX</li>
+              <li>Conditional logic + clean schema</li>
+            </ul>
+          </div>
+
+          <div class="tip">
+            <div class="tipTitle">Preview controls</div>
+            <ul>
+              <li><b>Enter</b> to continue</li>
+              <li><b>Shift+Enter</b> for new line (long text)</li>
+              <li><b>Back</b> button to go previous</li>
+            </ul>
+          </div>
+
+          <div class="tip">
+            <div class="tipTitle">Export/Import</div>
+            <p>Use Export to commit schemas in Git. Import to restore instantly.</p>
+          </div>
+
+          <div class="miniStats" id="miniStats"></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Preview Modal -->
+  <div class="modalBackdrop" id="previewBackdrop" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Preview">
+      <div class="modalTop">
+        <div class="modalTopLeft">
+          <div class="previewTitle" id="previewTitle"></div>
+          <div class="previewSub" id="previewSub"></div>
+        </div>
+        <div class="modalTopRight">
+          <button class="btn ghost" id="btnClosePreview" type="button">Close</button>
+        </div>
+      </div>
+
+      <div class="progressWrap" aria-label="Progress">
+        <div class="progressBar">
+          <div class="progressFill" id="progressFill"></div>
+        </div>
+        <div class="progressText" id="progressText"></div>
+      </div>
+
+      <div class="previewStage" id="previewStage" tabindex="-1"></div>
+
+      <div class="previewFooter">
+        <div class="previewFooterLeft">
+          <button class="btn ghost" id="btnPrev" type="button">← Back</button>
+        </div>
+        <div class="previewFooterRight">
+          <div class="hintKey">
+            <span class="kbd">Enter</span>
+            <span class="muted">to continue</span>
+          </div>
+          <button class="btn primary" id="btnNext" type="button">Next →</button>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="topbar-right">
-      <button class="btn" id="btnNew">New</button>
-      <button class="btn btnPrimary" id="btnCopy">Copy link</button>
-    </div>
-  </header>
+  <!-- File input for import -->
+  <input type="file" id="fileInput" accept="application/json" hidden />
 
-  <div class="pagination" id="pagination"></div>
-
-  <main class="main">
-
-    <!-- LEFT -->
-    <aside class="panel">
-      <div class="panelTitle">Structure</div>
-
-      <div class="panelSection">
-        <div class="sectionHeader">
-          <div class="sectionTitle">Pages</div>
-          <button class="iconBtn" id="addPage" title="Add page">+</button>
-        </div>
-        <div id="pageList" class="list"></div>
-      </div>
-
-      <div class="panelSection">
-        <div class="sectionHeader">
-          <div class="sectionTitle">Groups</div>
-          <button class="iconBtn" id="addGroup" title="Add group">+</button>
-        </div>
-        <div id="groupList" class="list"></div>
-      </div>
-
-      <div class="panelSection">
-        <div class="sectionHeader">
-          <div class="sectionTitle">Components</div>
-        </div>
-        <div id="componentList" class="componentGrid"></div>
-      </div>
-    </aside>
-
-    <!-- CANVAS -->
-    <section class="canvas">
-      <div class="canvasHeader">
-        <div class="crumbs" id="crumbs"></div>
-        <div class="hintSmall">Click a field to edit. Test answers affect conditional logic.</div>
-      </div>
-      <div class="canvasBody" id="canvas"></div>
-    </section>
-
-    <!-- RIGHT -->
-    <aside class="panel">
-      <div class="panelTitle">Properties</div>
-      <div id="inspector" class="panelSection">
-        <div class="hint">Select a field to edit its properties.</div>
-      </div>
-    </aside>
-
-  </main>
-
-  <footer class="statusbar">
-    <div id="statusText" class="statusText">Ready</div>
-    <div class="statusRight">
-      <span class="pill" id="shareState">Local</span>
-    </div>
-  </footer>
-
-</div>
-
-<script src="./app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
