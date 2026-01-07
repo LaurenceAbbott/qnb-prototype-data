@@ -307,9 +307,8 @@
       });
       name.addEventListener("input", () => {
         p.name = safeText(name) || "Untitled page";
-        saveSchema();
+        saveSchemaDebounced();
         renderMiniStats();
-      });
 
       const meta = document.createElement("div");
       meta.className = "pageMeta";
@@ -1139,8 +1138,22 @@
     selection.pageId = pid;
     selection.groupId = gid;
     selection.questionId = qid;
+
     saveSchema();
     renderAll();
+
+    // Auto-focus page name for immediate editing
+    requestAnimationFrame(() => {
+      const el = document.querySelector(".pageItem.active .pageName");
+      if (el) {
+        el.focus();
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
   }
 
   function addGroupToPage(pageId) {
