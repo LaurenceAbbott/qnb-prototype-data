@@ -48,6 +48,13 @@
           <div class="panelTitle" id="editorTitle">Editor</div>
 
           <div class="panelHeaderActions">
+            <!-- NEW: Group navigation -->
+            <div class="groupNav" aria-label="Group navigation">
+              <button class="btn small ghost" id="btnPrevGroup" type="button" title="Previous group">←</button>
+              <select class="select groupSelect" id="groupSelect" aria-label="Select group"></select>
+              <button class="btn small ghost" id="btnNextGroup" type="button" title="Next group">→</button>
+            </div>
+
             <button class="btn small ghost" id="btnAddGroup" type="button" title="Add group to selected page">+ Group</button>
             <button class="btn small" id="btnAddQuestion" type="button" title="Add a question to selected group">+ Question</button>
           </div>
@@ -91,7 +98,7 @@
         </div>
       </section>
 
-      <!-- RIGHT: Mini Preview / Tips -->
+      <!-- RIGHT: Tips -->
       <aside class="panel panelRight" aria-label="Tips">
         <div class="panelHeader">
           <div class="panelTitle">Quality checklist</div>
