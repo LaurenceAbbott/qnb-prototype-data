@@ -1728,6 +1728,11 @@
   // -------------------------
   // Init
   // -------------------------
+  // Ensure preview is ALWAYS closed on initial load
+  preview.open = false;
+  if (previewBackdrop) previewBackdrop.hidden = true;
+  document.body.style.overflow = "";
+
   wire();
   renderAll();
 
@@ -1735,3 +1740,4 @@
   if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
   if (!Array.isArray(schema.pages)) schema.pages = [];
 })();
+
