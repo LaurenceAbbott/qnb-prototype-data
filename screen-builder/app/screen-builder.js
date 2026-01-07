@@ -743,10 +743,21 @@ const CONFIG = window.SB_CONFIG || {
 
   // ===== LOAD =====
   async function load(){
-    const [journey, ...codelists] = await Promise.all([
-      fetchJson(CONFIG.journeyUrl),
-      ...CONFIG.codelistUrls.map(fetchJson)
-    ]);
+   const params = new URLSearchParams(window.location.search);
+const journeyId = params.get("journey") || CONFIG.defaultJourneyId || "motor";
+
+// Support both old CONFIG.journeyUrl and new CONFIG.journeyBaseUrl
+const journeyUrl =
+  CONFIG.journeyUrl ||
+  (CONFIG.journeyBaseUrl ? `${CONFIG.journeyBaseUrl}${journeyId}.json` : "");
+
+if (!journeyUrl) throw new Error("No journeyUrl configured.");
+
+const [journey, ...codelists] = await Promise.all([
+  fetchJson(journeyUrl),
+  ...(CONFIG.codelistUrls || []).map(fetchJson)
+]);
+
 
     state.journey = journey;
     state.codelists.clear();
