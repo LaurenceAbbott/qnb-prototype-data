@@ -55,6 +55,19 @@
     }
   }
 
+  function isTextEditingElement(el) {
+    if (!el) return false;
+    if (el.isContentEditable) return true;
+    const tag = (el.tagName || "").toLowerCase();
+    if (tag === "textarea") return true;
+    if (tag === "input") {
+      const type = (el.getAttribute("type") || "text").toLowerCase();
+      // treat these as "typing" inputs
+      return ["text", "email", "number", "search", "tel", "url", "password"].includes(type);
+    }
+    return false;
+  }
+
   // -------------------------
   // Schema model
   // -------------------------
@@ -268,8 +281,10 @@
     renderPagesList();
     renderCanvas();
 
-    // CRITICAL: do not rebuild inspector while user is typing in it
-    if (!isTypingInspector) {
+    // CRITICAL: do not rebuild inspector while user is actively typing in a text field (prevents 1-letter bug)
+    const ae = document.activeElement;
+    const typingNow = ae && ae.closest && ae.closest("#inspector") && isTextEditingElement(ae);
+    if (!typingNow && !isTypingInspector) {
       renderInspector();
     }
 
@@ -835,6 +850,11 @@
       on = !on;
       t.classList.toggle("on", on);
       t.setAttribute("aria-checked", on ? "true" : "false");
+
+      // If user toggles logic while a text input is focused, we must allow inspector to rebuild
+      // so the logic editor appears immediately.
+      isTypingInspector = false;
+
       onToggle(on);
     };
 
@@ -1086,6 +1106,9 @@
       add.className = "btn";
       add.textContent = "+ Add rule";
       add.disabled = earlier.length === 0;
+      if (add.disabled) {
+        add.title = "Add at least one question before this one to create conditional rules.";
+      }
       add.addEventListener("click", () => {
         q.logic.rules.push({
           id: uid("rule"),
@@ -1471,16 +1494,22 @@
   function wire() {
     // Track inspector focus to prevent rebuild while typing (fixes 1-letter issue)
     document.addEventListener("focusin", (e) => {
-      if (e.target.closest("#inspector")) isTypingInspector = true;
+      if (!e.target.closest("#inspector")) return;
+      // Only treat as "typing" when focusing a text-editing control
+      isTypingInspector = isTextEditingElement(e.target);
     });
 
     document.addEventListener("focusout", (e) => {
       if (!e.target.closest("#inspector")) return;
+      // If focus stays within inspector, keep flag only if the new active element is a typing control
       setTimeout(() => {
-        if (!document.activeElement.closest("#inspector")) {
+        const ae = document.activeElement;
+        if (ae && ae.closest && ae.closest("#inspector")) {
+          isTypingInspector = isTextEditingElement(ae);
+        } else {
           isTypingInspector = false;
-          renderAll();
         }
+        renderAll();
       }, 0);
     });
     // LOB inline title
