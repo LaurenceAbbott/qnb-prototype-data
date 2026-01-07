@@ -132,14 +132,13 @@ function showCreateJourneyModal(){
     state.preview.pageIndex = 0;
     state.selected = { kind: "journey", pageId: null, groupId: null, questionId: null };
 
-    // Update URL (no reload). This is optional but useful for sharing.
-    const url = new URL(window.location.href);
-    url.searchParams.set("journey", id);
-    window.history.replaceState({}, "", url.toString());
-
+    // Close modal and render the new journey
     el.remove();
     render();
-    toast(`Created "${name}". You can now add pages/groups/questions.`);
+
+    // Create a share link immediately (editable) and copy it
+    shareCurrentJourney();
+
   });
 }
 
@@ -160,7 +159,7 @@ function showCreateJourneyModal(){
             </div>
           </div>
           <div class="sb-actions">
-            <div class="sb-pill">Source: <code>GitHub</code></div>
+            <button class="sb-btn" id="sb-share">Share link</button>
             <button class="sb-btn" id="sb-export">Export JSON</button>
             <button class="sb-btn primary" id="sb-publish" ${CONFIG.publishEndpoint ? "" : "disabled"} title="${CONFIG.publishEndpoint ? "" : "Set CONFIG.publishEndpoint to enable publishing"}">
               Publish
@@ -382,15 +381,22 @@ function showCreateJourneyModal(){
     const placeholder = q.placeholder ? `placeholder="${escapeAttr(q.placeholder)}"` : "";
     if(q.type === "select"){
       const cl = q.codelistId ? state.codelists.get(q.codelistId) : null;
-      const opts = (cl?.items || []).map(i => `<option value="${escapeAttr(i.value)}">${escapeHtml(i.label)}</option>`).join("");
+      const current = String(val ?? "");
+      const items = (cl?.items || []);
+      const opts = items.map(i => {
+        const v = String(i.value ?? "");
+        const selected = (v === current) ? "selected" : "";
+        return `<option value="${escapeAttr(v)}" ${selected}>${escapeHtml(i.label)}</option>`;
+      }).join("");
+      const placeholderSelected = current === "" ? "selected" : "";
       return `
         <select class="sb-select" ${keyAttr}>
-          <option value="">${escapeHtml(q.placeholder || "Select...")}</option>
+          <option value="" ${placeholderSelected}>${escapeHtml(q.placeholder || "Select...")}</option>
           ${opts}
         </select>
       `;
     }
-    if(q.type === "radio"){
+if(q.type === "radio"){
       const cl = q.codelistId ? state.codelists.get(q.codelistId) : null;
       const items = (cl?.items || []);
       return `
@@ -628,6 +634,8 @@ function showCreateJourneyModal(){
       downloadText(`${state.journey.id||"journey"}.json`, data);
       toast("Exported journey JSON.");
     });
+
+    document.getElementById("sb-share").addEventListener("click", shareCurrentJourney);
 
     document.getElementById("sb-reset").addEventListener("click", () => {
       state.answers = {};
@@ -870,6 +878,19 @@ async function load(){
   state.codelists.clear();
   codelists.forEach(cl => state.codelists.set(cl.id, cl));
 
+  // ✅ If URL contains a shared journey (#sb=...), load it (editable) and stop
+  const shared = getSharedJourneyFromHash();
+  if(shared){
+    state.journey = shared;
+    state.answers = {};
+    state.errors = {};
+    state.preview.pageIndex = 0;
+    state.selected = { kind:"journey", pageId:null, groupId:null, questionId:null };
+    render();
+    toast("Loaded from share link.");
+    return;
+  }
+
   // ✅ No journey param = show modal, DO NOT load any journey
   if(!journeyIdFromUrl){
     state.journey = null;
@@ -897,14 +918,79 @@ async function load(){
   render();
   toast("Loaded from GitHub.");
 }
-
-
   async function fetchJson(url){
     const res = await fetch(url, { cache: "no-store" });
     if(!res.ok) throw new Error("Failed to load: " + url);
     return res.json();
   }
 
+
+  // ===== SHARE LINKS (no backend) =====
+  // Stores the whole journey JSON in the URL hash as: #sb=<base64url(json)>
+  function sbBase64UrlEncode(str){
+    const bytes = new TextEncoder().encode(str);
+    let bin = "";
+    for(const b of bytes) bin += String.fromCharCode(b);
+    const b64 = btoa(bin);
+    return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+  }
+
+  function sbBase64UrlDecode(b64url){
+    const b64 = b64url.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((b64url.length + 3) % 4);
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  function getSharedJourneyFromHash(){
+    const h = (window.location.hash || "");
+    if(!h.startsWith("#sb=")) return null;
+    try{
+      const payload = h.slice(4);
+      const jsonStr = sbBase64UrlDecode(payload);
+      const obj = JSON.parse(jsonStr);
+      if(!obj || !obj.pages) return null;
+      return obj;
+    }catch{
+      return null;
+    }
+  }
+
+  async function copyToClipboard(text){
+    try{
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    }catch{}
+    // fallback
+    try{
+      window.prompt("Copy this link:", text);
+      return true;
+    }catch{}
+    return false;
+  }
+
+  async function shareCurrentJourney(){
+    if(!state.journey) return toast("Nothing to share yet.");
+    try{
+      const jsonStr = JSON.stringify(state.journey);
+      const token = sbBase64UrlEncode(jsonStr);
+      const url = new URL(window.location.href);
+      url.hash = "sb=" + token;
+
+      // keep URL clean (no ?journey= when sharing)
+      url.searchParams.delete("journey");
+      window.history.replaceState({}, "", url.toString());
+
+      await copyToClipboard(url.toString());
+      toast("Share link copied ✅");
+    }catch(e){
+      toast("Could not create share link.");
+      console.error(e);
+    }
+  }
   function downloadText(filename, text){
     const blob = new Blob([text], {type:"application/json"});
     const a = document.createElement("a");
