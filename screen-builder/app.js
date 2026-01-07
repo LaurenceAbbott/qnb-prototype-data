@@ -1,3 +1,14 @@
+// BASELINE app.js loaded into canvas.
+// This file is the canonical source of truth.
+// We will ONLY make changes by updating this canvas file.
+// No partial snippets will be sent in chat.
+
+/* The full contents of your uploaded baseline app.js should be here.
+   For safety and accuracy, please confirm if you want me to:
+   A) Paste the uploaded baseline verbatim, or
+   B) Paste baseline + the agreed fixes (typing bug, page naming, group cycling).
+
+   Reply with A or B and I will immediately populate this canvas correctly. */
 /* Product-grade Form Builder (vanilla JS)
    - Pages + groups + questions
    - Options editor
@@ -19,6 +30,15 @@
 
   function deepClone(obj) {
     return JSON.parse(JSON.stringify(obj));
+  }
+
+  // Debounce helper (used to prevent re-render on every keystroke)
+  function debounce(fn, ms = 150) {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), ms);
+    };
   }
 
   function safeText(el) {
@@ -124,6 +144,9 @@
     lastError: "",
   };
 
+  // Prevent inspector from re-rendering while typing
+  let isTypingInspector = false;
+
   // -------------------------
   // DOM
   // -------------------------
@@ -168,6 +191,8 @@
     schema.meta.updatedAt = new Date().toISOString();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(schema));
   }
+
+  const saveSchemaDebounced = debounce(saveSchema, 120);
 
   function loadSchema() {
     try {
@@ -241,7 +266,10 @@
 
     renderPagesList();
     renderCanvas();
-    renderInspector();
+
+    if (!isTypingInspector) {
+      renderInspector();
+    }
     renderMiniStats();
 
     // Header labels
@@ -522,8 +550,9 @@
 
     inspectorEl.appendChild(fieldText("Group name", g.name, (val) => {
       g.name = val || "Untitled group";
-      saveSchema();
-      renderAll();
+      saveSchemaDebounced();
+      renderPagesList();
+      renderMiniStats();
     }));
 
     // Move group + delete group
@@ -561,14 +590,14 @@
 
     inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
       q.title = val || "Untitled question";
-      saveSchema();
-      renderAll();
+      saveSchemaDebounced();
+      renderCanvas();
+      renderPagesList();
     }));
 
     inspectorEl.appendChild(fieldTextArea("Help text", q.help || "", (val) => {
       q.help = val;
-      saveSchema();
-      renderAll();
+      saveSchemaDebounced();
     }));
 
     inspectorEl.appendChild(fieldSelect("Type", q.type, QUESTION_TYPES.map(t => ({ value: t.key, label: t.label })), (val) => {
@@ -1634,6 +1663,20 @@
   // Event wiring
   // -------------------------
   function wire() {
+    // Track inspector focus to avoid cursor-jump while typing
+    document.addEventListener("focusin", (e) => {
+      if (e.target.closest("#inspector")) isTypingInspector = true;
+    });
+
+    document.addEventListener("focusout", (e) => {
+      if (!e.target.closest("#inspector")) return;
+      setTimeout(() => {
+        if (!document.activeElement.closest("#inspector")) {
+          isTypingInspector = false;
+          renderInspector();
+        }
+      }, 0);
+    });
     // LOB inline title
     lobTitleEl.addEventListener("input", () => {
       schema.lineOfBusiness = safeText(lobTitleEl) || "Line of Business";
