@@ -248,7 +248,7 @@
     emptyStateEl.classList.toggle("show", !hasAnything);
     editorEl.style.display = hasAnything ? "block" : "none";
 
-    // LoB title
+    // LoB title (avoid cursor jumps)
     if (lobTitleEl && safeText(lobTitleEl) !== schema.lineOfBusiness) {
       lobTitleEl.textContent = schema.lineOfBusiness || "Line of Business";
     }
@@ -256,20 +256,11 @@
     renderPagesList();
     renderCanvas();
 
-    // Don't rebuild the inspector while the user is typing in it (prevents 1-letter bug)
+    // CRITICAL: do not rebuild inspector while user is typing in it
     if (!isTypingInspector) {
       renderInspector();
     }
 
-    renderMiniStats();
-
-    // Header labels
-    const p = getPage(selection.pageId);
-    const g = getGroup(selection.pageId, selection.groupId);
-    editorTitleEl.textContent = p ? `Editor · ${p.name}` : "Editor";
-    pageNameDisplayEl.textContent = p ? p.name : "—";
-    groupNameDisplayEl.textContent = g ? g.name : "—";
-  }
     renderMiniStats();
 
     // Header labels
@@ -706,15 +697,21 @@
     input.className = "input";
     input.type = "text";
     input.value = value || "";
-    input.addEventListener("input", () => onChange(input.value));
-    input.addEventListener("blur", () => {
-      // Commit any dependent UI updates after typing finishes
-      isTypingInspector = false;
-      renderAll();
+
+    input.addEventListener("focus", () => {
+      isTypingInspector = true;
     });
+
+    input.addEventListener("input", () => {
+      onChange(input.value);
+    });
+
+    // Do NOT renderAll on blur here; focusout handler in wire() will re-render when leaving inspector.
 
     wrap.appendChild(lab);
     wrap.appendChild(input);
+    return wrap;
+  }
     return wrap;
   }
 
@@ -729,14 +726,21 @@
     const ta = document.createElement("textarea");
     ta.className = "textarea";
     ta.value = value || "";
-    ta.addEventListener("input", () => onChange(ta.value));
-    ta.addEventListener("blur", () => {
-      isTypingInspector = false;
-      renderAll();
+
+    ta.addEventListener("focus", () => {
+      isTypingInspector = true;
     });
+
+    ta.addEventListener("input", () => {
+      onChange(ta.value);
+    });
+
+    // Do NOT renderAll on blur here; focusout handler in wire() will re-render when leaving inspector.
 
     wrap.appendChild(lab);
     wrap.appendChild(ta);
+    return wrap;
+  }
     return wrap;
   }
 
