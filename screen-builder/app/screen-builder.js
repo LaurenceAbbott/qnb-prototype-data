@@ -1,16 +1,12 @@
 (function(){
   // ===== CONFIG =====
-  const CONFIG = {
-    // Raw GitHub content URLs (recommended)
-    journeyUrl: "https://raw.githubusercontent.com/LaurenceAbbott/qnb-prototype-data/main/screen-builder/journeys/motor.json",
-    codelistUrls: [
-      "https://raw.githubusercontent.com/LaurenceAbbott/qnb-prototype-data/main/screen-builder/codelists/titles.json"
-    ],
+ // ===== CONFIG =====
+const CONFIG = window.SB_CONFIG || {
+  journeyUrl: "",
+  codelistUrls: [],
+  publishEndpoint: ""
+};
 
-    // Your publish endpoint (Cloudflare Worker / Netlify Function / Vercel Function)
-    // Leave blank to disable "Publish to GitHub"
-    publishEndpoint: "" // e.g. "https://your-worker.yourdomain.workers.dev/publish"
-  };
 
   // ===== STATE =====
   const state = {
