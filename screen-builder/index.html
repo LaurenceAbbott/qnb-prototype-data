@@ -9,40 +9,57 @@
 <body>
 
 <div class="app">
+
+  <!-- TOP BAR -->
   <header class="topbar">
     <div class="topbar-left">
       <div class="brand">Screen Builder</div>
+
       <div class="lob">
         <label>Line of Business</label>
         <input id="lobTitle" placeholder="e.g. Home Insurance" />
       </div>
     </div>
+
     <div class="topbar-right">
-      <button id="newBtn">New</button>
-      <button id="copyBtn">Copy link</button>
+      <button id="btnNew">New</button>
+      <button id="btnCopy">Copy link</button>
     </div>
   </header>
 
+  <!-- PAGE PROGRESS -->
   <div class="pagination" id="pagination"></div>
 
+  <!-- MAIN -->
   <main class="main">
+
+    <!-- LEFT -->
     <aside class="panel">
       <h3>Pages</h3>
       <div id="pageList"></div>
-      <button id="addPage">+ Page</button>
+      <button id="addPage">+ Add page</button>
 
       <h3>Groups</h3>
       <div id="groupList"></div>
-      <button id="addGroup">+ Group</button>
+      <button id="addGroup">+ Add group</button>
+
+      <h3>Components</h3>
+      <div id="componentList"></div>
     </aside>
 
+    <!-- CANVAS -->
     <section class="canvas" id="canvas"></section>
 
+    <!-- RIGHT -->
     <aside class="panel">
       <h3>Properties</h3>
-      <div id="inspector"></div>
+      <div id="inspector">
+        <div class="hint">Select a field to edit</div>
+      </div>
     </aside>
+
   </main>
+
 </div>
 
 <script src="./app.js"></script>
