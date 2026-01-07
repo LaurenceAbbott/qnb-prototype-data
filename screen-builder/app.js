@@ -706,12 +706,8 @@
       onChange(input.value);
     });
 
-    // Do NOT renderAll on blur here; focusout handler in wire() will re-render when leaving inspector.
-
     wrap.appendChild(lab);
     wrap.appendChild(input);
-    return wrap;
-  }
     return wrap;
   }
 
@@ -735,12 +731,8 @@
       onChange(ta.value);
     });
 
-    // Do NOT renderAll on blur here; focusout handler in wire() will re-render when leaving inspector.
-
     wrap.appendChild(lab);
     wrap.appendChild(ta);
-    return wrap;
-  }
     return wrap;
   }
 
@@ -1379,6 +1371,7 @@
   }
 
   // -------------------------
+  // Export / Import
   // -------------------------
   function exportJson() {
     saveSchema();
