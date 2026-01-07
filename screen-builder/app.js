@@ -1728,9 +1728,20 @@
   // -------------------------
   // Init
   // -------------------------
-  // Ensure preview is ALWAYS closed on initial load
+
+  // HARD reset preview state on load (Webflow-safe)
+  // Do NOT rely on HTML or CSS default state
   preview.open = false;
-  if (previewBackdrop) previewBackdrop.hidden = true;
+  preview.index = 0;
+  preview.steps = [];
+  preview.answers = {};
+  preview.lastError = "";
+
+  if (previewBackdrop) {
+    previewBackdrop.hidden = true;
+    previewBackdrop.style.display = "none";
+  }
+
   document.body.style.overflow = "";
 
   wire();
