@@ -9,50 +9,30 @@
 (function () {
   const STORAGE_KEY = "og-formbuilder-schema-v1";
 
-// -------------------------
-// Utilities
-// -------------------------
-const uid = (prefix = "id") =>
-  `${prefix}_${Math.random().toString(16).slice(2)}_${Date.now().toString(16)}`;
+  // -------------------------
+  // Utilities
+  // -------------------------
+  const uid = (prefix = "id") =>
+    `${prefix}_${Math.random().toString(16).slice(2)}_${Date.now().toString(16)}`;
 
-const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
-function debounce(fn, ms = 150) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
-}
+  function deepClone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  }
 
-function deepClone(obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
+  function safeText(el) {
+    return (el?.textContent || "").replace(/\s+/g, " ").trim();
+  }
 
-function safeText(el) {
-  return (el?.textContent || "").replace(/\s+/g, " ").trim();
-}
-
-function escapeHtml(str) {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-// ✅ NEW – used when creating a page
-function focusAndSelect(el) {
-  if (!el) return;
-  el.focus();
-  const range = document.createRange();
-  range.selectNodeContents(el);
-  const sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
-}
-
+  function escapeHtml(str) {
+    return String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
 
   // -------------------------
   // Schema model
@@ -125,95 +105,81 @@ function focusAndSelect(el) {
     return type === "select" || type === "radio" || type === "checkboxes";
   }
 
-// -------------------------
-// App state
-// -------------------------
-let schema = loadSchema() || newDefaultSchema();
+  // -------------------------
+  // App state
+  // -------------------------
+  let schema = loadSchema() || newDefaultSchema();
+  let selection = {
+    pageId: schema.pages[0]?.id || null,
+    groupId: schema.pages[0]?.groups[0]?.id || null,
+    questionId: schema.pages[0]?.groups[0]?.questions[0]?.id || null,
+  };
 
-let selection = {
-  pageId: schema.pages[0]?.id || null,
-  groupId: schema.pages[0]?.groups[0]?.id || null,
-  questionId: schema.pages[0]?.groups[0]?.questions[0]?.id || null,
-};
+  // Preview state
+  let preview = {
+    open: false,
+    steps: [],
+    index: 0,
+    answers: {}, // qid -> value
+    lastError: "",
+  };
 
-// ✅ NEW – prevents inspector re-render while typing
-let isTypingInspector = false;
+  // -------------------------
+  // DOM
+  // -------------------------
+  const $ = (sel) => document.querySelector(sel);
 
-// Preview state
-let preview = {
-  open: false,
-  steps: [],
-  index: 0,
-  answers: {},
-  lastError: "",
-};
+  const lobTitleEl = $("#lobTitle");
+  const pagesListEl = $("#pagesList");
+  const canvasEl = $("#canvas");
+  const inspectorEl = $("#inspector");
+  const inspectorSubEl = $("#inspectorSub");
+  const editorTitleEl = $("#editorTitle");
+  const emptyStateEl = $("#emptyState");
+  const editorEl = $("#editor");
+  const pageNameDisplayEl = $("#pageNameDisplay");
+  const groupNameDisplayEl = $("#groupNameDisplay");
+  const miniStatsEl = $("#miniStats");
 
-// -------------------------
-// DOM
-// -------------------------
-const $ = (sel) => document.querySelector(sel);
+  const btnAddPage = $("#btnAddPage");
+  const btnAddGroup = $("#btnAddGroup");
+  const btnAddQuestion = $("#btnAddQuestion");
+  const btnPreview = $("#btnPreview");
+  const btnExport = $("#btnExport");
+  const btnImport = $("#btnImport");
+  const fileInput = $("#fileInput");
+  const emptyAddPage = $("#emptyAddPage");
 
-const lobTitleEl = $("#lobTitle");
-const pagesListEl = $("#pagesList");
-const canvasEl = $("#canvas");
-const inspectorEl = $("#inspector");
-const inspectorSubEl = $("#inspectorSub");
-const editorTitleEl = $("#editorTitle");
-const emptyStateEl = $("#emptyState");
-const editorEl = $("#editor");
-const pageNameDisplayEl = $("#pageNameDisplay");
-const groupNameDisplayEl = $("#groupNameDisplay");
+  // Preview modal DOM
+  const previewBackdrop = $("#previewBackdrop");
+  const btnClosePreview = $("#btnClosePreview");
+  const btnPrev = $("#btnPrev");
+  const btnNext = $("#btnNext");
+  const previewStage = $("#previewStage");
+  const previewTitle = $("#previewTitle");
+  const previewSub = $("#previewSub");
+  const progressFill = $("#progressFill");
+  const progressText = $("#progressText");
 
-const btnAddPage = $("#btnAddPage");
-const btnAddGroup = $("#btnAddGroup");
-const btnAddQuestion = $("#btnAddQuestion");
-
-// ✅ NEW – group navigation in header
-const groupSelect = $("#groupSelect");
-const btnPrevGroup = $("#btnPrevGroup");
-const btnNextGroup = $("#btnNextGroup");
-
-const btnPreview = $("#btnPreview");
-const btnExport = $("#btnExport");
-const btnImport = $("#btnImport");
-const fileInput = $("#fileInput");
-const emptyAddPage = $("#emptyAddPage");
-
-// Preview modal DOM
-const previewBackdrop = $("#previewBackdrop");
-const btnClosePreview = $("#btnClosePreview");
-const btnPrev = $("#btnPrev");
-const btnNext = $("#btnNext");
-const previewStage = $("#previewStage");
-const previewTitle = $("#previewTitle");
-const previewSub = $("#previewSub");
-const progressFill = $("#progressFill");
-const progressText = $("#progressText");
-
-
-// -------------------------
-// Persistence
-// -------------------------
-function saveSchema() {
-  schema.meta.updatedAt = new Date().toISOString();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(schema));
-}
-
-// ✅ NEW – used by inspector typing
-const saveSchemaDebounced = debounce(saveSchema, 120);
-
-function loadSchema() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!parsed || !Array.isArray(parsed.pages)) return null;
-    return parsed;
-  } catch {
-    return null;
+  // -------------------------
+  // Persistence
+  // -------------------------
+  function saveSchema() {
+    schema.meta.updatedAt = new Date().toISOString();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(schema));
   }
-}
 
+  function loadSchema() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed.pages)) return null;
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
 
   // -------------------------
   // Find helpers
@@ -257,189 +223,419 @@ function loadSchema() {
     selection.questionId = q.id;
   }
 
- // -------------------------
-// Rendering
-// -------------------------
-function renderAll() {
-  ensureSelection();
+  // -------------------------
+  // Rendering
+  // -------------------------
+  function renderAll() {
+    ensureSelection();
 
-  // Empty state
-  const hasAnything = schema.pages.length > 0;
-  emptyStateEl.classList.toggle("show", !hasAnything);
-  editorEl.style.display = hasAnything ? "block" : "none";
+    // Empty state
+    const hasAnything = schema.pages.length > 0;
+    emptyStateEl.classList.toggle("show", !hasAnything);
+    editorEl.style.display = hasAnything ? "block" : "none";
 
-  // LoB title
-  if (lobTitleEl && safeText(lobTitleEl) !== schema.lineOfBusiness) {
-    lobTitleEl.textContent = schema.lineOfBusiness || "Line of Business";
-  }
+    // LoB title
+    if (lobTitleEl && safeText(lobTitleEl) !== schema.lineOfBusiness) {
+      lobTitleEl.textContent = schema.lineOfBusiness || "Line of Business";
+    }
 
-  renderPagesList();
-  renderCanvas();
-  refreshGroupNav();
-
-  // ⚠️ CRITICAL: do not re-render inspector while typing
-  if (!isTypingInspector) {
+    renderPagesList();
+    renderCanvas();
     renderInspector();
+    renderMiniStats();
+
+    // Header labels
+    const p = getPage(selection.pageId);
+    const g = getGroup(selection.pageId, selection.groupId);
+    editorTitleEl.textContent = p ? `Editor · ${p.name}` : "Editor";
+    pageNameDisplayEl.textContent = p ? p.name : "—";
+    groupNameDisplayEl.textContent = g ? g.name : "—";
   }
 
-  renderMiniStats();
+  function renderPagesList() {
+    pagesListEl.innerHTML = "";
 
-  // Header labels
-  const p = getPage(selection.pageId);
-  const g = getGroup(selection.pageId, selection.groupId);
-  editorTitleEl.textContent = p ? `Editor · ${p.name}` : "Editor";
-  pageNameDisplayEl.textContent = p ? p.name : "—";
-  groupNameDisplayEl.textContent = g ? g.name : "—";
-}
+    schema.pages.forEach((p, pIdx) => {
+      const pageDiv = document.createElement("div");
+      pageDiv.className = "pageItem" + (p.id === selection.pageId ? " active" : "");
 
-function renderPagesList() {
-  pagesListEl.innerHTML = "";
+      const top = document.createElement("div");
+      top.className = "pageTop";
 
-  schema.pages.forEach((p, pIdx) => {
-    const pageDiv = document.createElement("div");
-    pageDiv.className = "pageItem" + (p.id === selection.pageId ? " active" : "");
+      const left = document.createElement("div");
+      left.style.flex = "1";
+      left.style.minWidth = "0";
 
-    const top = document.createElement("div");
-    top.className = "pageTop";
-
-    const left = document.createElement("div");
-    left.style.flex = "1";
-    left.style.minWidth = "0";
-
-    const name = document.createElement("div");
-    name.className = "pageName";
-    name.contentEditable = "true";
-    name.spellcheck = false;
-    name.textContent = p.name;
-
-    name.addEventListener("focus", () => {
-      selection.pageId = p.id;
-      ensureSelection();
-      renderAll();
-    });
-
-    name.addEventListener("input", () => {
-      p.name = safeText(name) || "Untitled page";
-      saveSchemaDebounced();
-      renderMiniStats();
-    });
-
-    const meta = document.createElement("div");
-    meta.className = "pageMeta";
-    const qCount = p.groups.reduce((acc, g) => acc + g.questions.length, 0);
-    meta.textContent = `${p.groups.length} group${p.groups.length !== 1 ? "s" : ""} · ${qCount} question${qCount !== 1 ? "s" : ""}`;
-
-    left.appendChild(name);
-    left.appendChild(meta);
-
-    const actions = document.createElement("div");
-    actions.className = "pageActions";
-
-    const upBtn = iconButton("↑", "Move up");
-    upBtn.disabled = pIdx === 0;
-    upBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      moveItem(schema.pages, pIdx, pIdx - 1);
-      saveSchema();
-      renderAll();
-    });
-
-    const downBtn = iconButton("↓", "Move down");
-    downBtn.disabled = pIdx === schema.pages.length - 1;
-    downBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      moveItem(schema.pages, pIdx, pIdx + 1);
-      saveSchema();
-      renderAll();
-    });
-
-    const delBtn = iconButton("✕", "Delete page");
-    delBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (!confirm(`Delete page "${p.name}"? This cannot be undone.`)) return;
-      schema.pages = schema.pages.filter((x) => x.id !== p.id);
-      saveSchema();
-      ensureSelection();
-      renderAll();
-    });
-
-    actions.appendChild(upBtn);
-    actions.appendChild(downBtn);
-    actions.appendChild(delBtn);
-
-    top.appendChild(left);
-    top.appendChild(actions);
-    pageDiv.appendChild(top);
-
-    // Group chips
-    const chips = document.createElement("div");
-    chips.className = "groupsMini";
-
-    p.groups.forEach((g) => {
-      const chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "groupChip" + (p.id === selection.pageId && g.id === selection.groupId ? " active" : "");
-      chip.textContent = g.name;
-      chip.addEventListener("click", () => {
+      const name = document.createElement("div");
+      name.className = "pageName";
+      name.contentEditable = "true";
+      name.spellcheck = false;
+      name.textContent = p.name;
+      name.addEventListener("focus", () => {
         selection.pageId = p.id;
-        selection.groupId = g.id;
-        selection.questionId = g.questions[0]?.id || null;
+        // keep group selection if exists
+        ensureSelection();
         renderAll();
       });
-      chips.appendChild(chip);
+      name.addEventListener("input", () => {
+        p.name = safeText(name) || "Untitled page";
+        saveSchema();
+        renderMiniStats();
+      });
+
+      const meta = document.createElement("div");
+      meta.className = "pageMeta";
+      const qCount = p.groups.reduce((acc, g) => acc + g.questions.length, 0);
+      meta.textContent = `${p.groups.length} group${p.groups.length !== 1 ? "s" : ""} · ${qCount} question${qCount !== 1 ? "s" : ""}`;
+
+      left.appendChild(name);
+      left.appendChild(meta);
+
+      const actions = document.createElement("div");
+      actions.className = "pageActions";
+
+      // reorder up/down
+      const upBtn = iconButton("↑", "Move up");
+      upBtn.disabled = pIdx === 0;
+      upBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        moveItem(schema.pages, pIdx, pIdx - 1);
+        saveSchema();
+        renderAll();
+      });
+
+      const downBtn = iconButton("↓", "Move down");
+      downBtn.disabled = pIdx === schema.pages.length - 1;
+      downBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        moveItem(schema.pages, pIdx, pIdx + 1);
+        saveSchema();
+        renderAll();
+      });
+
+      const delBtn = iconButton("✕", "Delete page");
+      delBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!confirm(`Delete page "${p.name}"? This cannot be undone.`)) return;
+        schema.pages = schema.pages.filter((x) => x.id !== p.id);
+        saveSchema();
+        ensureSelection();
+        renderAll();
+      });
+
+      actions.appendChild(upBtn);
+      actions.appendChild(downBtn);
+      actions.appendChild(delBtn);
+
+      top.appendChild(left);
+      top.appendChild(actions);
+
+      pageDiv.appendChild(top);
+
+      // Groups chips (select group)
+      const chips = document.createElement("div");
+      chips.className = "groupsMini";
+      p.groups.forEach((g) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "groupChip" + (p.id === selection.pageId && g.id === selection.groupId ? " active" : "");
+        chip.textContent = g.name;
+        chip.addEventListener("click", () => {
+          selection.pageId = p.id;
+          selection.groupId = g.id;
+          selection.questionId = g.questions[0]?.id || null;
+          renderAll();
+        });
+        chips.appendChild(chip);
+      });
+
+      const addGroupChip = document.createElement("button");
+      addGroupChip.type = "button";
+      addGroupChip.className = "groupChip";
+      addGroupChip.textContent = "+ Group";
+      addGroupChip.addEventListener("click", () => {
+        selection.pageId = p.id;
+        addGroupToPage(p.id);
+      });
+      chips.appendChild(addGroupChip);
+
+      pageDiv.appendChild(chips);
+
+      // click page selects it
+      pageDiv.addEventListener("click", () => {
+        selection.pageId = p.id;
+        // choose first group/question
+        selection.groupId = p.groups[0]?.id || null;
+        selection.questionId = p.groups[0]?.questions[0]?.id || null;
+        renderAll();
+      });
+
+      pagesListEl.appendChild(pageDiv);
     });
-
-    const addGroupChip = document.createElement("button");
-    addGroupChip.type = "button";
-    addGroupChip.className = "groupChip";
-    addGroupChip.textContent = "+ Group";
-    addGroupChip.addEventListener("click", () => {
-      selection.pageId = p.id;
-      addGroupToPage(p.id);
-    });
-    chips.appendChild(addGroupChip);
-
-    pageDiv.appendChild(chips);
-
-    pageDiv.addEventListener("click", () => {
-      selection.pageId = p.id;
-      selection.groupId = p.groups[0]?.id || null;
-      selection.questionId = p.groups[0]?.questions[0]?.id || null;
-      renderAll();
-    });
-
-    pagesListEl.appendChild(pageDiv);
-  });
-}
-
-function refreshGroupNav() {
-  const p = getPage(selection.pageId);
-  if (!groupSelect) return;
-
-  groupSelect.innerHTML = "";
-
-  if (!p || !p.groups.length) {
-    groupSelect.disabled = true;
-    btnPrevGroup.disabled = true;
-    btnNextGroup.disabled = true;
-    return;
   }
 
-  groupSelect.disabled = false;
+  function renderCanvas() {
+    canvasEl.innerHTML = "";
 
-  p.groups.forEach((g) => {
-    const opt = document.createElement("option");
-    opt.value = g.id;
-    opt.textContent = g.name;
-    if (g.id === selection.groupId) opt.selected = true;
-    groupSelect.appendChild(opt);
-  });
+    const p = getPage(selection.pageId);
+    const g = getGroup(selection.pageId, selection.groupId);
+    if (!p || !g) return;
 
-  const idx = p.groups.findIndex((g) => g.id === selection.groupId);
-  btnPrevGroup.disabled = idx <= 0;
-  btnNextGroup.disabled = idx >= p.groups.length - 1;
-}
+    if (!g.questions.length) {
+      const empty = document.createElement("div");
+      empty.className = "tip";
+      empty.innerHTML = `
+        <div class="tipTitle">No questions in this group</div>
+        <p class="muted">Add your first question to start building a Typeform-style journey.</p>
+      `;
+      canvasEl.appendChild(empty);
+      return;
+    }
 
+    g.questions.forEach((q, qIdx) => {
+      const card = document.createElement("div");
+      card.className = "qCard" + (q.id === selection.questionId ? " active" : "");
+
+      const left = document.createElement("div");
+      left.className = "qLeft";
+
+      const title = document.createElement("div");
+      title.className = "qTitle";
+      title.textContent = q.title || "Untitled question";
+
+      const meta = document.createElement("div");
+      meta.className = "qMeta";
+
+      const typeBadge = document.createElement("span");
+      typeBadge.className = "badge";
+      typeBadge.textContent = QUESTION_TYPES.find((t) => t.key === q.type)?.label || q.type;
+
+      meta.appendChild(typeBadge);
+
+      if (q.required) {
+        const req = document.createElement("span");
+        req.className = "badge req";
+        req.textContent = "Required";
+        meta.appendChild(req);
+      }
+
+      if (q.logic?.enabled && (q.logic.rules?.length || 0) > 0) {
+        const lg = document.createElement("span");
+        lg.className = "badge logic";
+        lg.textContent = "Logic";
+        meta.appendChild(lg);
+      }
+
+      left.appendChild(title);
+      left.appendChild(meta);
+
+      const actions = document.createElement("div");
+      actions.className = "qActions";
+
+      const upBtn = iconButton("↑", "Move up");
+      upBtn.disabled = qIdx === 0;
+      upBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        moveItem(g.questions, qIdx, qIdx - 1);
+        saveSchema();
+        renderAll();
+      });
+
+      const downBtn = iconButton("↓", "Move down");
+      downBtn.disabled = qIdx === g.questions.length - 1;
+      downBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        moveItem(g.questions, qIdx, qIdx + 1);
+        saveSchema();
+        renderAll();
+      });
+
+      const dupBtn = iconButton("⧉", "Duplicate");
+      dupBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const copy = deepClone(q);
+        copy.id = uid("q");
+        // keep logic but reference still valid
+        g.questions.splice(qIdx + 1, 0, copy);
+        selection.questionId = copy.id;
+        saveSchema();
+        renderAll();
+      });
+
+      const delBtn = iconButton("✕", "Delete");
+      delBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!confirm("Delete this question?")) return;
+        g.questions = g.questions.filter((x) => x.id !== q.id);
+        if (selection.questionId === q.id) selection.questionId = g.questions[0]?.id || null;
+        saveSchema();
+        renderAll();
+      });
+
+      actions.appendChild(upBtn);
+      actions.appendChild(downBtn);
+      actions.appendChild(dupBtn);
+      actions.appendChild(delBtn);
+
+      card.appendChild(left);
+      card.appendChild(actions);
+
+      card.addEventListener("click", () => {
+        selection.questionId = q.id;
+        renderAll();
+      });
+
+      canvasEl.appendChild(card);
+    });
+  }
+
+  function renderInspector() {
+    inspectorEl.innerHTML = "";
+    const p = getPage(selection.pageId);
+    const g = getGroup(selection.pageId, selection.groupId);
+    const q = getQuestion(selection.pageId, selection.groupId, selection.questionId);
+
+    if (!p) {
+      inspectorSubEl.textContent = "Create a page to get started";
+      return;
+    }
+
+    if (!g) {
+      inspectorSubEl.textContent = "Select or add a group";
+      // group controls
+      inspectorEl.appendChild(sectionTitle("Page"));
+      inspectorEl.appendChild(fieldText("Page name", p.name, (val) => {
+        p.name = val || "Untitled page";
+        saveSchema();
+        renderAll();
+      }));
+      inspectorEl.appendChild(buttonRow([
+        { label: "+ Group", kind: "primary", onClick: () => addGroupToPage(p.id) },
+      ]));
+      return;
+    }
+
+    // Group editor (always visible)
+    inspectorSubEl.textContent = q ? "Editing question" : "Editing group";
+
+    inspectorEl.appendChild(sectionTitle("Group"));
+
+    inspectorEl.appendChild(fieldText("Group name", g.name, (val) => {
+      g.name = val || "Untitled group";
+      saveSchema();
+      renderAll();
+    }));
+
+    // Move group + delete group
+    inspectorEl.appendChild(buttonRow([
+      { label: "Move group up", kind: "ghost", onClick: () => moveGroup(p.id, g.id, -1) },
+      { label: "Move group down", kind: "ghost", onClick: () => moveGroup(p.id, g.id, +1) },
+    ]));
+
+    inspectorEl.appendChild(buttonRow([
+      {
+        label: "Delete group",
+        kind: "ghost",
+        onClick: () => {
+          if (!confirm(`Delete group "${g.name}"?`)) return;
+          p.groups = p.groups.filter((x) => x.id !== g.id);
+          selection.groupId = p.groups[0]?.id || null;
+          selection.questionId = p.groups[0]?.questions[0]?.id || null;
+          saveSchema();
+          renderAll();
+        },
+      },
+    ]));
+
+    inspectorEl.appendChild(divider());
+
+    // If no question selected
+    if (!q) {
+      inspectorEl.appendChild(sectionTitle("Questions"));
+      inspectorEl.appendChild(pEl("Select a question in the canvas to edit its settings.", "inlineHelp"));
+      return;
+    }
+
+    // Question inspector
+    inspectorEl.appendChild(sectionTitle("Question"));
+
+    inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
+      q.title = val || "Untitled question";
+      saveSchema();
+      renderAll();
+    }));
+
+    inspectorEl.appendChild(fieldTextArea("Help text", q.help || "", (val) => {
+      q.help = val;
+      saveSchema();
+      renderAll();
+    }));
+
+    inspectorEl.appendChild(fieldSelect("Type", q.type, QUESTION_TYPES.map(t => ({ value: t.key, label: t.label })), (val) => {
+      q.type = val;
+      if (!isOptionType(q.type)) q.options = [];
+      if (isOptionType(q.type) && (!q.options || !q.options.length)) {
+        q.options = ["Option 1", "Option 2", "Option 3"];
+      }
+      saveSchema();
+      renderAll();
+    }));
+
+    // Placeholder
+    if (q.type === "text" || q.type === "email" || q.type === "number") {
+      inspectorEl.appendChild(fieldText("Placeholder", q.placeholder || "", (val) => {
+        q.placeholder = val;
+        saveSchema();
+      }));
+    }
+
+    // Required toggle
+    inspectorEl.appendChild(toggleRow("Required", q.required === true, (on) => {
+      q.required = on;
+      saveSchema();
+      renderAll();
+    }));
+
+    // Options editor
+    if (isOptionType(q.type)) {
+      inspectorEl.appendChild(divider());
+      inspectorEl.appendChild(sectionTitle("Options"));
+      inspectorEl.appendChild(pEl("Add, rename, reorder, or delete options.", "inlineHelp"));
+      inspectorEl.appendChild(optionsEditor(q));
+    }
+
+    // Conditional logic
+    inspectorEl.appendChild(divider());
+    inspectorEl.appendChild(sectionTitle("Conditional logic"));
+    inspectorEl.appendChild(pEl("Show this question only if the rule(s) match.", "inlineHelp"));
+
+    inspectorEl.appendChild(toggleRow("Enable logic", q.logic?.enabled === true, (on) => {
+      q.logic = q.logic || { enabled: false, rules: [] };
+      q.logic.enabled = on;
+      saveSchema();
+      renderAll();
+    }));
+
+    if (q.logic?.enabled) {
+      inspectorEl.appendChild(logicEditor(p, q));
+    }
+  }
+
+  function renderMiniStats() {
+    const pages = schema.pages.length;
+    const groups = schema.pages.reduce((a, p) => a + p.groups.length, 0);
+    const questions = schema.pages.reduce(
+      (a, p) => a + p.groups.reduce((b, g) => b + g.questions.length, 0),
+      0
+    );
+
+    miniStatsEl.innerHTML = `
+      <div class="statRow"><span class="muted">Pages</span><span class="statVal">${pages}</span></div>
+      <div class="statRow"><span class="muted">Groups</span><span class="statVal">${groups}</span></div>
+      <div class="statRow"><span class="muted">Questions</span><span class="statVal">${questions}</span></div>
+      <div class="statRow"><span class="muted">Autosaved</span><span class="statVal">Yes</span></div>
+    `;
+  }
 
   // -------------------------
   // Components (Inspector)
@@ -881,89 +1077,85 @@ function refreshGroupNav() {
   }
 
   // -------------------------
-// Actions
-// -------------------------
-function addPage() {
-  const pid = uid("page");
-  const gid = uid("group");
-  const qid = uid("q");
+  // Actions
+  // -------------------------
+  function addPage() {
+    const pid = uid("page");
+    const gid = uid("group");
+    const qid = uid("q");
 
-  schema.pages.push({
-    id: pid,
-    name: "New page",
-    groups: [
-      {
-        id: gid,
-        name: "Group 1",
-        questions: [
-          {
-            id: qid,
-            type: "text",
-            title: "New question",
-            help: "",
-            required: false,
-            placeholder: "",
-            options: [],
-            logic: { enabled: false, rules: [] },
-          },
-        ],
-      },
-    ],
-  });
+    schema.pages.push({
+      id: pid,
+      name: `Page ${schema.pages.length + 1}`,
+      groups: [
+        {
+          id: gid,
+          name: "Group 1",
+          questions: [
+            {
+              id: qid,
+              type: "text",
+              title: "New question",
+              help: "",
+              required: false,
+              placeholder: "",
+              options: [],
+              logic: { enabled: false, rules: [] },
+            },
+          ],
+        },
+      ],
+    });
 
-  selection.pageId = pid;
-  selection.groupId = gid;
-  selection.questionId = qid;
+    selection.pageId = pid;
+    selection.groupId = gid;
+    selection.questionId = qid;
+    saveSchema();
+    renderAll();
+  }
 
-  saveSchema();
-  renderAll();
+  function addGroupToPage(pageId) {
+    const p = getPage(pageId);
+    if (!p) return;
 
-  // Auto-focus page name so user can type immediately
-  requestAnimationFrame(() => {
-    const el = document.querySelector(".pageItem.active .pageName");
-    focusAndSelect(el);
-  });
-}
+    const gid = uid("group");
+    p.groups.push({
+      id: gid,
+      name: `Group ${p.groups.length + 1}`,
+      questions: [],
+    });
 
-function addGroupToPage(pageId) {
-  const p = getPage(pageId);
-  if (!p) return;
+    selection.pageId = p.id;
+    selection.groupId = gid;
+    selection.questionId = null;
 
-  const gid = uid("group");
-  p.groups.push({
-    id: gid,
-    name: `Group ${p.groups.length + 1}`,
-    questions: [],
-  });
+    saveSchema();
+    renderAll();
+  }
 
-  selection.pageId = p.id;
-  selection.groupId = gid;
-  selection.questionId = null;
+  function addQuestion() {
+    const p = getPage(selection.pageId);
+    const g = getGroup(selection.pageId, selection.groupId);
+    if (!p || !g) return;
 
-  saveSchema();
-  renderAll();
-}
+    const qid = uid("q");
+    const q = {
+      id: qid,
+      type: "text",
+      title: "New question",
+      help: "",
+      required: false,
+      placeholder: "",
+      options: [],
+      logic: { enabled: false, rules: [] },
+    };
 
-function addQuestion() {
-  const g = getGroup(selection.pageId, selection.groupId);
-  if (!g) return;
+    g.questions.push(q);
+    selection.questionId = qid;
 
-  const qid = uid("q");
-  g.questions.push({
-    id: qid,
-    type: "text",
-    title: "New question",
-    help: "",
-    required: false,
-    placeholder: "",
-    options: [],
-    logic: { enabled: false, rules: [] },
-  });
-
-  selection.questionId = qid;
-  saveSchema();
-  renderAll();
-}
+    saveSchema();
+    renderAll();
+  }
 
   // -------------------------
   // Flow building (Preview steps)
@@ -1438,84 +1630,57 @@ function addQuestion() {
     reader.readAsText(file);
   }
 
- // -------------------------
-// Event wiring
-// -------------------------
-function wire() {
-  btnAddPage.addEventListener("click", addPage);
-  emptyAddPage.addEventListener("click", addPage);
-
-  btnAddGroup.addEventListener("click", () => {
-    if (!selection.pageId) return;
-    addGroupToPage(selection.pageId);
-  });
-
-  btnAddQuestion.addEventListener("click", addQuestion);
-
-  // Group navigation (header)
-  groupSelect.addEventListener("change", () => {
-    selection.groupId = groupSelect.value;
-    const g = getGroup(selection.pageId, selection.groupId);
-    selection.questionId = g?.questions[0]?.id || null;
-    renderAll();
-  });
-
-  btnPrevGroup.addEventListener("click", () => {
-    const p = getPage(selection.pageId);
-    if (!p) return;
-    const idx = p.groups.findIndex((g) => g.id === selection.groupId);
-    if (idx > 0) {
-      selection.groupId = p.groups[idx - 1].id;
-      selection.questionId = p.groups[idx - 1].questions[0]?.id || null;
+  // -------------------------
+  // Event wiring
+  // -------------------------
+  function wire() {
+    // LOB inline title
+    lobTitleEl.addEventListener("input", () => {
+      schema.lineOfBusiness = safeText(lobTitleEl) || "Line of Business";
+      saveSchema();
+    });
+    lobTitleEl.addEventListener("blur", () => {
+      schema.lineOfBusiness = safeText(lobTitleEl) || "Line of Business";
+      saveSchema();
       renderAll();
-    }
-  });
+    });
 
-  btnNextGroup.addEventListener("click", () => {
-    const p = getPage(selection.pageId);
-    if (!p) return;
-    const idx = p.groups.findIndex((g) => g.id === selection.groupId);
-    if (idx < p.groups.length - 1) {
-      selection.groupId = p.groups[idx + 1].id;
-      selection.questionId = p.groups[idx + 1].questions[0]?.id || null;
-      renderAll();
-    }
-  });
+    btnAddPage.addEventListener("click", addPage);
+    emptyAddPage.addEventListener("click", addPage);
 
-  // Inspector typing guard
-  document.addEventListener("focusin", (e) => {
-    if (e.target.closest("#inspector")) isTypingInspector = true;
-  });
+    btnAddGroup.addEventListener("click", () => {
+      const p = getPage(selection.pageId);
+      if (!p) return;
+      addGroupToPage(p.id);
+    });
 
-  document.addEventListener("focusout", (e) => {
-    if (!e.target.closest("#inspector")) return;
-    setTimeout(() => {
-      if (!document.activeElement.closest("#inspector")) {
-        isTypingInspector = false;
-        renderInspector();
-      }
-    }, 0);
-  });
+    btnAddQuestion.addEventListener("click", addQuestion);
 
-  btnPreview.addEventListener("click", openPreview);
-  btnClosePreview.addEventListener("click", closePreview);
-  btnPrev.addEventListener("click", previewPrev);
-  btnNext.addEventListener("click", previewNext);
+    btnPreview.addEventListener("click", () => {
+      // reset preview answers each time? keep. best: keep within session; but start fresh for consistent testing:
+      preview.answers = {};
+      openPreview();
+    });
 
-  btnExport.addEventListener("click", exportJson);
-  btnImport.addEventListener("click", () => fileInput.click());
+    btnClosePreview.addEventListener("click", closePreview);
+    previewBackdrop.addEventListener("click", (e) => {
+      if (e.target === previewBackdrop) closePreview();
+    });
 
-  fileInput.addEventListener("change", () => {
-    const f = fileInput.files?.[0];
-    if (f) importJsonFile(f);
-    fileInput.value = "";
-  });
+    btnExport.addEventListener("click", exportJson);
 
-  lobTitleEl.addEventListener("input", () => {
-    schema.lineOfBusiness = safeText(lobTitleEl) || "Line of Business";
-    saveSchemaDebounced();
-  });
-}
+    btnImport.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", () => {
+      const f = fileInput.files?.[0];
+      if (f) importJsonFile(f);
+      fileInput.value = "";
+    });
+
+    // ESC closes preview
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !previewBackdrop.hidden) closePreview();
+    });
+  }
 
   // -------------------------
   // Init
