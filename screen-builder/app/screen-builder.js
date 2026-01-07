@@ -61,100 +61,88 @@ function showCreateJourneyModal(){
     <div class="sb-modal">
       <div class="sb-modal-head">
         <strong>Create a new journey</strong>
-        <div>Enter details to start building.</div>
+        <div>Give it a name, then start building your prototype.</div>
       </div>
+
       <div class="sb-modal-body">
         <div class="sb-kv">
           <div class="k">Journey name</div>
           <input class="sb-input" id="sb-new-name" placeholder="e.g. Home Quote & Buy" />
         </div>
+
         <div class="sb-kv">
           <div class="k">Line of business</div>
           <input class="sb-input" id="sb-new-lob" placeholder="e.g. home" />
         </div>
+
         <div class="sb-kv">
           <div class="k">Journey ID</div>
-          <input class="sb-input" id="sb-new-id" placeholder="e.g. home" />
+          <input class="sb-input" id="sb-new-id" placeholder="auto-generated" />
         </div>
-        <div class="sb-inline-help">This creates a draft in the builder. You can Export JSON (and later Publish).</div>
+
+        <div class="sb-inline-help">
+          This creates a draft in the builder. Use <strong>Export JSON</strong> to save/share.
+        </div>
       </div>
+
       <div class="sb-modal-actions">
         <button class="sb-btn" id="sb-new-close">Close</button>
         <button class="sb-btn primary" id="sb-new-create">Create journey</button>
       </div>
     </div>
   `;
+
   document.body.appendChild(el);
 
   const nameEl = el.querySelector("#sb-new-name");
   const lobEl  = el.querySelector("#sb-new-lob");
   const idEl   = el.querySelector("#sb-new-id");
 
-  const slugify = (s) => String(s||"").trim().toLowerCase()
-    .replace(/['"]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+  // Auto-generate ID from name/lob (but let user override)
+  let idTouched = false;
+  idEl.addEventListener("input", () => { idTouched = true; });
 
-  const sync = () => {
-    const id = slugify(nameEl.value) || slugify(lobEl.value);
-    if(!idEl.value) idEl.value = id;
+  const syncId = () => {
+    if (idTouched) return;
+    const proposed = slugify(nameEl.value) || slugify(lobEl.value);
+    idEl.value = proposed;
   };
-  nameEl.addEventListener("input", sync);
-  lobEl.addEventListener("input", sync);
+
+  nameEl.addEventListener("input", syncId);
+  lobEl.addEventListener("input", syncId);
 
   el.querySelector("#sb-new-close").addEventListener("click", () => el.remove());
 
- el.querySelector("#sb-new-create").addEventListener("click", () => {
-  alert("Create journey clicked"); // ✅ TEMP DEBUG (we will remove after)
-
-  try {
-    const name = nameEl.value.trim();
-    const lob  = lobEl.value.trim().toLowerCase();
-    const id   = (idEl.value.trim() || slugify(name) || slugify(lob));
+  el.querySelector("#sb-new-create").addEventListener("click", () => {
+    const name = (nameEl.value || "").trim();
+    const lob  = (lobEl.value || "").trim().toLowerCase();
+    const id   = ((idEl.value || "").trim() || slugify(name) || slugify(lob));
 
     if(!name || !lob || !id){
-      alert("Please enter Journey name, Line of business, and Journey ID.");
+      toast("Please enter a name, LOB, and ID.");
       return;
     }
 
-    // Create the new blank journey
-    state.journey = {
-      schemaVersion: 1,
-      id,
-      name,
-      lob,
-      pages: [
-        {
-          id: "p1",
-          title: "Page 1",
-          groups: [{ id: "g1", title: "Group 1", questions: [] }]
-        }
-      ]
-    };
+    // Create blank journey
+    state.journey = makeBlankJourney({ id, name, lob });
 
-    // ✅ Reset runtime state (this is important)
+    // Reset runtime state so UI definitely switches to the new journey
     state.answers = {};
     state.errors = {};
     state.preview.pageIndex = 0;
-    state.selected = { kind:"journey", pageId:null, groupId:null, questionId:null };
+    state.selected = { kind: "journey", pageId: null, groupId: null, questionId: null };
 
-    // Update URL (no reload)
+    // Update URL (no reload). This is optional but useful for sharing.
     const url = new URL(window.location.href);
     url.searchParams.set("journey", id);
     window.history.replaceState({}, "", url.toString());
 
-    // Download immediately
-    downloadJson(`${id}.json`, state.journey);
-
-    // Close modal first (so user sees something happen even if render fails)
     el.remove();
-
-    // Re-render app
     render();
-    toast(`Journey created and downloaded: ${id}.json`);
-  } catch (err) {
-    console.error("Create journey failed:", err);
-    alert("Create journey failed — check console for error.");
-  }
-});
+    toast(`Created "${name}". You can now add pages/groups/questions.`);
+  });
+}
+
 
 
   
