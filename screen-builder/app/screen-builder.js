@@ -102,7 +102,10 @@ function showCreateJourneyModal(){
 
   el.querySelector("#sb-new-close").addEventListener("click", () => el.remove());
 
-  el.querySelector("#sb-new-create").addEventListener("click", () => {
+ el.querySelector("#sb-new-create").addEventListener("click", () => {
+  alert("Create journey clicked"); // ✅ TEMP DEBUG (we will remove after)
+
+  try {
     const name = nameEl.value.trim();
     const lob  = lobEl.value.trim().toLowerCase();
     const id   = (idEl.value.trim() || slugify(name) || slugify(lob));
@@ -112,24 +115,46 @@ function showCreateJourneyModal(){
       return;
     }
 
+    // Create the new blank journey
     state.journey = {
       schemaVersion: 1,
       id,
       name,
       lob,
-      pages: [{ id:"p1", title:"Page 1", groups:[{ id:"g1", title:"Group 1", questions:[] }] }]
+      pages: [
+        {
+          id: "p1",
+          title: "Page 1",
+          groups: [{ id: "g1", title: "Group 1", questions: [] }]
+        }
+      ]
     };
 
+    // ✅ Reset runtime state (this is important)
+    state.answers = {};
+    state.errors = {};
+    state.preview.pageIndex = 0;
+    state.selected = { kind:"journey", pageId:null, groupId:null, questionId:null };
+
+    // Update URL (no reload)
     const url = new URL(window.location.href);
     url.searchParams.set("journey", id);
     window.history.replaceState({}, "", url.toString());
 
+    // Download immediately
     downloadJson(`${id}.json`, state.journey);
+
+    // Close modal first (so user sees something happen even if render fails)
     el.remove();
+
+    // Re-render app
     render();
-    toast(`Journey created and downloaded. Add ${id}.json to /screen-builder/journeys in GitHub.`);
-  });
-}
+    toast(`Journey created and downloaded: ${id}.json`);
+  } catch (err) {
+    console.error("Create journey failed:", err);
+    alert("Create journey failed — check console for error.");
+  }
+});
 
 
   
