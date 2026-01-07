@@ -1268,6 +1268,8 @@
     // Start with fresh answers OR keep existing? Product best practice: keep during session.
     preview.answers = preview.answers || {};
 
+    // Show modal (CSS-controlled)
+    previewBackdrop.classList.add("isOpen");
     previewBackdrop.hidden = false;
     document.body.style.overflow = "hidden";
 
@@ -1279,6 +1281,8 @@
 
   function closePreview() {
     preview.open = false;
+    // Hide modal (CSS-controlled)
+    previewBackdrop.classList.remove("isOpen");
     previewBackdrop.hidden = true;
     document.body.style.overflow = "";
     previewStage.innerHTML = "";
@@ -1678,13 +1682,17 @@
 
     // ESC closes preview
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !previewBackdrop.hidden) closePreview();
+      if (e.key === "Escape" && previewBackdrop.classList.contains("isOpen")) closePreview();
     });
   }
 
   // -------------------------
   // Init
   // -------------------------
+  // Ensure preview is closed on load (CSS-controlled)
+  previewBackdrop.classList.remove("isOpen");
+  previewBackdrop.hidden = true;
+
   wire();
   renderAll();
 
