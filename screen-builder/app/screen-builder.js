@@ -60,33 +60,47 @@ function showCreateJourneyModal(){
   el.innerHTML = `
     <div class="sb-modal">
       <div class="sb-modal-head">
-        <strong>Create a new journey</strong>
-        <div>Give it a name, then start building your prototype.</div>
+        <strong>Create or open a journey</strong>
+        <div>Create a new journey flow, or paste a share link to continue from someone else.</div>
       </div>
 
       <div class="sb-modal-body">
-        <div class="sb-kv">
-          <div class="k">Journey name</div>
-          <input class="sb-input" id="sb-new-name" placeholder="e.g. Home Quote & Buy" />
-        </div>
+        <div style="display:grid; gap:14px;">
+          <div>
+            <div class="sb-inline-help" style="margin:0 0 8px 0;"><strong>Create new</strong></div>
 
-        <div class="sb-kv">
-          <div class="k">Line of business</div>
-          <input class="sb-input" id="sb-new-lob" placeholder="e.g. home" />
-        </div>
+            <div class="sb-kv">
+              <div class="k">Journey name</div>
+              <input class="sb-input" id="sb-new-name" placeholder="e.g. Home Quote & Buy" />
+            </div>
 
-        <div class="sb-kv">
-          <div class="k">Journey ID</div>
-          <input class="sb-input" id="sb-new-id" placeholder="auto-generated" />
-        </div>
+            <div class="sb-kv">
+              <div class="k">Line of business</div>
+              <input class="sb-input" id="sb-new-lob" placeholder="e.g. home" />
+            </div>
 
-        <div class="sb-inline-help">
-          This creates a draft in the builder. Use <strong>Export JSON</strong> to save/share.
+            <div class="sb-kv">
+              <div class="k">Journey ID</div>
+              <input class="sb-input" id="sb-new-id" placeholder="auto-generated" />
+            </div>
+
+            <div class="sb-inline-help">Tip: Journey ID is used in the URL (e.g. <span style="font-family:var(--mono)">?journey=home</span>).</div>
+          </div>
+
+          <div style="border-top:1px solid var(--border); padding-top:14px;">
+            <div class="sb-inline-help" style="margin:0 0 8px 0;"><strong>Open from share link</strong></div>
+            <div class="sb-kv">
+              <div class="k">Share link</div>
+              <textarea class="sb-input" id="sb-open-link" rows="3" placeholder="Paste a link like: https://.../screen-builder#sb=..."></textarea>
+            </div>
+            <div class="sb-inline-help">Pasting a link loads that journey immediately (editable). Click <strong>Share link</strong> again to send on your version.</div>
+          </div>
         </div>
       </div>
 
       <div class="sb-modal-actions">
-        <button class="sb-btn" id="sb-new-close">Close</button>
+        <button class="sb-btn" id="sb-new-demo">Load demo</button>
+        <button class="sb-btn" id="sb-open-btn">Open link</button>
         <button class="sb-btn primary" id="sb-new-create">Create journey</button>
       </div>
     </div>
@@ -97,8 +111,8 @@ function showCreateJourneyModal(){
   const nameEl = el.querySelector("#sb-new-name");
   const lobEl  = el.querySelector("#sb-new-lob");
   const idEl   = el.querySelector("#sb-new-id");
+  const linkEl = el.querySelector("#sb-open-link");
 
-  // Auto-generate ID from name/lob (but let user override)
   let idTouched = false;
   idEl.addEventListener("input", () => { idTouched = true; });
 
@@ -107,13 +121,44 @@ function showCreateJourneyModal(){
     const proposed = slugify(nameEl.value) || slugify(lobEl.value);
     idEl.value = proposed;
   };
-
   nameEl.addEventListener("input", syncId);
   lobEl.addEventListener("input", syncId);
 
-  el.querySelector("#sb-new-close").addEventListener("click", () => el.remove());
+  el.querySelector("#sb-new-demo").addEventListener("click", () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("journey", (CONFIG.demoJourneyId || CONFIG.defaultJourneyId || "motor"));
+    window.location.href = url.toString();
+  });
 
-  el.querySelector("#sb-new-create").addEventListener("click", () => {
+  el.querySelector("#sb-open-btn").addEventListener("click", () => {
+    const raw = (linkEl.value || "").trim();
+    if(!raw) return toast("Paste a share link first.");
+
+    const m = raw.match(/#sb=([A-Za-z0-9_-]+)/);
+    if(!m) return toast("That link doesn't look like a Screen Builder share link.");
+
+    // Set hash then load from it
+    window.location.hash = `sb=${m[1]}`;
+    const shared = getSharedJourneyFromHash();
+    if(!shared) return toast("Couldn't load journey from that link.");
+
+    state.journey = shared;
+    state.answers = {};
+    state.errors = {};
+    state.preview.pageIndex = 0;
+    state.selected = { kind: "journey", pageId: null, groupId: null, questionId: null };
+
+    // Keep ?journey in sync (nice for display/sharing)
+    const url = new URL(window.location.href);
+    url.searchParams.set("journey", shared.id || "shared");
+    window.history.replaceState({}, "", url.toString());
+
+    el.remove();
+    render();
+    toast(`Opened from link. Click "Share link" to send your version.`);
+  });
+
+  el.querySelector("#sb-new-create").addEventListener("click", async () => {
     const name = (nameEl.value || "").trim();
     const lob  = (lobEl.value || "").trim().toLowerCase();
     const id   = ((idEl.value || "").trim() || slugify(name) || slugify(lob));
@@ -123,24 +168,24 @@ function showCreateJourneyModal(){
       return;
     }
 
-    // Create blank journey
     state.journey = makeBlankJourney({ id, name, lob });
-
-    // Reset runtime state so UI definitely switches to the new journey
     state.answers = {};
     state.errors = {};
     state.preview.pageIndex = 0;
     state.selected = { kind: "journey", pageId: null, groupId: null, questionId: null };
 
-    // Close modal and render the new journey
+    const url = new URL(window.location.href);
+    url.searchParams.set("journey", id);
+    window.history.replaceState({}, "", url.toString());
+
     el.remove();
     render();
 
-    // Create a share link immediately (editable) and copy it
-    shareCurrentJourney();
-
+    // Immediately create a share link for convenience
+    await shareCurrentJourney();
   });
 }
+
 
 
 
