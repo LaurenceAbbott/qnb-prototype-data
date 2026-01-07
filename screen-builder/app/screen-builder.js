@@ -124,9 +124,10 @@ function showCreateJourneyModal(){
     url.searchParams.set("journey", id);
     window.history.replaceState({}, "", url.toString());
 
+    downloadJson(`${id}.json`, state.journey);
     el.remove();
     render();
-    toast("Draft journey created (not saved yet).");
+    toast(`Journey created and downloaded. Add ${id}.json to /screen-builder/journeys in GitHub.`);
   });
 }
 
