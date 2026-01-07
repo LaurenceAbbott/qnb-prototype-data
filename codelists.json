@@ -1,0 +1,8648 @@
+{
+  "PLYesNo": [
+    {
+      "value": "false",
+      "label": "No"
+    },
+    {
+      "value": "true",
+      "label": "Yes"
+    }
+  ],
+  "PLTitleCode": [
+    {
+      "value": "040",
+      "label": "Admiral"
+    },
+    {
+      "value": "103",
+      "label": "Advocate"
+    },
+    {
+      "value": "039",
+      "label": "Air Chief Marshal"
+    },
+    {
+      "value": "041",
+      "label": "Air Commodore"
+    },
+    {
+      "value": "043",
+      "label": "Air Marshal"
+    },
+    {
+      "value": "044",
+      "label": "Air Vice Marshall"
+    },
+    {
+      "value": "042",
+      "label": "Airman"
+    },
+    {
+      "value": "037",
+      "label": "An tUasal"
+    },
+    {
+      "value": "068",
+      "label": "Baron"
+    },
+    {
+      "value": "069",
+      "label": "Baroness"
+    },
+    {
+      "value": "038",
+      "label": "Bean"
+    },
+    {
+      "value": "045",
+      "label": "Bombardier"
+    },
+    {
+      "value": "008",
+      "label": "Brigadier"
+    },
+    {
+      "value": "027",
+      "label": "Brother"
+    },
+    {
+      "value": "046",
+      "label": "Canon"
+    },
+    {
+      "value": "009",
+      "label": "Captain"
+    },
+    {
+      "value": "070",
+      "label": "Cardinal"
+    },
+    {
+      "value": "010",
+      "label": "Chief"
+    },
+    {
+      "value": "011",
+      "label": "Colonel"
+    },
+    {
+      "value": "089",
+      "label": "Colour Sergeant"
+    },
+    {
+      "value": "012",
+      "label": "Commander"
+    },
+    {
+      "value": "013",
+      "label": "Commodore"
+    },
+    {
+      "value": "047",
+      "label": "Corporal"
+    },
+    {
+      "value": "028",
+      "label": "Councillor"
+    },
+    {
+      "value": "071",
+      "label": "Count"
+    },
+    {
+      "value": "072",
+      "label": "Countess"
+    },
+    {
+      "value": "014",
+      "label": "Dame"
+    },
+    {
+      "value": "048",
+      "label": "Dean"
+    },
+    {
+      "value": "001",
+      "label": "Doctor"
+    },
+    {
+      "value": "090",
+      "label": "Duchess"
+    },
+    {
+      "value": "087",
+      "label": "Estate Of"
+    },
+    {
+      "value": "034",
+      "label": "Executor(s) of"
+    },
+    {
+      "value": "035",
+      "label": "Father"
+    },
+    {
+      "value": "049",
+      "label": "Field Marshal"
+    },
+    {
+      "value": "015",
+      "label": "Flight Lieutenant"
+    },
+    {
+      "value": "091",
+      "label": "Flight Officer"
+    },
+    {
+      "value": "050",
+      "label": "Flight Sergeant"
+    },
+    {
+      "value": "016",
+      "label": "General"
+    },
+    {
+      "value": "051",
+      "label": "Group Captain"
+    },
+    {
+      "value": "052",
+      "label": "Gunner"
+    },
+    {
+      "value": "092",
+      "label": "HRH"
+    },
+    {
+      "value": "105",
+      "label": "Her Excellency"
+    },
+    {
+      "value": "104",
+      "label": "His Excellency"
+    },
+    {
+      "value": "017",
+      "label": "Honourable"
+    },
+    {
+      "value": "018",
+      "label": "Judge"
+    },
+    {
+      "value": "019",
+      "label": "Lady"
+    },
+    {
+      "value": "053",
+      "label": "Lance Bombardier"
+    },
+    {
+      "value": "055",
+      "label": "Lance Corporal"
+    },
+    {
+      "value": "020",
+      "label": "Lieutenant"
+    },
+    {
+      "value": "054",
+      "label": "Lieutenant Colonel"
+    },
+    {
+      "value": "076",
+      "label": "Lieutenant Commander"
+    },
+    {
+      "value": "056",
+      "label": "Lieutenant General"
+    },
+    {
+      "value": "021",
+      "label": "Lord"
+    },
+    {
+      "value": "093",
+      "label": "Madam"
+    },
+    {
+      "value": "022",
+      "label": "Major"
+    },
+    {
+      "value": "085",
+      "label": "Major General"
+    },
+    {
+      "value": "094",
+      "label": "Marquis"
+    },
+    {
+      "value": "095",
+      "label": "Marshal Of The Royal Air Force"
+    },
+    {
+      "value": "023",
+      "label": "Master"
+    },
+    {
+      "value": "064",
+      "label": "Master Sergeant"
+    },
+    {
+      "value": "002",
+      "label": "Miss"
+    },
+    {
+      "value": "036",
+      "label": "Mother"
+    },
+    {
+      "value": "003",
+      "label": "Mr"
+    },
+    {
+      "value": "079",
+      "label": "Mr Justice"
+    },
+    {
+      "value": "004",
+      "label": "Mrs"
+    },
+    {
+      "value": "005",
+      "label": "Ms"
+    },
+    {
+      "value": "106",
+      "label": "Mx"
+    },
+    {
+      "value": "096",
+      "label": "Pilot Officer"
+    },
+    {
+      "value": "080",
+      "label": "Prince"
+    },
+    {
+      "value": "097",
+      "label": "Princess"
+    },
+    {
+      "value": "057",
+      "label": "Private"
+    },
+    {
+      "value": "024",
+      "label": "Professor"
+    },
+    {
+      "value": "077",
+      "label": "Provost"
+    },
+    {
+      "value": "029",
+      "label": "Rabbi"
+    },
+    {
+      "value": "058",
+      "label": "Rear Admiral"
+    },
+    {
+      "value": "059",
+      "label": "Regimental Sergeant Major"
+    },
+    {
+      "value": "006",
+      "label": "Reverend"
+    },
+    {
+      "value": "098",
+      "label": "Reverend Doctor"
+    },
+    {
+      "value": "032",
+      "label": "Right Reverend"
+    },
+    {
+      "value": "099",
+      "label": "Sachem"
+    },
+    {
+      "value": "060",
+      "label": "Sergeant"
+    },
+    {
+      "value": "081",
+      "label": "Sheikh"
+    },
+    {
+      "value": "101",
+      "label": "Sheriff"
+    },
+    {
+      "value": "007",
+      "label": "Sir"
+    },
+    {
+      "value": "030",
+      "label": "Sister"
+    },
+    {
+      "value": "025",
+      "label": "Squadron Leader"
+    },
+    {
+      "value": "061",
+      "label": "Staff Sergeant"
+    },
+    {
+      "value": "100",
+      "label": "Surgeon Captain"
+    },
+    {
+      "value": "083",
+      "label": "The Duke of"
+    },
+    {
+      "value": "082",
+      "label": "The Earl of"
+    },
+    {
+      "value": "073",
+      "label": "The Honourable Lady"
+    },
+    {
+      "value": "086",
+      "label": "The Honourable Miss"
+    },
+    {
+      "value": "074",
+      "label": "The Honourable Mrs"
+    },
+    {
+      "value": "075",
+      "label": "The Honourable Sir"
+    },
+    {
+      "value": "084",
+      "label": "The Marquess of"
+    },
+    {
+      "value": "066",
+      "label": "The Most Reverend"
+    },
+    {
+      "value": "031",
+      "label": "The Right Honourable"
+    },
+    {
+      "value": "067",
+      "label": "The Venerable"
+    },
+    {
+      "value": "088",
+      "label": "Trustees Of"
+    },
+    {
+      "value": "033",
+      "label": "Very Reverend"
+    },
+    {
+      "value": "102",
+      "label": "Vice Admiral"
+    },
+    {
+      "value": "065",
+      "label": "Viscount"
+    },
+    {
+      "value": "078",
+      "label": "Viscountess"
+    },
+    {
+      "value": "062",
+      "label": "Warrant Officer 1"
+    },
+    {
+      "value": "063",
+      "label": "Warrant Officer 2"
+    },
+    {
+      "value": "026",
+      "label": "Wing Commander"
+    }
+  ],
+  "PLOccupation": [
+    {
+      "value": "001",
+      "label": "Abattoir Worker"
+    },
+    {
+      "value": "01A",
+      "label": "Abbot"
+    },
+    {
+      "value": "02A",
+      "label": "Abstractor"
+    },
+    {
+      "value": "391",
+      "label": "Accommodation Officer"
+    },
+    {
+      "value": "03A",
+      "label": "Accompanist"
+    },
+    {
+      "value": "53D",
+      "label": "Account Director"
+    },
+    {
+      "value": "D77",
+      "label": "Account Executive"
+    },
+    {
+      "value": "D78",
+      "label": "Account Manager"
+    },
+    {
+      "value": "A01",
+      "label": "Accountant"
+    },
+    {
+      "value": "002",
+      "label": "Accounts Assistant"
+    },
+    {
+      "value": "003",
+      "label": "Accounts Clerk"
+    },
+    {
+      "value": "M07",
+      "label": "Accounts Manager"
+    },
+    {
+      "value": "A04",
+      "label": "Accounts Staff"
+    },
+    {
+      "value": "B76",
+      "label": "Acoustic Engineer"
+    },
+    {
+      "value": "04A",
+      "label": "Acrobat"
+    },
+    {
+      "value": "004",
+      "label": "Actor"
+    },
+    {
+      "value": "005",
+      "label": "Actress"
+    },
+    {
+      "value": "A06",
+      "label": "Actuary"
+    },
+    {
+      "value": "006",
+      "label": "Acupuncturist"
+    },
+    {
+      "value": "007",
+      "label": "Administration Assistant"
+    },
+    {
+      "value": "008",
+      "label": "Administration Clerk"
+    },
+    {
+      "value": "M08",
+      "label": "Administration Manager"
+    },
+    {
+      "value": "05A",
+      "label": "Administration Officer"
+    },
+    {
+      "value": "A07",
+      "label": "Administration Staff"
+    },
+    {
+      "value": "009",
+      "label": "Administrator"
+    },
+    {
+      "value": "A25",
+      "label": "Advertising Agent"
+    },
+    {
+      "value": "010",
+      "label": "Advertising Assistant"
+    },
+    {
+      "value": "18C",
+      "label": "Advertising Buyer"
+    },
+    {
+      "value": "011",
+      "label": "Advertising Clerk"
+    },
+    {
+      "value": "680",
+      "label": "Advertising Contractor"
+    },
+    {
+      "value": "77A",
+      "label": "Advertising Controller"
+    },
+    {
+      "value": "81B",
+      "label": "Advertising Director"
+    },
+    {
+      "value": "E27",
+      "label": "Advertising Executive"
+    },
+    {
+      "value": "012",
+      "label": "Advertising Manager"
+    },
+    {
+      "value": "A08",
+      "label": "Advertising Staff"
+    },
+    {
+      "value": "06A",
+      "label": "Advocate"
+    },
+    {
+      "value": "013",
+      "label": "Aerial Erector"
+    },
+    {
+      "value": "014",
+      "label": "Aerobic Instructor"
+    },
+    {
+      "value": "E10",
+      "label": "Aeronautical Engineer"
+    },
+    {
+      "value": "01J",
+      "label": "After Dinner Speaker"
+    },
+    {
+      "value": "01K",
+      "label": "Agency Staff"
+    },
+    {
+      "value": "D79",
+      "label": "Agister"
+    },
+    {
+      "value": "B36",
+      "label": "Agricultural Consultant"
+    },
+    {
+      "value": "B37",
+      "label": "Agricultural Contractor"
+    },
+    {
+      "value": "015",
+      "label": "Agricultural Engineer"
+    },
+    {
+      "value": "B38",
+      "label": "Agricultural Merchant"
+    },
+    {
+      "value": "B70",
+      "label": "Agricultural Worker"
+    },
+    {
+      "value": "07A",
+      "label": "Agriculturalist"
+    },
+    {
+      "value": "D80",
+      "label": "Agronomist"
+    },
+    {
+      "value": "A09",
+      "label": "Air Traffic Controller"
+    },
+    {
+      "value": "392",
+      "label": "Aircraft Buyer"
+    },
+    {
+      "value": "A10",
+      "label": "Aircraft Cabin Crew"
+    },
+    {
+      "value": "016",
+      "label": "Aircraft Designer"
+    },
+    {
+      "value": "559",
+      "label": "Aircraft Engineer"
+    },
+    {
+      "value": "08A",
+      "label": "Aircraft Fitter"
+    },
+    {
+      "value": "09A",
+      "label": "Aircraft Hand"
+    },
+    {
+      "value": "B39",
+      "label": "Aircraft Maintenance Engineer"
+    },
+    {
+      "value": "B40",
+      "label": "Aircraft Surface Finisher"
+    },
+    {
+      "value": "10A",
+      "label": "Airline Broker"
+    },
+    {
+      "value": "017",
+      "label": "Airline Check-in Staff"
+    },
+    {
+      "value": "018",
+      "label": "Airman"
+    },
+    {
+      "value": "588",
+      "label": "Airport Controller"
+    },
+    {
+      "value": "M09",
+      "label": "Airport Manager"
+    },
+    {
+      "value": "40A",
+      "label": "Alarm Fitter"
+    },
+    {
+      "value": "019",
+      "label": "Almoner"
+    },
+    {
+      "value": "B41",
+      "label": "Ambulance Controller"
+    },
+    {
+      "value": "A12",
+      "label": "Ambulance Crew"
+    },
+    {
+      "value": "D41",
+      "label": "Ambulance Driver"
+    },
+    {
+      "value": "A34",
+      "label": "Amusement Arcade Worker"
+    },
+    {
+      "value": "020",
+      "label": "Anaesthetist"
+    },
+    {
+      "value": "B42",
+      "label": "Analytical Chemist"
+    },
+    {
+      "value": "021",
+      "label": "Animal Breeder"
+    },
+    {
+      "value": "11A",
+      "label": "Animator"
+    },
+    {
+      "value": "12A",
+      "label": "Announcer"
+    },
+    {
+      "value": "B86",
+      "label": "Anthropologist"
+    },
+    {
+      "value": "A13",
+      "label": "Antique Dealer"
+    },
+    {
+      "value": "41C",
+      "label": "Antique Renovator"
+    },
+    {
+      "value": "53A",
+      "label": "Appeal/Tribunal Chairman"
+    },
+    {
+      "value": "393",
+      "label": "Applications Engineer"
+    },
+    {
+      "value": "394",
+      "label": "Applications Programmer"
+    },
+    {
+      "value": "13A",
+      "label": "Apprentice"
+    },
+    {
+      "value": "D81",
+      "label": "Aquarist"
+    },
+    {
+      "value": "022",
+      "label": "Arbitrator"
+    },
+    {
+      "value": "B84",
+      "label": "Arborist"
+    },
+    {
+      "value": "15A",
+      "label": "ArchDeacon"
+    },
+    {
+      "value": "A14",
+      "label": "Archaeologist"
+    },
+    {
+      "value": "14A",
+      "label": "Archbishop"
+    },
+    {
+      "value": "A15",
+      "label": "Architect"
+    },
+    {
+      "value": "023",
+      "label": "Architects Technician"
+    },
+    {
+      "value": "B43",
+      "label": "Architectural Surveyor"
+    },
+    {
+      "value": "A16",
+      "label": "Archivist"
+    },
+    {
+      "value": "M10",
+      "label": "Area Manager"
+    },
+    {
+      "value": "B44",
+      "label": "Armourer"
+    },
+    {
+      "value": "691",
+      "label": "Aromatherapist"
+    },
+    {
+      "value": "16A",
+      "label": "Art Buyer"
+    },
+    {
+      "value": "024",
+      "label": "Art Critic"
+    },
+    {
+      "value": "A17",
+      "label": "Art Dealer"
+    },
+    {
+      "value": "17A",
+      "label": "Art Director"
+    },
+    {
+      "value": "A74",
+      "label": "Art Historian"
+    },
+    {
+      "value": "B45",
+      "label": "Art Restorer"
+    },
+    {
+      "value": "B46",
+      "label": "Artexer"
+    },
+    {
+      "value": "025",
+      "label": "Articled Clerk"
+    },
+    {
+      "value": "18A",
+      "label": "Artificial Inseminator"
+    },
+    {
+      "value": "B71",
+      "label": "Artificial Limb Fitter"
+    },
+    {
+      "value": "A18",
+      "label": "Artist"
+    },
+    {
+      "value": "20D",
+      "label": "Artist - Commercial"
+    },
+    {
+      "value": "21D",
+      "label": "Artist - Freelance"
+    },
+    {
+      "value": "19A",
+      "label": "Artist - Portrait"
+    },
+    {
+      "value": "20A",
+      "label": "Artist - Technical"
+    },
+    {
+      "value": "C93",
+      "label": "Asbestos Remover"
+    },
+    {
+      "value": "026",
+      "label": "Asphalter"
+    },
+    {
+      "value": "A20",
+      "label": "Assembly Worker"
+    },
+    {
+      "value": "A21",
+      "label": "Assessor"
+    },
+    {
+      "value": "589",
+      "label": "Assistant Accounts Manager"
+    },
+    {
+      "value": "590",
+      "label": "Assistant Caretaker"
+    },
+    {
+      "value": "591",
+      "label": "Assistant Cook"
+    },
+    {
+      "value": "395",
+      "label": "Assistant Manager"
+    },
+    {
+      "value": "592",
+      "label": "Assistant Nurse"
+    },
+    {
+      "value": "593",
+      "label": "Assistant Teacher"
+    },
+    {
+      "value": "52D",
+      "label": "Associate Director"
+    },
+    {
+      "value": "027",
+      "label": "Astrologer"
+    },
+    {
+      "value": "028",
+      "label": "Astronomer"
+    },
+    {
+      "value": "21A",
+      "label": "Athlete"
+    },
+    {
+      "value": "A26",
+      "label": "Au Pair"
+    },
+    {
+      "value": "692",
+      "label": "Auction Worker"
+    },
+    {
+      "value": "A22",
+      "label": "Auctioneer"
+    },
+    {
+      "value": "396",
+      "label": "Audiologist"
+    },
+    {
+      "value": "397",
+      "label": "Audit Clerk"
+    },
+    {
+      "value": "515",
+      "label": "Audit Manager"
+    },
+    {
+      "value": "A23",
+      "label": "Auditor"
+    },
+    {
+      "value": "A24",
+      "label": "Author"
+    },
+    {
+      "value": "029",
+      "label": "Auto Electrician"
+    },
+    {
+      "value": "030",
+      "label": "Auxiliary Nurse"
+    },
+    {
+      "value": "031",
+      "label": "Bacon Curer"
+    },
+    {
+      "value": "22A",
+      "label": "Bacteriologist"
+    },
+    {
+      "value": "B01",
+      "label": "Baggage Handler"
+    },
+    {
+      "value": "B02",
+      "label": "Bailiff"
+    },
+    {
+      "value": "B03",
+      "label": "Baker"
+    },
+    {
+      "value": "560",
+      "label": "Bakery Assistant"
+    },
+    {
+      "value": "681",
+      "label": "Bakery Manager"
+    },
+    {
+      "value": "594",
+      "label": "Bakery Operator"
+    },
+    {
+      "value": "23A",
+      "label": "Ballistics Expert"
+    },
+    {
+      "value": "693",
+      "label": "Balloonist"
+    },
+    {
+      "value": "032",
+      "label": "Bank Clerk"
+    },
+    {
+      "value": "033",
+      "label": "Bank Manager"
+    },
+    {
+      "value": "B47",
+      "label": "Bank Messenger"
+    },
+    {
+      "value": "398",
+      "label": "Bank Note Checker"
+    },
+    {
+      "value": "B04",
+      "label": "Bank Staff"
+    },
+    {
+      "value": "81A",
+      "label": "Banking Correspondent"
+    },
+    {
+      "value": "595",
+      "label": "Baptist Minister"
+    },
+    {
+      "value": "034",
+      "label": "Bar Manager"
+    },
+    {
+      "value": "B05",
+      "label": "Bar Staff"
+    },
+    {
+      "value": "035",
+      "label": "Bar Steward"
+    },
+    {
+      "value": "036",
+      "label": "Barber"
+    },
+    {
+      "value": "24A",
+      "label": "Bargeman"
+    },
+    {
+      "value": "037",
+      "label": "Barmaid"
+    },
+    {
+      "value": "038",
+      "label": "Barman"
+    },
+    {
+      "value": "B06",
+      "label": "Barrister"
+    },
+    {
+      "value": "25A",
+      "label": "Basket Worker"
+    },
+    {
+      "value": "B07",
+      "label": "Beautician"
+    },
+    {
+      "value": "596",
+      "label": "Beauty Therapist"
+    },
+    {
+      "value": "26A",
+      "label": "BeeKeeper"
+    },
+    {
+      "value": "682",
+      "label": "Betting Shop Clerk"
+    },
+    {
+      "value": "039",
+      "label": "Bill Poster"
+    },
+    {
+      "value": "876",
+      "label": "Bingo Caller"
+    },
+    {
+      "value": "694",
+      "label": "Bingo Hall Staff"
+    },
+    {
+      "value": "040",
+      "label": "Biochemist"
+    },
+    {
+      "value": "041",
+      "label": "Biologist"
+    },
+    {
+      "value": "28A",
+      "label": "Biometrician"
+    },
+    {
+      "value": "29A",
+      "label": "Biophysicist"
+    },
+    {
+      "value": "30A",
+      "label": "Bishop"
+    },
+    {
+      "value": "B08",
+      "label": "Blacksmith"
+    },
+    {
+      "value": "597",
+      "label": "Blind Assembler"
+    },
+    {
+      "value": "516",
+      "label": "Blind Fitter"
+    },
+    {
+      "value": "042",
+      "label": "Blinds Installer"
+    },
+    {
+      "value": "B09",
+      "label": "Boat Builder"
+    },
+    {
+      "value": "32A",
+      "label": "Boatswain"
+    },
+    {
+      "value": "598",
+      "label": "Body Fitter"
+    },
+    {
+      "value": "D69",
+      "label": "Bodyguard"
+    },
+    {
+      "value": "476",
+      "label": "Bodyshop Manager"
+    },
+    {
+      "value": "043",
+      "label": "Boiler Maker"
+    },
+    {
+      "value": "B10",
+      "label": "Boiler Man"
+    },
+    {
+      "value": "044",
+      "label": "Book Binder"
+    },
+    {
+      "value": "045",
+      "label": "Book Seller"
+    },
+    {
+      "value": "399",
+      "label": "Book-Keeper"
+    },
+    {
+      "value": "33A",
+      "label": "Bookfinisher"
+    },
+    {
+      "value": "599",
+      "label": "Booking Agent"
+    },
+    {
+      "value": "C22",
+      "label": "Booking Clerk"
+    },
+    {
+      "value": "400",
+      "label": "Booking Office Clerk"
+    },
+    {
+      "value": "34A",
+      "label": "Boom Operator"
+    },
+    {
+      "value": "046",
+      "label": "Botanist"
+    },
+    {
+      "value": "35A",
+      "label": "Bottler"
+    },
+    {
+      "value": "695",
+      "label": "Box Maker"
+    },
+    {
+      "value": "B67",
+      "label": "Box Office Clerk"
+    },
+    {
+      "value": "M11",
+      "label": "Branch Manager"
+    },
+    {
+      "value": "047",
+      "label": "Brewer"
+    },
+    {
+      "value": "B48",
+      "label": "Brewery Manager"
+    },
+    {
+      "value": "B12",
+      "label": "Brewery Worker"
+    },
+    {
+      "value": "B13",
+      "label": "Bricklayer"
+    },
+    {
+      "value": "36A",
+      "label": "Bridgeman"
+    },
+    {
+      "value": "37A",
+      "label": "Bridgemaster"
+    },
+    {
+      "value": "048",
+      "label": "Broadcaster"
+    },
+    {
+      "value": "E11",
+      "label": "Broadcasting Engineer"
+    },
+    {
+      "value": "38A",
+      "label": "Brother (Church)"
+    },
+    {
+      "value": "B15",
+      "label": "Builder"
+    },
+    {
+      "value": "049",
+      "label": "Builders Labourer"
+    },
+    {
+      "value": "696",
+      "label": "Builders Merchant"
+    },
+    {
+      "value": "600",
+      "label": "Building Advisor"
+    },
+    {
+      "value": "601",
+      "label": "Building Contractor"
+    },
+    {
+      "value": "D47",
+      "label": "Building Control Officer"
+    },
+    {
+      "value": "B49",
+      "label": "Building Engineer"
+    },
+    {
+      "value": "B50",
+      "label": "Building Estimator"
+    },
+    {
+      "value": "050",
+      "label": "Building Foreman"
+    },
+    {
+      "value": "401",
+      "label": "Building Inspector"
+    },
+    {
+      "value": "39A",
+      "label": "Building Maintenance"
+    },
+    {
+      "value": "602",
+      "label": "Building Manager"
+    },
+    {
+      "value": "697",
+      "label": "Building Site Inspector"
+    },
+    {
+      "value": "C70",
+      "label": "Building Society Agent"
+    },
+    {
+      "value": "683",
+      "label": "Building Society Clerk"
+    },
+    {
+      "value": "557",
+      "label": "Building Society Staff"
+    },
+    {
+      "value": "402",
+      "label": "Building Surveyor"
+    },
+    {
+      "value": "B16",
+      "label": "Bursar"
+    },
+    {
+      "value": "B17",
+      "label": "Bus Conductor"
+    },
+    {
+      "value": "051",
+      "label": "Bus Driver"
+    },
+    {
+      "value": "B51",
+      "label": "Bus Mechanic"
+    },
+    {
+      "value": "603",
+      "label": "Bus Valeter"
+    },
+    {
+      "value": "D93",
+      "label": "Business Analyst"
+    },
+    {
+      "value": "B18",
+      "label": "Business Consultant"
+    },
+    {
+      "value": "B21",
+      "label": "Butcher"
+    },
+    {
+      "value": "684",
+      "label": "Butchery Manager"
+    },
+    {
+      "value": "052",
+      "label": "Butler"
+    },
+    {
+      "value": "B22",
+      "label": "Buyer"
+    },
+    {
+      "value": "053",
+      "label": "Cabinet Maker"
+    },
+    {
+      "value": "517",
+      "label": "Cable Contractor"
+    },
+    {
+      "value": "B52",
+      "label": "Cable Jointer"
+    },
+    {
+      "value": "698",
+      "label": "Cable TV Installer"
+    },
+    {
+      "value": "604",
+      "label": "Cafe Owner"
+    },
+    {
+      "value": "605",
+      "label": "Cafe Staff"
+    },
+    {
+      "value": "686",
+      "label": "Cafe Worker"
+    },
+    {
+      "value": "403",
+      "label": "Calibration Manager"
+    },
+    {
+      "value": "CA1",
+      "label": "Call Centre Manager"
+    },
+    {
+      "value": "CA2",
+      "label": "Call Centre Staff"
+    },
+    {
+      "value": "43A",
+      "label": "Calligrapher"
+    },
+    {
+      "value": "B53",
+      "label": "Camera Repairer"
+    },
+    {
+      "value": "054",
+      "label": "Cameraman"
+    },
+    {
+      "value": "B54",
+      "label": "Canal Boat Broker"
+    },
+    {
+      "value": "44A",
+      "label": "Canon (Church)"
+    },
+    {
+      "value": "45A",
+      "label": "Canvasser"
+    },
+    {
+      "value": "46A",
+      "label": "Captain Merchant Ship"
+    },
+    {
+      "value": "606",
+      "label": "Car Body Repairer"
+    },
+    {
+      "value": "055",
+      "label": "Car Builder"
+    },
+    {
+      "value": "607",
+      "label": "Car Dealer"
+    },
+    {
+      "value": "D27",
+      "label": "Car Delivery Driver"
+    },
+    {
+      "value": "C51",
+      "label": "Car Park Attendant"
+    },
+    {
+      "value": "056",
+      "label": "Car Salesman"
+    },
+    {
+      "value": "V05",
+      "label": "Car Valet"
+    },
+    {
+      "value": "608",
+      "label": "Car Wash Attendant"
+    },
+    {
+      "value": "47A",
+      "label": "Cardinal"
+    },
+    {
+      "value": "48A",
+      "label": "Cardiographer"
+    },
+    {
+      "value": "49A",
+      "label": "Cardiologist"
+    },
+    {
+      "value": "C49",
+      "label": "Care Assistant"
+    },
+    {
+      "value": "404",
+      "label": "Care Manager"
+    },
+    {
+      "value": "518",
+      "label": "Careers Advisor"
+    },
+    {
+      "value": "057",
+      "label": "Careers Officer"
+    },
+    {
+      "value": "D75",
+      "label": "Carer - Non Professional"
+    },
+    {
+      "value": "D89",
+      "label": "Carer - Professional"
+    },
+    {
+      "value": "C02",
+      "label": "Caretaker"
+    },
+    {
+      "value": "50A",
+      "label": "Cargo Handler"
+    },
+    {
+      "value": "699",
+      "label": "Cargo Operator"
+    },
+    {
+      "value": "C03",
+      "label": "Carpenter"
+    },
+    {
+      "value": "609",
+      "label": "Carpenters Assistant"
+    },
+    {
+      "value": "700",
+      "label": "Carpet Cleaner"
+    },
+    {
+      "value": "610",
+      "label": "Carpet Retailer"
+    },
+    {
+      "value": "C04",
+      "label": "Carpetfitter"
+    },
+    {
+      "value": "701",
+      "label": "Carphone Fitter"
+    },
+    {
+      "value": "C05",
+      "label": "Cartographer"
+    },
+    {
+      "value": "B90",
+      "label": "Cartoonist"
+    },
+    {
+      "value": "B55",
+      "label": "Cash Point Fitter"
+    },
+    {
+      "value": "C06",
+      "label": "Cashier"
+    },
+    {
+      "value": "C07",
+      "label": "Casual Worker"
+    },
+    {
+      "value": "51A",
+      "label": "Cataloguer"
+    },
+    {
+      "value": "C08",
+      "label": "Caterer"
+    },
+    {
+      "value": "B91",
+      "label": "Catering Consultant"
+    },
+    {
+      "value": "611",
+      "label": "Catering Manager"
+    },
+    {
+      "value": "C10",
+      "label": "Catering Staff"
+    },
+    {
+      "value": "059",
+      "label": "Caulker"
+    },
+    {
+      "value": "612",
+      "label": "Ceiling Contractor"
+    },
+    {
+      "value": "52A",
+      "label": "Ceiling Fitter"
+    },
+    {
+      "value": "561",
+      "label": "Ceiling Fixer"
+    },
+    {
+      "value": "613",
+      "label": "Cellarman"
+    },
+    {
+      "value": "519",
+      "label": "Centre Lathe Operator"
+    },
+    {
+      "value": "060",
+      "label": "Certified Accountant"
+    },
+    {
+      "value": "C11",
+      "label": "Chambermaid"
+    },
+    {
+      "value": "061",
+      "label": "Chandler"
+    },
+    {
+      "value": "A91",
+      "label": "Chaplain"
+    },
+    {
+      "value": "405",
+      "label": "Charge Hand"
+    },
+    {
+      "value": "062",
+      "label": "Charity Worker"
+    },
+    {
+      "value": "063",
+      "label": "Chartered Accountant"
+    },
+    {
+      "value": "614",
+      "label": "Chartered Engineer"
+    },
+    {
+      "value": "064",
+      "label": "Chartered Surveyor"
+    },
+    {
+      "value": "D90",
+      "label": "Chartered Valuer"
+    },
+    {
+      "value": "C52",
+      "label": "Charterer"
+    },
+    {
+      "value": "C12",
+      "label": "Chauffeur"
+    },
+    {
+      "value": "877",
+      "label": "Check-Out Assistant"
+    },
+    {
+      "value": "C13",
+      "label": "Chef"
+    },
+    {
+      "value": "E12",
+      "label": "Chemical Engineer"
+    },
+    {
+      "value": "065",
+      "label": "Chemist"
+    },
+    {
+      "value": "D50",
+      "label": "Chicken Chaser"
+    },
+    {
+      "value": "066",
+      "label": "Chicken Sexer"
+    },
+    {
+      "value": "615",
+      "label": "Chief Cashier"
+    },
+    {
+      "value": "616",
+      "label": "Chief Chemist"
+    },
+    {
+      "value": "D62",
+      "label": "Chief Executive"
+    },
+    {
+      "value": "54A",
+      "label": "Child Care Officer (Local Government)"
+    },
+    {
+      "value": "C14",
+      "label": "Child Minder"
+    },
+    {
+      "value": "C50",
+      "label": "Childrens Entertainer"
+    },
+    {
+      "value": "C15",
+      "label": "Chimney Sweep"
+    },
+    {
+      "value": "702",
+      "label": "China Restorer"
+    },
+    {
+      "value": "C16",
+      "label": "Chiropodist"
+    },
+    {
+      "value": "068",
+      "label": "Chiropractor"
+    },
+    {
+      "value": "55A",
+      "label": "Choirmaster"
+    },
+    {
+      "value": "069",
+      "label": "Choreographer"
+    },
+    {
+      "value": "56A",
+      "label": "Chorister"
+    },
+    {
+      "value": "57A",
+      "label": "Church Army Worker"
+    },
+    {
+      "value": "98A",
+      "label": "Church Dean"
+    },
+    {
+      "value": "070",
+      "label": "Church Officer"
+    },
+    {
+      "value": "071",
+      "label": "Church Warden"
+    },
+    {
+      "value": "495",
+      "label": "Cinema Assistant"
+    },
+    {
+      "value": "M12",
+      "label": "Cinema Manager"
+    },
+    {
+      "value": "B56",
+      "label": "Circus Proprietor"
+    },
+    {
+      "value": "C17",
+      "label": "Circus Worker"
+    },
+    {
+      "value": "E13",
+      "label": "Civil Engineer"
+    },
+    {
+      "value": "C18",
+      "label": "Civil Servant"
+    },
+    {
+      "value": "072",
+      "label": "Claims Adjustor"
+    },
+    {
+      "value": "073",
+      "label": "Claims Assessor"
+    },
+    {
+      "value": "617",
+      "label": "Claims Manager"
+    },
+    {
+      "value": "D51",
+      "label": "Clairvoyant"
+    },
+    {
+      "value": "59A",
+      "label": "Clapper"
+    },
+    {
+      "value": "D48",
+      "label": "Classical Musician"
+    },
+    {
+      "value": "406",
+      "label": "Classroom Aide"
+    },
+    {
+      "value": "703",
+      "label": "Clay Pigeon Instructor"
+    },
+    {
+      "value": "C20",
+      "label": "Cleaner"
+    },
+    {
+      "value": "562",
+      "label": "Cleaning Contractor"
+    },
+    {
+      "value": "618",
+      "label": "Cleaning Supervisor"
+    },
+    {
+      "value": "074",
+      "label": "Clergyman"
+    },
+    {
+      "value": "075",
+      "label": "Cleric"
+    },
+    {
+      "value": "619",
+      "label": "Clerical Assistant"
+    },
+    {
+      "value": "496",
+      "label": "Clerical Officer"
+    },
+    {
+      "value": "C21",
+      "label": "Clerk"
+    },
+    {
+      "value": "C25",
+      "label": "Clerk Of Works"
+    },
+    {
+      "value": "61A",
+      "label": "Clerk of Court"
+    },
+    {
+      "value": "620",
+      "label": "Clinical Psychologist"
+    },
+    {
+      "value": "076",
+      "label": "Clock Maker"
+    },
+    {
+      "value": "01B",
+      "label": "Clothing Design Cutter"
+    },
+    {
+      "value": "077",
+      "label": "Coach Builder"
+    },
+    {
+      "value": "078",
+      "label": "Coach Driver"
+    },
+    {
+      "value": "B57",
+      "label": "Coach Sprayer"
+    },
+    {
+      "value": "079",
+      "label": "Coal Merchant"
+    },
+    {
+      "value": "64A",
+      "label": "Coalman"
+    },
+    {
+      "value": "C27",
+      "label": "Coastguard"
+    },
+    {
+      "value": "632",
+      "label": "Cobbler"
+    },
+    {
+      "value": "B58",
+      "label": "Coffee Merchant"
+    },
+    {
+      "value": "704",
+      "label": "Coin Dealer"
+    },
+    {
+      "value": "705",
+      "label": "College Dean"
+    },
+    {
+      "value": "621",
+      "label": "College Lecturer"
+    },
+    {
+      "value": "B85",
+      "label": "College Principal"
+    },
+    {
+      "value": "65A",
+      "label": "College Scout"
+    },
+    {
+      "value": "66A",
+      "label": "Colourist (Maps/Photographs)"
+    },
+    {
+      "value": "67A",
+      "label": "Comedian"
+    },
+    {
+      "value": "080",
+      "label": "Commercial Artist"
+    },
+    {
+      "value": "520",
+      "label": "Commercial Manager"
+    },
+    {
+      "value": "081",
+      "label": "Commercial Traveller"
+    },
+    {
+      "value": "C54",
+      "label": "Commission Agent"
+    },
+    {
+      "value": "C29",
+      "label": "Commissionaire"
+    },
+    {
+      "value": "082",
+      "label": "Commissioned Officer"
+    },
+    {
+      "value": "69A",
+      "label": "Commissioner of Police"
+    },
+    {
+      "value": "622",
+      "label": "Commissioning Engineer"
+    },
+    {
+      "value": "C30",
+      "label": "Commodity Broker"
+    },
+    {
+      "value": "C31",
+      "label": "Commodity Dealer"
+    },
+    {
+      "value": "A92",
+      "label": "Communications Officer"
+    },
+    {
+      "value": "687",
+      "label": "Communications Supervisor"
+    },
+    {
+      "value": "623",
+      "label": "Community Craft Instructor"
+    },
+    {
+      "value": "B59",
+      "label": "Community Nurse"
+    },
+    {
+      "value": "083",
+      "label": "Community Worker"
+    },
+    {
+      "value": "70A",
+      "label": "Companion"
+    },
+    {
+      "value": "71A",
+      "label": "Companion Nurse"
+    },
+    {
+      "value": "D61",
+      "label": "Company Chairman"
+    },
+    {
+      "value": "084",
+      "label": "Company Director"
+    },
+    {
+      "value": "C71",
+      "label": "Company Search Agent"
+    },
+    {
+      "value": "C32",
+      "label": "Company Secretary"
+    },
+    {
+      "value": "72A",
+      "label": "Compiler"
+    },
+    {
+      "value": "407",
+      "label": "Complementary Therapist"
+    },
+    {
+      "value": "73A",
+      "label": "Compliance Officer"
+    },
+    {
+      "value": "085",
+      "label": "Composer"
+    },
+    {
+      "value": "C33",
+      "label": "Compositor"
+    },
+    {
+      "value": "086",
+      "label": "Computer Analyst"
+    },
+    {
+      "value": "C55",
+      "label": "Computer Consultant"
+    },
+    {
+      "value": "75A",
+      "label": "Computer Editor"
+    },
+    {
+      "value": "087",
+      "label": "Computer Engineer"
+    },
+    {
+      "value": "688",
+      "label": "Computer Manager"
+    },
+    {
+      "value": "95B",
+      "label": "Computer Network Controller"
+    },
+    {
+      "value": "C56",
+      "label": "Computer Operator"
+    },
+    {
+      "value": "C57",
+      "label": "Computer Programmer"
+    },
+    {
+      "value": "C58",
+      "label": "Computer Technician"
+    },
+    {
+      "value": "76A",
+      "label": "Conductor"
+    },
+    {
+      "value": "521",
+      "label": "Confectioner"
+    },
+    {
+      "value": "B60",
+      "label": "Conference Manager"
+    },
+    {
+      "value": "706",
+      "label": "Conference Organiser"
+    },
+    {
+      "value": "707",
+      "label": "Conservationist"
+    },
+    {
+      "value": "624",
+      "label": "Conservator"
+    },
+    {
+      "value": "689",
+      "label": "Construction Engineer"
+    },
+    {
+      "value": "C35",
+      "label": "Construction Worker"
+    },
+    {
+      "value": "088",
+      "label": "Consultant"
+    },
+    {
+      "value": "C59",
+      "label": "Consultant Engineer"
+    },
+    {
+      "value": "CA3",
+      "label": "Consumer Scientist"
+    },
+    {
+      "value": "477",
+      "label": "Contract Cleaner"
+    },
+    {
+      "value": "625",
+      "label": "Contract Furnisher"
+    },
+    {
+      "value": "497",
+      "label": "Contract Manager"
+    },
+    {
+      "value": "C37",
+      "label": "Contractor"
+    },
+    {
+      "value": "626",
+      "label": "Contracts Supervisor"
+    },
+    {
+      "value": "089",
+      "label": "Conveyancer"
+    },
+    {
+      "value": "090",
+      "label": "Cook"
+    },
+    {
+      "value": "091",
+      "label": "Cooper"
+    },
+    {
+      "value": "78A",
+      "label": "Copier"
+    },
+    {
+      "value": "375",
+      "label": "Coppersmith"
+    },
+    {
+      "value": "80A",
+      "label": "Copy Typist"
+    },
+    {
+      "value": "384",
+      "label": "Copywriter"
+    },
+    {
+      "value": "C38",
+      "label": "Coroner"
+    },
+    {
+      "value": "82A",
+      "label": "Correspondent Press"
+    },
+    {
+      "value": "C72",
+      "label": "Corrosion Consultant"
+    },
+    {
+      "value": "B61",
+      "label": "Costume Designer"
+    },
+    {
+      "value": "C60",
+      "label": "Costume Jeweller"
+    },
+    {
+      "value": "A93",
+      "label": "Costumier"
+    },
+    {
+      "value": "092",
+      "label": "Council Worker"
+    },
+    {
+      "value": "093",
+      "label": "Counsellor"
+    },
+    {
+      "value": "27A",
+      "label": "Counter Staff"
+    },
+    {
+      "value": "708",
+      "label": "Countryside Ranger"
+    },
+    {
+      "value": "498",
+      "label": "County Councillor"
+    },
+    {
+      "value": "C39",
+      "label": "Courier"
+    },
+    {
+      "value": "408",
+      "label": "Court Officer"
+    },
+    {
+      "value": "01E",
+      "label": "Court Reporter"
+    },
+    {
+      "value": "86A",
+      "label": "Coxswain"
+    },
+    {
+      "value": "627",
+      "label": "Craft Dealer"
+    },
+    {
+      "value": "C43",
+      "label": "Craftsman"
+    },
+    {
+      "value": "628",
+      "label": "Craftswoman"
+    },
+    {
+      "value": "094",
+      "label": "Crane Driver"
+    },
+    {
+      "value": "D70",
+      "label": "Crane Erector"
+    },
+    {
+      "value": "C44",
+      "label": "Crane Operator"
+    },
+    {
+      "value": "01F",
+      "label": "Crash Assessor"
+    },
+    {
+      "value": "88A",
+      "label": "Creative Director"
+    },
+    {
+      "value": "522",
+      "label": "Creche Worker"
+    },
+    {
+      "value": "B92",
+      "label": "Credit Broker"
+    },
+    {
+      "value": "C53",
+      "label": "Credit Controller"
+    },
+    {
+      "value": "B62",
+      "label": "Credit Draper"
+    },
+    {
+      "value": "095",
+      "label": "Credit Manager"
+    },
+    {
+      "value": "01G",
+      "label": "Credit Researcher"
+    },
+    {
+      "value": "A94",
+      "label": "Crematorium Attendant"
+    },
+    {
+      "value": "89A",
+      "label": "Cricketer"
+    },
+    {
+      "value": "629",
+      "label": "Crime Examiner"
+    },
+    {
+      "value": "90A",
+      "label": "Criminologist"
+    },
+    {
+      "value": "096",
+      "label": "Crofter"
+    },
+    {
+      "value": "C46",
+      "label": "Croupier"
+    },
+    {
+      "value": "B82",
+      "label": "Crown Prosecutor"
+    },
+    {
+      "value": "92A",
+      "label": "Curate"
+    },
+    {
+      "value": "C47",
+      "label": "Curator"
+    },
+    {
+      "value": "709",
+      "label": "Currency Trader"
+    },
+    {
+      "value": "93A",
+      "label": "Curtain Hanger"
+    },
+    {
+      "value": "690",
+      "label": "Curtain Maker"
+    },
+    {
+      "value": "409",
+      "label": "Customer Advisor"
+    },
+    {
+      "value": "390",
+      "label": "Customer Liaison Officer"
+    },
+    {
+      "value": "94A",
+      "label": "Customer Service Controller"
+    },
+    {
+      "value": "097",
+      "label": "Customs & Excise Officer"
+    },
+    {
+      "value": "098",
+      "label": "Cutler"
+    },
+    {
+      "value": "099",
+      "label": "Cutter"
+    },
+    {
+      "value": "630",
+      "label": "Cycle Repairer"
+    },
+    {
+      "value": "23C",
+      "label": "Cyclist"
+    },
+    {
+      "value": "633",
+      "label": "Dairy Engineer"
+    },
+    {
+      "value": "D01",
+      "label": "Dairy Worker"
+    },
+    {
+      "value": "410",
+      "label": "Dance Teacher"
+    },
+    {
+      "value": "100",
+      "label": "Dancer"
+    },
+    {
+      "value": "385",
+      "label": "Dark Room Technician"
+    },
+    {
+      "value": "634",
+      "label": "Data Administrator"
+    },
+    {
+      "value": "635",
+      "label": "Data Co-Ordinator"
+    },
+    {
+      "value": "74A",
+      "label": "Data Processing Manager"
+    },
+    {
+      "value": "563",
+      "label": "Data Processor"
+    },
+    {
+      "value": "523",
+      "label": "Day Care Officer"
+    },
+    {
+      "value": "53C",
+      "label": "Day Centre Officer"
+    },
+    {
+      "value": "D03",
+      "label": "Dealer - General"
+    },
+    {
+      "value": "D44",
+      "label": "Debt Collector"
+    },
+    {
+      "value": "636",
+      "label": "Debt Counsellor"
+    },
+    {
+      "value": "101",
+      "label": "Decorator"
+    },
+    {
+      "value": "102",
+      "label": "Delivery Courier"
+    },
+    {
+      "value": "637",
+      "label": "Delivery Driver"
+    },
+    {
+      "value": "D05",
+      "label": "Delivery Roundsman"
+    },
+    {
+      "value": "23D",
+      "label": "Demolition Contractor"
+    },
+    {
+      "value": "D06",
+      "label": "Demolition Worker"
+    },
+    {
+      "value": "103",
+      "label": "Demonstrator"
+    },
+    {
+      "value": "A75",
+      "label": "Dendrochronologist"
+    },
+    {
+      "value": "104",
+      "label": "Dental Assistant"
+    },
+    {
+      "value": "105",
+      "label": "Dental Hygienist"
+    },
+    {
+      "value": "99A",
+      "label": "Dental Mechanic"
+    },
+    {
+      "value": "106",
+      "label": "Dental Nurse"
+    },
+    {
+      "value": "499",
+      "label": "Dental Surgeon"
+    },
+    {
+      "value": "107",
+      "label": "Dental Technician"
+    },
+    {
+      "value": "D92",
+      "label": "Dental Therapist"
+    },
+    {
+      "value": "108",
+      "label": "Dentist"
+    },
+    {
+      "value": "638",
+      "label": "Deputy Head Teacher"
+    },
+    {
+      "value": "639",
+      "label": "Deputy Manager"
+    },
+    {
+      "value": "640",
+      "label": "Deputy Principal"
+    },
+    {
+      "value": "109",
+      "label": "Dermatologist"
+    },
+    {
+      "value": "79A",
+      "label": "Design Copier"
+    },
+    {
+      "value": "641",
+      "label": "Design Director"
+    },
+    {
+      "value": "411",
+      "label": "Design Engineer"
+    },
+    {
+      "value": "642",
+      "label": "Design Manager"
+    },
+    {
+      "value": "D08",
+      "label": "Designer"
+    },
+    {
+      "value": "643",
+      "label": "Despatch Driver"
+    },
+    {
+      "value": "644",
+      "label": "Despatch Rider"
+    },
+    {
+      "value": "110",
+      "label": "Despatch Worker"
+    },
+    {
+      "value": "412",
+      "label": "Development Manager"
+    },
+    {
+      "value": "710",
+      "label": "Diamond Dealer"
+    },
+    {
+      "value": "524",
+      "label": "Diecaster"
+    },
+    {
+      "value": "111",
+      "label": "Dietician"
+    },
+    {
+      "value": "112",
+      "label": "Dinner Lady"
+    },
+    {
+      "value": "113",
+      "label": "Diplomat"
+    },
+    {
+      "value": "08B",
+      "label": "Director of Environment"
+    },
+    {
+      "value": "09B",
+      "label": "Director of Housing"
+    },
+    {
+      "value": "10B",
+      "label": "Director of Planning"
+    },
+    {
+      "value": "D17",
+      "label": "Disc Jockey"
+    },
+    {
+      "value": "11B",
+      "label": "Dispenser (Pharmacy)"
+    },
+    {
+      "value": "711",
+      "label": "Distillery Worker"
+    },
+    {
+      "value": "645",
+      "label": "Distribution Manager"
+    },
+    {
+      "value": "12B",
+      "label": "Distributor (Leaflets/Circ.)"
+    },
+    {
+      "value": "N03",
+      "label": "District Nurse"
+    },
+    {
+      "value": "D19",
+      "label": "District Valuer"
+    },
+    {
+      "value": "D20",
+      "label": "Diver"
+    },
+    {
+      "value": "13B",
+      "label": "Dock Pilot"
+    },
+    {
+      "value": "D21",
+      "label": "Docker"
+    },
+    {
+      "value": "114",
+      "label": "Dockyard Worker"
+    },
+    {
+      "value": "115",
+      "label": "Doctor"
+    },
+    {
+      "value": "646",
+      "label": "Document Controller"
+    },
+    {
+      "value": "564",
+      "label": "Dog Beautician"
+    },
+    {
+      "value": "116",
+      "label": "Dog Breeder"
+    },
+    {
+      "value": "413",
+      "label": "Dog Groomer"
+    },
+    {
+      "value": "14B",
+      "label": "Dog Handler"
+    },
+    {
+      "value": "647",
+      "label": "Dog Trainer"
+    },
+    {
+      "value": "D88",
+      "label": "Dog Walker"
+    },
+    {
+      "value": "A84",
+      "label": "Dog Warden"
+    },
+    {
+      "value": "B93",
+      "label": "Doll Maker"
+    },
+    {
+      "value": "648",
+      "label": "Domestic Staff"
+    },
+    {
+      "value": "649",
+      "label": "Door Fitter"
+    },
+    {
+      "value": "C28",
+      "label": "Door To Door Collector"
+    },
+    {
+      "value": "D24",
+      "label": "Doorman"
+    },
+    {
+      "value": "D39",
+      "label": "Double Glazing Fitter"
+    },
+    {
+      "value": "117",
+      "label": "Double Glazing Salesman"
+    },
+    {
+      "value": "15B",
+      "label": "Draper"
+    },
+    {
+      "value": "D25",
+      "label": "Draughtsman"
+    },
+    {
+      "value": "650",
+      "label": "Draughtswoman"
+    },
+    {
+      "value": "118",
+      "label": "Drayman"
+    },
+    {
+      "value": "16B",
+      "label": "Dredger Master"
+    },
+    {
+      "value": "17B",
+      "label": "Dredgerman"
+    },
+    {
+      "value": "18B",
+      "label": "Dresser Theatre/Films"
+    },
+    {
+      "value": "D26",
+      "label": "Dressmaker"
+    },
+    {
+      "value": "19B",
+      "label": "Driller (Civil Engineering)"
+    },
+    {
+      "value": "712",
+      "label": "Drilling Technician"
+    },
+    {
+      "value": "D43",
+      "label": "Driver"
+    },
+    {
+      "value": "D37",
+      "label": "Driving Examiner"
+    },
+    {
+      "value": "D38",
+      "label": "Driving Instructor"
+    },
+    {
+      "value": "D91",
+      "label": "Driving Instructor (HGV)"
+    },
+    {
+      "value": "D94",
+      "label": "Driving Instructor - Advanced"
+    },
+    {
+      "value": "414",
+      "label": "Drug Addiction Counsellor"
+    },
+    {
+      "value": "651",
+      "label": "Dry Cleaner"
+    },
+    {
+      "value": "525",
+      "label": "Dryliner"
+    },
+    {
+      "value": "119",
+      "label": "Dustman"
+    },
+    {
+      "value": "652",
+      "label": "Dye Polisher"
+    },
+    {
+      "value": "120",
+      "label": "Dyer"
+    },
+    {
+      "value": "E31",
+      "label": "Earth Moving Contractor"
+    },
+    {
+      "value": "653",
+      "label": "Ecologist"
+    },
+    {
+      "value": "E01",
+      "label": "Economist"
+    },
+    {
+      "value": "E02",
+      "label": "Editor"
+    },
+    {
+      "value": "C73",
+      "label": "Editorial Consultant"
+    },
+    {
+      "value": "713",
+      "label": "Editorial Staff"
+    },
+    {
+      "value": "654",
+      "label": "Education Advisor"
+    },
+    {
+      "value": "A95",
+      "label": "Education Officer"
+    },
+    {
+      "value": "415",
+      "label": "Electrical Contractor"
+    },
+    {
+      "value": "21B",
+      "label": "Electrical Contracts Manager"
+    },
+    {
+      "value": "E28",
+      "label": "Electrical Engineer"
+    },
+    {
+      "value": "655",
+      "label": "Electrical Fitter"
+    },
+    {
+      "value": "22B",
+      "label": "Electrical Process Worker"
+    },
+    {
+      "value": "E04",
+      "label": "Electrician"
+    },
+    {
+      "value": "C74",
+      "label": "Electrologist"
+    },
+    {
+      "value": "121",
+      "label": "Electronic Engineer"
+    },
+    {
+      "value": "656",
+      "label": "Electronics Supervisor"
+    },
+    {
+      "value": "657",
+      "label": "Electronics Technician"
+    },
+    {
+      "value": "23B",
+      "label": "Electroplater"
+    },
+    {
+      "value": "24B",
+      "label": "Electrotyper"
+    },
+    {
+      "value": "122",
+      "label": "Embalmer"
+    },
+    {
+      "value": "123",
+      "label": "Embassy Staff"
+    },
+    {
+      "value": "B94",
+      "label": "Embroiderer"
+    },
+    {
+      "value": "25B",
+      "label": "Embryologist"
+    },
+    {
+      "value": "26B",
+      "label": "Endocrinologist"
+    },
+    {
+      "value": "500",
+      "label": "Energy Analyst"
+    },
+    {
+      "value": "27B",
+      "label": "Engine Room Man"
+    },
+    {
+      "value": "E09",
+      "label": "Engineer"
+    },
+    {
+      "value": "71C",
+      "label": "Engineer Stoker"
+    },
+    {
+      "value": "28B",
+      "label": "Engineman"
+    },
+    {
+      "value": "E22",
+      "label": "Engraver"
+    },
+    {
+      "value": "E23",
+      "label": "Enquiry Agent"
+    },
+    {
+      "value": "E24",
+      "label": "Entertainer"
+    },
+    {
+      "value": "29B",
+      "label": "Entomologist"
+    },
+    {
+      "value": "A76",
+      "label": "Environmental Chemist"
+    },
+    {
+      "value": "B95",
+      "label": "Environmental Consultant"
+    },
+    {
+      "value": "124",
+      "label": "Environmental Health Officer"
+    },
+    {
+      "value": "C75",
+      "label": "Equity Agent"
+    },
+    {
+      "value": "30B",
+      "label": "Erector"
+    },
+    {
+      "value": "E32",
+      "label": "Ergonomist"
+    },
+    {
+      "value": "31B",
+      "label": "Escort"
+    },
+    {
+      "value": "E25",
+      "label": "Estate Agent"
+    },
+    {
+      "value": "658",
+      "label": "Estate Manager"
+    },
+    {
+      "value": "E29",
+      "label": "Estimator"
+    },
+    {
+      "value": "416",
+      "label": "Evangelist"
+    },
+    {
+      "value": "659",
+      "label": "Events Organiser"
+    },
+    {
+      "value": "32B",
+      "label": "Examiner"
+    },
+    {
+      "value": "417",
+      "label": "Excursion Manager"
+    },
+    {
+      "value": "58A",
+      "label": "Executive Officer"
+    },
+    {
+      "value": "125",
+      "label": "Exhaust Fitter"
+    },
+    {
+      "value": "B96",
+      "label": "Exhibition Designer"
+    },
+    {
+      "value": "126",
+      "label": "Exhibition Organiser"
+    },
+    {
+      "value": "127",
+      "label": "Exotic Dancer"
+    },
+    {
+      "value": "A85",
+      "label": "Expedition Leader"
+    },
+    {
+      "value": "33B",
+      "label": "Explosives Worker"
+    },
+    {
+      "value": "C76",
+      "label": "Export Consultant"
+    },
+    {
+      "value": "714",
+      "label": "Exporter"
+    },
+    {
+      "value": "35B",
+      "label": "Extra"
+    },
+    {
+      "value": "660",
+      "label": "Extrusion Operator"
+    },
+    {
+      "value": "128",
+      "label": "Fabricator"
+    },
+    {
+      "value": "661",
+      "label": "Factory Canteen Manager"
+    },
+    {
+      "value": "I07",
+      "label": "Factory Inspector"
+    },
+    {
+      "value": "662",
+      "label": "Factory Manager"
+    },
+    {
+      "value": "F01",
+      "label": "Factory Worker"
+    },
+    {
+      "value": "F02",
+      "label": "Fairground Worker"
+    },
+    {
+      "value": "B78",
+      "label": "Falconer"
+    },
+    {
+      "value": "565",
+      "label": "Farm Manager"
+    },
+    {
+      "value": "F03",
+      "label": "Farm Worker"
+    },
+    {
+      "value": "F04",
+      "label": "Farmer"
+    },
+    {
+      "value": "386",
+      "label": "Farrier"
+    },
+    {
+      "value": "D09",
+      "label": "Fashion Designer"
+    },
+    {
+      "value": "663",
+      "label": "Fashion Photographer"
+    },
+    {
+      "value": "129",
+      "label": "Fast Food Delivery Driver"
+    },
+    {
+      "value": "715",
+      "label": "Fast Food Proprietor"
+    },
+    {
+      "value": "130",
+      "label": "Fence Erector"
+    },
+    {
+      "value": "34B",
+      "label": "Fettler (Foundry)"
+    },
+    {
+      "value": "131",
+      "label": "Fibre Glass Moulder"
+    },
+    {
+      "value": "A96",
+      "label": "Field Officer"
+    },
+    {
+      "value": "664",
+      "label": "Figure Painter"
+    },
+    {
+      "value": "60A",
+      "label": "Filing Clerk"
+    },
+    {
+      "value": "132",
+      "label": "Film Director"
+    },
+    {
+      "value": "41B",
+      "label": "Film Gaffer"
+    },
+    {
+      "value": "133",
+      "label": "Film Producer"
+    },
+    {
+      "value": "134",
+      "label": "Film Technician"
+    },
+    {
+      "value": "418",
+      "label": "Finance Director"
+    },
+    {
+      "value": "665",
+      "label": "Finance Manager"
+    },
+    {
+      "value": "666",
+      "label": "Finance Officer"
+    },
+    {
+      "value": "F05",
+      "label": "Financial Advisor"
+    },
+    {
+      "value": "419",
+      "label": "Financial Analyst"
+    },
+    {
+      "value": "478",
+      "label": "Financial Consultant"
+    },
+    {
+      "value": "F06",
+      "label": "Financier"
+    },
+    {
+      "value": "36B",
+      "label": "Finisher"
+    },
+    {
+      "value": "B73",
+      "label": "Fire Officer"
+    },
+    {
+      "value": "716",
+      "label": "Fire Prevention Officer"
+    },
+    {
+      "value": "D60",
+      "label": "Fire Protection Consultant"
+    },
+    {
+      "value": "135",
+      "label": "Firefighter"
+    },
+    {
+      "value": "667",
+      "label": "Fireplace Fitter"
+    },
+    {
+      "value": "668",
+      "label": "Firewood Merchant"
+    },
+    {
+      "value": "D97",
+      "label": "First Aid Instructor"
+    },
+    {
+      "value": "669",
+      "label": "First Aid Worker"
+    },
+    {
+      "value": "670",
+      "label": "Fish Buyer"
+    },
+    {
+      "value": "501",
+      "label": "Fish Filleter"
+    },
+    {
+      "value": "136",
+      "label": "Fish Fryer"
+    },
+    {
+      "value": "671",
+      "label": "Fish Merchant"
+    },
+    {
+      "value": "672",
+      "label": "Fish Worker"
+    },
+    {
+      "value": "673",
+      "label": "Fisheries Inspector"
+    },
+    {
+      "value": "F08",
+      "label": "Fisherman"
+    },
+    {
+      "value": "566",
+      "label": "Fishery Manager"
+    },
+    {
+      "value": "F09",
+      "label": "Fishmonger"
+    },
+    {
+      "value": "137",
+      "label": "Fitness Instructor"
+    },
+    {
+      "value": "F10",
+      "label": "Fitter"
+    },
+    {
+      "value": "F11",
+      "label": "Fitter - Tyre/Exhaust"
+    },
+    {
+      "value": "526",
+      "label": "Flagger"
+    },
+    {
+      "value": "86B",
+      "label": "Fleet Manager"
+    },
+    {
+      "value": "138",
+      "label": "Flight Deck Crew"
+    },
+    {
+      "value": "02B",
+      "label": "Flight Dispatcher"
+    },
+    {
+      "value": "420",
+      "label": "Floor Layer"
+    },
+    {
+      "value": "421",
+      "label": "Floor Manager"
+    },
+    {
+      "value": "F12",
+      "label": "Florist"
+    },
+    {
+      "value": "674",
+      "label": "Flour Miller"
+    },
+    {
+      "value": "B97",
+      "label": "Flower Arranger"
+    },
+    {
+      "value": "387",
+      "label": "Flying Instructor"
+    },
+    {
+      "value": "527",
+      "label": "Foam Convertor"
+    },
+    {
+      "value": "422",
+      "label": "Food Processor"
+    },
+    {
+      "value": "56D",
+      "label": "Footballer - Semi Professional"
+    },
+    {
+      "value": "37B",
+      "label": "Footman"
+    },
+    {
+      "value": "502",
+      "label": "Foreman"
+    },
+    {
+      "value": "C77",
+      "label": "Forensic Scientist"
+    },
+    {
+      "value": "B75",
+      "label": "Forest Ranger"
+    },
+    {
+      "value": "F16",
+      "label": "Forester"
+    },
+    {
+      "value": "D28",
+      "label": "Fork Lift Truck Driver"
+    },
+    {
+      "value": "38B",
+      "label": "Fortune Teller"
+    },
+    {
+      "value": "F17",
+      "label": "Forwarding Agent"
+    },
+    {
+      "value": "A97",
+      "label": "Foster Parent"
+    },
+    {
+      "value": "88B",
+      "label": "Foundry Moulder"
+    },
+    {
+      "value": "139",
+      "label": "Foundry Worker"
+    },
+    {
+      "value": "A86",
+      "label": "Fraud Investigator"
+    },
+    {
+      "value": "30D",
+      "label": "Freelance Photographer"
+    },
+    {
+      "value": "140",
+      "label": "French Polisher"
+    },
+    {
+      "value": "676",
+      "label": "Fruiterer"
+    },
+    {
+      "value": "141",
+      "label": "Fuel Merchant"
+    },
+    {
+      "value": "39B",
+      "label": "Fund Manager"
+    },
+    {
+      "value": "F18",
+      "label": "Fund Raiser"
+    },
+    {
+      "value": "142",
+      "label": "Funeral Director"
+    },
+    {
+      "value": "143",
+      "label": "Funeral Furnisher"
+    },
+    {
+      "value": "40B",
+      "label": "Funfair Employee"
+    },
+    {
+      "value": "F19",
+      "label": "Furnace Man"
+    },
+    {
+      "value": "677",
+      "label": "Furniture Dealer"
+    },
+    {
+      "value": "F20",
+      "label": "Furniture Remover"
+    },
+    {
+      "value": "F21",
+      "label": "Furniture Restorer"
+    },
+    {
+      "value": "F24",
+      "label": "Furrier"
+    },
+    {
+      "value": "717",
+      "label": "Gallery Owner"
+    },
+    {
+      "value": "718",
+      "label": "Gambler"
+    },
+    {
+      "value": "G10",
+      "label": "Gamekeeper"
+    },
+    {
+      "value": "C96",
+      "label": "Gaming Board Inspector"
+    },
+    {
+      "value": "719",
+      "label": "Gaming Club Manager"
+    },
+    {
+      "value": "720",
+      "label": "Gaming Club Proprietor"
+    },
+    {
+      "value": "721",
+      "label": "Garage Attendant"
+    },
+    {
+      "value": "423",
+      "label": "Garage Foreman"
+    },
+    {
+      "value": "722",
+      "label": "Garage Manager"
+    },
+    {
+      "value": "B66",
+      "label": "Garda"
+    },
+    {
+      "value": "723",
+      "label": "Garden Designer"
+    },
+    {
+      "value": "G01",
+      "label": "Gardener"
+    },
+    {
+      "value": "144",
+      "label": "Gas Fitter"
+    },
+    {
+      "value": "724",
+      "label": "Gas Mechanic"
+    },
+    {
+      "value": "145",
+      "label": "Gas Technician"
+    },
+    {
+      "value": "D52",
+      "label": "Gate Keeper"
+    },
+    {
+      "value": "784",
+      "label": "Genealogist"
+    },
+    {
+      "value": "146",
+      "label": "General Manager"
+    },
+    {
+      "value": "D22",
+      "label": "General Practitioner"
+    },
+    {
+      "value": "42B",
+      "label": "Geneticist"
+    },
+    {
+      "value": "43B",
+      "label": "Geographer"
+    },
+    {
+      "value": "G09",
+      "label": "Geologist"
+    },
+    {
+      "value": "424",
+      "label": "Geophysicist"
+    },
+    {
+      "value": "44B",
+      "label": "Geriatrician"
+    },
+    {
+      "value": "B79",
+      "label": "Gilder"
+    },
+    {
+      "value": "G03",
+      "label": "Glass Worker"
+    },
+    {
+      "value": "147",
+      "label": "Glazier"
+    },
+    {
+      "value": "G04",
+      "label": "Goldsmith"
+    },
+    {
+      "value": "D68",
+      "label": "Golf Caddy"
+    },
+    {
+      "value": "A77",
+      "label": "Golf Club Professional"
+    },
+    {
+      "value": "45B",
+      "label": "Golf Coach"
+    },
+    {
+      "value": "725",
+      "label": "Golfer"
+    },
+    {
+      "value": "03B",
+      "label": "Goods Despatcher"
+    },
+    {
+      "value": "528",
+      "label": "Goods Handler"
+    },
+    {
+      "value": "D57",
+      "label": "Governor"
+    },
+    {
+      "value": "726",
+      "label": "Granite Technician"
+    },
+    {
+      "value": "D10",
+      "label": "Graphic Designer"
+    },
+    {
+      "value": "B74",
+      "label": "Graphologist"
+    },
+    {
+      "value": "G05",
+      "label": "Grave Digger"
+    },
+    {
+      "value": "727",
+      "label": "Gravel Merchant"
+    },
+    {
+      "value": "148",
+      "label": "Green Keeper"
+    },
+    {
+      "value": "G06",
+      "label": "Greengrocer"
+    },
+    {
+      "value": "728",
+      "label": "Grocer"
+    },
+    {
+      "value": "G07",
+      "label": "Groom"
+    },
+    {
+      "value": "503",
+      "label": "Ground Worker"
+    },
+    {
+      "value": "G08",
+      "label": "Groundsman"
+    },
+    {
+      "value": "149",
+      "label": "Guard"
+    },
+    {
+      "value": "150",
+      "label": "Guest House Proprietor"
+    },
+    {
+      "value": "729",
+      "label": "Guide"
+    },
+    {
+      "value": "151",
+      "label": "Gun Smith"
+    },
+    {
+      "value": "152",
+      "label": "Gynaecologist"
+    },
+    {
+      "value": "D29",
+      "label": "HGV Driver"
+    },
+    {
+      "value": "736",
+      "label": "HGV Mechanic"
+    },
+    {
+      "value": "46B",
+      "label": "Haematologist"
+    },
+    {
+      "value": "75C",
+      "label": "Hair Stylist"
+    },
+    {
+      "value": "H01",
+      "label": "Hairdresser"
+    },
+    {
+      "value": "529",
+      "label": "Handyman"
+    },
+    {
+      "value": "D82",
+      "label": "Harbour Master"
+    },
+    {
+      "value": "730",
+      "label": "Hardware Dealer"
+    },
+    {
+      "value": "731",
+      "label": "Haulage Contractor"
+    },
+    {
+      "value": "H03",
+      "label": "Hawker"
+    },
+    {
+      "value": "530",
+      "label": "Head Accurist"
+    },
+    {
+      "value": "732",
+      "label": "Head Greenkeeper"
+    },
+    {
+      "value": "A78",
+      "label": "Head Lad"
+    },
+    {
+      "value": "47B",
+      "label": "Head of Arts"
+    },
+    {
+      "value": "48B",
+      "label": "Head of Trade"
+    },
+    {
+      "value": "49B",
+      "label": "Head of Traffic"
+    },
+    {
+      "value": "H11",
+      "label": "Headteacher"
+    },
+    {
+      "value": "567",
+      "label": "Health Advisor"
+    },
+    {
+      "value": "733",
+      "label": "Health And Safety Consultant"
+    },
+    {
+      "value": "376",
+      "label": "Health And Safety Officer"
+    },
+    {
+      "value": "734",
+      "label": "Health Care Assistant"
+    },
+    {
+      "value": "735",
+      "label": "Health Planner"
+    },
+    {
+      "value": "479",
+      "label": "Health Therapist"
+    },
+    {
+      "value": "H05",
+      "label": "Health Visitor"
+    },
+    {
+      "value": "50B",
+      "label": "Hearing Aid Technician"
+    },
+    {
+      "value": "425",
+      "label": "Hearing Therapist"
+    },
+    {
+      "value": "153",
+      "label": "Heating & Ventilation Engineer"
+    },
+    {
+      "value": "154",
+      "label": "Heating Engineer"
+    },
+    {
+      "value": "E14",
+      "label": "Heating/Ventilation Engineer"
+    },
+    {
+      "value": "51B",
+      "label": "Hedger/Ditcher"
+    },
+    {
+      "value": "52B",
+      "label": "Helmsman"
+    },
+    {
+      "value": "155",
+      "label": "Herbalist"
+    },
+    {
+      "value": "53B",
+      "label": "Herdsman"
+    },
+    {
+      "value": "D53",
+      "label": "Highway Inspector"
+    },
+    {
+      "value": "D30",
+      "label": "Hire Car Driver"
+    },
+    {
+      "value": "H17",
+      "label": "Hirer"
+    },
+    {
+      "value": "54B",
+      "label": "Histologist"
+    },
+    {
+      "value": "737",
+      "label": "Historian"
+    },
+    {
+      "value": "156",
+      "label": "Hod Carrier"
+    },
+    {
+      "value": "D76",
+      "label": "Home Economist"
+    },
+    {
+      "value": "H06",
+      "label": "Home Help"
+    },
+    {
+      "value": "738",
+      "label": "Homecare Manager"
+    },
+    {
+      "value": "157",
+      "label": "Homeopath"
+    },
+    {
+      "value": "C90",
+      "label": "Homeworker"
+    },
+    {
+      "value": "739",
+      "label": "Hop Merchant"
+    },
+    {
+      "value": "158",
+      "label": "Horse Breeder"
+    },
+    {
+      "value": "14D",
+      "label": "Horse Dealer (Non Sport)"
+    },
+    {
+      "value": "15D",
+      "label": "Horse Dealer (Sport)"
+    },
+    {
+      "value": "H12",
+      "label": "Horse Riding Instructor"
+    },
+    {
+      "value": "161",
+      "label": "Horse Trader"
+    },
+    {
+      "value": "740",
+      "label": "Horse Trainer"
+    },
+    {
+      "value": "C78",
+      "label": "Horticultural Consultant"
+    },
+    {
+      "value": "H07",
+      "label": "Horticulturalist"
+    },
+    {
+      "value": "741",
+      "label": "Hosiery Mechanic"
+    },
+    {
+      "value": "742",
+      "label": "Hosiery Worker"
+    },
+    {
+      "value": "743",
+      "label": "Hospital Consultant"
+    },
+    {
+      "value": "678",
+      "label": "Hospital Doctor"
+    },
+    {
+      "value": "744",
+      "label": "Hospital Manager"
+    },
+    {
+      "value": "745",
+      "label": "Hospital Orderly"
+    },
+    {
+      "value": "55B",
+      "label": "Hospital Photographer"
+    },
+    {
+      "value": "426",
+      "label": "Hospital Technician"
+    },
+    {
+      "value": "A87",
+      "label": "Hospital Warden"
+    },
+    {
+      "value": "746",
+      "label": "Hospital Worker"
+    },
+    {
+      "value": "H08",
+      "label": "Hostess"
+    },
+    {
+      "value": "747",
+      "label": "Hot Foil Printer"
+    },
+    {
+      "value": "B98",
+      "label": "Hotel Consultant"
+    },
+    {
+      "value": "748",
+      "label": "Hotel Worker"
+    },
+    {
+      "value": "162",
+      "label": "Hotelier"
+    },
+    {
+      "value": "427",
+      "label": "House Parent"
+    },
+    {
+      "value": "D83",
+      "label": "House Sitter"
+    },
+    {
+      "value": "163",
+      "label": "Househusband"
+    },
+    {
+      "value": "H10",
+      "label": "Housekeeper"
+    },
+    {
+      "value": "56B",
+      "label": "Houseman"
+    },
+    {
+      "value": "H09",
+      "label": "Housewife"
+    },
+    {
+      "value": "749",
+      "label": "Housing Assistant"
+    },
+    {
+      "value": "164",
+      "label": "Housing Officer"
+    },
+    {
+      "value": "750",
+      "label": "Housing Supervisor"
+    },
+    {
+      "value": "H15",
+      "label": "Human Resources Manager"
+    },
+    {
+      "value": "H16",
+      "label": "Human Resources Staff"
+    },
+    {
+      "value": "H18",
+      "label": "Hunt Master"
+    },
+    {
+      "value": "H19",
+      "label": "Huntsman"
+    },
+    {
+      "value": "751",
+      "label": "Hydro Geologist"
+    },
+    {
+      "value": "568",
+      "label": "Hygienist"
+    },
+    {
+      "value": "752",
+      "label": "Hypnotherapist"
+    },
+    {
+      "value": "A98",
+      "label": "Hypnotist"
+    },
+    {
+      "value": "870",
+      "label": "IT Consultant"
+    },
+    {
+      "value": "871",
+      "label": "IT Manager"
+    },
+    {
+      "value": "872",
+      "label": "IT Trainer"
+    },
+    {
+      "value": "I01",
+      "label": "Ice Cream Vendor"
+    },
+    {
+      "value": "378",
+      "label": "Illustrator"
+    },
+    {
+      "value": "428",
+      "label": "Immigration Officer"
+    },
+    {
+      "value": "57B",
+      "label": "Immunologist"
+    },
+    {
+      "value": "C79",
+      "label": "Import Consultant"
+    },
+    {
+      "value": "58B",
+      "label": "Import/Export Dealer"
+    },
+    {
+      "value": "753",
+      "label": "Importer"
+    },
+    {
+      "value": "I02",
+      "label": "Independent Means"
+    },
+    {
+      "value": "785",
+      "label": "Induction Moulder"
+    },
+    {
+      "value": "I03",
+      "label": "Industrial Chemist"
+    },
+    {
+      "value": "B99",
+      "label": "Industrial Consultant"
+    },
+    {
+      "value": "D11",
+      "label": "Industrial Designer"
+    },
+    {
+      "value": "786",
+      "label": "Injection Moulder"
+    },
+    {
+      "value": "I04",
+      "label": "Inland Revenue Officer"
+    },
+    {
+      "value": "D95",
+      "label": "Insolvency Practitioner"
+    },
+    {
+      "value": "I05",
+      "label": "Inspector"
+    },
+    {
+      "value": "I09",
+      "label": "Inspector - Insurance"
+    },
+    {
+      "value": "59B",
+      "label": "Installation Worker"
+    },
+    {
+      "value": "60B",
+      "label": "Instructor"
+    },
+    {
+      "value": "429",
+      "label": "Instrument Engineer"
+    },
+    {
+      "value": "I10",
+      "label": "Instrument Maker"
+    },
+    {
+      "value": "531",
+      "label": "Instrument Supervisor"
+    },
+    {
+      "value": "782",
+      "label": "Instrument Technician"
+    },
+    {
+      "value": "165",
+      "label": "Insurance Assessor"
+    },
+    {
+      "value": "61B",
+      "label": "Insurance Collector"
+    },
+    {
+      "value": "787",
+      "label": "Insurance Consultant"
+    },
+    {
+      "value": "166",
+      "label": "Insurance Inspector"
+    },
+    {
+      "value": "167",
+      "label": "Insurance Representative"
+    },
+    {
+      "value": "168",
+      "label": "Interior Decorator"
+    },
+    {
+      "value": "D12",
+      "label": "Interior Designer"
+    },
+    {
+      "value": "I13",
+      "label": "Interpreter"
+    },
+    {
+      "value": "169",
+      "label": "Interviewer"
+    },
+    {
+      "value": "D63",
+      "label": "Inventor"
+    },
+    {
+      "value": "975",
+      "label": "Investigator"
+    },
+    {
+      "value": "D64",
+      "label": "Investment Advisor"
+    },
+    {
+      "value": "788",
+      "label": "Investment Banker"
+    },
+    {
+      "value": "M13",
+      "label": "Investment Manager"
+    },
+    {
+      "value": "62B",
+      "label": "Invigilator"
+    },
+    {
+      "value": "63B",
+      "label": "Ironer"
+    },
+    {
+      "value": "64B",
+      "label": "Ironer Finisher"
+    },
+    {
+      "value": "65B",
+      "label": "Ironer Presser"
+    },
+    {
+      "value": "I14",
+      "label": "Ironmonger"
+    },
+    {
+      "value": "66B",
+      "label": "Itinerant Labourer"
+    },
+    {
+      "value": "67B",
+      "label": "Itinerant Trader"
+    },
+    {
+      "value": "170",
+      "label": "Janitor"
+    },
+    {
+      "value": "789",
+      "label": "Jazz Composer"
+    },
+    {
+      "value": "J01",
+      "label": "Jeweller"
+    },
+    {
+      "value": "480",
+      "label": "Jewellery Consultant"
+    },
+    {
+      "value": "J02",
+      "label": "Jockey"
+    },
+    {
+      "value": "J03",
+      "label": "Joiner"
+    },
+    {
+      "value": "790",
+      "label": "Joinery Consultant"
+    },
+    {
+      "value": "68B",
+      "label": "Jointer"
+    },
+    {
+      "value": "J04",
+      "label": "Journalist"
+    },
+    {
+      "value": "26D",
+      "label": "Journalist - Freelance"
+    },
+    {
+      "value": "C80",
+      "label": "Journalistic Agent"
+    },
+    {
+      "value": "J05",
+      "label": "Judge"
+    },
+    {
+      "value": "69B",
+      "label": "Juggler"
+    },
+    {
+      "value": "791",
+      "label": "Junk Shop Proprietor"
+    },
+    {
+      "value": "171",
+      "label": "Justice Of The Peace"
+    },
+    {
+      "value": "172",
+      "label": "Keep Fit Instructor"
+    },
+    {
+      "value": "C94",
+      "label": "Kennel Hand"
+    },
+    {
+      "value": "173",
+      "label": "Kennel Maid"
+    },
+    {
+      "value": "70B",
+      "label": "Kiln Setter"
+    },
+    {
+      "value": "71B",
+      "label": "Kilnman (Glass/Ceramics)"
+    },
+    {
+      "value": "174",
+      "label": "Kissagram Person"
+    },
+    {
+      "value": "175",
+      "label": "Kitchen Worker"
+    },
+    {
+      "value": "K01",
+      "label": "Knitter"
+    },
+    {
+      "value": "795",
+      "label": "Labelling Operator"
+    },
+    {
+      "value": "792",
+      "label": "Laboratory Analyst"
+    },
+    {
+      "value": "430",
+      "label": "Laboratory Assistant"
+    },
+    {
+      "value": "797",
+      "label": "Laboratory Attendant"
+    },
+    {
+      "value": "793",
+      "label": "Laboratory Manager"
+    },
+    {
+      "value": "796",
+      "label": "Laboratory Operative"
+    },
+    {
+      "value": "794",
+      "label": "Laboratory Supervisor"
+    },
+    {
+      "value": "L01",
+      "label": "Laboratory Technician"
+    },
+    {
+      "value": "L02",
+      "label": "Labourer"
+    },
+    {
+      "value": "379",
+      "label": "Laminator"
+    },
+    {
+      "value": "C61",
+      "label": "Lampshade Maker"
+    },
+    {
+      "value": "L12",
+      "label": "Land Agent"
+    },
+    {
+      "value": "C81",
+      "label": "Land Surveyor"
+    },
+    {
+      "value": "798",
+      "label": "Landlady"
+    },
+    {
+      "value": "176",
+      "label": "Landlord"
+    },
+    {
+      "value": "A79",
+      "label": "Landowner"
+    },
+    {
+      "value": "532",
+      "label": "Landscape Architect"
+    },
+    {
+      "value": "L03",
+      "label": "Landscape Gardener"
+    },
+    {
+      "value": "874",
+      "label": "Landworker"
+    },
+    {
+      "value": "431",
+      "label": "Lathe Operator"
+    },
+    {
+      "value": "177",
+      "label": "Laundry Worker"
+    },
+    {
+      "value": "178",
+      "label": "Lavatory Attendant"
+    },
+    {
+      "value": "799",
+      "label": "Law Clerk"
+    },
+    {
+      "value": "800",
+      "label": "Lawn Mower Repairer"
+    },
+    {
+      "value": "L05",
+      "label": "Lawyer"
+    },
+    {
+      "value": "801",
+      "label": "Leaflet Distributor"
+    },
+    {
+      "value": "179",
+      "label": "Leather Worker"
+    },
+    {
+      "value": "L06",
+      "label": "Lecturer"
+    },
+    {
+      "value": "802",
+      "label": "Ledger Clerk"
+    },
+    {
+      "value": "803",
+      "label": "Legal Advisor"
+    },
+    {
+      "value": "504",
+      "label": "Legal Assistant"
+    },
+    {
+      "value": "432",
+      "label": "Legal Executive"
+    },
+    {
+      "value": "L07",
+      "label": "Legal Secretary"
+    },
+    {
+      "value": "180",
+      "label": "Leisure Centre Attendant"
+    },
+    {
+      "value": "804",
+      "label": "Leisure Centre Manager"
+    },
+    {
+      "value": "35C",
+      "label": "Lengthman"
+    },
+    {
+      "value": "181",
+      "label": "Lens Grinder & Polisher"
+    },
+    {
+      "value": "805",
+      "label": "Letting Agent"
+    },
+    {
+      "value": "72B",
+      "label": "Lexicographer"
+    },
+    {
+      "value": "C99",
+      "label": "Liaison Officer"
+    },
+    {
+      "value": "L08",
+      "label": "Librarian"
+    },
+    {
+      "value": "817",
+      "label": "Library Manager"
+    },
+    {
+      "value": "182",
+      "label": "Licensee"
+    },
+    {
+      "value": "C62",
+      "label": "Licensing Consultant"
+    },
+    {
+      "value": "54D",
+      "label": "Life Assurance Salesman"
+    },
+    {
+      "value": "L11",
+      "label": "Lifeguard"
+    },
+    {
+      "value": "183",
+      "label": "Lift Attendant"
+    },
+    {
+      "value": "184",
+      "label": "Lift Engineer"
+    },
+    {
+      "value": "818",
+      "label": "Lighterman"
+    },
+    {
+      "value": "D49",
+      "label": "Lighthouse Keeper"
+    },
+    {
+      "value": "819",
+      "label": "Lighting Designer"
+    },
+    {
+      "value": "73B",
+      "label": "Lighting Director"
+    },
+    {
+      "value": "185",
+      "label": "Lighting Technician"
+    },
+    {
+      "value": "820",
+      "label": "Lime Kiln Attendant"
+    },
+    {
+      "value": "875",
+      "label": "Line Manager"
+    },
+    {
+      "value": "186",
+      "label": "Line Worker"
+    },
+    {
+      "value": "74B",
+      "label": "Linesman"
+    },
+    {
+      "value": "187",
+      "label": "Linguist"
+    },
+    {
+      "value": "75B",
+      "label": "Linotype Operator"
+    },
+    {
+      "value": "188",
+      "label": "Literary Agent"
+    },
+    {
+      "value": "821",
+      "label": "Literary Editor"
+    },
+    {
+      "value": "L09",
+      "label": "Lithographer"
+    },
+    {
+      "value": "569",
+      "label": "Litigation Manager"
+    },
+    {
+      "value": "493",
+      "label": "Loader"
+    },
+    {
+      "value": "822",
+      "label": "Loans Manager"
+    },
+    {
+      "value": "383",
+      "label": "Local Government Officer"
+    },
+    {
+      "value": "D58",
+      "label": "Lock Keeper"
+    },
+    {
+      "value": "L10",
+      "label": "Locksmith"
+    },
+    {
+      "value": "24D",
+      "label": "Locum Doctor"
+    },
+    {
+      "value": "823",
+      "label": "Locum Pharmacist"
+    },
+    {
+      "value": "824",
+      "label": "Log Merchant"
+    },
+    {
+      "value": "189",
+      "label": "Lorry Driver"
+    },
+    {
+      "value": "190",
+      "label": "Loss Adjustor"
+    },
+    {
+      "value": "191",
+      "label": "Loss Assessor"
+    },
+    {
+      "value": "192",
+      "label": "Lumberjack"
+    },
+    {
+      "value": "825",
+      "label": "Machine Fitters Mate"
+    },
+    {
+      "value": "826",
+      "label": "Machine Minder"
+    },
+    {
+      "value": "M01",
+      "label": "Machine Operator"
+    },
+    {
+      "value": "481",
+      "label": "Machine Setter"
+    },
+    {
+      "value": "827",
+      "label": "Machine Technician"
+    },
+    {
+      "value": "828",
+      "label": "Machine Tool Engineer"
+    },
+    {
+      "value": "829",
+      "label": "Machine Tool Fitter"
+    },
+    {
+      "value": "M02",
+      "label": "Machinist"
+    },
+    {
+      "value": "830",
+      "label": "Magician"
+    },
+    {
+      "value": "M03",
+      "label": "Magistrate"
+    },
+    {
+      "value": "193",
+      "label": "Magistrates Clerk"
+    },
+    {
+      "value": "831",
+      "label": "Maid"
+    },
+    {
+      "value": "76B",
+      "label": "Mail Order Worker"
+    },
+    {
+      "value": "832",
+      "label": "Maintenance Engineer"
+    },
+    {
+      "value": "482",
+      "label": "Maintenance Fitter"
+    },
+    {
+      "value": "433",
+      "label": "Maintenance Man"
+    },
+    {
+      "value": "833",
+      "label": "Maintenance Manager"
+    },
+    {
+      "value": "M04",
+      "label": "Maintenance Staff"
+    },
+    {
+      "value": "77B",
+      "label": "Maitre D Hotel"
+    },
+    {
+      "value": "505",
+      "label": "Make Up Artist"
+    },
+    {
+      "value": "834",
+      "label": "Make Up Supervisor"
+    },
+    {
+      "value": "M05",
+      "label": "Management Consultant"
+    },
+    {
+      "value": "835",
+      "label": "Management Trainee"
+    },
+    {
+      "value": "M06",
+      "label": "Manager"
+    },
+    {
+      "value": "M19",
+      "label": "Manager - Sports"
+    },
+    {
+      "value": "78B",
+      "label": "Managing Clerk"
+    },
+    {
+      "value": "194",
+      "label": "Managing Director"
+    },
+    {
+      "value": "195",
+      "label": "Manicurist"
+    },
+    {
+      "value": "M23",
+      "label": "Manufacturing Agent"
+    },
+    {
+      "value": "79B",
+      "label": "Manufacturing Engineer"
+    },
+    {
+      "value": "836",
+      "label": "Manufacturing Technician"
+    },
+    {
+      "value": "27D",
+      "label": "Map Maker"
+    },
+    {
+      "value": "837",
+      "label": "Map Mounter"
+    },
+    {
+      "value": "838",
+      "label": "Marble Finisher"
+    },
+    {
+      "value": "839",
+      "label": "Marble Mason"
+    },
+    {
+      "value": "C85",
+      "label": "Marine Broker"
+    },
+    {
+      "value": "C63",
+      "label": "Marine Consultant"
+    },
+    {
+      "value": "840",
+      "label": "Marine Electrician"
+    },
+    {
+      "value": "E15",
+      "label": "Marine Engineer"
+    },
+    {
+      "value": "841",
+      "label": "Marine Geologist"
+    },
+    {
+      "value": "196",
+      "label": "Marine Pilot"
+    },
+    {
+      "value": "570",
+      "label": "Marine Surveyor"
+    },
+    {
+      "value": "M24",
+      "label": "Market Gardener"
+    },
+    {
+      "value": "843",
+      "label": "Market Research Assistant"
+    },
+    {
+      "value": "M25",
+      "label": "Market Researcher"
+    },
+    {
+      "value": "M26",
+      "label": "Market Trader"
+    },
+    {
+      "value": "844",
+      "label": "Marketing Agent"
+    },
+    {
+      "value": "197",
+      "label": "Marketing Assistant"
+    },
+    {
+      "value": "845",
+      "label": "Marketing Co-ordinator"
+    },
+    {
+      "value": "846",
+      "label": "Marketing Consultant"
+    },
+    {
+      "value": "847",
+      "label": "Marketing Director"
+    },
+    {
+      "value": "198",
+      "label": "Marketing Executive"
+    },
+    {
+      "value": "199",
+      "label": "Marketing Manager"
+    },
+    {
+      "value": "848",
+      "label": "Marquee Erector"
+    },
+    {
+      "value": "849",
+      "label": "Massage Therapist"
+    },
+    {
+      "value": "200",
+      "label": "Masseur"
+    },
+    {
+      "value": "201",
+      "label": "Masseuse"
+    },
+    {
+      "value": "850",
+      "label": "Master Mariner"
+    },
+    {
+      "value": "M53",
+      "label": "Master Of Foxhounds"
+    },
+    {
+      "value": "D84",
+      "label": "Master of Ceremonies"
+    },
+    {
+      "value": "851",
+      "label": "Materials Controller"
+    },
+    {
+      "value": "852",
+      "label": "Materials Manager"
+    },
+    {
+      "value": "853",
+      "label": "Mathematician"
+    },
+    {
+      "value": "434",
+      "label": "Matron"
+    },
+    {
+      "value": "854",
+      "label": "Mattress Maker"
+    },
+    {
+      "value": "S50",
+      "label": "Mature Student - Living At Home"
+    },
+    {
+      "value": "S51",
+      "label": "Mature Student - Living Away"
+    },
+    {
+      "value": "855",
+      "label": "Meat Inspector"
+    },
+    {
+      "value": "856",
+      "label": "Meat Wholesaler"
+    },
+    {
+      "value": "M29",
+      "label": "Mechanic"
+    },
+    {
+      "value": "80B",
+      "label": "Mechanical Designer"
+    },
+    {
+      "value": "E16",
+      "label": "Mechanical Engineer"
+    },
+    {
+      "value": "783",
+      "label": "Mechanical Technician"
+    },
+    {
+      "value": "857",
+      "label": "Medal Dealer"
+    },
+    {
+      "value": "91A",
+      "label": "Media Critic"
+    },
+    {
+      "value": "82B",
+      "label": "Media Planner"
+    },
+    {
+      "value": "858",
+      "label": "Medical Advisor"
+    },
+    {
+      "value": "859",
+      "label": "Medical Assistant"
+    },
+    {
+      "value": "C36",
+      "label": "Medical Consultant"
+    },
+    {
+      "value": "06B",
+      "label": "Medical Diagnostician"
+    },
+    {
+      "value": "B35",
+      "label": "Medical Officer"
+    },
+    {
+      "value": "860",
+      "label": "Medical Physicist"
+    },
+    {
+      "value": "B34",
+      "label": "Medical Practitioner"
+    },
+    {
+      "value": "861",
+      "label": "Medical Researcher"
+    },
+    {
+      "value": "435",
+      "label": "Medical Secretary"
+    },
+    {
+      "value": "S48",
+      "label": "Medical Student - Living At Home"
+    },
+    {
+      "value": "S49",
+      "label": "Medical Student - Living Away"
+    },
+    {
+      "value": "862",
+      "label": "Medical Supplier"
+    },
+    {
+      "value": "863",
+      "label": "Medical Technician"
+    },
+    {
+      "value": "M45",
+      "label": "Member Of Parliament"
+    },
+    {
+      "value": "864",
+      "label": "Merchandiser"
+    },
+    {
+      "value": "865",
+      "label": "Merchant Banker"
+    },
+    {
+      "value": "202",
+      "label": "Merchant Seaman"
+    },
+    {
+      "value": "M34",
+      "label": "Messenger"
+    },
+    {
+      "value": "203",
+      "label": "Metal Dealer"
+    },
+    {
+      "value": "571",
+      "label": "Metal Engineer"
+    },
+    {
+      "value": "506",
+      "label": "Metal Polisher"
+    },
+    {
+      "value": "M50",
+      "label": "Metal Worker"
+    },
+    {
+      "value": "M35",
+      "label": "Metallurgist"
+    },
+    {
+      "value": "M36",
+      "label": "Meteorologist"
+    },
+    {
+      "value": "M37",
+      "label": "Meter Reader"
+    },
+    {
+      "value": "204",
+      "label": "Microbiologist"
+    },
+    {
+      "value": "507",
+      "label": "Microfilm Operator"
+    },
+    {
+      "value": "83B",
+      "label": "Microscopist"
+    },
+    {
+      "value": "M38",
+      "label": "Midwife"
+    },
+    {
+      "value": "C97",
+      "label": "Milklady"
+    },
+    {
+      "value": "205",
+      "label": "Milkman"
+    },
+    {
+      "value": "866",
+      "label": "Mill Operator"
+    },
+    {
+      "value": "206",
+      "label": "Mill Worker"
+    },
+    {
+      "value": "207",
+      "label": "Miller"
+    },
+    {
+      "value": "M39",
+      "label": "Milliner"
+    },
+    {
+      "value": "B80",
+      "label": "Millwright"
+    },
+    {
+      "value": "M40",
+      "label": "Miner"
+    },
+    {
+      "value": "208",
+      "label": "Mineralologist"
+    },
+    {
+      "value": "A88",
+      "label": "Minibus Driver"
+    },
+    {
+      "value": "209",
+      "label": "Minicab Driver"
+    },
+    {
+      "value": "867",
+      "label": "Mining Consultant"
+    },
+    {
+      "value": "E17",
+      "label": "Mining Engineer"
+    },
+    {
+      "value": "M41",
+      "label": "Minister Of Religion"
+    },
+    {
+      "value": "84B",
+      "label": "Minister Of The Crown"
+    },
+    {
+      "value": "B81",
+      "label": "Missionary"
+    },
+    {
+      "value": "C09",
+      "label": "Mobile Caterer"
+    },
+    {
+      "value": "D18",
+      "label": "Mobile Disc Jockey"
+    },
+    {
+      "value": "868",
+      "label": "Mobile Disco Owner"
+    },
+    {
+      "value": "210",
+      "label": "Mobile Hairdresser"
+    },
+    {
+      "value": "A80",
+      "label": "Mobile Motor Mechanic"
+    },
+    {
+      "value": "211",
+      "label": "Mobile Service Engineer"
+    },
+    {
+      "value": "M42",
+      "label": "Model"
+    },
+    {
+      "value": "869",
+      "label": "Model Maker"
+    },
+    {
+      "value": "85B",
+      "label": "Moderator"
+    },
+    {
+      "value": "754",
+      "label": "Money Broker"
+    },
+    {
+      "value": "806",
+      "label": "Money Dealer"
+    },
+    {
+      "value": "M51",
+      "label": "Moneylender"
+    },
+    {
+      "value": "D85",
+      "label": "Monk"
+    },
+    {
+      "value": "873",
+      "label": "Monumental Sculptor"
+    },
+    {
+      "value": "807",
+      "label": "Mooring Contractor"
+    },
+    {
+      "value": "212",
+      "label": "Mortgage Broker"
+    },
+    {
+      "value": "808",
+      "label": "Mortgage Consultant"
+    },
+    {
+      "value": "213",
+      "label": "Mortician"
+    },
+    {
+      "value": "809",
+      "label": "Motor Dealer"
+    },
+    {
+      "value": "214",
+      "label": "Motor Engineer"
+    },
+    {
+      "value": "810",
+      "label": "Motor Fitter"
+    },
+    {
+      "value": "215",
+      "label": "Motor Mechanic"
+    },
+    {
+      "value": "28D",
+      "label": "Motor Racing Driver"
+    },
+    {
+      "value": "811",
+      "label": "Motor Racing Organiser"
+    },
+    {
+      "value": "M44",
+      "label": "Motor Trader"
+    },
+    {
+      "value": "89B",
+      "label": "Moulding Process Technician"
+    },
+    {
+      "value": "812",
+      "label": "Museum Assistant"
+    },
+    {
+      "value": "813",
+      "label": "Museum Attendant"
+    },
+    {
+      "value": "814",
+      "label": "Museum Consultant"
+    },
+    {
+      "value": "436",
+      "label": "Museum Technician"
+    },
+    {
+      "value": "91B",
+      "label": "Music Producer"
+    },
+    {
+      "value": "508",
+      "label": "Music Teacher"
+    },
+    {
+      "value": "815",
+      "label": "Music Therapist"
+    },
+    {
+      "value": "816",
+      "label": "Music Wholesaler"
+    },
+    {
+      "value": "92B",
+      "label": "Musical Arranger"
+    },
+    {
+      "value": "M46",
+      "label": "Musician"
+    },
+    {
+      "value": "29D",
+      "label": "Musician - Amateur"
+    },
+    {
+      "value": "N08",
+      "label": "Nanny"
+    },
+    {
+      "value": "94B",
+      "label": "Naturalist"
+    },
+    {
+      "value": "C82",
+      "label": "Naturopath"
+    },
+    {
+      "value": "216",
+      "label": "Navigator"
+    },
+    {
+      "value": "N01",
+      "label": "Negotiator"
+    },
+    {
+      "value": "217",
+      "label": "Neurologist"
+    },
+    {
+      "value": "N11",
+      "label": "Newsagent"
+    },
+    {
+      "value": "96B",
+      "label": "Newsreader"
+    },
+    {
+      "value": "878",
+      "label": "Night Porter"
+    },
+    {
+      "value": "218",
+      "label": "Night Watchman"
+    },
+    {
+      "value": "219",
+      "label": "Non Commissioned Officer"
+    },
+    {
+      "value": "26C",
+      "label": "Non Professional Footballer"
+    },
+    {
+      "value": "62A",
+      "label": "Non Professional Sports Coach"
+    },
+    {
+      "value": "43D",
+      "label": "Not Employed Due to Disability"
+    },
+    {
+      "value": "220",
+      "label": "Not In Employment"
+    },
+    {
+      "value": "221",
+      "label": "Notary Public"
+    },
+    {
+      "value": "222",
+      "label": "Nuclear Scientist"
+    },
+    {
+      "value": "N09",
+      "label": "Nun"
+    },
+    {
+      "value": "N02",
+      "label": "Nurse"
+    },
+    {
+      "value": "97B",
+      "label": "Nursemaid"
+    },
+    {
+      "value": "437",
+      "label": "Nursery Assistant"
+    },
+    {
+      "value": "N10",
+      "label": "Nursery Nurse"
+    },
+    {
+      "value": "879",
+      "label": "Nursery Worker"
+    },
+    {
+      "value": "N05",
+      "label": "Nurseryman"
+    },
+    {
+      "value": "533",
+      "label": "Nursing Assistant"
+    },
+    {
+      "value": "880",
+      "label": "Nursing Auxiliary"
+    },
+    {
+      "value": "572",
+      "label": "Nursing Manager"
+    },
+    {
+      "value": "54C",
+      "label": "Nursing Officer"
+    },
+    {
+      "value": "D66",
+      "label": "Nursing Sister"
+    },
+    {
+      "value": "755",
+      "label": "Nutritionist"
+    },
+    {
+      "value": "98B",
+      "label": "Obstetrician"
+    },
+    {
+      "value": "C64",
+      "label": "Occupational Health Consultant"
+    },
+    {
+      "value": "D54",
+      "label": "Occupational Health Nurse"
+    },
+    {
+      "value": "223",
+      "label": "Occupational Therapist"
+    },
+    {
+      "value": "224",
+      "label": "Oculist"
+    },
+    {
+      "value": "881",
+      "label": "Off Shore Surveyor"
+    },
+    {
+      "value": "882",
+      "label": "Office Administrator"
+    },
+    {
+      "value": "225",
+      "label": "Office Manager"
+    },
+    {
+      "value": "883",
+      "label": "Oil Broker"
+    },
+    {
+      "value": "534",
+      "label": "Oil Rig Crew"
+    },
+    {
+      "value": "884",
+      "label": "Opera Singer"
+    },
+    {
+      "value": "885",
+      "label": "Operations Director"
+    },
+    {
+      "value": "99B",
+      "label": "Operations Engineer"
+    },
+    {
+      "value": "226",
+      "label": "Operations Manager"
+    },
+    {
+      "value": "438",
+      "label": "Operations Supervisor"
+    },
+    {
+      "value": "01C",
+      "label": "Opthalmic Surgeon"
+    },
+    {
+      "value": "573",
+      "label": "Opthalmic Technician"
+    },
+    {
+      "value": "886",
+      "label": "Optical Advisor"
+    },
+    {
+      "value": "380",
+      "label": "Optical Assistant"
+    },
+    {
+      "value": "535",
+      "label": "Optical Technician"
+    },
+    {
+      "value": "O02",
+      "label": "Optician"
+    },
+    {
+      "value": "A89",
+      "label": "Optometrist"
+    },
+    {
+      "value": "02C",
+      "label": "Orchestra Leader"
+    },
+    {
+      "value": "887",
+      "label": "Orchestral Violinist"
+    },
+    {
+      "value": "888",
+      "label": "Order Clerk"
+    },
+    {
+      "value": "03C",
+      "label": "Orderly"
+    },
+    {
+      "value": "227",
+      "label": "Organist"
+    },
+    {
+      "value": "889",
+      "label": "Ornamental Blacksmith"
+    },
+    {
+      "value": "C91",
+      "label": "Ornithologist"
+    },
+    {
+      "value": "890",
+      "label": "Orthopaedic Technician"
+    },
+    {
+      "value": "756",
+      "label": "Orthoptist"
+    },
+    {
+      "value": "O03",
+      "label": "Osteopath"
+    },
+    {
+      "value": "228",
+      "label": "Ostler"
+    },
+    {
+      "value": "891",
+      "label": "Outdoor Pursuits Instructor"
+    },
+    {
+      "value": "439",
+      "label": "Outfitter"
+    },
+    {
+      "value": "892",
+      "label": "Outreach Worker"
+    },
+    {
+      "value": "893",
+      "label": "Overhead Line Instructor"
+    },
+    {
+      "value": "894",
+      "label": "Overhead Lineman"
+    },
+    {
+      "value": "895",
+      "label": "Overlocker"
+    },
+    {
+      "value": "896",
+      "label": "Overseas Mailer"
+    },
+    {
+      "value": "897",
+      "label": "Overwriter"
+    },
+    {
+      "value": "898",
+      "label": "Packaging Consultant"
+    },
+    {
+      "value": "P01",
+      "label": "Packer"
+    },
+    {
+      "value": "899",
+      "label": "Paediatrician"
+    },
+    {
+      "value": "D55",
+      "label": "Pager Operator"
+    },
+    {
+      "value": "C83",
+      "label": "Paint Consultant"
+    },
+    {
+      "value": "229",
+      "label": "Paint Sprayer"
+    },
+    {
+      "value": "01H",
+      "label": "Paint Technologist"
+    },
+    {
+      "value": "P02",
+      "label": "Painter"
+    },
+    {
+      "value": "P03",
+      "label": "Painter And Decorator"
+    },
+    {
+      "value": "B89",
+      "label": "Palaeobotanist"
+    },
+    {
+      "value": "D56",
+      "label": "Palaeontologist"
+    },
+    {
+      "value": "381",
+      "label": "Pallet Maker"
+    },
+    {
+      "value": "230",
+      "label": "Panel Beater"
+    },
+    {
+      "value": "900",
+      "label": "Paper Mill Worker"
+    },
+    {
+      "value": "D59",
+      "label": "Parachute Packer"
+    },
+    {
+      "value": "231",
+      "label": "Paramedic"
+    },
+    {
+      "value": "232",
+      "label": "Park Attendant"
+    },
+    {
+      "value": "233",
+      "label": "Park Keeper"
+    },
+    {
+      "value": "901",
+      "label": "Park Ranger"
+    },
+    {
+      "value": "902",
+      "label": "Partition Erector"
+    },
+    {
+      "value": "903",
+      "label": "Parts Man"
+    },
+    {
+      "value": "483",
+      "label": "Parts Manager"
+    },
+    {
+      "value": "536",
+      "label": "Parts Supervisor"
+    },
+    {
+      "value": "P05",
+      "label": "Party Planner"
+    },
+    {
+      "value": "537",
+      "label": "Pasteuriser"
+    },
+    {
+      "value": "904",
+      "label": "Pastry Chef"
+    },
+    {
+      "value": "757",
+      "label": "Patent Agent"
+    },
+    {
+      "value": "538",
+      "label": "Patent Attorney"
+    },
+    {
+      "value": "440",
+      "label": "Pathologist"
+    },
+    {
+      "value": "C92",
+      "label": "Patrol Person"
+    },
+    {
+      "value": "P41",
+      "label": "Patrolman"
+    },
+    {
+      "value": "905",
+      "label": "Pattern Cutter"
+    },
+    {
+      "value": "P06",
+      "label": "Pattern Maker"
+    },
+    {
+      "value": "906",
+      "label": "Pattern Weaver"
+    },
+    {
+      "value": "907",
+      "label": "Paviour"
+    },
+    {
+      "value": "P07",
+      "label": "Pawnbroker"
+    },
+    {
+      "value": "908",
+      "label": "Payment Officer"
+    },
+    {
+      "value": "574",
+      "label": "Payroll Assistant"
+    },
+    {
+      "value": "910",
+      "label": "Payroll Clerk"
+    },
+    {
+      "value": "911",
+      "label": "Payroll Manager"
+    },
+    {
+      "value": "912",
+      "label": "Payroll Supervisor"
+    },
+    {
+      "value": "913",
+      "label": "Pearl Stringer"
+    },
+    {
+      "value": "P52",
+      "label": "Pedicurist"
+    },
+    {
+      "value": "914",
+      "label": "Pensions Consultant"
+    },
+    {
+      "value": "915",
+      "label": "Pensions Manager"
+    },
+    {
+      "value": "P08",
+      "label": "Personal Assistant"
+    },
+    {
+      "value": "P09",
+      "label": "Personnel Administrator"
+    },
+    {
+      "value": "234",
+      "label": "Personnel Manager"
+    },
+    {
+      "value": "235",
+      "label": "Personnel Officer"
+    },
+    {
+      "value": "P10",
+      "label": "Pest Control"
+    },
+    {
+      "value": "236",
+      "label": "Pest Controller"
+    },
+    {
+      "value": "916",
+      "label": "Pet Minder"
+    },
+    {
+      "value": "P11",
+      "label": "Petrol Station Attendant"
+    },
+    {
+      "value": "441",
+      "label": "Petroleum Engineer"
+    },
+    {
+      "value": "917",
+      "label": "Petty Officer"
+    },
+    {
+      "value": "918",
+      "label": "Pharmaceutical Assistant"
+    },
+    {
+      "value": "P12",
+      "label": "Pharmacist"
+    },
+    {
+      "value": "919",
+      "label": "Pharmacy Manager"
+    },
+    {
+      "value": "920",
+      "label": "Pharmacy Technician"
+    },
+    {
+      "value": "B87",
+      "label": "Philatelist"
+    },
+    {
+      "value": "P50",
+      "label": "Phlebotomist"
+    },
+    {
+      "value": "237",
+      "label": "Photo Engraver"
+    },
+    {
+      "value": "921",
+      "label": "Photo Laboratory Processor"
+    },
+    {
+      "value": "922",
+      "label": "Photo Technician"
+    },
+    {
+      "value": "A99",
+      "label": "Photocopy Machine Technician"
+    },
+    {
+      "value": "P13",
+      "label": "Photographer"
+    },
+    {
+      "value": "P47",
+      "label": "Photographer - Location"
+    },
+    {
+      "value": "05C",
+      "label": "Photographer - Press"
+    },
+    {
+      "value": "33D",
+      "label": "Photographer - Press (Local)"
+    },
+    {
+      "value": "06C",
+      "label": "Photographer - Shop Owner"
+    },
+    {
+      "value": "34D",
+      "label": "Photographer - Street"
+    },
+    {
+      "value": "P15",
+      "label": "Photographer - Studio"
+    },
+    {
+      "value": "C84",
+      "label": "Photographic Agent"
+    },
+    {
+      "value": "923",
+      "label": "Physician"
+    },
+    {
+      "value": "238",
+      "label": "Physicist"
+    },
+    {
+      "value": "388",
+      "label": "Physiologist"
+    },
+    {
+      "value": "P16",
+      "label": "Physiotherapist"
+    },
+    {
+      "value": "924",
+      "label": "Piano Teacher"
+    },
+    {
+      "value": "P17",
+      "label": "Piano Tuner"
+    },
+    {
+      "value": "239",
+      "label": "Picker"
+    },
+    {
+      "value": "925",
+      "label": "Picture Editor"
+    },
+    {
+      "value": "240",
+      "label": "Picture Framer"
+    },
+    {
+      "value": "42C",
+      "label": "Picture Renovator"
+    },
+    {
+      "value": "926",
+      "label": "Picture Researcher"
+    },
+    {
+      "value": "927",
+      "label": "Pig Man"
+    },
+    {
+      "value": "928",
+      "label": "Pig Manager"
+    },
+    {
+      "value": "241",
+      "label": "Pilot"
+    },
+    {
+      "value": "08C",
+      "label": "Pilot Helicopter"
+    },
+    {
+      "value": "09C",
+      "label": "Pilot Test"
+    },
+    {
+      "value": "509",
+      "label": "Pipe Fitter"
+    },
+    {
+      "value": "758",
+      "label": "Pipe Inspector"
+    },
+    {
+      "value": "929",
+      "label": "Pipe Insulator"
+    },
+    {
+      "value": "P48",
+      "label": "Pipe Layer"
+    },
+    {
+      "value": "575",
+      "label": "Planning Engineer"
+    },
+    {
+      "value": "930",
+      "label": "Planning Manager"
+    },
+    {
+      "value": "539",
+      "label": "Planning Officer"
+    },
+    {
+      "value": "931",
+      "label": "Planning Technician"
+    },
+    {
+      "value": "932",
+      "label": "Plant Attendant"
+    },
+    {
+      "value": "10C",
+      "label": "Plant Breeder"
+    },
+    {
+      "value": "D33",
+      "label": "Plant Driver"
+    },
+    {
+      "value": "933",
+      "label": "Plant Engineer"
+    },
+    {
+      "value": "934",
+      "label": "Plant Fitter"
+    },
+    {
+      "value": "442",
+      "label": "Plant Manager"
+    },
+    {
+      "value": "935",
+      "label": "Plant Operator"
+    },
+    {
+      "value": "P18",
+      "label": "Plasterer"
+    },
+    {
+      "value": "484",
+      "label": "Plastics Consultant"
+    },
+    {
+      "value": "540",
+      "label": "Plastics Engineer"
+    },
+    {
+      "value": "936",
+      "label": "Plate Layer"
+    },
+    {
+      "value": "443",
+      "label": "Plater"
+    },
+    {
+      "value": "541",
+      "label": "Playgroup Assistant"
+    },
+    {
+      "value": "444",
+      "label": "Playgroup Leader"
+    },
+    {
+      "value": "11C",
+      "label": "Playwright"
+    },
+    {
+      "value": "P19",
+      "label": "Plumber"
+    },
+    {
+      "value": "C98",
+      "label": "Plumbing & Heating Engineer"
+    },
+    {
+      "value": "C95",
+      "label": "Podiatrist"
+    },
+    {
+      "value": "36C",
+      "label": "Pointsman"
+    },
+    {
+      "value": "12C",
+      "label": "Police - Civilian"
+    },
+    {
+      "value": "P53",
+      "label": "Police Community Support Officer"
+    },
+    {
+      "value": "P20",
+      "label": "Police Officer"
+    },
+    {
+      "value": "937",
+      "label": "Polisher"
+    },
+    {
+      "value": "242",
+      "label": "Pool Attendant"
+    },
+    {
+      "value": "P43",
+      "label": "Pools Collector"
+    },
+    {
+      "value": "31D",
+      "label": "Port Officer"
+    },
+    {
+      "value": "P21",
+      "label": "Porter"
+    },
+    {
+      "value": "938",
+      "label": "Portfolio Manager"
+    },
+    {
+      "value": "939",
+      "label": "Post Card Seller"
+    },
+    {
+      "value": "19D",
+      "label": "Post Graduate Student Living Away from Home"
+    },
+    {
+      "value": "18D",
+      "label": "Post Graduate Student Living at Home"
+    },
+    {
+      "value": "244",
+      "label": "Post Office Counter Clerk"
+    },
+    {
+      "value": "940",
+      "label": "Post Sorter"
+    },
+    {
+      "value": "13C",
+      "label": "Post/Telegraph Officer"
+    },
+    {
+      "value": "245",
+      "label": "Postman"
+    },
+    {
+      "value": "B27",
+      "label": "Postmaster"
+    },
+    {
+      "value": "246",
+      "label": "Postwoman"
+    },
+    {
+      "value": "759",
+      "label": "Potato Merchant"
+    },
+    {
+      "value": "P24",
+      "label": "Potter"
+    },
+    {
+      "value": "15C",
+      "label": "Poultry Worker"
+    },
+    {
+      "value": "445",
+      "label": "Practice Manager"
+    },
+    {
+      "value": "941",
+      "label": "Preacher"
+    },
+    {
+      "value": "16C",
+      "label": "Precious Metal Merchant"
+    },
+    {
+      "value": "446",
+      "label": "Precision Engineer"
+    },
+    {
+      "value": "B65",
+      "label": "Premises Security Installers"
+    },
+    {
+      "value": "83A",
+      "label": "Press Correspondent"
+    },
+    {
+      "value": "576",
+      "label": "Press Officer"
+    },
+    {
+      "value": "510",
+      "label": "Press Operator"
+    },
+    {
+      "value": "35D",
+      "label": "Press Photographer - Freelance"
+    },
+    {
+      "value": "36D",
+      "label": "Press Photographer - National"
+    },
+    {
+      "value": "17C",
+      "label": "Press Producer"
+    },
+    {
+      "value": "942",
+      "label": "Press Setter"
+    },
+    {
+      "value": "943",
+      "label": "Presser"
+    },
+    {
+      "value": "247",
+      "label": "Priest"
+    },
+    {
+      "value": "19C",
+      "label": "Principal"
+    },
+    {
+      "value": "248",
+      "label": "Print Finisher"
+    },
+    {
+      "value": "P25",
+      "label": "Printer"
+    },
+    {
+      "value": "20C",
+      "label": "Printing Press Operator"
+    },
+    {
+      "value": "944",
+      "label": "Prison Chaplain"
+    },
+    {
+      "value": "P26",
+      "label": "Prison Officer"
+    },
+    {
+      "value": "17D",
+      "label": "Private Detective"
+    },
+    {
+      "value": "P44",
+      "label": "Private Investigator"
+    },
+    {
+      "value": "21C",
+      "label": "Privy Councillor"
+    },
+    {
+      "value": "P27",
+      "label": "Probation Officer"
+    },
+    {
+      "value": "945",
+      "label": "Probation Worker"
+    },
+    {
+      "value": "485",
+      "label": "Process Engineer"
+    },
+    {
+      "value": "946",
+      "label": "Process Operator"
+    },
+    {
+      "value": "P28",
+      "label": "Process Worker"
+    },
+    {
+      "value": "250",
+      "label": "Procurator Fiscal"
+    },
+    {
+      "value": "447",
+      "label": "Produce Supervisor"
+    },
+    {
+      "value": "P29",
+      "label": "Producer"
+    },
+    {
+      "value": "22C",
+      "label": "Product Designer"
+    },
+    {
+      "value": "948",
+      "label": "Product Installer"
+    },
+    {
+      "value": "448",
+      "label": "Product Manager"
+    },
+    {
+      "value": "449",
+      "label": "Production Engineer"
+    },
+    {
+      "value": "949",
+      "label": "Production Hand"
+    },
+    {
+      "value": "M52",
+      "label": "Production Manager"
+    },
+    {
+      "value": "542",
+      "label": "Production Planner"
+    },
+    {
+      "value": "24C",
+      "label": "Professional Apprentice Footballer"
+    },
+    {
+      "value": "P30",
+      "label": "Professional Boxer"
+    },
+    {
+      "value": "32D",
+      "label": "Professional Cricketer"
+    },
+    {
+      "value": "37D",
+      "label": "Professional Cyclist"
+    },
+    {
+      "value": "25C",
+      "label": "Professional Footballer"
+    },
+    {
+      "value": "63A",
+      "label": "Professional Sports Coach"
+    },
+    {
+      "value": "P34",
+      "label": "Professional Wrestler"
+    },
+    {
+      "value": "251",
+      "label": "Professor"
+    },
+    {
+      "value": "950",
+      "label": "Progress Chaser"
+    },
+    {
+      "value": "252",
+      "label": "Progress Clerk"
+    },
+    {
+      "value": "951",
+      "label": "Project Co-ordinator"
+    },
+    {
+      "value": "253",
+      "label": "Project Engineer"
+    },
+    {
+      "value": "577",
+      "label": "Project Leader"
+    },
+    {
+      "value": "254",
+      "label": "Project Manager"
+    },
+    {
+      "value": "952",
+      "label": "Project Worker"
+    },
+    {
+      "value": "P35",
+      "label": "Projectionist"
+    },
+    {
+      "value": "P36",
+      "label": "Promoter"
+    },
+    {
+      "value": "40D",
+      "label": "Promoter - Entertainments"
+    },
+    {
+      "value": "P37",
+      "label": "Promoter - Racing"
+    },
+    {
+      "value": "P38",
+      "label": "Promoter - Ring Sports"
+    },
+    {
+      "value": "41D",
+      "label": "Promoter - Sports"
+    },
+    {
+      "value": "511",
+      "label": "Proof Reader"
+    },
+    {
+      "value": "255",
+      "label": "Property Buyer"
+    },
+    {
+      "value": "256",
+      "label": "Property Dealer"
+    },
+    {
+      "value": "P49",
+      "label": "Property Developer"
+    },
+    {
+      "value": "257",
+      "label": "Property Manager"
+    },
+    {
+      "value": "258",
+      "label": "Property Valuer"
+    },
+    {
+      "value": "259",
+      "label": "Proprietor"
+    },
+    {
+      "value": "P51",
+      "label": "Prosthetist"
+    },
+    {
+      "value": "260",
+      "label": "Psychiatrist"
+    },
+    {
+      "value": "A90",
+      "label": "Psychoanalyst"
+    },
+    {
+      "value": "953",
+      "label": "Psychodynamic Counsellor"
+    },
+    {
+      "value": "261",
+      "label": "Psychologist"
+    },
+    {
+      "value": "262",
+      "label": "Psychotherapist"
+    },
+    {
+      "value": "486",
+      "label": "Public House Manager"
+    },
+    {
+      "value": "P39",
+      "label": "Public Relations Officer"
+    },
+    {
+      "value": "P42",
+      "label": "Publican"
+    },
+    {
+      "value": "450",
+      "label": "Publicity Manager"
+    },
+    {
+      "value": "P40",
+      "label": "Publisher"
+    },
+    {
+      "value": "760",
+      "label": "Publishing Manager"
+    },
+    {
+      "value": "954",
+      "label": "Purchase Clerk"
+    },
+    {
+      "value": "955",
+      "label": "Purchase Ledger Clerk"
+    },
+    {
+      "value": "578",
+      "label": "Purchasing Assistant"
+    },
+    {
+      "value": "956",
+      "label": "Purchasing Manager"
+    },
+    {
+      "value": "263",
+      "label": "Purser"
+    },
+    {
+      "value": "Q01",
+      "label": "Quality Controller"
+    },
+    {
+      "value": "543",
+      "label": "Quality Engineer"
+    },
+    {
+      "value": "957",
+      "label": "Quality Inspector"
+    },
+    {
+      "value": "544",
+      "label": "Quality Manager"
+    },
+    {
+      "value": "545",
+      "label": "Quality Technician"
+    },
+    {
+      "value": "Q02",
+      "label": "Quantity Surveyor"
+    },
+    {
+      "value": "264",
+      "label": "Quarry Worker"
+    },
+    {
+      "value": "265",
+      "label": "Queens Counsel"
+    },
+    {
+      "value": "266",
+      "label": "Rabbi"
+    },
+    {
+      "value": "761",
+      "label": "Racehorse Groom"
+    },
+    {
+      "value": "29C",
+      "label": "Racing Motorcyclist"
+    },
+    {
+      "value": "R01",
+      "label": "Racing Organiser"
+    },
+    {
+      "value": "30C",
+      "label": "Radar Mechanic"
+    },
+    {
+      "value": "762",
+      "label": "Radio Controller"
+    },
+    {
+      "value": "267",
+      "label": "Radio Director"
+    },
+    {
+      "value": "958",
+      "label": "Radio Engineer"
+    },
+    {
+      "value": "31C",
+      "label": "Radio Helpline Coordinator"
+    },
+    {
+      "value": "32C",
+      "label": "Radio Mechanic"
+    },
+    {
+      "value": "579",
+      "label": "Radio Operator"
+    },
+    {
+      "value": "268",
+      "label": "Radio Presenter"
+    },
+    {
+      "value": "269",
+      "label": "Radio Producer"
+    },
+    {
+      "value": "R02",
+      "label": "Radiographer"
+    },
+    {
+      "value": "451",
+      "label": "Radiologist"
+    },
+    {
+      "value": "33C",
+      "label": "Radiotherapist"
+    },
+    {
+      "value": "34C",
+      "label": "Railman"
+    },
+    {
+      "value": "959",
+      "label": "Rally Driver"
+    },
+    {
+      "value": "960",
+      "label": "Ramp Agent"
+    },
+    {
+      "value": "R14",
+      "label": "Re-Settlement Officer"
+    },
+    {
+      "value": "38C",
+      "label": "Reactor Attendant"
+    },
+    {
+      "value": "40C",
+      "label": "Reader"
+    },
+    {
+      "value": "39C",
+      "label": "Reader Compositor"
+    },
+    {
+      "value": "R04",
+      "label": "Receptionist"
+    },
+    {
+      "value": "961",
+      "label": "Records Supervisor"
+    },
+    {
+      "value": "962",
+      "label": "Recovery Vehicle Co-ordinator"
+    },
+    {
+      "value": "R13",
+      "label": "Recruitment Consultant"
+    },
+    {
+      "value": "270",
+      "label": "Rector"
+    },
+    {
+      "value": "R15",
+      "label": "Referee"
+    },
+    {
+      "value": "494",
+      "label": "Refit Merchandiser"
+    },
+    {
+      "value": "764",
+      "label": "Reflexologist"
+    },
+    {
+      "value": "963",
+      "label": "Refractory Engineer"
+    },
+    {
+      "value": "763",
+      "label": "Refrigeration Engineer"
+    },
+    {
+      "value": "R05",
+      "label": "Refuse Collector"
+    },
+    {
+      "value": "42D",
+      "label": "Registered Disabled"
+    },
+    {
+      "value": "R06",
+      "label": "Registrar"
+    },
+    {
+      "value": "964",
+      "label": "Regulator"
+    },
+    {
+      "value": "965",
+      "label": "Relocation Agent"
+    },
+    {
+      "value": "966",
+      "label": "Remedial Therapist"
+    },
+    {
+      "value": "765",
+      "label": "Rent Collector"
+    },
+    {
+      "value": "D67",
+      "label": "Rent Officer"
+    },
+    {
+      "value": "967",
+      "label": "Repair Man"
+    },
+    {
+      "value": "R07",
+      "label": "Reporter"
+    },
+    {
+      "value": "44D",
+      "label": "Reporter - Freelance"
+    },
+    {
+      "value": "968",
+      "label": "Reprographic Assistant"
+    },
+    {
+      "value": "90B",
+      "label": "Rescue Worker"
+    },
+    {
+      "value": "969",
+      "label": "Research Analyst"
+    },
+    {
+      "value": "43C",
+      "label": "Research Assistant"
+    },
+    {
+      "value": "C65",
+      "label": "Research Consultant"
+    },
+    {
+      "value": "452",
+      "label": "Research Director"
+    },
+    {
+      "value": "487",
+      "label": "Research Scientist"
+    },
+    {
+      "value": "453",
+      "label": "Research Technician"
+    },
+    {
+      "value": "R08",
+      "label": "Researcher"
+    },
+    {
+      "value": "A81",
+      "label": "Resin Caster"
+    },
+    {
+      "value": "271",
+      "label": "Restaurant Manager"
+    },
+    {
+      "value": "272",
+      "label": "Restaurateur"
+    },
+    {
+      "value": "273",
+      "label": "Restorer"
+    },
+    {
+      "value": "R09",
+      "label": "Retired"
+    },
+    {
+      "value": "970",
+      "label": "Revenue Clerk"
+    },
+    {
+      "value": "454",
+      "label": "Revenue Officer"
+    },
+    {
+      "value": "44C",
+      "label": "Rheumatologist"
+    },
+    {
+      "value": "R10",
+      "label": "Rig Worker"
+    },
+    {
+      "value": "275",
+      "label": "Rigger"
+    },
+    {
+      "value": "45C",
+      "label": "Riverman"
+    },
+    {
+      "value": "276",
+      "label": "Riveter"
+    },
+    {
+      "value": "B28",
+      "label": "Road Safety Officer"
+    },
+    {
+      "value": "389",
+      "label": "Road Sweeper"
+    },
+    {
+      "value": "277",
+      "label": "Road Worker"
+    },
+    {
+      "value": "580",
+      "label": "Roof Tiler"
+    },
+    {
+      "value": "R12",
+      "label": "Roofer"
+    },
+    {
+      "value": "971",
+      "label": "Rose Grower"
+    },
+    {
+      "value": "278",
+      "label": "Royal Marine"
+    },
+    {
+      "value": "46C",
+      "label": "Rubber Worker"
+    },
+    {
+      "value": "C66",
+      "label": "Rug Maker"
+    },
+    {
+      "value": "27C",
+      "label": "Rugby Player"
+    },
+    {
+      "value": "38D",
+      "label": "Rugby Player - Amateur"
+    },
+    {
+      "value": "39D",
+      "label": "Rugby Player - Professional"
+    },
+    {
+      "value": "279",
+      "label": "Saddler"
+    },
+    {
+      "value": "512",
+      "label": "Safety Officer"
+    },
+    {
+      "value": "280",
+      "label": "Sail Maker"
+    },
+    {
+      "value": "455",
+      "label": "Sales Administrator"
+    },
+    {
+      "value": "S04",
+      "label": "Sales Assistant"
+    },
+    {
+      "value": "456",
+      "label": "Sales Director"
+    },
+    {
+      "value": "E18",
+      "label": "Sales Engineer"
+    },
+    {
+      "value": "281",
+      "label": "Sales Executive"
+    },
+    {
+      "value": "282",
+      "label": "Sales Manager"
+    },
+    {
+      "value": "283",
+      "label": "Sales Representative"
+    },
+    {
+      "value": "457",
+      "label": "Sales Support"
+    },
+    {
+      "value": "D73",
+      "label": "Sales Woman"
+    },
+    {
+      "value": "284",
+      "label": "Salesman"
+    },
+    {
+      "value": "47C",
+      "label": "Salvage Dealer"
+    },
+    {
+      "value": "48C",
+      "label": "Salvage Hand"
+    },
+    {
+      "value": "49C",
+      "label": "Sample Hand"
+    },
+    {
+      "value": "285",
+      "label": "Sand Blaster"
+    },
+    {
+      "value": "50C",
+      "label": "Sand Merchant"
+    },
+    {
+      "value": "286",
+      "label": "Saw Miller"
+    },
+    {
+      "value": "51C",
+      "label": "Sawyer"
+    },
+    {
+      "value": "S05",
+      "label": "Scaffolder"
+    },
+    {
+      "value": "52C",
+      "label": "Scenehand"
+    },
+    {
+      "value": "84A",
+      "label": "School Counsellor"
+    },
+    {
+      "value": "458",
+      "label": "School Crossing Warden"
+    },
+    {
+      "value": "B68",
+      "label": "School Inspector"
+    },
+    {
+      "value": "74C",
+      "label": "School Student"
+    },
+    {
+      "value": "766",
+      "label": "Scientific Officer"
+    },
+    {
+      "value": "S06",
+      "label": "Scientist"
+    },
+    {
+      "value": "22D",
+      "label": "Scientist - Atomic Energy"
+    },
+    {
+      "value": "287",
+      "label": "Scrap Dealer"
+    },
+    {
+      "value": "288",
+      "label": "Screen Printer"
+    },
+    {
+      "value": "289",
+      "label": "Screen Writer"
+    },
+    {
+      "value": "S07",
+      "label": "Script Writer"
+    },
+    {
+      "value": "S08",
+      "label": "Sculptor"
+    },
+    {
+      "value": "290",
+      "label": "Seaman"
+    },
+    {
+      "value": "291",
+      "label": "Seamstress"
+    },
+    {
+      "value": "292",
+      "label": "Second Hand Dealer"
+    },
+    {
+      "value": "S09",
+      "label": "Secretary"
+    },
+    {
+      "value": "459",
+      "label": "Secretary And PA"
+    },
+    {
+      "value": "C67",
+      "label": "Security Consultant"
+    },
+    {
+      "value": "546",
+      "label": "Security Controller"
+    },
+    {
+      "value": "S10",
+      "label": "Security Guard"
+    },
+    {
+      "value": "S11",
+      "label": "Security Officer"
+    },
+    {
+      "value": "293",
+      "label": "Seedsman"
+    },
+    {
+      "value": "294",
+      "label": "Servant"
+    },
+    {
+      "value": "E19",
+      "label": "Service Engineer"
+    },
+    {
+      "value": "E20",
+      "label": "Service Engineer (Non-Mobile)"
+    },
+    {
+      "value": "547",
+      "label": "Service Manager"
+    },
+    {
+      "value": "55C",
+      "label": "Setter"
+    },
+    {
+      "value": "56C",
+      "label": "Sewage Worker"
+    },
+    {
+      "value": "460",
+      "label": "Share Dealer"
+    },
+    {
+      "value": "295",
+      "label": "Sheet Metal Worker"
+    },
+    {
+      "value": "296",
+      "label": "Shelf Filler"
+    },
+    {
+      "value": "767",
+      "label": "Shelter Warden"
+    },
+    {
+      "value": "297",
+      "label": "Shepherd"
+    },
+    {
+      "value": "298",
+      "label": "Sheriff"
+    },
+    {
+      "value": "299",
+      "label": "Sheriff Clerk"
+    },
+    {
+      "value": "300",
+      "label": "Sheriff Principal"
+    },
+    {
+      "value": "301",
+      "label": "Sheriffs Officer"
+    },
+    {
+      "value": "581",
+      "label": "Shift Controller"
+    },
+    {
+      "value": "B83",
+      "label": "Ship Broker"
+    },
+    {
+      "value": "302",
+      "label": "Ship Builder"
+    },
+    {
+      "value": "C23",
+      "label": "Shipping Clerk"
+    },
+    {
+      "value": "488",
+      "label": "Shipping Officer"
+    },
+    {
+      "value": "303",
+      "label": "Shipwright"
+    },
+    {
+      "value": "S13",
+      "label": "Shipyard Worker"
+    },
+    {
+      "value": "B69",
+      "label": "Shoe Maker"
+    },
+    {
+      "value": "304",
+      "label": "Shoe Repairer"
+    },
+    {
+      "value": "768",
+      "label": "Shooting Instructor"
+    },
+    {
+      "value": "S14",
+      "label": "Shop Assistant"
+    },
+    {
+      "value": "S17",
+      "label": "Shop Fitter"
+    },
+    {
+      "value": "305",
+      "label": "Shop Keeper"
+    },
+    {
+      "value": "306",
+      "label": "Shop Manager"
+    },
+    {
+      "value": "58C",
+      "label": "Shorthand Writer"
+    },
+    {
+      "value": "307",
+      "label": "Shot Blaster"
+    },
+    {
+      "value": "B72",
+      "label": "Show Jumper"
+    },
+    {
+      "value": "S39",
+      "label": "Showman"
+    },
+    {
+      "value": "308",
+      "label": "Shunter"
+    },
+    {
+      "value": "A82",
+      "label": "Sign Maker"
+    },
+    {
+      "value": "309",
+      "label": "Signalman"
+    },
+    {
+      "value": "S18",
+      "label": "Signwriter"
+    },
+    {
+      "value": "59C",
+      "label": "Silversmith"
+    },
+    {
+      "value": "60C",
+      "label": "Singer"
+    },
+    {
+      "value": "548",
+      "label": "Site Agent"
+    },
+    {
+      "value": "461",
+      "label": "Site Engineer"
+    },
+    {
+      "value": "549",
+      "label": "Skipper"
+    },
+    {
+      "value": "310",
+      "label": "Slater"
+    },
+    {
+      "value": "311",
+      "label": "Slaughterman"
+    },
+    {
+      "value": "312",
+      "label": "Smallholder"
+    },
+    {
+      "value": "61C",
+      "label": "Smelter"
+    },
+    {
+      "value": "28C",
+      "label": "Snooker Player"
+    },
+    {
+      "value": "S19",
+      "label": "Social Worker"
+    },
+    {
+      "value": "63C",
+      "label": "Sociolagist"
+    },
+    {
+      "value": "462",
+      "label": "Software Consultant"
+    },
+    {
+      "value": "463",
+      "label": "Software Engineer"
+    },
+    {
+      "value": "D96",
+      "label": "Solar Panel Installer And Repairer"
+    },
+    {
+      "value": "313",
+      "label": "Soldier"
+    },
+    {
+      "value": "S20",
+      "label": "Solicitor"
+    },
+    {
+      "value": "314",
+      "label": "Song Writer"
+    },
+    {
+      "value": "S21",
+      "label": "Sorter"
+    },
+    {
+      "value": "64C",
+      "label": "Sound Editor"
+    },
+    {
+      "value": "315",
+      "label": "Sound Engineer"
+    },
+    {
+      "value": "65C",
+      "label": "Sound Mixer"
+    },
+    {
+      "value": "550",
+      "label": "Sound Technician"
+    },
+    {
+      "value": "769",
+      "label": "Special Constable"
+    },
+    {
+      "value": "B32",
+      "label": "Special Needs Assistant"
+    },
+    {
+      "value": "316",
+      "label": "Speech Therapist"
+    },
+    {
+      "value": "66C",
+      "label": "Sports Administrator"
+    },
+    {
+      "value": "S54",
+      "label": "Sports Agent"
+    },
+    {
+      "value": "S40",
+      "label": "Sports Centre Attendant"
+    },
+    {
+      "value": "317",
+      "label": "Sports Coach"
+    },
+    {
+      "value": "770",
+      "label": "Sports Commentator"
+    },
+    {
+      "value": "67C",
+      "label": "Sports Equipment Repairer"
+    },
+    {
+      "value": "S55",
+      "label": "Sports Scout"
+    },
+    {
+      "value": "318",
+      "label": "Sportsman"
+    },
+    {
+      "value": "319",
+      "label": "Sportswoman"
+    },
+    {
+      "value": "582",
+      "label": "Spring Maker"
+    },
+    {
+      "value": "S24",
+      "label": "Stable Hand"
+    },
+    {
+      "value": "489",
+      "label": "Staff Nurse"
+    },
+    {
+      "value": "320",
+      "label": "Stage Director"
+    },
+    {
+      "value": "322",
+      "label": "Stage Manager"
+    },
+    {
+      "value": "323",
+      "label": "Stage Mover"
+    },
+    {
+      "value": "68C",
+      "label": "Stamp Dealer"
+    },
+    {
+      "value": "69C",
+      "label": "State Enrolled Nurse"
+    },
+    {
+      "value": "70C",
+      "label": "State Registered Nurse"
+    },
+    {
+      "value": "M20",
+      "label": "Station Manager"
+    },
+    {
+      "value": "S43",
+      "label": "Stationer"
+    },
+    {
+      "value": "S25",
+      "label": "Statistician"
+    },
+    {
+      "value": "324",
+      "label": "Steel Erector"
+    },
+    {
+      "value": "S41",
+      "label": "Steel Worker"
+    },
+    {
+      "value": "S26",
+      "label": "Steeplejack"
+    },
+    {
+      "value": "513",
+      "label": "Stenographer"
+    },
+    {
+      "value": "S27",
+      "label": "Stevedore"
+    },
+    {
+      "value": "325",
+      "label": "Steward"
+    },
+    {
+      "value": "326",
+      "label": "Stewardess"
+    },
+    {
+      "value": "S29",
+      "label": "Stock Controller"
+    },
+    {
+      "value": "97A",
+      "label": "Stock Exchange Dealer"
+    },
+    {
+      "value": "551",
+      "label": "Stock Manager"
+    },
+    {
+      "value": "S30",
+      "label": "Stockbroker"
+    },
+    {
+      "value": "327",
+      "label": "Stockman"
+    },
+    {
+      "value": "771",
+      "label": "Stocktaker"
+    },
+    {
+      "value": "552",
+      "label": "Stone Cutter"
+    },
+    {
+      "value": "B77",
+      "label": "Stone Sawyer"
+    },
+    {
+      "value": "S31",
+      "label": "Stonemason"
+    },
+    {
+      "value": "587",
+      "label": "Store Detective"
+    },
+    {
+      "value": "72C",
+      "label": "Store Keeper"
+    },
+    {
+      "value": "328",
+      "label": "Storeman"
+    },
+    {
+      "value": "73C",
+      "label": "Stores Controller"
+    },
+    {
+      "value": "329",
+      "label": "Storewoman"
+    },
+    {
+      "value": "D71",
+      "label": "Street Entertainer"
+    },
+    {
+      "value": "S33",
+      "label": "Street Trader"
+    },
+    {
+      "value": "330",
+      "label": "Stud Hand"
+    },
+    {
+      "value": "S45",
+      "label": "Student - Living Away"
+    },
+    {
+      "value": "S44",
+      "label": "Student - Living at Home"
+    },
+    {
+      "value": "85A",
+      "label": "Student Counseller"
+    },
+    {
+      "value": "S52",
+      "label": "Student Nurse - Living At Home"
+    },
+    {
+      "value": "S53",
+      "label": "Student Nurse - Living Away"
+    },
+    {
+      "value": "S46",
+      "label": "Student Teacher - Living At Home"
+    },
+    {
+      "value": "S47",
+      "label": "Student Teacher - Living Away"
+    },
+    {
+      "value": "553",
+      "label": "Studio Manager"
+    },
+    {
+      "value": "B33",
+      "label": "Sub-Postmaster"
+    },
+    {
+      "value": "583",
+      "label": "Sub-Postmistress"
+    },
+    {
+      "value": "76C",
+      "label": "Superintendent"
+    },
+    {
+      "value": "S42",
+      "label": "Supervisor"
+    },
+    {
+      "value": "514",
+      "label": "Supply Teacher"
+    },
+    {
+      "value": "77C",
+      "label": "Support Worker"
+    },
+    {
+      "value": "S36",
+      "label": "Surgeon"
+    },
+    {
+      "value": "45D",
+      "label": "Surgeon - N.H.S."
+    },
+    {
+      "value": "46D",
+      "label": "Surgeon - Non  N.H.S."
+    },
+    {
+      "value": "S37",
+      "label": "Surveyor"
+    },
+    {
+      "value": "S38",
+      "label": "Surveyor - Chartered"
+    },
+    {
+      "value": "332",
+      "label": "Systems Analyst"
+    },
+    {
+      "value": "584",
+      "label": "Systems Engineer"
+    },
+    {
+      "value": "464",
+      "label": "Systems Manager"
+    },
+    {
+      "value": "C68",
+      "label": "T-Shirt Printer"
+    },
+    {
+      "value": "A67",
+      "label": "TV And Video Installer"
+    },
+    {
+      "value": "A68",
+      "label": "TV And Video Repairer"
+    },
+    {
+      "value": "91C",
+      "label": "TV Announcer"
+    },
+    {
+      "value": "47D",
+      "label": "TV Broadcasting Technician"
+    },
+    {
+      "value": "A69",
+      "label": "TV Editor"
+    },
+    {
+      "value": "C86",
+      "label": "Tachograph Analyst"
+    },
+    {
+      "value": "554",
+      "label": "Tacker"
+    },
+    {
+      "value": "T01",
+      "label": "Tailor"
+    },
+    {
+      "value": "B88",
+      "label": "Tank Farm Operative"
+    },
+    {
+      "value": "976",
+      "label": "Tanker Driver"
+    },
+    {
+      "value": "333",
+      "label": "Tanner"
+    },
+    {
+      "value": "78C",
+      "label": "Tape Librarian"
+    },
+    {
+      "value": "79C",
+      "label": "Tape Operator"
+    },
+    {
+      "value": "977",
+      "label": "Tarmacer"
+    },
+    {
+      "value": "D74",
+      "label": "Tarot Reader/Palmistry Expert"
+    },
+    {
+      "value": "31A",
+      "label": "Taster"
+    },
+    {
+      "value": "772",
+      "label": "Tattooist"
+    },
+    {
+      "value": "978",
+      "label": "Tax Advisor"
+    },
+    {
+      "value": "490",
+      "label": "Tax Analyst"
+    },
+    {
+      "value": "979",
+      "label": "Tax Assistant"
+    },
+    {
+      "value": "334",
+      "label": "Tax Consultant"
+    },
+    {
+      "value": "I08",
+      "label": "Tax Inspector"
+    },
+    {
+      "value": "980",
+      "label": "Tax Manager"
+    },
+    {
+      "value": "981",
+      "label": "Tax Officer"
+    },
+    {
+      "value": "982",
+      "label": "Taxi Controller"
+    },
+    {
+      "value": "D34",
+      "label": "Taxi Driver"
+    },
+    {
+      "value": "T02",
+      "label": "Taxidermist"
+    },
+    {
+      "value": "335",
+      "label": "Tea Blender"
+    },
+    {
+      "value": "336",
+      "label": "Tea Taster"
+    },
+    {
+      "value": "T03",
+      "label": "Teacher"
+    },
+    {
+      "value": "465",
+      "label": "Teachers Assistant"
+    },
+    {
+      "value": "983",
+      "label": "Technical Advisor"
+    },
+    {
+      "value": "984",
+      "label": "Technical Analyst"
+    },
+    {
+      "value": "985",
+      "label": "Technical Assistant"
+    },
+    {
+      "value": "337",
+      "label": "Technical Author"
+    },
+    {
+      "value": "986",
+      "label": "Technical Clerk"
+    },
+    {
+      "value": "987",
+      "label": "Technical Co-ordinator"
+    },
+    {
+      "value": "988",
+      "label": "Technical Director"
+    },
+    {
+      "value": "989",
+      "label": "Technical Editor"
+    },
+    {
+      "value": "990",
+      "label": "Technical Engineer"
+    },
+    {
+      "value": "773",
+      "label": "Technical Illustrator"
+    },
+    {
+      "value": "774",
+      "label": "Technical Instructor"
+    },
+    {
+      "value": "991",
+      "label": "Technical Liaison Engineer"
+    },
+    {
+      "value": "992",
+      "label": "Technical Manager"
+    },
+    {
+      "value": "14C",
+      "label": "Technician"
+    },
+    {
+      "value": "T04",
+      "label": "Technician - Performing Arts"
+    },
+    {
+      "value": "80C",
+      "label": "Technologist"
+    },
+    {
+      "value": "D65",
+      "label": "Telecommunication Consultant"
+    },
+    {
+      "value": "338",
+      "label": "Telecommunications Engineer"
+    },
+    {
+      "value": "993",
+      "label": "Telecommunications Manager"
+    },
+    {
+      "value": "994",
+      "label": "Telegraphist"
+    },
+    {
+      "value": "995",
+      "label": "Telemarketeer"
+    },
+    {
+      "value": "339",
+      "label": "Telephone Engineer"
+    },
+    {
+      "value": "T05",
+      "label": "Telephonist"
+    },
+    {
+      "value": "S02",
+      "label": "Telesales Person"
+    },
+    {
+      "value": "340",
+      "label": "Television Director"
+    },
+    {
+      "value": "341",
+      "label": "Television Engineer"
+    },
+    {
+      "value": "342",
+      "label": "Television Presenter"
+    },
+    {
+      "value": "343",
+      "label": "Television Producer"
+    },
+    {
+      "value": "92C",
+      "label": "Television Set Builder"
+    },
+    {
+      "value": "775",
+      "label": "Telex Operator"
+    },
+    {
+      "value": "996",
+      "label": "Temperature Time Recorder"
+    },
+    {
+      "value": "997",
+      "label": "Tennis Coach"
+    },
+    {
+      "value": "D86",
+      "label": "Terrier"
+    },
+    {
+      "value": "81C",
+      "label": "Test Driver"
+    },
+    {
+      "value": "82C",
+      "label": "Test Engineer"
+    },
+    {
+      "value": "998",
+      "label": "Textile Consultant"
+    },
+    {
+      "value": "999",
+      "label": "Textile Engineer"
+    },
+    {
+      "value": "A35",
+      "label": "Textile Technician"
+    },
+    {
+      "value": "T06",
+      "label": "Textile Worker"
+    },
+    {
+      "value": "344",
+      "label": "Thatcher"
+    },
+    {
+      "value": "07B",
+      "label": "Theatre Director"
+    },
+    {
+      "value": "345",
+      "label": "Theatre Manager"
+    },
+    {
+      "value": "A36",
+      "label": "Theatre Technician"
+    },
+    {
+      "value": "346",
+      "label": "Theatrical Agent"
+    },
+    {
+      "value": "83C",
+      "label": "Theme Park Worker"
+    },
+    {
+      "value": "466",
+      "label": "Therapist"
+    },
+    {
+      "value": "491",
+      "label": "Thermal Engineer"
+    },
+    {
+      "value": "A37",
+      "label": "Thermal Insulator"
+    },
+    {
+      "value": "C88",
+      "label": "Ticket Agent"
+    },
+    {
+      "value": "37C",
+      "label": "Ticket Collector"
+    },
+    {
+      "value": "T07",
+      "label": "Ticket Inspector"
+    },
+    {
+      "value": "T24",
+      "label": "Tiler"
+    },
+    {
+      "value": "A38",
+      "label": "Timber Inspector"
+    },
+    {
+      "value": "A39",
+      "label": "Timber Worker"
+    },
+    {
+      "value": "85C",
+      "label": "Time and Motion Analyst"
+    },
+    {
+      "value": "T08",
+      "label": "Tobacconist"
+    },
+    {
+      "value": "972",
+      "label": "Toll Collector"
+    },
+    {
+      "value": "T09",
+      "label": "Tool Maker"
+    },
+    {
+      "value": "382",
+      "label": "Tool Setter"
+    },
+    {
+      "value": "A40",
+      "label": "Tour Agent"
+    },
+    {
+      "value": "347",
+      "label": "Tour Guide"
+    },
+    {
+      "value": "A41",
+      "label": "Town Clerk"
+    },
+    {
+      "value": "467",
+      "label": "Town Planner"
+    },
+    {
+      "value": "T10",
+      "label": "Toy Maker"
+    },
+    {
+      "value": "A83",
+      "label": "Toy Trader"
+    },
+    {
+      "value": "A42",
+      "label": "Track Worker"
+    },
+    {
+      "value": "A43",
+      "label": "Tractor Driver"
+    },
+    {
+      "value": "A44",
+      "label": "Tractor Mechanic"
+    },
+    {
+      "value": "A45",
+      "label": "Trade Mark Agent"
+    },
+    {
+      "value": "T23",
+      "label": "Trade Union Official"
+    },
+    {
+      "value": "348",
+      "label": "Trading Standards Officer"
+    },
+    {
+      "value": "A46",
+      "label": "Traffic Clerk"
+    },
+    {
+      "value": "04B",
+      "label": "Traffic Despatcher"
+    },
+    {
+      "value": "A47",
+      "label": "Traffic Engineer"
+    },
+    {
+      "value": "A48",
+      "label": "Traffic Officer"
+    },
+    {
+      "value": "A49",
+      "label": "Traffic Planner"
+    },
+    {
+      "value": "A50",
+      "label": "Traffic Supervisor"
+    },
+    {
+      "value": "T11",
+      "label": "Traffic Warden"
+    },
+    {
+      "value": "05B",
+      "label": "Train Despatcher"
+    },
+    {
+      "value": "D35",
+      "label": "Train Driver"
+    },
+    {
+      "value": "87B",
+      "label": "Train Motorman"
+    },
+    {
+      "value": "555",
+      "label": "Trainee Manager"
+    },
+    {
+      "value": "T12",
+      "label": "Trainer"
+    },
+    {
+      "value": "A51",
+      "label": "Training Advisor"
+    },
+    {
+      "value": "A52",
+      "label": "Training Assistant"
+    },
+    {
+      "value": "A54",
+      "label": "Training Co-ordinator"
+    },
+    {
+      "value": "A53",
+      "label": "Training Consultant"
+    },
+    {
+      "value": "A55",
+      "label": "Training Instructor"
+    },
+    {
+      "value": "468",
+      "label": "Training Manager"
+    },
+    {
+      "value": "T16",
+      "label": "Training Officer"
+    },
+    {
+      "value": "A56",
+      "label": "Transcriber"
+    },
+    {
+      "value": "T17",
+      "label": "Translator"
+    },
+    {
+      "value": "86C",
+      "label": "Transmission Controller"
+    },
+    {
+      "value": "A57",
+      "label": "Transport Clerk"
+    },
+    {
+      "value": "A58",
+      "label": "Transport Consultant"
+    },
+    {
+      "value": "469",
+      "label": "Transport Controller"
+    },
+    {
+      "value": "470",
+      "label": "Transport Engineer"
+    },
+    {
+      "value": "M21",
+      "label": "Transport Manager"
+    },
+    {
+      "value": "349",
+      "label": "Transport Officer"
+    },
+    {
+      "value": "A59",
+      "label": "Transport Planner"
+    },
+    {
+      "value": "87C",
+      "label": "Transport Policeman"
+    },
+    {
+      "value": "T18",
+      "label": "Travel Agent"
+    },
+    {
+      "value": "A60",
+      "label": "Travel Clerk"
+    },
+    {
+      "value": "350",
+      "label": "Travel Consultant"
+    },
+    {
+      "value": "351",
+      "label": "Travel Courier"
+    },
+    {
+      "value": "A61",
+      "label": "Travel Guide"
+    },
+    {
+      "value": "A62",
+      "label": "Travel Guide Writer"
+    },
+    {
+      "value": "A63",
+      "label": "Travel Representative"
+    },
+    {
+      "value": "88C",
+      "label": "Travelling Salesman/Woman"
+    },
+    {
+      "value": "89C",
+      "label": "Trawler Hand"
+    },
+    {
+      "value": "A64",
+      "label": "Treasurer"
+    },
+    {
+      "value": "352",
+      "label": "Tree Feller"
+    },
+    {
+      "value": "T20",
+      "label": "Tree Surgeon"
+    },
+    {
+      "value": "C87",
+      "label": "Trichologist"
+    },
+    {
+      "value": "T21",
+      "label": "Trinity House Pilot"
+    },
+    {
+      "value": "A65",
+      "label": "Trout Farmer"
+    },
+    {
+      "value": "90C",
+      "label": "Truck Driver"
+    },
+    {
+      "value": "776",
+      "label": "Tug Skipper"
+    },
+    {
+      "value": "353",
+      "label": "Tunneller"
+    },
+    {
+      "value": "A03",
+      "label": "Turf Accountant"
+    },
+    {
+      "value": "A66",
+      "label": "Turkey Farmer"
+    },
+    {
+      "value": "354",
+      "label": "Turner"
+    },
+    {
+      "value": "355",
+      "label": "Tutor"
+    },
+    {
+      "value": "356",
+      "label": "Typesetter"
+    },
+    {
+      "value": "A70",
+      "label": "Typewriter Engineer"
+    },
+    {
+      "value": "T22",
+      "label": "Typist"
+    },
+    {
+      "value": "93C",
+      "label": "Typographer"
+    },
+    {
+      "value": "A71",
+      "label": "Tyre Builder"
+    },
+    {
+      "value": "357",
+      "label": "Tyre Fitter"
+    },
+    {
+      "value": "A72",
+      "label": "Tyre Inspector"
+    },
+    {
+      "value": "A73",
+      "label": "Tyre Technician"
+    },
+    {
+      "value": "25D",
+      "label": "Tyre/Exhaust Fitter"
+    },
+    {
+      "value": "U06",
+      "label": "Umpire"
+    },
+    {
+      "value": "48D",
+      "label": "Undergraduate Student - Living At Home"
+    },
+    {
+      "value": "49D",
+      "label": "Undergraduate Student - Living Away from Home"
+    },
+    {
+      "value": "U01",
+      "label": "Undertaker"
+    },
+    {
+      "value": "U02",
+      "label": "Underwriter"
+    },
+    {
+      "value": "U03",
+      "label": "Unemployed"
+    },
+    {
+      "value": "16D",
+      "label": "University Dean"
+    },
+    {
+      "value": "94C",
+      "label": "University Reader"
+    },
+    {
+      "value": "Unknown",
+      "label": "Unknown"
+    },
+    {
+      "value": "U04",
+      "label": "Upholsterer"
+    },
+    {
+      "value": "U05",
+      "label": "Usher"
+    },
+    {
+      "value": "V02",
+      "label": "VDU Operator"
+    },
+    {
+      "value": "95C",
+      "label": "Valet"
+    },
+    {
+      "value": "V01",
+      "label": "Valuer"
+    },
+    {
+      "value": "777",
+      "label": "Valve Technician"
+    },
+    {
+      "value": "D46",
+      "label": "Van Driver"
+    },
+    {
+      "value": "96C",
+      "label": "Van Salesman"
+    },
+    {
+      "value": "358",
+      "label": "Vehicle Assessor"
+    },
+    {
+      "value": "68A",
+      "label": "Vehicle Bodybuilder"
+    },
+    {
+      "value": "97C",
+      "label": "Vehicle Delivery Agent"
+    },
+    {
+      "value": "E21",
+      "label": "Vehicle Engineer"
+    },
+    {
+      "value": "471",
+      "label": "Vehicle Technician"
+    },
+    {
+      "value": "778",
+      "label": "Vending Machine Filler"
+    },
+    {
+      "value": "779",
+      "label": "Vending Machine Technician"
+    },
+    {
+      "value": "D72",
+      "label": "Ventriloquist"
+    },
+    {
+      "value": "472",
+      "label": "Verger"
+    },
+    {
+      "value": "V07",
+      "label": "Veterinary Assistant"
+    },
+    {
+      "value": "98C",
+      "label": "Veterinary Nurse"
+    },
+    {
+      "value": "V04",
+      "label": "Veterinary Surgeon"
+    },
+    {
+      "value": "359",
+      "label": "Vicar"
+    },
+    {
+      "value": "99C",
+      "label": "Video Supplier"
+    },
+    {
+      "value": "01D",
+      "label": "Videotape Engineer"
+    },
+    {
+      "value": "492",
+      "label": "Violin Maker"
+    },
+    {
+      "value": "02D",
+      "label": "Vision Control Manager"
+    },
+    {
+      "value": "03D",
+      "label": "Vision Mixer"
+    },
+    {
+      "value": "V06",
+      "label": "Voluntary Worker"
+    },
+    {
+      "value": "04D",
+      "label": "Vulcanologist"
+    },
+    {
+      "value": "C24",
+      "label": "Wages Clerk"
+    },
+    {
+      "value": "360",
+      "label": "Waiter"
+    },
+    {
+      "value": "361",
+      "label": "Waitress"
+    },
+    {
+      "value": "05D",
+      "label": "Warden"
+    },
+    {
+      "value": "06D",
+      "label": "Wardrobe Mistress"
+    },
+    {
+      "value": "473",
+      "label": "Warehouse Manager"
+    },
+    {
+      "value": "362",
+      "label": "Warehouseman"
+    },
+    {
+      "value": "363",
+      "label": "Warehousewoman"
+    },
+    {
+      "value": "364",
+      "label": "Waste Dealer"
+    },
+    {
+      "value": "07D",
+      "label": "Waste Disposal Worker"
+    },
+    {
+      "value": "55D",
+      "label": "Waste Paper Merchant"
+    },
+    {
+      "value": "W02",
+      "label": "Watchmaker"
+    },
+    {
+      "value": "D87",
+      "label": "Water Diviner"
+    },
+    {
+      "value": "365",
+      "label": "Weaver"
+    },
+    {
+      "value": "W09",
+      "label": "Web Designer"
+    },
+    {
+      "value": "50D",
+      "label": "Web Developer"
+    },
+    {
+      "value": "51D",
+      "label": "Web Programmer"
+    },
+    {
+      "value": "780",
+      "label": "Weighbridge Clerk"
+    },
+    {
+      "value": "781",
+      "label": "Weighbridge Operator"
+    },
+    {
+      "value": "W04",
+      "label": "Welder"
+    },
+    {
+      "value": "585",
+      "label": "Welfare Assistant"
+    },
+    {
+      "value": "366",
+      "label": "Welfare Officer"
+    },
+    {
+      "value": "474",
+      "label": "Welfare Rights Officer"
+    },
+    {
+      "value": "367",
+      "label": "Wheel Clamper"
+    },
+    {
+      "value": "08D",
+      "label": "Wheelwright"
+    },
+    {
+      "value": "09D",
+      "label": "Whisky Blender"
+    },
+    {
+      "value": "D36",
+      "label": "Wholesale Newspaper Delivery Driver"
+    },
+    {
+      "value": "10D",
+      "label": "Will Writer"
+    },
+    {
+      "value": "W05",
+      "label": "Window Cleaner"
+    },
+    {
+      "value": "368",
+      "label": "Window Dresser"
+    },
+    {
+      "value": "F22",
+      "label": "Windscreen Fitter"
+    },
+    {
+      "value": "369",
+      "label": "Wine Merchant"
+    },
+    {
+      "value": "370",
+      "label": "Wood Carver"
+    },
+    {
+      "value": "371",
+      "label": "Wood Cutter"
+    },
+    {
+      "value": "11D",
+      "label": "Wood Machinist"
+    },
+    {
+      "value": "372",
+      "label": "Wood Worker"
+    },
+    {
+      "value": "C69",
+      "label": "Word Processing Operator"
+    },
+    {
+      "value": "12D",
+      "label": "Work Study Analyst"
+    },
+    {
+      "value": "586",
+      "label": "Works Manager"
+    },
+    {
+      "value": "W06",
+      "label": "Writer"
+    },
+    {
+      "value": "B63",
+      "label": "Yacht Master"
+    },
+    {
+      "value": "13D",
+      "label": "Yard Man"
+    },
+    {
+      "value": "556",
+      "label": "Yard Manager"
+    },
+    {
+      "value": "Y01",
+      "label": "Yoga Teacher"
+    },
+    {
+      "value": "475",
+      "label": "Youth Hostel Warden"
+    },
+    {
+      "value": "373",
+      "label": "Youth Worker"
+    },
+    {
+      "value": "Z01",
+      "label": "Zoo Keeper"
+    },
+    {
+      "value": "B64",
+      "label": "Zoo Manager"
+    },
+    {
+      "value": "374",
+      "label": "Zoologist"
+    },
+    {
+      "value": "C89",
+      "label": "Zoology Consultant"
+    }
+  ],
+  "JYMaritalStatus": [
+    {
+      "value": "003",
+      "label": "Engaged"
+    },
+    {
+      "value": "001",
+      "label": "Married"
+    },
+    {
+      "value": "005",
+      "label": "Other"
+    },
+    {
+      "value": "004",
+      "label": "Partnered"
+    },
+    {
+      "value": "002",
+      "label": "Single"
+    }
+  ],
+  "JYClaimStatus": [
+    {
+      "value": "001",
+      "label": "Declined"
+    },
+    {
+      "value": "002",
+      "label": "No Claim Made"
+    },
+    {
+      "value": "003",
+      "label": "Open"
+    },
+    {
+      "value": "004",
+      "label": "Settled"
+    }
+  ],
+  "JYIntruderAlarm": [
+    {
+      "value": "002",
+      "label": "App Dialler"
+    },
+    {
+      "value": "001",
+      "label": "Audible Only"
+    },
+    {
+      "value": "003",
+      "label": "Central Station Direct Line"
+    },
+    {
+      "value": "004",
+      "label": "NACOSS"
+    },
+    {
+      "value": "Other",
+      "label": "Other"
+    },
+    {
+      "value": "005",
+      "label": "SSAIB"
+    }
+  ],
+  "JYYesNoNA": [
+    {
+      "value": "NA",
+      "label": "N/A"
+    },
+    {
+      "value": "false",
+      "label": "No"
+    },
+    {
+      "value": "true",
+      "label": "Yes"
+    }
+  ],
+  "JYMethodOfSignalling": [
+    {
+      "value": "BTRedcare",
+      "label": "BT Redcare"
+    },
+    {
+      "value": "DC",
+      "label": "Dual Comm"
+    },
+    {
+      "value": "Other",
+      "label": "Other"
+    }
+  ],
+  "JYSafeCashRating": [
+    {
+      "value": "1000",
+      "label": "£1,000"
+    },
+    {
+      "value": "10000",
+      "label": "£10,000"
+    },
+    {
+      "value": "17500",
+      "label": "£17,500"
+    },
+    {
+      "value": "2000",
+      "label": "£2,000"
+    },
+    {
+      "value": "3000",
+      "label": "£3,000"
+    },
+    {
+      "value": "30000",
+      "label": "£30,000"
+    },
+    {
+      "value": "4000",
+      "label": "£4,000"
+    },
+    {
+      "value": "6000",
+      "label": "£6,000"
+    }
+  ],
+  "JYClaimType": [
+    {
+      "value": "002",
+      "label": "Accidental Damage - Jewellery"
+    },
+    {
+      "value": "003",
+      "label": "Accidental Damage - Other"
+    },
+    {
+      "value": "001",
+      "label": "Accidental Loss"
+    },
+    {
+      "value": "Buildings",
+      "label": "Buildings"
+    },
+    {
+      "value": "Combined",
+      "label": "Combined"
+    },
+    {
+      "value": "Contents",
+      "label": "Contents"
+    },
+    {
+      "value": "Other",
+      "label": "Other"
+    },
+    {
+      "value": "004",
+      "label": "Theft or Attempted Theft"
+    },
+    {
+      "value": "Valuables",
+      "label": "Valuables"
+    }
+  ],
+  "JYItemCategory": [
+    {
+      "value": "015",
+      "label": "Coin Collection"
+    },
+    {
+      "value": "005",
+      "label": "Collection / Memorabilia"
+    },
+    {
+      "value": "018",
+      "label": "DJ Equipment"
+    },
+    {
+      "value": "008",
+      "label": "Earring / Bracelet"
+    },
+    {
+      "value": "006",
+      "label": "Engagement Ring"
+    },
+    {
+      "value": "007",
+      "label": "Eternity Ring"
+    },
+    {
+      "value": "003",
+      "label": "Fine Art"
+    },
+    {
+      "value": "011",
+      "label": "Gold Chain / Medallion"
+    },
+    {
+      "value": "012",
+      "label": "Items in Safety Deposit"
+    },
+    {
+      "value": "001",
+      "label": "Jewellery"
+    },
+    {
+      "value": "017",
+      "label": "Musical Instrument Outside Home"
+    },
+    {
+      "value": "016",
+      "label": "Musical Instrument in Home"
+    },
+    {
+      "value": "004",
+      "label": "Musical Instrument(s)"
+    },
+    {
+      "value": "013",
+      "label": "Stamp Collection"
+    },
+    {
+      "value": "009",
+      "label": "Watch not within a Collection"
+    },
+    {
+      "value": "010",
+      "label": "Watch within a Collection"
+    },
+    {
+      "value": "002",
+      "label": "Watch(es)"
+    },
+    {
+      "value": "014",
+      "label": "Wine Collection"
+    }
+  ],
+  "JYWearingHabit": [
+    {
+      "value": "001",
+      "label": "Always Worn"
+    },
+    {
+      "value": "004",
+      "label": "Kept in the Home"
+    },
+    {
+      "value": "005",
+      "label": "Not Applicable"
+    },
+    {
+      "value": "002",
+      "label": "Occasionally Worn"
+    },
+    {
+      "value": "003",
+      "label": "Rarely Worn"
+    }
+  ],
+  "JYEndorsements": [
+    {
+      "value": "SC21",
+      "label": "Free Format"
+    },
+    {
+      "value": "SC1",
+      "label": "SC1  - Personal Custody Clause"
+    },
+    {
+      "value": "SC10",
+      "label": "SC10 - Inside the Home only"
+    },
+    {
+      "value": "SC11",
+      "label": "SC11 - Property in a Safe Deposit Box"
+    },
+    {
+      "value": "SC12",
+      "label": "SC12 - Employment Exclusion"
+    },
+    {
+      "value": "SC13",
+      "label": "SC13 - Extended Travel"
+    },
+    {
+      "value": "SC14",
+      "label": "SC14 - Excess Applies - £1,000"
+    },
+    {
+      "value": "SC15",
+      "label": "SC15 - Excess Applies - £2,500"
+    },
+    {
+      "value": "SC16",
+      "label": "SC16 - In the Home Only"
+    },
+    {
+      "value": "SC17",
+      "label": "SC17 - Travel Exclusion"
+    },
+    {
+      "value": "SC18",
+      "label": "SC18 - Inventory of Items"
+    },
+    {
+      "value": "SC19",
+      "label": "SC19 - Stamp Collection"
+    },
+    {
+      "value": "SC2",
+      "label": "SC2 - Minimum Security in Operation Requirement"
+    },
+    {
+      "value": "SC20",
+      "label": "SC20 - Valuation Endorsement"
+    },
+    {
+      "value": "SC3",
+      "label": "SC3 - Security in Operation Requirement"
+    },
+    {
+      "value": "SC4",
+      "label": "SC4 - Alarm Installation Requirement"
+    },
+    {
+      "value": "SC5",
+      "label": "SC5 - Kept in the Safe Requirement"
+    },
+    {
+      "value": "SC6",
+      "label": "SC6 - Safe Installation Requirement"
+    },
+    {
+      "value": "SC7",
+      "label": "SC7 - Security Upgrade Requirement"
+    },
+    {
+      "value": "SC8",
+      "label": "SC8 - Wine Collection"
+    },
+    {
+      "value": "SC9",
+      "label": "SC9 - Musical Instruments"
+    }
+  ]
+}
