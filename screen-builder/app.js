@@ -21,6 +21,15 @@
     return JSON.parse(JSON.stringify(obj));
   }
 
+  // Debounce helper (prevents re-render on every keystroke)
+  function debounce(fn, ms = 150) {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), ms);
+    };
+  }
+
   function safeText(el) {
     return (el?.textContent || "").replace(/\s+/g, " ").trim();
   }
@@ -124,6 +133,9 @@
     lastError: "",
   };
 
+  // Prevent inspector re-render while typing
+  let isTypingInspector = false;
+
   // -------------------------
   // DOM
   // -------------------------
@@ -168,6 +180,8 @@
     schema.meta.updatedAt = new Date().toISOString();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(schema));
   }
+
+  const saveSchemaDebounced = debounce(saveSchema, 120);
 
   function loadSchema() {
     try {
@@ -241,7 +255,21 @@
 
     renderPagesList();
     renderCanvas();
-    renderInspector();
+
+    // Don't rebuild the inspector while the user is typing in it (prevents 1-letter bug)
+    if (!isTypingInspector) {
+      renderInspector();
+    }
+
+    renderMiniStats();
+
+    // Header labels
+    const p = getPage(selection.pageId);
+    const g = getGroup(selection.pageId, selection.groupId);
+    editorTitleEl.textContent = p ? `Editor · ${p.name}` : "Editor";
+    pageNameDisplayEl.textContent = p ? p.name : "—";
+    groupNameDisplayEl.textContent = g ? g.name : "—";
+  }
     renderMiniStats();
 
     // Header labels
@@ -272,14 +300,16 @@
       name.spellcheck = false;
       name.textContent = p.name;
       name.addEventListener("focus", () => {
+        // Selecting the page should not trigger a full re-render while the user is editing
         selection.pageId = p.id;
-        // keep group selection if exists
         ensureSelection();
-        renderAll();
       });
       name.addEventListener("input", () => {
         p.name = safeText(name) || "Untitled page";
-        saveSchema();
+        saveSchemaDebounced();
+        // update header + stats without rebuilding inspector
+        editorTitleEl.textContent = `Editor · ${p.name}`;
+        pageNameDisplayEl.textContent = p.name;
         renderMiniStats();
       });
 
@@ -506,8 +536,10 @@
       inspectorEl.appendChild(sectionTitle("Page"));
       inspectorEl.appendChild(fieldText("Page name", p.name, (val) => {
         p.name = val || "Untitled page";
-        saveSchema();
-        renderAll();
+        saveSchemaDebounced();
+        renderPagesList();
+        editorTitleEl.textContent = `Editor · ${p.name}`;
+        pageNameDisplayEl.textContent = p.name;
       }));
       inspectorEl.appendChild(buttonRow([
         { label: "+ Group", kind: "primary", onClick: () => addGroupToPage(p.id) },
@@ -522,8 +554,9 @@
 
     inspectorEl.appendChild(fieldText("Group name", g.name, (val) => {
       g.name = val || "Untitled group";
-      saveSchema();
-      renderAll();
+      saveSchemaDebounced();
+      renderPagesList();
+      groupNameDisplayEl.textContent = g.name;
     }));
 
     // Move group + delete group
@@ -561,14 +594,14 @@
 
     inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
       q.title = val || "Untitled question";
-      saveSchema();
-      renderAll();
+      saveSchemaDebounced();
+      renderCanvas();
+      renderPagesList();
     }));
 
     inspectorEl.appendChild(fieldTextArea("Help text", q.help || "", (val) => {
       q.help = val;
-      saveSchema();
-      renderAll();
+      saveSchemaDebounced();
     }));
 
     inspectorEl.appendChild(fieldSelect("Type", q.type, QUESTION_TYPES.map(t => ({ value: t.key, label: t.label })), (val) => {
@@ -674,6 +707,11 @@
     input.type = "text";
     input.value = value || "";
     input.addEventListener("input", () => onChange(input.value));
+    input.addEventListener("blur", () => {
+      // Commit any dependent UI updates after typing finishes
+      isTypingInspector = false;
+      renderAll();
+    });
 
     wrap.appendChild(lab);
     wrap.appendChild(input);
@@ -692,6 +730,10 @@
     ta.className = "textarea";
     ta.value = value || "";
     ta.addEventListener("input", () => onChange(ta.value));
+    ta.addEventListener("blur", () => {
+      isTypingInspector = false;
+      renderAll();
+    });
 
     wrap.appendChild(lab);
     wrap.appendChild(ta);
@@ -1372,10 +1414,24 @@
   // Event wiring
   // -------------------------
   function wire() {
+    // Track inspector focus to prevent rebuild while typing (fixes 1-letter issue)
+    document.addEventListener("focusin", (e) => {
+      if (e.target.closest("#inspector")) isTypingInspector = true;
+    });
+
+    document.addEventListener("focusout", (e) => {
+      if (!e.target.closest("#inspector")) return;
+      setTimeout(() => {
+        if (!document.activeElement.closest("#inspector")) {
+          isTypingInspector = false;
+          renderAll();
+        }
+      }, 0);
+    });
     // LOB inline title
     lobTitleEl.addEventListener("input", () => {
       schema.lineOfBusiness = safeText(lobTitleEl) || "Line of Business";
-      saveSchema();
+      saveSchemaDebounced();
     });
     lobTitleEl.addEventListener("blur", () => {
       schema.lineOfBusiness = safeText(lobTitleEl) || "Line of Business";
