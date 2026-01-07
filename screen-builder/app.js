@@ -1304,27 +1304,19 @@
   // Preview UI
   // -------------------------
 
-  // Guard against Webflow / IX synthetic clicks on load
+  // Simple, deterministic preview control
+  // Preview ONLY opens via explicit Preview button click
   let userInitiatedPreview = false;
-  let previewUnlocked = false; // becomes true only after first real user interaction
+
   function openPreview() {
-    // HARD gate: preview can NEVER open until user has interacted with the page
-    if (!previewUnlocked) return;
-
-    // Ignore synthetic or programmatic opens
     if (!userInitiatedPreview) return;
-
-    // reset flag immediately so only direct clicks work
     userInitiatedPreview = false;
 
     preview.open = true;
     preview.index = 0;
     preview.lastError = "";
-
-    // Start with fresh answers OR keep existing? Product best practice: keep during session.
     preview.answers = preview.answers || {};
 
-    // Explicitly show modal (reverse hard-hide)
     previewBackdrop.hidden = false;
     previewBackdrop.style.display = "flex";
     previewBackdrop.style.visibility = "visible";
@@ -1333,13 +1325,12 @@
 
     document.body.style.overflow = "hidden";
 
-    // Focus stage for keyboard
     setTimeout(() => previewStage.focus(), 20);
 
     renderPreview();
   }
 
-  function closePreview() {
+  function closePreview() {) {
     preview.open = false;
     previewBackdrop.hidden = true;
     document.body.style.overflow = "";
@@ -1696,15 +1687,8 @@
   // Event wiring
   // -------------------------
   function wire() {
-    // Unlock preview ONLY after first genuine user interaction
-    document.addEventListener("pointerdown", () => {
-      previewUnlocked = true;
-    }, { once: true });
-
-    document.addEventListener("keydown", () => {
-      previewUnlocked = true;
-    }, { once: true });
     // Track inspector focus to avoid cursor-jump while typing
+ to avoid cursor-jump while typing
     document.addEventListener("focusin", (e) => {
       if (e.target.closest("#inspector")) isTypingInspector = true;
     });
@@ -1741,9 +1725,7 @@
     btnAddQuestion.addEventListener("click", addQuestion);
 
     btnPreview.addEventListener("click", () => {
-      // Mark as genuine user action (prevents Webflow auto-trigger)
       userInitiatedPreview = true;
-      // reset preview answers each time? keep. best: keep within session; but start fresh for consistent testing:
       preview.answers = {};
       openPreview();
     });
@@ -1780,7 +1762,6 @@
     preview.lastError = "";
 
     if (previewBackdrop) {
-      // HARD override for Webflow / IX / iframe restores
       previewBackdrop.hidden = true;
       previewBackdrop.style.display = "none";
       previewBackdrop.style.visibility = "hidden";
@@ -1790,23 +1771,17 @@
 
     document.body.style.overflow = "";
   }
-  }
 
-  // Run immediately
-  userInitiatedPreview = false;
+  // Always start in builder view
   forceClosePreview();
 
-  // Run again AFTER Webflow + iframe restore
   window.addEventListener("load", () => {
     forceClosePreview();
-    setTimeout(forceClosePreview, 0);
-    setTimeout(forceClosePreview, 50);
   });
 
   wire();
   renderAll();
 
-  // Auto-create friendly initial values if schema is empty or corrupted
   if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
   if (!Array.isArray(schema.pages)) schema.pages = [];
 })();
