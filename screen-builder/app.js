@@ -1,873 +1,1694 @@
-/* =========================================================
-   Screen Builder (Option B / iframe shell)
-   Excalidraw-ish: simple, clean, editable via link
-   - LOB title big editable
-   - Rename pages/groups inline
-   - Full component palette
-   - Edit options for select/radio/checkbox groups
-   - Conditional logic (show/hide) + preview answers
-   - No focus-loss typing bug
-   - Share link via URL hash + localStorage
-   ========================================================= */
+/* Product-grade Form Builder (vanilla JS)
+   - Pages + groups + questions
+   - Options editor
+   - Conditional logic
+   - Typeform-style preview (one question at a time, progress bar)
+   - Autosave + export/import JSON
+*/
 
-const LS_KEY = "screenbuilder:doc:v2";
-const HASH_KEY = "data";
+(function () {
+  const STORAGE_KEY = "og-formbuilder-schema-v1";
 
-const $ = (id) => document.getElementById(id);
+  // -------------------------
+  // Utilities
+  // -------------------------
+  const uid = (prefix = "id") =>
+    `${prefix}_${Math.random().toString(16).slice(2)}_${Date.now().toString(16)}`;
 
-function uid() {
-  // Safari-safe unique id
-  return Date.now().toString(36) + Math.random().toString(36).slice(2);
-}
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
-/* -------------------------
-   Components
--------------------------- */
-const COMPONENTS = [
-  { key: "text", label: "Text", type: "text", hasPlaceholder: true },
-  { key: "textarea", label: "Textarea", type: "textarea", hasPlaceholder: true },
-  { key: "email", label: "Email", type: "email", hasPlaceholder: true },
-  { key: "number", label: "Number", type: "number", hasPlaceholder: true },
-  { key: "date", label: "Date", type: "date", hasPlaceholder: false },
-  { key: "time", label: "Time", type: "time", hasPlaceholder: false },
-  { key: "select", label: "Select", type: "select", hasOptions: true },
-  { key: "radioGroup", label: "Radio", type: "radioGroup", hasOptions: true },
-  { key: "checkboxGroup", label: "Checkbox", type: "checkboxGroup", hasOptions: true },
-];
+  function deepClone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  }
 
-/* -------------------------
-   Encode / Decode for share links
--------------------------- */
-function encodeDoc(doc) {
-  const json = JSON.stringify(doc);
-  return btoa(unescape(encodeURIComponent(json)));
-}
-function decodeDoc(b64) {
-  const json = decodeURIComponent(escape(atob(b64)));
-  return JSON.parse(json);
-}
-function getHashParam() {
-  const hash = location.hash.startsWith("#") ? location.hash.slice(1) : "";
-  const params = new URLSearchParams(hash);
-  return params.get(HASH_KEY);
-}
-function setHashParam(value) {
-  const params = new URLSearchParams(location.hash.slice(1));
-  params.set(HASH_KEY, value);
-  location.hash = params.toString();
-}
-function saveLocal(doc) {
-  localStorage.setItem(LS_KEY, JSON.stringify(doc));
-}
-function loadLocal() {
-  const raw = localStorage.getItem(LS_KEY);
-  if (!raw) return null;
-  try { return JSON.parse(raw); } catch { return null; }
-}
+  function safeText(el) {
+    return (el?.textContent || "").replace(/\s+/g, " ").trim();
+  }
 
-/* -------------------------
-   Default doc
--------------------------- */
-function defaultDoc() {
-  const pageId = uid();
-  const groupId = uid();
-  return {
-    version: 2,
-    id: uid(),
-    lobTitle: "Home Insurance",
-    selected: { pageId, groupId, fieldId: null },
-    // used to make conditional logic “feel real” while building
-    previewAnswers: {}, // fieldId -> value OR array
-    pages: [
-      {
-        id: pageId,
-        title: "Page 1",
-        groups: [
-          {
-            id: groupId,
-            title: "Group 1",
-            fields: []
-          }
-        ]
-      }
-    ]
+  function escapeHtml(str) {
+    return String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  // -------------------------
+  // Schema model
+  // -------------------------
+  const QUESTION_TYPES = [
+    { key: "text", label: "Short text" },
+    { key: "textarea", label: "Long text" },
+    { key: "number", label: "Number" },
+    { key: "email", label: "Email" },
+    { key: "date", label: "Date" },
+    { key: "select", label: "Select (dropdown)" },
+    { key: "radio", label: "Radio group" },
+    { key: "checkboxes", label: "Checkboxes" },
+    { key: "yesno", label: "Yes / No" },
+  ];
+
+  const OPERATORS = [
+    { key: "equals", label: "equals" },
+    { key: "not_equals", label: "does not equal" },
+    { key: "contains", label: "contains" },
+    { key: "not_contains", label: "does not contain" },
+    { key: "gt", label: ">" },
+    { key: "gte", label: ">=" },
+    { key: "lt", label: "<" },
+    { key: "lte", label: "<=" },
+    { key: "is_answered", label: "is answered" },
+    { key: "is_not_answered", label: "is not answered" },
+  ];
+
+  function newDefaultSchema() {
+    const pageId = uid("page");
+    const groupId = uid("group");
+    const q1 = uid("q");
+
+    return {
+      meta: {
+        version: 1,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      lineOfBusiness: "Motor Insurance",
+      pages: [
+        {
+          id: pageId,
+          name: "About you",
+          groups: [
+            {
+              id: groupId,
+              name: "Basics",
+              questions: [
+                {
+                  id: q1,
+                  type: "text",
+                  title: "What is your full name?",
+                  help: "Use your legal name as it appears on official documents.",
+                  required: true,
+                  placeholder: "e.g. Alex Taylor",
+                  options: [],
+                  logic: { enabled: false, rules: [] },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+  }
+
+  function isOptionType(type) {
+    return type === "select" || type === "radio" || type === "checkboxes";
+  }
+
+  // -------------------------
+  // App state
+  // -------------------------
+  let schema = loadSchema() || newDefaultSchema();
+  let selection = {
+    pageId: schema.pages[0]?.id || null,
+    groupId: schema.pages[0]?.groups[0]?.id || null,
+    questionId: schema.pages[0]?.groups[0]?.questions[0]?.id || null,
   };
-}
 
-let doc = (function loadDoc() {
-  const fromHash = getHashParam();
-  if (fromHash) {
-    try { return decodeDoc(fromHash); } catch {}
+  // Preview state
+  let preview = {
+    open: false,
+    steps: [],
+    index: 0,
+    answers: {}, // qid -> value
+    lastError: "",
+  };
+
+  // -------------------------
+  // DOM
+  // -------------------------
+  const $ = (sel) => document.querySelector(sel);
+
+  const lobTitleEl = $("#lobTitle");
+  const pagesListEl = $("#pagesList");
+  const canvasEl = $("#canvas");
+  const inspectorEl = $("#inspector");
+  const inspectorSubEl = $("#inspectorSub");
+  const editorTitleEl = $("#editorTitle");
+  const emptyStateEl = $("#emptyState");
+  const editorEl = $("#editor");
+  const pageNameDisplayEl = $("#pageNameDisplay");
+  const groupNameDisplayEl = $("#groupNameDisplay");
+  const miniStatsEl = $("#miniStats");
+
+  const btnAddPage = $("#btnAddPage");
+  const btnAddGroup = $("#btnAddGroup");
+  const btnAddQuestion = $("#btnAddQuestion");
+  const btnPreview = $("#btnPreview");
+  const btnExport = $("#btnExport");
+  const btnImport = $("#btnImport");
+  const fileInput = $("#fileInput");
+  const emptyAddPage = $("#emptyAddPage");
+
+  // Preview modal DOM
+  const previewBackdrop = $("#previewBackdrop");
+  const btnClosePreview = $("#btnClosePreview");
+  const btnPrev = $("#btnPrev");
+  const btnNext = $("#btnNext");
+  const previewStage = $("#previewStage");
+  const previewTitle = $("#previewTitle");
+  const previewSub = $("#previewSub");
+  const progressFill = $("#progressFill");
+  const progressText = $("#progressText");
+
+  // -------------------------
+  // Persistence
+  // -------------------------
+  function saveSchema() {
+    schema.meta.updatedAt = new Date().toISOString();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(schema));
   }
-  const fromLocal = loadLocal();
-  if (fromLocal) return fromLocal;
-  return defaultDoc();
-})();
 
-/* -------------------------
-   Access helpers
--------------------------- */
-function getPage(pageId = doc.selected.pageId) {
-  return doc.pages.find(p => p.id === pageId) || doc.pages[0];
-}
-function getGroup(page, groupId = doc.selected.groupId) {
-  return page.groups.find(g => g.id === groupId) || page.groups[0];
-}
-function getAllFieldsOnPage(page) {
-  const out = [];
-  page.groups.forEach(g => g.fields.forEach(f => out.push(f)));
-  return out;
-}
-function findFieldOnPage(page, fieldId) {
-  for (const g of page.groups) {
-    const f = g.fields.find(x => x.id === fieldId);
-    if (f) return f;
-  }
-  return null;
-}
-function ensureSelection() {
-  const page = getPage(doc.selected.pageId);
-  doc.selected.pageId = page.id;
-  const group = getGroup(page, doc.selected.groupId);
-  doc.selected.groupId = group.id;
-}
-
-/* -------------------------
-   Conditional logic evaluation (preview)
--------------------------- */
-function isFieldVisibleOnPage(page, field) {
-  const rules = field.visibilityRules || [];
-  if (!rules.length) return true;
-
-  for (const r of rules) {
-    const answer = doc.previewAnswers[r.whenFieldId];
-
-    if (r.op === "isAnswered") {
-      const ok = Array.isArray(answer) ? answer.length > 0 : (answer !== undefined && String(answer).trim() !== "");
-      if (!ok) return false;
-      continue;
-    }
-
-    const ruleVal = (r.value ?? "").toString();
-    if (answer === undefined || answer === null) return false;
-
-    if (Array.isArray(answer)) {
-      // checkboxGroup answer
-      if (r.op === "equals") {
-        if (!answer.includes(ruleVal)) return false;
-      } else if (r.op === "notEquals") {
-        if (answer.includes(ruleVal)) return false;
-      } else if (r.op === "contains") {
-        if (!answer.join(" ").toLowerCase().includes(ruleVal.toLowerCase())) return false;
-      }
-    } else {
-      const a = String(answer);
-      if (r.op === "equals") {
-        if (a !== ruleVal) return false;
-      } else if (r.op === "notEquals") {
-        if (a === ruleVal) return false;
-      } else if (r.op === "contains") {
-        if (!a.toLowerCase().includes(ruleVal.toLowerCase())) return false;
-      }
+  function loadSchema() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed.pages)) return null;
+      return parsed;
+    } catch {
+      return null;
     }
   }
-  return true;
-}
 
-/* -------------------------
-   Render
--------------------------- */
-function renderAll() {
-  ensureSelection();
-  renderTop();
-  renderPagination();
-  renderLists();
-  renderComponents();
-  renderCanvas();
-  renderInspector();
-  renderShareState();
-}
-
-function renderTop() {
-  const el = $("lobTitle");
-  // Don’t stomp while user is editing
-  if (document.activeElement !== el) {
-    el.textContent = doc.lobTitle || "";
+  // -------------------------
+  // Find helpers
+  // -------------------------
+  function getPage(pid) {
+    return schema.pages.find((p) => p.id === pid) || null;
+  }
+  function getGroup(pid, gid) {
+    const p = getPage(pid);
+    return p?.groups?.find((g) => g.id === gid) || null;
+  }
+  function getQuestion(pid, gid, qid) {
+    const g = getGroup(pid, gid);
+    return g?.questions?.find((q) => q.id === qid) || null;
   }
 
-  const page = getPage();
-  const group = getGroup(page);
-  $("crumbs").textContent = `${page.title}  /  ${group.title}`;
-}
-
-function renderPagination() {
-  const el = $("pagination");
-  el.innerHTML = "";
-  doc.pages.forEach(p => {
-    const dot = document.createElement("div");
-    dot.className = "pageDot" + (p.id === doc.selected.pageId ? " active" : "");
-    dot.title = p.title;
-    dot.onclick = () => {
-      doc.selected.pageId = p.id;
-      doc.selected.groupId = p.groups[0]?.id || null;
-      doc.selected.fieldId = null;
-      commit("Changed page");
-    };
-    el.appendChild(dot);
-  });
-}
-
-function renderLists() {
-  const page = getPage();
-
-  // Pages list (inline rename)
-  const pageList = $("pageList");
-  pageList.innerHTML = "";
-  doc.pages.forEach((p, idx) => {
-    const item = document.createElement("div");
-    item.className = "listItem" + (p.id === doc.selected.pageId ? " active" : "");
-    item.onclick = () => {
-      doc.selected.pageId = p.id;
-      doc.selected.groupId = p.groups[0]?.id || null;
-      doc.selected.fieldId = null;
-      commit("Selected page");
-    };
-
-    const titleWrap = document.createElement("div");
-    titleWrap.style.flex = "1";
-    const title = document.createElement("div");
-    title.className = "listItemTitle";
-    title.textContent = p.title;
-    titleWrap.appendChild(title);
-
-    title.ondblclick = (ev) => {
-      ev.stopPropagation();
-      startInlineEdit(titleWrap, p.title, (val) => {
-        p.title = val || p.title;
-        commit("Renamed page", { soft: true });
-      });
-    };
-
-    const meta = document.createElement("div");
-    meta.className = "listItemMeta";
-    meta.textContent = String(idx + 1);
-
-    item.appendChild(titleWrap);
-    item.appendChild(meta);
-    pageList.appendChild(item);
-  });
-
-  // Groups list (inline rename)
-  const groupList = $("groupList");
-  groupList.innerHTML = "";
-  page.groups.forEach((g, idx) => {
-    const item = document.createElement("div");
-    item.className = "listItem" + (g.id === doc.selected.groupId ? " active" : "");
-    item.onclick = () => {
-      doc.selected.groupId = g.id;
-      doc.selected.fieldId = null;
-      commit("Selected group");
-    };
-
-    const titleWrap = document.createElement("div");
-    titleWrap.style.flex = "1";
-    const title = document.createElement("div");
-    title.className = "listItemTitle";
-    title.textContent = g.title;
-    titleWrap.appendChild(title);
-
-    title.ondblclick = (ev) => {
-      ev.stopPropagation();
-      startInlineEdit(titleWrap, g.title, (val) => {
-        g.title = val || g.title;
-        commit("Renamed group", { soft: true });
-      });
-    };
-
-    const meta = document.createElement("div");
-    meta.className = "listItemMeta";
-    meta.textContent = String(idx + 1);
-
-    item.appendChild(titleWrap);
-    item.appendChild(meta);
-    groupList.appendChild(item);
-  });
-}
-
-function renderComponents() {
-  const wrap = $("componentList");
-  wrap.innerHTML = "";
-  COMPONENTS.forEach(c => {
-    const btn = document.createElement("button");
-    btn.className = "compBtn";
-    btn.textContent = c.label;
-    btn.onclick = () => addField(c);
-    wrap.appendChild(btn);
-  });
-}
-
-function renderCanvas() {
-  const page = getPage();
-  const canvas = $("canvas");
-  canvas.innerHTML = "";
-
-  page.groups.forEach(group => {
-    const groupCard = document.createElement("div");
-    groupCard.className = "groupCard";
-
-    const gh = document.createElement("div");
-    gh.className = "groupHeader";
-
-    const gt = document.createElement("div");
-    gt.className = "groupTitle";
-    gt.textContent = group.title;
-
-    gh.appendChild(gt);
-    groupCard.appendChild(gh);
-
-    if (!group.fields.length) {
-      const empty = document.createElement("div");
-      empty.className = "hint";
-      empty.textContent = "Add components from the left.";
-      groupCard.appendChild(empty);
+  function ensureSelection() {
+    if (!schema.pages.length) {
+      selection = { pageId: null, groupId: null, questionId: null };
+      return;
     }
 
-    group.fields.forEach(field => {
-      if (!isFieldVisibleOnPage(page, field)) return;
+    const p = getPage(selection.pageId) || schema.pages[0];
+    selection.pageId = p.id;
 
-      const card = document.createElement("div");
-      card.className = "fieldCard" + (field.id === doc.selected.fieldId ? " selected" : "");
-      card.onclick = () => {
-        doc.selected.fieldId = field.id;
-        renderInspector(); // no full rerender needed
-      };
+    if (!p.groups?.length) {
+      selection.groupId = null;
+      selection.questionId = null;
+      return;
+    }
+
+    const g = getGroup(p.id, selection.groupId) || p.groups[0];
+    selection.groupId = g.id;
+
+    if (!g.questions?.length) {
+      selection.questionId = null;
+      return;
+    }
+
+    const q = getQuestion(p.id, g.id, selection.questionId) || g.questions[0];
+    selection.questionId = q.id;
+  }
+
+  // -------------------------
+  // Rendering
+  // -------------------------
+  function renderAll() {
+    ensureSelection();
+
+    // Empty state
+    const hasAnything = schema.pages.length > 0;
+    emptyStateEl.classList.toggle("show", !hasAnything);
+    editorEl.style.display = hasAnything ? "block" : "none";
+
+    // LoB title
+    if (lobTitleEl && safeText(lobTitleEl) !== schema.lineOfBusiness) {
+      lobTitleEl.textContent = schema.lineOfBusiness || "Line of Business";
+    }
+
+    renderPagesList();
+    renderCanvas();
+    renderInspector();
+    renderMiniStats();
+
+    // Header labels
+    const p = getPage(selection.pageId);
+    const g = getGroup(selection.pageId, selection.groupId);
+    editorTitleEl.textContent = p ? `Editor · ${p.name}` : "Editor";
+    pageNameDisplayEl.textContent = p ? p.name : "—";
+    groupNameDisplayEl.textContent = g ? g.name : "—";
+  }
+
+  function renderPagesList() {
+    pagesListEl.innerHTML = "";
+
+    schema.pages.forEach((p, pIdx) => {
+      const pageDiv = document.createElement("div");
+      pageDiv.className = "pageItem" + (p.id === selection.pageId ? " active" : "");
 
       const top = document.createElement("div");
-      top.className = "fieldTop";
+      top.className = "pageTop";
 
-      const label = document.createElement("div");
-      label.className = "fieldLabel";
-      label.textContent = field.label || "(No label)";
+      const left = document.createElement("div");
+      left.style.flex = "1";
+      left.style.minWidth = "0";
 
-      const type = document.createElement("div");
-      type.className = "fieldType";
-      type.textContent = field.type;
+      const name = document.createElement("div");
+      name.className = "pageName";
+      name.contentEditable = "true";
+      name.spellcheck = false;
+      name.textContent = p.name;
+      name.addEventListener("focus", () => {
+        selection.pageId = p.id;
+        // keep group selection if exists
+        ensureSelection();
+        renderAll();
+      });
+      name.addEventListener("input", () => {
+        p.name = safeText(name) || "Untitled page";
+        saveSchema();
+        renderMiniStats();
+      });
 
-      top.appendChild(label);
-      top.appendChild(type);
-      card.appendChild(top);
+      const meta = document.createElement("div");
+      meta.className = "pageMeta";
+      const qCount = p.groups.reduce((acc, g) => acc + g.questions.length, 0);
+      meta.textContent = `${p.groups.length} group${p.groups.length !== 1 ? "s" : ""} · ${qCount} question${qCount !== 1 ? "s" : ""}`;
 
-      if (field.help) {
-        const help = document.createElement("div");
-        help.className = "fieldHelp";
-        help.textContent = field.help;
-        card.appendChild(help);
+      left.appendChild(name);
+      left.appendChild(meta);
+
+      const actions = document.createElement("div");
+      actions.className = "pageActions";
+
+      // reorder up/down
+      const upBtn = iconButton("↑", "Move up");
+      upBtn.disabled = pIdx === 0;
+      upBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        moveItem(schema.pages, pIdx, pIdx - 1);
+        saveSchema();
+        renderAll();
+      });
+
+      const downBtn = iconButton("↓", "Move down");
+      downBtn.disabled = pIdx === schema.pages.length - 1;
+      downBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        moveItem(schema.pages, pIdx, pIdx + 1);
+        saveSchema();
+        renderAll();
+      });
+
+      const delBtn = iconButton("✕", "Delete page");
+      delBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!confirm(`Delete page "${p.name}"? This cannot be undone.`)) return;
+        schema.pages = schema.pages.filter((x) => x.id !== p.id);
+        saveSchema();
+        ensureSelection();
+        renderAll();
+      });
+
+      actions.appendChild(upBtn);
+      actions.appendChild(downBtn);
+      actions.appendChild(delBtn);
+
+      top.appendChild(left);
+      top.appendChild(actions);
+
+      pageDiv.appendChild(top);
+
+      // Groups chips (select group)
+      const chips = document.createElement("div");
+      chips.className = "groupsMini";
+      p.groups.forEach((g) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "groupChip" + (p.id === selection.pageId && g.id === selection.groupId ? " active" : "");
+        chip.textContent = g.name;
+        chip.addEventListener("click", () => {
+          selection.pageId = p.id;
+          selection.groupId = g.id;
+          selection.questionId = g.questions[0]?.id || null;
+          renderAll();
+        });
+        chips.appendChild(chip);
+      });
+
+      const addGroupChip = document.createElement("button");
+      addGroupChip.type = "button";
+      addGroupChip.className = "groupChip";
+      addGroupChip.textContent = "+ Group";
+      addGroupChip.addEventListener("click", () => {
+        selection.pageId = p.id;
+        addGroupToPage(p.id);
+      });
+      chips.appendChild(addGroupChip);
+
+      pageDiv.appendChild(chips);
+
+      // click page selects it
+      pageDiv.addEventListener("click", () => {
+        selection.pageId = p.id;
+        // choose first group/question
+        selection.groupId = p.groups[0]?.id || null;
+        selection.questionId = p.groups[0]?.questions[0]?.id || null;
+        renderAll();
+      });
+
+      pagesListEl.appendChild(pageDiv);
+    });
+  }
+
+  function renderCanvas() {
+    canvasEl.innerHTML = "";
+
+    const p = getPage(selection.pageId);
+    const g = getGroup(selection.pageId, selection.groupId);
+    if (!p || !g) return;
+
+    if (!g.questions.length) {
+      const empty = document.createElement("div");
+      empty.className = "tip";
+      empty.innerHTML = `
+        <div class="tipTitle">No questions in this group</div>
+        <p class="muted">Add your first question to start building a Typeform-style journey.</p>
+      `;
+      canvasEl.appendChild(empty);
+      return;
+    }
+
+    g.questions.forEach((q, qIdx) => {
+      const card = document.createElement("div");
+      card.className = "qCard" + (q.id === selection.questionId ? " active" : "");
+
+      const left = document.createElement("div");
+      left.className = "qLeft";
+
+      const title = document.createElement("div");
+      title.className = "qTitle";
+      title.textContent = q.title || "Untitled question";
+
+      const meta = document.createElement("div");
+      meta.className = "qMeta";
+
+      const typeBadge = document.createElement("span");
+      typeBadge.className = "badge";
+      typeBadge.textContent = QUESTION_TYPES.find((t) => t.key === q.type)?.label || q.type;
+
+      meta.appendChild(typeBadge);
+
+      if (q.required) {
+        const req = document.createElement("span");
+        req.className = "badge req";
+        req.textContent = "Required";
+        meta.appendChild(req);
       }
 
-      const preview = document.createElement("div");
-      preview.className = "preview";
+      if (q.logic?.enabled && (q.logic.rules?.length || 0) > 0) {
+        const lg = document.createElement("span");
+        lg.className = "badge logic";
+        lg.textContent = "Logic";
+        meta.appendChild(lg);
+      }
 
-      preview.appendChild(renderPreviewControl(page, field));
+      left.appendChild(title);
+      left.appendChild(meta);
 
-      card.appendChild(preview);
-      groupCard.appendChild(card);
+      const actions = document.createElement("div");
+      actions.className = "qActions";
+
+      const upBtn = iconButton("↑", "Move up");
+      upBtn.disabled = qIdx === 0;
+      upBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        moveItem(g.questions, qIdx, qIdx - 1);
+        saveSchema();
+        renderAll();
+      });
+
+      const downBtn = iconButton("↓", "Move down");
+      downBtn.disabled = qIdx === g.questions.length - 1;
+      downBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        moveItem(g.questions, qIdx, qIdx + 1);
+        saveSchema();
+        renderAll();
+      });
+
+      const dupBtn = iconButton("⧉", "Duplicate");
+      dupBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const copy = deepClone(q);
+        copy.id = uid("q");
+        // keep logic but reference still valid
+        g.questions.splice(qIdx + 1, 0, copy);
+        selection.questionId = copy.id;
+        saveSchema();
+        renderAll();
+      });
+
+      const delBtn = iconButton("✕", "Delete");
+      delBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!confirm("Delete this question?")) return;
+        g.questions = g.questions.filter((x) => x.id !== q.id);
+        if (selection.questionId === q.id) selection.questionId = g.questions[0]?.id || null;
+        saveSchema();
+        renderAll();
+      });
+
+      actions.appendChild(upBtn);
+      actions.appendChild(downBtn);
+      actions.appendChild(dupBtn);
+      actions.appendChild(delBtn);
+
+      card.appendChild(left);
+      card.appendChild(actions);
+
+      card.addEventListener("click", () => {
+        selection.questionId = q.id;
+        renderAll();
+      });
+
+      canvasEl.appendChild(card);
+    });
+  }
+
+  function renderInspector() {
+    inspectorEl.innerHTML = "";
+    const p = getPage(selection.pageId);
+    const g = getGroup(selection.pageId, selection.groupId);
+    const q = getQuestion(selection.pageId, selection.groupId, selection.questionId);
+
+    if (!p) {
+      inspectorSubEl.textContent = "Create a page to get started";
+      return;
+    }
+
+    if (!g) {
+      inspectorSubEl.textContent = "Select or add a group";
+      // group controls
+      inspectorEl.appendChild(sectionTitle("Page"));
+      inspectorEl.appendChild(fieldText("Page name", p.name, (val) => {
+        p.name = val || "Untitled page";
+        saveSchema();
+        renderAll();
+      }));
+      inspectorEl.appendChild(buttonRow([
+        { label: "+ Group", kind: "primary", onClick: () => addGroupToPage(p.id) },
+      ]));
+      return;
+    }
+
+    // Group editor (always visible)
+    inspectorSubEl.textContent = q ? "Editing question" : "Editing group";
+
+    inspectorEl.appendChild(sectionTitle("Group"));
+
+    inspectorEl.appendChild(fieldText("Group name", g.name, (val) => {
+      g.name = val || "Untitled group";
+      saveSchema();
+      renderAll();
+    }));
+
+    // Move group + delete group
+    inspectorEl.appendChild(buttonRow([
+      { label: "Move group up", kind: "ghost", onClick: () => moveGroup(p.id, g.id, -1) },
+      { label: "Move group down", kind: "ghost", onClick: () => moveGroup(p.id, g.id, +1) },
+    ]));
+
+    inspectorEl.appendChild(buttonRow([
+      {
+        label: "Delete group",
+        kind: "ghost",
+        onClick: () => {
+          if (!confirm(`Delete group "${g.name}"?`)) return;
+          p.groups = p.groups.filter((x) => x.id !== g.id);
+          selection.groupId = p.groups[0]?.id || null;
+          selection.questionId = p.groups[0]?.questions[0]?.id || null;
+          saveSchema();
+          renderAll();
+        },
+      },
+    ]));
+
+    inspectorEl.appendChild(divider());
+
+    // If no question selected
+    if (!q) {
+      inspectorEl.appendChild(sectionTitle("Questions"));
+      inspectorEl.appendChild(pEl("Select a question in the canvas to edit its settings.", "inlineHelp"));
+      return;
+    }
+
+    // Question inspector
+    inspectorEl.appendChild(sectionTitle("Question"));
+
+    inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
+      q.title = val || "Untitled question";
+      saveSchema();
+      renderAll();
+    }));
+
+    inspectorEl.appendChild(fieldTextArea("Help text", q.help || "", (val) => {
+      q.help = val;
+      saveSchema();
+      renderAll();
+    }));
+
+    inspectorEl.appendChild(fieldSelect("Type", q.type, QUESTION_TYPES.map(t => ({ value: t.key, label: t.label })), (val) => {
+      q.type = val;
+      if (!isOptionType(q.type)) q.options = [];
+      if (isOptionType(q.type) && (!q.options || !q.options.length)) {
+        q.options = ["Option 1", "Option 2", "Option 3"];
+      }
+      saveSchema();
+      renderAll();
+    }));
+
+    // Placeholder
+    if (q.type === "text" || q.type === "email" || q.type === "number") {
+      inspectorEl.appendChild(fieldText("Placeholder", q.placeholder || "", (val) => {
+        q.placeholder = val;
+        saveSchema();
+      }));
+    }
+
+    // Required toggle
+    inspectorEl.appendChild(toggleRow("Required", q.required === true, (on) => {
+      q.required = on;
+      saveSchema();
+      renderAll();
+    }));
+
+    // Options editor
+    if (isOptionType(q.type)) {
+      inspectorEl.appendChild(divider());
+      inspectorEl.appendChild(sectionTitle("Options"));
+      inspectorEl.appendChild(pEl("Add, rename, reorder, or delete options.", "inlineHelp"));
+      inspectorEl.appendChild(optionsEditor(q));
+    }
+
+    // Conditional logic
+    inspectorEl.appendChild(divider());
+    inspectorEl.appendChild(sectionTitle("Conditional logic"));
+    inspectorEl.appendChild(pEl("Show this question only if the rule(s) match.", "inlineHelp"));
+
+    inspectorEl.appendChild(toggleRow("Enable logic", q.logic?.enabled === true, (on) => {
+      q.logic = q.logic || { enabled: false, rules: [] };
+      q.logic.enabled = on;
+      saveSchema();
+      renderAll();
+    }));
+
+    if (q.logic?.enabled) {
+      inspectorEl.appendChild(logicEditor(p, q));
+    }
+  }
+
+  function renderMiniStats() {
+    const pages = schema.pages.length;
+    const groups = schema.pages.reduce((a, p) => a + p.groups.length, 0);
+    const questions = schema.pages.reduce(
+      (a, p) => a + p.groups.reduce((b, g) => b + g.questions.length, 0),
+      0
+    );
+
+    miniStatsEl.innerHTML = `
+      <div class="statRow"><span class="muted">Pages</span><span class="statVal">${pages}</span></div>
+      <div class="statRow"><span class="muted">Groups</span><span class="statVal">${groups}</span></div>
+      <div class="statRow"><span class="muted">Questions</span><span class="statVal">${questions}</span></div>
+      <div class="statRow"><span class="muted">Autosaved</span><span class="statVal">Yes</span></div>
+    `;
+  }
+
+  // -------------------------
+  // Components (Inspector)
+  // -------------------------
+  function sectionTitle(text) {
+    const d = document.createElement("div");
+    d.className = "sectionTitle";
+    d.textContent = text;
+    return d;
+  }
+
+  function pEl(text, className) {
+    const p = document.createElement("p");
+    p.className = className || "";
+    p.textContent = text;
+    p.style.margin = "0";
+    return p;
+  }
+
+  function divider() {
+    const d = document.createElement("div");
+    d.className = "hr";
+    return d;
+  }
+
+  function fieldText(label, value, onChange) {
+    const wrap = document.createElement("div");
+    wrap.className = "field";
+
+    const lab = document.createElement("div");
+    lab.className = "label";
+    lab.textContent = label;
+
+    const input = document.createElement("input");
+    input.className = "input";
+    input.type = "text";
+    input.value = value || "";
+    input.addEventListener("input", () => onChange(input.value));
+
+    wrap.appendChild(lab);
+    wrap.appendChild(input);
+    return wrap;
+  }
+
+  function fieldTextArea(label, value, onChange) {
+    const wrap = document.createElement("div");
+    wrap.className = "field";
+
+    const lab = document.createElement("div");
+    lab.className = "label";
+    lab.textContent = label;
+
+    const ta = document.createElement("textarea");
+    ta.className = "textarea";
+    ta.value = value || "";
+    ta.addEventListener("input", () => onChange(ta.value));
+
+    wrap.appendChild(lab);
+    wrap.appendChild(ta);
+    return wrap;
+  }
+
+  function fieldSelect(label, value, options, onChange) {
+    const wrap = document.createElement("div");
+    wrap.className = "field";
+
+    const lab = document.createElement("div");
+    lab.className = "label";
+    lab.textContent = label;
+
+    const sel = document.createElement("select");
+    sel.className = "select";
+    options.forEach((opt) => {
+      const o = document.createElement("option");
+      o.value = opt.value;
+      o.textContent = opt.label;
+      if (opt.value === value) o.selected = true;
+      sel.appendChild(o);
+    });
+    sel.addEventListener("change", () => onChange(sel.value));
+
+    wrap.appendChild(lab);
+    wrap.appendChild(sel);
+    return wrap;
+  }
+
+  function toggleRow(label, on, onToggle) {
+    const row = document.createElement("div");
+    row.className = "toggleRow";
+
+    const left = document.createElement("div");
+    left.innerHTML = `<div style="font-weight:740">${escapeHtml(label)}</div>`;
+
+    const t = document.createElement("div");
+    t.className = "toggle" + (on ? " on" : "");
+    t.setAttribute("role", "switch");
+    t.setAttribute("aria-checked", on ? "true" : "false");
+    t.tabIndex = 0;
+
+    const toggle = () => {
+      on = !on;
+      t.classList.toggle("on", on);
+      t.setAttribute("aria-checked", on ? "true" : "false");
+      onToggle(on);
+    };
+
+    t.addEventListener("click", toggle);
+    t.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggle();
+      }
     });
 
-    canvas.appendChild(groupCard);
-  });
-}
-
-function renderPreviewControl(page, field) {
-  const type = field.type;
-
-  // Text-like
-  if (["text","email","number","date","time"].includes(type)) {
-    const input = document.createElement("input");
-    input.type = type === "text" ? "text" : type;
-    input.placeholder = field.placeholder || "";
-    input.value = doc.previewAnswers[field.id] ?? "";
-    input.oninput = (e) => {
-      doc.previewAnswers[field.id] = e.target.value;
-      saveLocal(doc);
-      // conditional logic may change visibility
-      renderCanvas();
-    };
-    return input;
+    row.appendChild(left);
+    row.appendChild(t);
+    return row;
   }
 
-  if (type === "textarea") {
-    const ta = document.createElement("textarea");
-    ta.rows = 3;
-    ta.placeholder = field.placeholder || "";
-    ta.value = doc.previewAnswers[field.id] ?? "";
-    ta.oninput = (e) => {
-      doc.previewAnswers[field.id] = e.target.value;
-      saveLocal(doc);
-      renderCanvas();
-    };
-    return ta;
+  function buttonRow(btns) {
+    const wrap = document.createElement("div");
+    wrap.style.display = "flex";
+    wrap.style.gap = "10px";
+    wrap.style.flexWrap = "wrap";
+
+    btns.forEach((b) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn " + (b.kind === "primary" ? "primary" : "ghost");
+      btn.textContent = b.label;
+      btn.addEventListener("click", b.onClick);
+      wrap.appendChild(btn);
+    });
+
+    return wrap;
   }
 
-  if (type === "select") {
+  function optionsEditor(q) {
+    const wrap = document.createElement("div");
+    wrap.className = "optList";
+
+    q.options = Array.isArray(q.options) ? q.options : [];
+
+    const render = () => {
+      wrap.innerHTML = "";
+
+      q.options.forEach((opt, idx) => {
+        const row = document.createElement("div");
+        row.className = "optItem";
+
+        const input = document.createElement("input");
+        input.className = "input";
+        input.type = "text";
+        input.value = opt;
+        input.addEventListener("input", () => {
+          q.options[idx] = input.value;
+          saveSchema();
+          renderCanvas(); // keep snappy without full rerender
+        });
+
+        const up = iconButton("↑", "Up");
+        up.disabled = idx === 0;
+        up.addEventListener("click", () => {
+          moveItem(q.options, idx, idx - 1);
+          saveSchema();
+          render();
+        });
+
+        const down = iconButton("↓", "Down");
+        down.disabled = idx === q.options.length - 1;
+        down.addEventListener("click", () => {
+          moveItem(q.options, idx, idx + 1);
+          saveSchema();
+          render();
+        });
+
+        const del = iconButton("✕", "Delete option");
+        del.addEventListener("click", () => {
+          q.options.splice(idx, 1);
+          saveSchema();
+          render();
+        });
+
+        row.appendChild(input);
+        row.appendChild(up);
+        row.appendChild(down);
+        row.appendChild(del);
+
+        wrap.appendChild(row);
+      });
+
+      const addWrap = document.createElement("div");
+      addWrap.style.display = "flex";
+      addWrap.style.gap = "10px";
+
+      const addBtn = document.createElement("button");
+      addBtn.type = "button";
+      addBtn.className = "btn";
+      addBtn.textContent = "+ Add option";
+      addBtn.addEventListener("click", () => {
+        q.options.push(`Option ${q.options.length + 1}`);
+        saveSchema();
+        render();
+      });
+
+      const seedBtn = document.createElement("button");
+      seedBtn.type = "button";
+      seedBtn.className = "btn ghost";
+      seedBtn.textContent = "Seed 3 options";
+      seedBtn.addEventListener("click", () => {
+        q.options = ["Option 1", "Option 2", "Option 3"];
+        saveSchema();
+        render();
+      });
+
+      addWrap.appendChild(addBtn);
+      addWrap.appendChild(seedBtn);
+      wrap.appendChild(addWrap);
+    };
+
+    render();
+    return wrap;
+  }
+
+  function logicEditor(page, q) {
+    const wrap = document.createElement("div");
+    wrap.className = "field";
+
+    q.logic = q.logic || { enabled: true, rules: [] };
+    q.logic.rules = Array.isArray(q.logic.rules) ? q.logic.rules : [];
+
+    const availableQuestions = getAllQuestionsInOrder(schema);
+
+    // only allow referencing questions that appear before this question in order
+    const thisIndex = availableQuestions.findIndex((x) => x.id === q.id);
+    const earlier = thisIndex > 0 ? availableQuestions.slice(0, thisIndex) : [];
+
+    const hint = document.createElement("div");
+    hint.className = "inlineHelp";
+    hint.textContent = earlier.length
+      ? "Rules can reference questions that appear before this one in the flow."
+      : "Add more questions before this one to use conditional logic.";
+
+    wrap.appendChild(hint);
+
+    const list = document.createElement("div");
+    list.style.display = "flex";
+    list.style.flexDirection = "column";
+    list.style.gap = "10px";
+    list.style.marginTop = "10px";
+
+    function renderRules() {
+      list.innerHTML = "";
+
+      q.logic.rules.forEach((r, idx) => {
+        const row = document.createElement("div");
+        row.className = "toggleRow";
+        row.style.flexDirection = "column";
+        row.style.alignItems = "stretch";
+
+        const top = document.createElement("div");
+        top.style.display = "grid";
+        top.style.gridTemplateColumns = "1fr 1fr";
+        top.style.gap = "10px";
+
+        const qSel = makeSelect(
+          earlier.map((x) => ({
+            value: x.id,
+            label: `${x.title || "Untitled"} (${x.type})`,
+          })),
+          r.questionId || ""
+        );
+        qSel.addEventListener("change", () => {
+          r.questionId = qSel.value;
+          saveSchema();
+          renderRules();
+        });
+
+        const opSel = makeSelect(
+          OPERATORS.map((o) => ({ value: o.key, label: o.label })),
+          r.operator || "equals"
+        );
+        opSel.addEventListener("change", () => {
+          r.operator = opSel.value;
+          saveSchema();
+          renderRules();
+        });
+
+        top.appendChild(wrapField("If question", qSel));
+        top.appendChild(wrapField("Operator", opSel));
+
+        row.appendChild(top);
+
+        const targetQ = earlier.find((x) => x.id === r.questionId);
+        const needsValue = !["is_answered", "is_not_answered"].includes(r.operator);
+
+        if (needsValue) {
+          const valueWrap = document.createElement("div");
+          valueWrap.style.marginTop = "10px";
+
+          // If referenced question is options-based, offer dropdown
+          if (targetQ && isOptionType(targetQ.type)) {
+            const vSel = makeSelect(
+              (targetQ.options || []).map((o) => ({ value: o, label: o })),
+              r.value || ""
+            );
+            vSel.addEventListener("change", () => {
+              r.value = vSel.value;
+              saveSchema();
+            });
+            valueWrap.appendChild(wrapField("Value", vSel));
+          } else {
+            const input = document.createElement("input");
+            input.className = "input";
+            input.type = "text";
+            input.value = r.value || "";
+            input.placeholder = "Value to compare against";
+            input.addEventListener("input", () => {
+              r.value = input.value;
+              saveSchema();
+            });
+            valueWrap.appendChild(wrapField("Value", input));
+          }
+
+          row.appendChild(valueWrap);
+        }
+
+        const actions = document.createElement("div");
+        actions.style.display = "flex";
+        actions.style.gap = "10px";
+        actions.style.marginTop = "10px";
+        actions.style.justifyContent = "flex-end";
+
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "btn ghost";
+        del.textContent = "Delete rule";
+        del.addEventListener("click", () => {
+          q.logic.rules.splice(idx, 1);
+          saveSchema();
+          renderAll();
+        });
+
+        actions.appendChild(del);
+        row.appendChild(actions);
+
+        list.appendChild(row);
+      });
+
+      const add = document.createElement("button");
+      add.type = "button";
+      add.className = "btn";
+      add.textContent = "+ Add rule";
+      add.disabled = earlier.length === 0;
+      add.addEventListener("click", () => {
+        q.logic.rules.push({
+          id: uid("rule"),
+          questionId: earlier[earlier.length - 1]?.id || "",
+          operator: "equals",
+          value: "",
+        });
+        saveSchema();
+        renderAll();
+      });
+
+      list.appendChild(add);
+    }
+
+    renderRules();
+    wrap.appendChild(list);
+    return wrap;
+  }
+
+  function wrapField(labelText, el) {
+    const w = document.createElement("div");
+    w.className = "field";
+    const lab = document.createElement("div");
+    lab.className = "label";
+    lab.textContent = labelText;
+    w.appendChild(lab);
+    w.appendChild(el);
+    return w;
+  }
+
+  function makeSelect(options, value) {
     const sel = document.createElement("select");
-    const opts = field.options || [];
-    opts.forEach(o => {
+    sel.className = "select";
+    const blank = document.createElement("option");
+    blank.value = "";
+    blank.textContent = "— Select —";
+    sel.appendChild(blank);
+
+    options.forEach((o) => {
       const opt = document.createElement("option");
       opt.value = o.value;
       opt.textContent = o.label;
+      if (o.value === value) opt.selected = true;
       sel.appendChild(opt);
     });
-    const current = doc.previewAnswers[field.id];
-    if (current !== undefined) sel.value = current;
-    sel.onchange = (e) => {
-      doc.previewAnswers[field.id] = e.target.value;
-      saveLocal(doc);
-      renderCanvas();
-    };
     return sel;
   }
 
-  if (type === "radioGroup") {
-    const wrap = document.createElement("div");
-    const opts = field.options || [];
-    const current = doc.previewAnswers[field.id] ?? "";
-    opts.forEach(o => {
-      const row = document.createElement("div");
-      row.className = "choiceRow";
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = field.id;
-      input.value = o.value;
-      input.checked = current === o.value;
-      input.onchange = (e) => {
-        doc.previewAnswers[field.id] = e.target.value;
-        saveLocal(doc);
-        renderCanvas();
-      };
-      const lab = document.createElement("label");
-      lab.textContent = o.label;
-      row.appendChild(input);
-      row.appendChild(lab);
-      wrap.appendChild(row);
+  function iconButton(text, title) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "iconBtn";
+    b.title = title || "";
+    b.textContent = text;
+    // disable styling
+    Object.defineProperty(b, "disabled", {
+      set(v) {
+        if (v) {
+          b.style.opacity = "0.35";
+          b.style.pointerEvents = "none";
+        } else {
+          b.style.opacity = "1";
+          b.style.pointerEvents = "auto";
+        }
+      },
     });
-    return wrap;
+    return b;
   }
 
-  if (type === "checkboxGroup") {
-    const wrap = document.createElement("div");
-    const opts = field.options || [];
-    const current = Array.isArray(doc.previewAnswers[field.id]) ? doc.previewAnswers[field.id] : [];
-    opts.forEach(o => {
-      const row = document.createElement("div");
-      row.className = "choiceRow";
-      const input = document.createElement("input");
-      input.type = "checkbox";
-      input.value = o.value;
-      input.checked = current.includes(o.value);
-      input.onchange = (e) => {
-        const next = new Set(current);
-        if (e.target.checked) next.add(o.value);
-        else next.delete(o.value);
-        doc.previewAnswers[field.id] = Array.from(next);
-        saveLocal(doc);
-        renderCanvas();
-      };
-      const lab = document.createElement("label");
-      lab.textContent = o.label;
-      row.appendChild(input);
-      row.appendChild(lab);
-      wrap.appendChild(row);
-    });
-    return wrap;
+  function moveItem(arr, from, to) {
+    if (to < 0 || to >= arr.length) return;
+    const [it] = arr.splice(from, 1);
+    arr.splice(to, 0, it);
   }
 
-  // fallback
-  const input = document.createElement("input");
-  input.type = "text";
-  return input;
-}
-
-function renderInspector() {
-  const wrap = $("inspector");
-  wrap.innerHTML = "";
-
-  const page = getPage();
-  const field = findFieldOnPage(page, doc.selected.fieldId);
-
-  if (!field) {
-    wrap.innerHTML = `<div class="hint">Select a field to edit its properties.</div>`;
-    return;
+  function moveGroup(pageId, groupId, dir) {
+    const p = getPage(pageId);
+    if (!p) return;
+    const idx = p.groups.findIndex((g) => g.id === groupId);
+    const to = idx + dir;
+    if (idx < 0 || to < 0 || to >= p.groups.length) return;
+    moveItem(p.groups, idx, to);
+    saveSchema();
+    renderAll();
   }
 
-  // Basic fields
-  wrap.appendChild(fieldBlock("Label", textInput(field.label || "", (v) => { field.label = v; softSave(); renderCanvas(); })));
-  wrap.appendChild(fieldBlock("Help text", textArea(field.help || "", (v) => { field.help = v; softSave(); renderCanvas(); })));
-  wrap.appendChild(fieldBlock("Placeholder", textInput(field.placeholder || "", (v) => { field.placeholder = v; softSave(); renderCanvas(); })));
+  // -------------------------
+  // Actions
+  // -------------------------
+  function addPage() {
+    const pid = uid("page");
+    const gid = uid("group");
+    const qid = uid("q");
 
-  // Options editor for select/radio/checkbox groups
-  if (["select","radioGroup","checkboxGroup"].includes(field.type)) {
-    const lines = (field.options || []).map(o => `${o.value} | ${o.label}`).join("\n");
-    const ta = textArea(lines, (v) => {
-      field.options = parseOptions(v);
-      softSave();
-      renderCanvas();
-      renderInspector(); // keep textarea consistent if formatting changes
+    schema.pages.push({
+      id: pid,
+      name: `Page ${schema.pages.length + 1}`,
+      groups: [
+        {
+          id: gid,
+          name: "Group 1",
+          questions: [
+            {
+              id: qid,
+              type: "text",
+              title: "New question",
+              help: "",
+              required: false,
+              placeholder: "",
+              options: [],
+              logic: { enabled: false, rules: [] },
+            },
+          ],
+        },
+      ],
     });
-    ta.rows = 7;
-    wrap.appendChild(fieldBlock("Options (one per line: value | label)", ta));
+
+    selection.pageId = pid;
+    selection.groupId = gid;
+    selection.questionId = qid;
+    saveSchema();
+    renderAll();
   }
 
-  // Conditional logic
-  wrap.appendChild(renderConditionalEditor(page, field));
+  function addGroupToPage(pageId) {
+    const p = getPage(pageId);
+    if (!p) return;
 
-  // Delete
-  const del = document.createElement("button");
-  del.className = "smallBtn";
-  del.textContent = "Delete field";
-  del.onclick = () => {
-    deleteField(page, field.id);
-    doc.selected.fieldId = null;
-    commit("Deleted field");
-  };
-  wrap.appendChild(del);
-}
+    const gid = uid("group");
+    p.groups.push({
+      id: gid,
+      name: `Group ${p.groups.length + 1}`,
+      questions: [],
+    });
 
-function renderConditionalEditor(page, field) {
-  field.visibilityRules = field.visibilityRules || [];
+    selection.pageId = p.id;
+    selection.groupId = gid;
+    selection.questionId = null;
 
-  const container = document.createElement("div");
-  container.className = "field";
-  const lab = document.createElement("label");
-  lab.textContent = "Conditional logic";
-  container.appendChild(lab);
-
-  const hint = document.createElement("div");
-  hint.className = "hint";
-  hint.textContent = "Show this field only when all rules match (preview answers drive this).";
-  container.appendChild(hint);
-
-  const rulesWrap = document.createElement("div");
-  container.appendChild(rulesWrap);
-
-  const candidates = getAllFieldsOnPage(page).filter(f => f.id !== field.id);
-
-  if (!field.visibilityRules.length) {
-    const none = document.createElement("div");
-    none.className = "hint";
-    none.style.marginTop = "8px";
-    none.textContent = "No rules yet.";
-    rulesWrap.appendChild(none);
+    saveSchema();
+    renderAll();
   }
 
-  field.visibilityRules.forEach((r) => {
-    const rule = document.createElement("div");
-    rule.className = "rule";
+  function addQuestion() {
+    const p = getPage(selection.pageId);
+    const g = getGroup(selection.pageId, selection.groupId);
+    if (!p || !g) return;
 
-    const whenSel = document.createElement("select");
-    candidates.forEach(c => {
-      const opt = document.createElement("option");
-      opt.value = c.id;
-      opt.textContent = c.label || c.type;
-      if (c.id === r.whenFieldId) opt.selected = true;
-      whenSel.appendChild(opt);
-    });
-
-    const opSel = document.createElement("select");
-    [
-      ["equals","equals"],
-      ["notEquals","not equals"],
-      ["contains","contains"],
-      ["isAnswered","is answered"]
-    ].forEach(([val, txt]) => {
-      const opt = document.createElement("option");
-      opt.value = val;
-      opt.textContent = txt;
-      if (r.op === val) opt.selected = true;
-      opSel.appendChild(opt);
-    });
-
-    const valInput = document.createElement("input");
-    valInput.type = "text";
-    valInput.value = r.value || "";
-    valInput.placeholder = "Value";
-
-    const del = document.createElement("button");
-    del.className = "smallBtn";
-    del.textContent = "×";
-    del.title = "Delete rule";
-
-    // No full re-render while typing:
-    whenSel.onchange = (e) => { r.whenFieldId = e.target.value; softSave(); renderCanvas(); };
-    opSel.onchange = (e) => { r.op = e.target.value; softSave(); renderCanvas(); renderInspector(); };
-    valInput.oninput = (e) => { r.value = e.target.value; softSave(); renderCanvas(); };
-    del.onclick = () => {
-      field.visibilityRules = field.visibilityRules.filter(x => x.id !== r.id);
-      commit("Deleted rule");
+    const qid = uid("q");
+    const q = {
+      id: qid,
+      type: "text",
+      title: "New question",
+      help: "",
+      required: false,
+      placeholder: "",
+      options: [],
+      logic: { enabled: false, rules: [] },
     };
 
-    const row = document.createElement("div");
-    row.className = "row";
+    g.questions.push(q);
+    selection.questionId = qid;
 
-    const col1 = document.createElement("div");
-    col1.className = "field";
-    col1.style.marginBottom = "0";
-    const l1 = document.createElement("label"); l1.textContent = "When";
-    col1.appendChild(l1); col1.appendChild(whenSel);
-
-    const col2 = document.createElement("div");
-    col2.className = "field";
-    col2.style.marginBottom = "0";
-    const l2 = document.createElement("label"); l2.textContent = "Operator";
-    col2.appendChild(l2); col2.appendChild(opSel);
-
-    row.appendChild(col1);
-    row.appendChild(col2);
-
-    rule.appendChild(row);
-
-    const row2 = document.createElement("div");
-    row2.className = "row";
-    row2.style.marginTop = "8px";
-
-    const col3 = document.createElement("div");
-    col3.className = "field";
-    col3.style.marginBottom = "0";
-    const l3 = document.createElement("label"); l3.textContent = "Value";
-    col3.appendChild(l3);
-    col3.appendChild(valInput);
-
-    const col4 = document.createElement("div");
-    col4.style.display = "flex";
-    col4.style.alignItems = "flex-end";
-    col4.style.justifyContent = "flex-end";
-    col4.appendChild(del);
-
-    row2.appendChild(col3);
-    row2.appendChild(col4);
-
-    rule.appendChild(row2);
-
-    rulesWrap.appendChild(rule);
-  });
-
-  const add = document.createElement("button");
-  add.className = "btn";
-  add.style.marginTop = "10px";
-  add.textContent = "Add rule";
-  add.onclick = () => {
-    const first = candidates[0];
-    field.visibilityRules.push({
-      id: uid(),
-      whenFieldId: first ? first.id : "",
-      op: "equals",
-      value: ""
-    });
-    commit("Added rule");
-  };
-  container.appendChild(add);
-
-  return container;
-}
-
-/* -------------------------
-   Inline editing helper (page/group names)
--------------------------- */
-function startInlineEdit(container, currentValue, onDone) {
-  container.innerHTML = "";
-  const input = document.createElement("input");
-  input.className = "inlineEdit";
-  input.value = currentValue;
-  container.appendChild(input);
-  input.focus();
-  input.select();
-
-  const finish = () => {
-    const val = input.value.trim();
-    onDone(val);
-  };
-
-  input.onkeydown = (e) => {
-    if (e.key === "Enter") { e.preventDefault(); finish(); }
-    if (e.key === "Escape") { e.preventDefault(); onDone(currentValue); }
-  };
-  input.onblur = finish;
-}
-
-/* -------------------------
-   Small UI helpers
--------------------------- */
-function fieldBlock(label, control) {
-  const wrap = document.createElement("div");
-  wrap.className = "field";
-  const l = document.createElement("label");
-  l.textContent = label;
-  wrap.appendChild(l);
-  wrap.appendChild(control);
-  return wrap;
-}
-function textInput(value, onInput) {
-  const i = document.createElement("input");
-  i.type = "text";
-  i.value = value;
-  i.oninput = (e) => onInput(e.target.value);
-  return i;
-}
-function textArea(value, onInput) {
-  const t = document.createElement("textarea");
-  t.value = value;
-  t.oninput = (e) => onInput(e.target.value);
-  return t;
-}
-function parseOptions(text) {
-  const lines = (text || "").split("\n").map(s => s.trim()).filter(Boolean);
-  return lines.map(line => {
-    const parts = line.split("|").map(p => p.trim());
-    const value = parts[0] || "";
-    const label = parts[1] || parts[0] || "";
-    return { value, label };
-  });
-}
-
-/* -------------------------
-   Mutations
--------------------------- */
-function addPage() {
-  const id = uid();
-  const groupId = uid();
-  doc.pages.push({
-    id,
-    title: `Page ${doc.pages.length + 1}`,
-    groups: [{ id: groupId, title: "Group 1", fields: [] }]
-  });
-  doc.selected.pageId = id;
-  doc.selected.groupId = groupId;
-  doc.selected.fieldId = null;
-  commit("Added page");
-}
-
-function addGroup() {
-  const page = getPage();
-  const id = uid();
-  page.groups.push({ id, title: `Group ${page.groups.length + 1}`, fields: [] });
-  doc.selected.groupId = id;
-  doc.selected.fieldId = null;
-  commit("Added group");
-}
-
-function addField(component) {
-  const page = getPage();
-  const group = getGroup(page);
-
-  const base = {
-    id: uid(),
-    type: component.type,
-    label: component.label,
-    help: "",
-    placeholder: component.hasPlaceholder ? `e.g. ${component.label}` : "",
-    options: component.hasOptions ? [
-      { value: "Option 1", label: "Option 1" },
-      { value: "Option 2", label: "Option 2" },
-    ] : [],
-    visibilityRules: []
-  };
-
-  group.fields.push(base);
-  doc.selected.fieldId = base.id;
-  commit(`Added ${component.label}`);
-}
-
-function deleteField(page, fieldId) {
-  page.groups.forEach(g => {
-    g.fields = g.fields.filter(f => f.id !== fieldId);
-  });
-  // Also remove any rules pointing to it
-  page.groups.forEach(g => g.fields.forEach(f => {
-    f.visibilityRules = (f.visibilityRules || []).filter(r => r.whenFieldId !== fieldId);
-  }));
-  // Remove preview answer
-  delete doc.previewAnswers[fieldId];
-}
-
-/* -------------------------
-   Persist / Commit
--------------------------- */
-let softTimer = null;
-
-function softSave() {
-  // save local + hash (debounced) without clobbering focus
-  saveLocal(doc);
-  if (softTimer) clearTimeout(softTimer);
-  softTimer = setTimeout(() => {
-    try { setHashParam(encodeDoc(doc)); } catch {}
-    renderShareState();
-  }, 150);
-}
-
-function commit(status, opts = {}) {
-  $("statusText").textContent = status;
-  saveLocal(doc);
-
-  if (!opts.soft) {
-    try { setHashParam(encodeDoc(doc)); } catch {}
+    saveSchema();
+    renderAll();
   }
-  renderAll();
-}
 
-function renderShareState() {
-  $("shareState").textContent = getHashParam() ? "Link" : "Local";
-}
+  // -------------------------
+  // Flow building (Preview steps)
+  // -------------------------
+  function getAllQuestionsInOrder(s) {
+    const list = [];
+    s.pages.forEach((p) => {
+      p.groups.forEach((g) => {
+        g.questions.forEach((q) => {
+          list.push({
+            id: q.id,
+            pageId: p.id,
+            groupId: g.id,
+            pageName: p.name,
+            groupName: g.name,
+            ...q,
+          });
+        });
+      });
+    });
+    return list;
+  }
 
-/* -------------------------
-   Wiring
--------------------------- */
-function wire() {
-  // LOB title (big editable)
-  const lob = $("lobTitle");
-  lob.addEventListener("input", () => {
-    doc.lobTitle = lob.textContent.trim();
-    softSave();
-    $("statusText").textContent = "Edited LOB title";
-  });
-  lob.addEventListener("blur", () => {
-    doc.lobTitle = lob.textContent.trim();
-    commit("Updated LOB title", { soft: true });
-  });
+  function evaluateRule(rule, answers, referencedQuestion) {
+    const ans = answers[rule.questionId];
+    const op = rule.operator;
 
-  $("addPage").onclick = addPage;
-  $("addGroup").onclick = addGroup;
+    const isEmpty =
+      ans === undefined ||
+      ans === null ||
+      (typeof ans === "string" && ans.trim() === "") ||
+      (Array.isArray(ans) && ans.length === 0);
 
-  $("btnNew").onclick = () => {
-    doc = defaultDoc();
-    history.replaceState(null, "", location.pathname + location.search);
-    commit("New document");
-  };
+    if (op === "is_answered") return !isEmpty;
+    if (op === "is_not_answered") return isEmpty;
 
-  $("btnCopy").onclick = async () => {
-    try { setHashParam(encodeDoc(doc)); } catch {}
-    const url = location.href;
-    try {
-      await navigator.clipboard.writeText(url);
-      $("statusText").textContent = "Link copied";
-    } catch {
-      $("statusText").textContent = "Copy failed (browser blocked)";
+    const val = rule.value;
+
+    // Normalize for comparisons
+    const asString = (v) => (v === undefined || v === null ? "" : String(v));
+    const asNumber = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : NaN;
+    };
+
+    // If answer is array (checkboxes), treat contains checks against array
+    if (Array.isArray(ans)) {
+      if (op === "contains") return ans.includes(val);
+      if (op === "not_contains") return !ans.includes(val);
+      // equals/not_equals can compare joined
+      if (op === "equals") return ans.join(",") === String(val);
+      if (op === "not_equals") return ans.join(",") !== String(val);
     }
-    renderShareState();
-  };
 
-  window.addEventListener("hashchange", () => {
-    const h = getHashParam();
-    if (!h) return;
-    try {
-      doc = decodeDoc(h);
-      saveLocal(doc);
+    // Number comparisons
+    const mightBeNumeric = referencedQuestion?.type === "number";
+    if (["gt", "gte", "lt", "lte"].includes(op) || mightBeNumeric) {
+      const a = asNumber(ans);
+      const b = asNumber(val);
+      if (Number.isNaN(a) || Number.isNaN(b)) return false;
+      if (op === "gt") return a > b;
+      if (op === "gte") return a >= b;
+      if (op === "lt") return a < b;
+      if (op === "lte") return a <= b;
+    }
+
+    // String comparisons
+    const aStr = asString(ans).toLowerCase();
+    const bStr = asString(val).toLowerCase();
+
+    if (op === "equals") return aStr === bStr;
+    if (op === "not_equals") return aStr !== bStr;
+    if (op === "contains") return aStr.includes(bStr);
+    if (op === "not_contains") return !aStr.includes(bStr);
+
+    return false;
+  }
+
+  function questionShouldShow(q, allQuestionsById, answers) {
+    if (!q.logic?.enabled) return true;
+    const rules = q.logic.rules || [];
+    if (!rules.length) return true;
+
+    // AND logic (all rules must match) — best practice default.
+    return rules.every((r) => {
+      const refQ = allQuestionsById[r.questionId];
+      return evaluateRule(r, answers, refQ);
+    });
+  }
+
+  function buildPreviewSteps() {
+    const all = getAllQuestionsInOrder(schema);
+    const byId = Object.fromEntries(all.map((q) => [q.id, q]));
+
+    // Decide visibility based on current answers (dynamic)
+    const visible = all.filter((q) => questionShouldShow(q, byId, preview.answers));
+
+    // Also remove any steps whose page/group got deleted
+    return visible;
+  }
+
+  // -------------------------
+  // Preview UI
+  // -------------------------
+  function openPreview() {
+    preview.open = true;
+    preview.index = 0;
+    preview.lastError = "";
+
+    // Start with fresh answers OR keep existing? Product best practice: keep during session.
+    preview.answers = preview.answers || {};
+
+    previewBackdrop.hidden = false;
+    document.body.style.overflow = "hidden";
+
+    // Focus stage for keyboard
+    setTimeout(() => previewStage.focus(), 20);
+
+    renderPreview();
+  }
+
+  function closePreview() {
+    preview.open = false;
+    previewBackdrop.hidden = true;
+    document.body.style.overflow = "";
+    previewStage.innerHTML = "";
+  }
+
+  function setProgress() {
+    const steps = preview.steps;
+    const total = steps.length || 1;
+    const current = clamp(preview.index + 1, 1, total);
+    const pct = (current / total) * 100;
+
+    progressFill.style.width = `${pct}%`;
+    progressText.textContent = `${current} / ${total}`;
+  }
+
+  function renderPreview() {
+    preview.steps = buildPreviewSteps();
+    preview.index = clamp(preview.index, 0, Math.max(0, preview.steps.length - 1));
+
+    const steps = preview.steps;
+    const step = steps[preview.index];
+
+    previewTitle.textContent = schema.lineOfBusiness || "Preview";
+    previewSub.textContent = step ? `${step.pageName} · ${step.groupName}` : "No questions yet";
+
+    setProgress();
+
+    btnPrev.disabled = preview.index === 0;
+    btnNext.disabled = steps.length === 0;
+
+    previewStage.innerHTML = "";
+    if (!step) {
+      const wrap = document.createElement("div");
+      wrap.className = "previewCard";
+      wrap.innerHTML = `
+        <div class="pQ">No questions to preview</div>
+        <div class="pHelp">Add questions in the builder, then open Preview again.</div>
+      `;
+      previewStage.appendChild(wrap);
+      return;
+    }
+
+    const card = document.createElement("div");
+    card.className = "previewCard";
+
+    const qTitle = document.createElement("div");
+    qTitle.className = "pQ";
+    qTitle.textContent = step.title || "Untitled question";
+
+    const help = document.createElement("div");
+    help.className = "pHelp";
+    help.textContent = step.help || "";
+
+    const inputWrap = document.createElement("div");
+    inputWrap.className = "pInputWrap";
+
+    const err = document.createElement("div");
+    err.className = "err";
+    err.style.display = "none";
+
+    const currentValue = preview.answers[step.id];
+
+    const commitAnswer = (value) => {
+      preview.answers[step.id] = value;
+    };
+
+    const showError = (msg) => {
+      err.style.display = msg ? "block" : "none";
+      err.textContent = msg || "";
+    };
+
+    const validate = () => {
+      if (!step.required) return { ok: true, msg: "" };
+
+      const v = preview.answers[step.id];
+      const empty =
+        v === undefined ||
+        v === null ||
+        (typeof v === "string" && v.trim() === "") ||
+        (Array.isArray(v) && v.length === 0);
+
+      if (empty) return { ok: false, msg: "This question is required." };
+
+      if (step.type === "email") {
+        const s = String(v).trim();
+        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+        if (!isEmail) return { ok: false, msg: "Please enter a valid email address." };
+      }
+
+      if (step.type === "number") {
+        const n = Number(v);
+        if (!Number.isFinite(n)) return { ok: false, msg: "Please enter a valid number." };
+      }
+
+      return { ok: true, msg: "" };
+    };
+
+    const goNext = () => {
+      const v = validate();
+      if (!v.ok) {
+        showError(v.msg);
+        return;
+      }
+      showError("");
+
+      // After committing, rebuild steps because logic may change visibility
+      const prevStepId = step.id;
+
+      // rebuild and find where we should go next
+      const stepsNow = buildPreviewSteps();
+      const idxNow = stepsNow.findIndex((s) => s.id === prevStepId);
+
+      // If this step got hidden (shouldn't happen), clamp
+      const nextIndex = idxNow >= 0 ? idxNow + 1 : preview.index + 1;
+
+      preview.steps = stepsNow;
+      preview.index = clamp(nextIndex, 0, Math.max(0, preview.steps.length - 1));
+
+      // If end, show completion screen
+      if (preview.index >= preview.steps.length - 1 && nextIndex >= preview.steps.length) {
+        renderCompletion();
+        return;
+      }
+
+      renderPreview();
+    };
+
+    // Render input by type
+    const type = step.type;
+
+    if (type === "text" || type === "email" || type === "number" || type === "date") {
+      const input = document.createElement("input");
+      input.className = "pInput";
+      input.type = type === "text" ? "text" : type;
+      input.placeholder = step.placeholder || "";
+      input.value = currentValue ?? "";
+      input.autocomplete = "off";
+
+      input.addEventListener("input", () => commitAnswer(input.value));
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          goNext();
+        }
+      });
+
+      inputWrap.appendChild(input);
+      setTimeout(() => input.focus(), 10);
+    }
+
+    if (type === "textarea") {
+      const ta = document.createElement("textarea");
+      ta.className = "pTextarea";
+      ta.placeholder = "Type your answer…";
+      ta.value = currentValue ?? "";
+
+      ta.addEventListener("input", () => commitAnswer(ta.value));
+      ta.addEventListener("keydown", (e) => {
+        // Enter continues, Shift+Enter new line
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          goNext();
+        }
+      });
+
+      inputWrap.appendChild(ta);
+      setTimeout(() => ta.focus(), 10);
+    }
+
+    if (type === "select") {
+      const sel = document.createElement("select");
+      sel.className = "pSelect";
+
+      const blank = document.createElement("option");
+      blank.value = "";
+      blank.textContent = "Select an option…";
+      sel.appendChild(blank);
+
+      (step.options || []).forEach((o) => {
+        const opt = document.createElement("option");
+        opt.value = o;
+        opt.textContent = o;
+        sel.appendChild(opt);
+      });
+
+      sel.value = currentValue ?? "";
+      sel.addEventListener("change", () => commitAnswer(sel.value));
+
+      inputWrap.appendChild(sel);
+      setTimeout(() => sel.focus(), 10);
+    }
+
+    if (type === "radio" || type === "yesno") {
+      const opts = type === "yesno" ? ["Yes", "No"] : (step.options || []);
+      const grid = document.createElement("div");
+      grid.className = "choiceGrid";
+
+      const selected = String(currentValue ?? "");
+
+      opts.forEach((o) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "choiceBtn" + (o === selected ? " selected" : "");
+        b.textContent = o;
+        b.addEventListener("click", () => {
+          commitAnswer(o);
+          // immediate advance is a premium-feel interaction; do it.
+          goNext();
+        });
+        grid.appendChild(b);
+      });
+
+      inputWrap.appendChild(grid);
+    }
+
+    if (type === "checkboxes") {
+      const opts = step.options || [];
+      const grid = document.createElement("div");
+      grid.className = "choiceGrid";
+
+      const selected = Array.isArray(currentValue) ? currentValue.slice() : [];
+
+      const toggle = (opt) => {
+        const idx = selected.indexOf(opt);
+        if (idx >= 0) selected.splice(idx, 1);
+        else selected.push(opt);
+        commitAnswer(selected.slice());
+        renderPreview(); // re-render to update selected styling
+      };
+
+      opts.forEach((o) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "choiceBtn" + (selected.includes(o) ? " selected" : "");
+        b.textContent = o;
+        b.addEventListener("click", () => toggle(o));
+        grid.appendChild(b);
+      });
+
+      // add helper for continuing
+      const help2 = document.createElement("div");
+      help2.className = "pHelp";
+      help2.textContent = "Select one or more options, then press Next.";
+
+      inputWrap.appendChild(grid);
+      inputWrap.appendChild(help2);
+    }
+
+    // Required tag
+    if (step.required) {
+      const req = document.createElement("div");
+      req.className = "pHelp";
+      req.style.marginTop = "12px";
+      req.innerHTML = `<span class="pill">Required</span>`;
+      inputWrap.appendChild(req);
+    }
+
+    card.appendChild(qTitle);
+    if (step.help) card.appendChild(help);
+    card.appendChild(inputWrap);
+    card.appendChild(err);
+
+    previewStage.appendChild(card);
+
+    // Next/Back wiring
+    btnNext.onclick = goNext;
+    btnPrev.onclick = () => {
+      preview.index = clamp(preview.index - 1, 0, Math.max(0, preview.steps.length - 1));
+      renderPreview();
+    };
+
+    // Enter to continue on stage (fallback)
+    previewStage.onkeydown = (e) => {
+      if (e.key === "Enter") {
+        // avoid double-handling for textarea
+        const active = document.activeElement;
+        const isTextArea = active && active.tagName === "TEXTAREA";
+        if (isTextArea && e.shiftKey) return;
+        if (isTextArea && !e.shiftKey) {
+          e.preventDefault();
+          goNext();
+          return;
+        }
+      }
+    };
+  }
+
+  function renderCompletion() {
+    // A polished end-screen
+    previewStage.innerHTML = "";
+    const card = document.createElement("div");
+    card.className = "previewCard";
+
+    card.innerHTML = `
+      <div class="pQ">Done.</div>
+      <div class="pHelp">This is where your real product would submit answers or progress the user journey.</div>
+      <div class="pHelp" style="margin-top:10px;">
+        <span class="pill">Answers captured</span>
+        <span class="pill" style="margin-left:8px;">Logic applied</span>
+      </div>
+      <div class="pHelp" style="margin-top:16px;">
+        You can close the preview or go back to tweak the form.
+      </div>
+    `;
+
+    previewStage.appendChild(card);
+
+    // show full progress
+    progressFill.style.width = "100%";
+    progressText.textContent = `${preview.steps.length} / ${preview.steps.length}`;
+
+    btnNext.onclick = () => closePreview();
+  }
+
+  // -------------------------
+  // Export / Import
+  // -------------------------
+  function exportJson() {
+    saveSchema();
+    const data = JSON.stringify(schema, null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `form-schema-${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    URL.revokeObjectURL(url);
+  }
+
+  function importJsonFile(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(String(reader.result || ""));
+        if (!parsed || !Array.isArray(parsed.pages)) throw new Error("Invalid schema format.");
+        schema = parsed;
+        saveSchema();
+        ensureSelection();
+        renderAll();
+        alert("Imported successfully.");
+      } catch (e) {
+        alert("Import failed: " + (e?.message || "Unknown error"));
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // -------------------------
+  // Event wiring
+  // -------------------------
+  function wire() {
+    // LOB inline title
+    lobTitleEl.addEventListener("input", () => {
+      schema.lineOfBusiness = safeText(lobTitleEl) || "Line of Business";
+      saveSchema();
+    });
+    lobTitleEl.addEventListener("blur", () => {
+      schema.lineOfBusiness = safeText(lobTitleEl) || "Line of Business";
+      saveSchema();
       renderAll();
-      $("statusText").textContent = "Loaded from link";
-    } catch {}
-  });
-}
+    });
 
-/* -------------------------
-   Boot
--------------------------- */
-wire();
-renderAll();
+    btnAddPage.addEventListener("click", addPage);
+    emptyAddPage.addEventListener("click", addPage);
+
+    btnAddGroup.addEventListener("click", () => {
+      const p = getPage(selection.pageId);
+      if (!p) return;
+      addGroupToPage(p.id);
+    });
+
+    btnAddQuestion.addEventListener("click", addQuestion);
+
+    btnPreview.addEventListener("click", () => {
+      // reset preview answers each time? keep. best: keep within session; but start fresh for consistent testing:
+      preview.answers = {};
+      openPreview();
+    });
+
+    btnClosePreview.addEventListener("click", closePreview);
+    previewBackdrop.addEventListener("click", (e) => {
+      if (e.target === previewBackdrop) closePreview();
+    });
+
+    btnExport.addEventListener("click", exportJson);
+
+    btnImport.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", () => {
+      const f = fileInput.files?.[0];
+      if (f) importJsonFile(f);
+      fileInput.value = "";
+    });
+
+    // ESC closes preview
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !previewBackdrop.hidden) closePreview();
+    });
+  }
+
+  // -------------------------
+  // Init
+  // -------------------------
+  wire();
+  renderAll();
+
+  // Auto-create friendly initial values if schema is empty or corrupted
+  if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
+  if (!Array.isArray(schema.pages)) schema.pages = [];
+})();
