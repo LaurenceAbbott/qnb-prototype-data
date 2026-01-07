@@ -19,7 +19,6 @@
 
 (function () {
   const STORAGE_KEY = "og-formbuilder-schema-v1";
-  const STORAGE_KEY = "og-formbuilder-schema-v1";
 
   // -------------------------
   // Utilities
@@ -1310,6 +1309,7 @@
   // .modalBackdrop.isOpen { display: grid; }
 
   function openPreview() {
+    if (!previewBackdrop) return;
     preview.open = true;
     preview.index = 0;
     preview.lastError = "";
@@ -1323,6 +1323,7 @@
   }
 
   function closePreview() {
+    if (!previewBackdrop) return;
     preview.open = false;
     previewBackdrop.classList.remove("isOpen");
     document.body.style.overflow = "";
