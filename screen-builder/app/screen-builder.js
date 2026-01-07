@@ -61,7 +61,7 @@ function showCreateJourneyModal(){
     <div class="sb-modal">
       <div class="sb-modal-head">
         <strong>Create a new journey</strong>
-        <div>Start a new line of business journey and begin adding pages and questions.</div>
+        <div>Enter details to start building.</div>
       </div>
       <div class="sb-modal-body">
         <div class="sb-kv">
@@ -74,12 +74,12 @@ function showCreateJourneyModal(){
         </div>
         <div class="sb-kv">
           <div class="k">Journey ID</div>
-          <input class="sb-input" id="sb-new-id" placeholder="auto-generated" />
+          <input class="sb-input" id="sb-new-id" placeholder="e.g. home" />
         </div>
-        <div class="sb-inline-help">Tip: ID becomes the filename in GitHub (e.g. <span style="font-family:var(--mono)">journeys/home.json</span>).</div>
+        <div class="sb-inline-help">This creates a draft in the builder. You can Export JSON (and later Publish).</div>
       </div>
       <div class="sb-modal-actions">
-        <button class="sb-btn" id="sb-new-demo">Load demo</button>
+        <button class="sb-btn" id="sb-new-close">Close</button>
         <button class="sb-btn primary" id="sb-new-create">Create journey</button>
       </div>
     </div>
@@ -87,51 +87,49 @@ function showCreateJourneyModal(){
   document.body.appendChild(el);
 
   const nameEl = el.querySelector("#sb-new-name");
-  const lobEl = el.querySelector("#sb-new-lob");
-  const idEl  = el.querySelector("#sb-new-id");
+  const lobEl  = el.querySelector("#sb-new-lob");
+  const idEl   = el.querySelector("#sb-new-id");
 
-  const syncId = () => {
-    const base = slugify(nameEl.value) || slugify(lobEl.value);
-    if(!idEl.dataset.touched) idEl.value = base || "";
+  const slugify = (s) => String(s||"").trim().toLowerCase()
+    .replace(/['"]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+
+  const sync = () => {
+    const id = slugify(nameEl.value) || slugify(lobEl.value);
+    if(!idEl.value) idEl.value = id;
   };
+  nameEl.addEventListener("input", sync);
+  lobEl.addEventListener("input", sync);
 
-  nameEl.addEventListener("input", syncId);
-  lobEl.addEventListener("input", syncId);
-  idEl.addEventListener("input", () => { idEl.dataset.touched = "1"; });
-
-  el.querySelector("#sb-new-demo").addEventListener("click", () => {
-    // Load default journey by setting URL param (keeps your existing behaviour)
-    const url = new URL(window.location.href);
-    url.searchParams.set("journey", (CONFIG.defaultJourneyId || "motor"));
-    window.location.href = url.toString();
-  });
+  el.querySelector("#sb-new-close").addEventListener("click", () => el.remove());
 
   el.querySelector("#sb-new-create").addEventListener("click", () => {
     const name = nameEl.value.trim();
-    const lob = lobEl.value.trim().toLowerCase();
-    const id = (idEl.value.trim() || slugify(name) || slugify(lob));
+    const lob  = lobEl.value.trim().toLowerCase();
+    const id   = (idEl.value.trim() || slugify(name) || slugify(lob));
 
     if(!name || !lob || !id){
       alert("Please enter Journey name, Line of business, and Journey ID.");
       return;
     }
 
-    state.journey = makeBlankJourney({ id, name, lob });
-    state.preview.pageIndex = 0;
-    state.selected = { kind:"journey", pageId:null, groupId:null, questionId:null };
-    state.answers = {};
-    state.errors = {};
+    state.journey = {
+      schemaVersion: 1,
+      id,
+      name,
+      lob,
+      pages: [{ id:"p1", title:"Page 1", groups:[{ id:"g1", title:"Group 1", questions:[] }] }]
+    };
 
-    // Update the URL so the journey is shareable
     const url = new URL(window.location.href);
     url.searchParams.set("journey", id);
     window.history.replaceState({}, "", url.toString());
 
     el.remove();
     render();
-    toast("New journey created (not yet saved). Use Export JSON or Publish.");
+    toast("Draft journey created (not saved yet).");
   });
 }
+
 
   
   // ===== RENDER =====
@@ -858,31 +856,27 @@ async function load(){
   state.codelists.clear();
   codelists.forEach(cl => state.codelists.set(cl.id, cl));
 
-  // If there's NO journey param, show the create modal and stop
+  // ✅ No journey param = show modal, DO NOT load any journey
   if(!journeyIdFromUrl){
     state.journey = null;
     state.selected = { kind:"journey", pageId:null, groupId:null, questionId:null };
     state.preview.pageIndex = 0;
 
-    render();                // renders shell (will show Loading/blank state)
-    showCreateJourneyModal(); // overlay
+    render();
+    showCreateJourneyModal();
     return;
   }
 
-  // If journey param exists, load that journey
-  const journeyId = journeyIdFromUrl;
-
+  // ✅ Journey param exists = load that journey
   const journeyUrl =
     CONFIG.journeyUrl ||
-    (CONFIG.journeyBaseUrl ? `${CONFIG.journeyBaseUrl}${journeyId}.json` : "");
+    (CONFIG.journeyBaseUrl ? `${CONFIG.journeyBaseUrl}${journeyIdFromUrl}.json` : "");
 
   if (!journeyUrl) throw new Error("No journeyUrl configured.");
 
   const journey = await fetchJson(journeyUrl);
-
   state.journey = journey;
 
-  // Default selection
   state.selected = { kind:"journey", pageId:null, groupId:null, questionId:null };
   state.preview.pageIndex = 0;
 
