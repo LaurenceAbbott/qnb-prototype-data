@@ -18,18 +18,7 @@
 */
 
 (function () {
-  // HARD guarantee: preview is hidden before anything else runs
-  document.addEventListener("DOMContentLoaded", () => {
-    const pb = document.getElementById("previewBackdrop");
-    if (pb) {
-      pb.hidden = true;
-      pb.style.display = "none";
-      pb.style.visibility = "hidden";
-      pb.style.opacity = "0";
-      pb.style.pointerEvents = "none";
-    }
-    document.body.style.overflow = "";
-  });
+  const STORAGE_KEY = "og-formbuilder-schema-v1";
   const STORAGE_KEY = "og-formbuilder-schema-v1";
 
   // -------------------------
@@ -1377,7 +1366,30 @@
       return;
     }
 
-    // (rest of renderPreview unchanged)
+    // Render single question step
+    const card = document.createElement("div");
+    card.className = "previewCard";
+
+    const qEl = document.createElement("div");
+    qEl.className = "pQ";
+    qEl.textContent = step.title || "Untitled question";
+
+    const inputWrap = document.createElement("div");
+    inputWrap.className = "pInput";
+
+    const input = document.createElement("input");
+    input.className = "input";
+    input.type = "text";
+    input.value = preview.answers[step.id] || "";
+    input.addEventListener("input", () => {
+      preview.answers[step.id] = input.value;
+    });
+
+    inputWrap.appendChild(input);
+    card.appendChild(qEl);
+    card.appendChild(inputWrap);
+    previewStage.appendChild(card);
+  }
 
   // -------------------------
   function exportJson() {
@@ -1474,7 +1486,9 @@
 
     // ESC closes preview
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !previewBackdrop.hidden) closePreview();
+      if (e.key === "Escape" && previewBackdrop.classList.contains("isOpen")) {
+        closePreview();
+      }
     });
   }
 
