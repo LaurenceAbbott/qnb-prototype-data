@@ -1306,12 +1306,17 @@
 
   // Guard against Webflow / IX synthetic clicks on load
   let userInitiatedPreview = false;
+  let previewUnlocked = false; // becomes true only after first real user interaction
   function openPreview() {
+    // HARD gate: preview can NEVER open until user has interacted with the page
+    if (!previewUnlocked) return;
+
     // Ignore synthetic or programmatic opens
     if (!userInitiatedPreview) return;
 
     // reset flag immediately so only direct clicks work
     userInitiatedPreview = false;
+
     preview.open = true;
     preview.index = 0;
     preview.lastError = "";
@@ -1319,7 +1324,13 @@
     // Start with fresh answers OR keep existing? Product best practice: keep during session.
     preview.answers = preview.answers || {};
 
+    // Explicitly show modal (reverse hard-hide)
     previewBackdrop.hidden = false;
+    previewBackdrop.style.display = "flex";
+    previewBackdrop.style.visibility = "visible";
+    previewBackdrop.style.opacity = "1";
+    previewBackdrop.style.pointerEvents = "auto";
+
     document.body.style.overflow = "hidden";
 
     // Focus stage for keyboard
@@ -1685,6 +1696,14 @@
   // Event wiring
   // -------------------------
   function wire() {
+    // Unlock preview ONLY after first genuine user interaction
+    document.addEventListener("pointerdown", () => {
+      previewUnlocked = true;
+    }, { once: true });
+
+    document.addEventListener("keydown", () => {
+      previewUnlocked = true;
+    }, { once: true });
     // Track inspector focus to avoid cursor-jump while typing
     document.addEventListener("focusin", (e) => {
       if (e.target.closest("#inspector")) isTypingInspector = true;
@@ -1770,6 +1789,7 @@
     }
 
     document.body.style.overflow = "";
+  }
   }
 
   // Run immediately
