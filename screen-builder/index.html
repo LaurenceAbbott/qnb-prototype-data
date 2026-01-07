@@ -10,55 +10,83 @@
 
 <div class="app">
 
-  <!-- TOP BAR -->
   <header class="topbar">
     <div class="topbar-left">
-      <div class="brand">Screen Builder</div>
+      <div class="brand">
+        <span class="brandMark"></span>
+        <span>Screen Builder</span>
+      </div>
 
-      <div class="lob">
-        <label>Line of Business</label>
-        <input id="lobTitle" placeholder="e.g. Home Insurance" />
+      <div class="lobBlock">
+        <div class="lobLabel">Line of Business</div>
+        <!-- Big editable title (NOT an input) -->
+        <div id="lobTitle" class="lobTitle" contenteditable="true" spellcheck="false">Home Insurance</div>
       </div>
     </div>
 
     <div class="topbar-right">
-      <button id="btnNew">New</button>
-      <button id="btnCopy">Copy link</button>
+      <button class="btn" id="btnNew">New</button>
+      <button class="btn btnPrimary" id="btnCopy">Copy link</button>
     </div>
   </header>
 
-  <!-- PAGE PROGRESS -->
   <div class="pagination" id="pagination"></div>
 
-  <!-- MAIN -->
   <main class="main">
 
     <!-- LEFT -->
     <aside class="panel">
-      <h3>Pages</h3>
-      <div id="pageList"></div>
-      <button id="addPage">+ Add page</button>
+      <div class="panelTitle">Structure</div>
 
-      <h3>Groups</h3>
-      <div id="groupList"></div>
-      <button id="addGroup">+ Add group</button>
+      <div class="panelSection">
+        <div class="sectionHeader">
+          <div class="sectionTitle">Pages</div>
+          <button class="iconBtn" id="addPage" title="Add page">+</button>
+        </div>
+        <div id="pageList" class="list"></div>
+      </div>
 
-      <h3>Components</h3>
-      <div id="componentList"></div>
+      <div class="panelSection">
+        <div class="sectionHeader">
+          <div class="sectionTitle">Groups</div>
+          <button class="iconBtn" id="addGroup" title="Add group">+</button>
+        </div>
+        <div id="groupList" class="list"></div>
+      </div>
+
+      <div class="panelSection">
+        <div class="sectionHeader">
+          <div class="sectionTitle">Components</div>
+        </div>
+        <div id="componentList" class="componentGrid"></div>
+      </div>
     </aside>
 
     <!-- CANVAS -->
-    <section class="canvas" id="canvas"></section>
+    <section class="canvas">
+      <div class="canvasHeader">
+        <div class="crumbs" id="crumbs"></div>
+        <div class="hintSmall">Click a field to edit. Test answers affect conditional logic.</div>
+      </div>
+      <div class="canvasBody" id="canvas"></div>
+    </section>
 
     <!-- RIGHT -->
     <aside class="panel">
-      <h3>Properties</h3>
-      <div id="inspector">
-        <div class="hint">Select a field to edit</div>
+      <div class="panelTitle">Properties</div>
+      <div id="inspector" class="panelSection">
+        <div class="hint">Select a field to edit its properties.</div>
       </div>
     </aside>
 
   </main>
+
+  <footer class="statusbar">
+    <div id="statusText" class="statusText">Ready</div>
+    <div class="statusRight">
+      <span class="pill" id="shareState">Local</span>
+    </div>
+  </footer>
 
 </div>
 
