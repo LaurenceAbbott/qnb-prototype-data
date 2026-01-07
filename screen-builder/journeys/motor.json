@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "motor",
+  "name": "Motor Quote & Buy",
+  "lob": "motor",
+  "pages": [
+    {
+      "id": "p1",
+      "title": "About you",
+      "groups": [
+        {
+          "id": "g1",
+          "title": "Personal details",
+          "questions": [
+            {
+              "id": "q_title",
+              "key": "title",
+              "type": "select",
+              "label": "Title",
+              "codelistId": "titles",
+              "placeholder": "Select a title",
+              "helperText": "This helps us address you correctly.",
+              "assistiveText": "",
+              "validation": { "required": true, "errorMessage": "Select a title" },
+              "logic": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
