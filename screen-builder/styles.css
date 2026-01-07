@@ -22,9 +22,6 @@
   --r-lg: 14px;
   --r-md: 12px;
 
-  --pad: 14px;
-  --pad2: 18px;
-
   --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
   --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
@@ -124,7 +121,7 @@ button, input, select, textarea{ font-family: inherit; }
   font-weight: 740;
   letter-spacing: 0.2px;
 }
-.panelHeaderActions{ display:flex; gap:8px; align-items:center; }
+.panelHeaderActions{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 
 .btn{
   border: 1px solid var(--stroke2);
@@ -151,6 +148,7 @@ button, input, select, textarea{ font-family: inherit; }
   border-color: rgba(255,255,255,0.16);
 }
 .btn.small{ padding: 8px 10px; border-radius: 11px; font-size: 13px; }
+.btn:disabled{ opacity:0.35; cursor:not-allowed; }
 
 .lobBlock{
   padding: 14px;
@@ -241,6 +239,7 @@ button, input, select, textarea{ font-family: inherit; }
 }
 .iconBtn:hover{ background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.18); }
 .iconBtn:active{ transform: translateY(1px); }
+.iconBtn:disabled{ opacity:0.35; cursor:not-allowed; }
 
 .groupsMini{
   margin-top: 10px;
@@ -257,6 +256,7 @@ button, input, select, textarea{ font-family: inherit; }
   background: rgba(255,255,255,0.04);
   font-size: 12px;
   color: var(--muted);
+  cursor:pointer;
 }
 .groupChip.active{
   border-color: rgba(96,165,250,0.55);
@@ -368,11 +368,6 @@ button, input, select, textarea{ font-family: inherit; }
   border-color: rgba(167,139,250,0.55);
   box-shadow: 0 0 0 3px rgba(167,139,250,0.16);
 }
-.row{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
 .toggleRow{
   display:flex;
   align-items:center;
@@ -420,6 +415,15 @@ button, input, select, textarea{ font-family: inherit; }
   margin-top: 4px;
 }
 .inlineHelp{ color: var(--muted2); font-size: 12px; line-height:1.4; }
+.pill{
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: var(--muted);
+}
+.muted{ color: var(--muted); }
 
 .optList{
   display:flex;
@@ -432,15 +436,6 @@ button, input, select, textarea{ font-family: inherit; }
   gap:8px;
 }
 .optItem .input{ flex:1; }
-.pill{
-  font-size: 12px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.04);
-  color: var(--muted);
-}
-.muted{ color: var(--muted); }
 
 .emptyState{
   position:absolute;
@@ -499,6 +494,23 @@ button, input, select, textarea{ font-family: inherit; }
 .statRow:last-child{ border-bottom:none; }
 .statVal{ font-family: var(--mono); color: rgba(255,255,255,0.86); }
 
+/* NEW: group nav styling */
+.groupNav{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding: 6px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.12);
+}
+.groupSelect{
+  min-width: 180px;
+  padding: 8px 10px;
+  border-radius: 12px;
+}
+
+/* Preview modal */
 .modalBackdrop{
   position:fixed;
   inset:0;
@@ -661,11 +673,9 @@ button, input, select, textarea{ font-family: inherit; }
   color: rgba(251,113,133,0.92);
   font-size: 13px;
 }
-.ok{
-  margin-top: 10px;
-  color: rgba(45,212,191,0.92);
-  font-size: 13px;
-}
+
+/* IMPORTANT: make the [hidden] attribute actually hide the modal */
+.modalBackdrop[hidden] { display: none !important; }
 
 @media (max-width: 1180px){
   .layout{ grid-template-columns: 320px 1fr; }
@@ -677,9 +687,4 @@ button, input, select, textarea{ font-family: inherit; }
   .panelLeft{ display:none; }
   .topbar{ flex-direction:column; align-items:flex-start; gap:10px; }
   .topActions{ width:100%; justify-content:flex-end; }
-}
-.modalBackdrop{ display:none; }
-.modalBackdrop.isOpen{ display:grid; }
-
-
 }
