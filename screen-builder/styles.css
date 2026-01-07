@@ -679,6 +679,6 @@ button, input, select, textarea{ font-family: inherit; }
   .topActions{ width:100%; justify-content:flex-end; }
 }
   .modalBackdrop{ display:none; }
-.modalBackdrop.isOpen{ display:grid; }
+  .modalBackdrop.isOpen{ display:grid; }
 
 }
