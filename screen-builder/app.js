@@ -309,6 +309,7 @@
         p.name = safeText(name) || "Untitled page";
         saveSchemaDebounced();
         renderMiniStats();
+      });
 
       const meta = document.createElement("div");
       meta.className = "pageMeta";
@@ -1302,7 +1303,15 @@
   // -------------------------
   // Preview UI
   // -------------------------
+
+  // Guard against Webflow / IX synthetic clicks on load
+  let userInitiatedPreview = false;
   function openPreview() {
+    // Ignore synthetic or programmatic opens
+    if (!userInitiatedPreview) return;
+
+    // reset flag immediately so only direct clicks work
+    userInitiatedPreview = false;
     preview.open = true;
     preview.index = 0;
     preview.lastError = "";
@@ -1713,6 +1722,8 @@
     btnAddQuestion.addEventListener("click", addQuestion);
 
     btnPreview.addEventListener("click", () => {
+      // Mark as genuine user action (prevents Webflow auto-trigger)
+      userInitiatedPreview = true;
       // reset preview answers each time? keep. best: keep within session; but start fresh for consistent testing:
       preview.answers = {};
       openPreview();
@@ -1762,6 +1773,7 @@
   }
 
   // Run immediately
+  userInitiatedPreview = false;
   forceClosePreview();
 
   // Run again AFTER Webflow + iframe restore
