@@ -43,6 +43,18 @@
       .replaceAll("'", "&#039;");
   }
 
+  function selectAllContent(el) {
+    try {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    } catch {
+      // no-op
+    }
+  }
+
   // -------------------------
   // Schema model
   // -------------------------
@@ -289,12 +301,49 @@
       name.className = "pageName";
       name.contentEditable = "true";
       name.spellcheck = false;
+      name.setAttribute("role", "textbox");
+      name.setAttribute("aria-label", "Page name");
+      name.title = "Click to rename";
       name.textContent = p.name;
-      name.addEventListener("focus", () => {
-        // Selecting the page should not trigger a full re-render while the user is editing
+
+      // CRITICAL: prevent parent click from re-rendering while editing
+      name.addEventListener("mousedown", (e) => {
+        e.stopPropagation();
+      });
+      name.addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
+
+      name.addEventListener("focus", (e) => {
+        e.stopPropagation();
         selection.pageId = p.id;
         ensureSelection();
+        // Make renaming effortless (no "type fast" race)
+        requestAnimationFrame(() => selectAllContent(name));
       });
+
+      name.addEventListener("keydown", (e) => {
+        // Enter commits rename
+        if (e.key === "Enter") {
+          e.preventDefault();
+          name.blur();
+        }
+        // Escape cancels back to stored value
+        if (e.key === "Escape") {
+          e.preventDefault();
+          name.textContent = p.name;
+          name.blur();
+        }
+      });
+
+      name.addEventListener("blur", () => {
+        const next = safeText(name) || "Untitled page";
+        name.textContent = next;
+        p.name = next;
+        saveSchema();
+        renderAll();
+      });
+
       name.addEventListener("input", () => {
         p.name = safeText(name) || "Untitled page";
         saveSchemaDebounced();
@@ -314,6 +363,14 @@
 
       const actions = document.createElement("div");
       actions.className = "pageActions";
+
+      // rename affordance
+      const renameBtn = iconButton("✎", "Rename page");
+      renameBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        name.focus();
+        requestAnimationFrame(() => selectAllContent(name));
+      });
 
       // reorder up/down
       const upBtn = iconButton("↑", "Move up");
@@ -344,6 +401,7 @@
         renderAll();
       });
 
+      actions.appendChild(renameBtn);
       actions.appendChild(upBtn);
       actions.appendChild(downBtn);
       actions.appendChild(delBtn);
