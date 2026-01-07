@@ -1413,7 +1413,11 @@
     preview.open = false;
     previewBackdrop.classList.remove("isOpen");
     document.body.style.overflow = "";
+    if (!previewStage) return;
+
     previewStage.innerHTML = "";
+    // If something goes wrong later, we want at least a visible container
+    if (previewStage) previewStage.style.display = "block";
   }
 
   function setProgress() {
@@ -1422,24 +1426,30 @@
     const current = clamp(preview.index + 1, 1, total);
     const pct = (current / total) * 100;
 
-    progressFill.style.width = `${pct}%`;
-    progressText.textContent = `${current} / ${total}`;
+    if (progressFill) progressFill.style.width = `${pct}%`;
+    if (progressText) progressText.textContent = `${current} / ${total}`;
   }
 
   function renderPreview() {
+    // Defensive: ensure preview area is visible even if CSS/IX left inline styles
+    if (previewStage) {
+      previewStage.style.visibility = "visible";
+      previewStage.style.opacity = "1";
+      previewStage.style.pointerEvents = "auto";
+    }
     preview.steps = buildPreviewSteps();
     preview.index = clamp(preview.index, 0, Math.max(0, preview.steps.length - 1));
 
     const steps = preview.steps;
     const step = steps[preview.index];
 
-    previewTitle.textContent = schema.lineOfBusiness || "Preview";
-    previewSub.textContent = step ? `${step.pageName} · ${step.groupName}` : "No questions yet";
+    if (previewTitle) previewTitle.textContent = schema.lineOfBusiness || "Preview";
+    if (previewSub) previewSub.textContent = step ? `${step.pageName} · ${step.groupName}` : "No questions yet";
 
     setProgress();
 
-    btnPrev.disabled = preview.index === 0;
-    btnNext.disabled = steps.length === 0;
+    if (btnPrev) btnPrev.disabled = preview.index === 0;
+    if (btnNext) btnNext.disabled = steps.length === 0;
 
     previewStage.innerHTML = "";
     if (!step) {
@@ -1450,6 +1460,7 @@
         <div class="pHelp">Add questions in the builder, then open Preview again.</div>
       `;
       previewStage.appendChild(wrap);
+      return;
       return;
     }
 
@@ -1602,6 +1613,9 @@
     card.appendChild(inputWrap);
     card.appendChild(errEl);
     previewStage.appendChild(card);
+
+    // Ensure Next button is re-enabled if previously disabled by completion view
+    if (btnNext) btnNext.disabled = false;
   }
 
   function renderCompletion() {
