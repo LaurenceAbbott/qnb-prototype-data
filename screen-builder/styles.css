@@ -683,6 +683,11 @@ ul {
     font-family: var(--font);
     color: rgba(255, 255, 255, 0.86);
 }
+.pError {
+    font-size: 12px;
+    padding-top: 8px;
+    color: indianred;
+}
 @media (max-width: 1180px){
   .layout{ grid-template-columns: 320px 1fr; }
   .panelRight{ display:none; }
