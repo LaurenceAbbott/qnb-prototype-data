@@ -769,7 +769,7 @@
     lab.textContent = label;
 
     const input = document.createElement("input");
-    input.className = "input";
+    input.className = "pControl pText";
     input.type = "text";
     input.value = value || "";
 
@@ -795,7 +795,7 @@
     lab.textContent = label;
 
     const ta = document.createElement("textarea");
-    ta.className = "textarea";
+    ta.className = "pControl pTextarea";
     ta.value = value || "";
 
     ta.addEventListener("focus", () => {
@@ -820,7 +820,7 @@
     lab.textContent = label;
 
     const sel = document.createElement("select");
-    sel.className = "select";
+    sel.className = "pControl pSelect";
     options.forEach((opt) => {
       const o = document.createElement("option");
       o.value = opt.value;
@@ -905,7 +905,7 @@
         row.className = "optItem";
 
         const input = document.createElement("input");
-        input.className = "input";
+        input.className = "pControl pText";
         input.type = "text";
         input.value = opt;
         input.addEventListener("input", () => {
@@ -1067,7 +1067,7 @@
             valueWrap.appendChild(wrapField("Value", vSel));
           } else {
             const input = document.createElement("input");
-            input.className = "input";
+            input.className = "pControl pText";
             input.type = "text";
             input.value = r.value || "";
             input.placeholder = "Value to compare against";
@@ -1150,7 +1150,7 @@
 
   function makeSelect(options, value) {
     const sel = document.createElement("select");
-    sel.className = "select";
+    sel.className = "pControl pSelect";
     const blank = document.createElement("option");
     blank.value = "";
     blank.textContent = "— Select —";
@@ -1483,7 +1483,7 @@
 
     if (["text", "email", "number", "date"].includes(step.type)) {
       const input = document.createElement("input");
-      input.className = "input";
+      input.className = "pControl pText";
       input.type = step.type === "text" ? "text" : step.type;
       input.placeholder = step.placeholder || "";
       input.value = getAnswer() ?? "";
@@ -1492,7 +1492,7 @@
       setTimeout(() => input.focus(), 0);
     } else if (step.type === "textarea") {
       const ta = document.createElement("textarea");
-      ta.className = "textarea";
+      ta.className = "pControl pTextarea";
       ta.placeholder = step.placeholder || "";
       ta.value = getAnswer() ?? "";
       ta.addEventListener("input", () => setAnswer(ta.value));
@@ -1500,13 +1500,12 @@
       setTimeout(() => ta.focus(), 0);
     } else if (step.type === "yesno") {
       const row = document.createElement("div");
-      row.style.display = "flex";
-      row.style.gap = "10px";
+      row.className = "pChoices pChoicesRow";
 
       const mk = (label, val) => {
         const b = document.createElement("button");
         b.type = "button";
-        b.className = "btn " + (getAnswer() === val ? "primary" : "ghost");
+        b.className = "pChoice" + (getAnswer() === val ? " isActive" : "");
         b.textContent = label;
         b.addEventListener("click", () => {
           setAnswer(val);
@@ -1523,7 +1522,7 @@
 
       if (step.type === "select") {
         const sel = document.createElement("select");
-        sel.className = "select";
+        sel.className = "pControl pSelect";
         const blank = document.createElement("option");
         blank.value = "";
         blank.textContent = "— Select —";
@@ -1542,14 +1541,12 @@
 
       if (step.type === "radio") {
         const list = document.createElement("div");
-        list.style.display = "flex";
-        list.style.flexDirection = "column";
-        list.style.gap = "10px";
+        list.className = "pChoices";
         const cur = getAnswer() ?? "";
         opts.forEach((o) => {
           const b = document.createElement("button");
           b.type = "button";
-          b.className = "btn " + (cur === o ? "primary" : "ghost");
+          b.className = "pChoice" + (cur === o ? " isActive" : "");
           b.textContent = o;
           b.addEventListener("click", () => {
             setAnswer(o);
@@ -1562,17 +1559,14 @@
 
       if (step.type === "checkboxes") {
         const list = document.createElement("div");
-        list.style.display = "flex";
-        list.style.flexDirection = "column";
-        list.style.gap = "10px";
+        list.className = "pChoices";
         const cur = Array.isArray(getAnswer()) ? getAnswer() : [];
         opts.forEach((o) => {
           const lab = document.createElement("label");
-          lab.style.display = "flex";
-          lab.style.alignItems = "center";
-          lab.style.gap = "10px";
+          lab.className = "pCheckRow";
           const cb = document.createElement("input");
           cb.type = "checkbox";
+          cb.className = "pCheckbox";
           cb.checked = cur.includes(o);
           cb.addEventListener("change", () => {
             const next = new Set(Array.isArray(getAnswer()) ? getAnswer() : []);
@@ -1581,6 +1575,7 @@
             setAnswer(Array.from(next));
           });
           const sp = document.createElement("span");
+          sp.className = "pCheckLabel";
           sp.textContent = o;
           lab.appendChild(cb);
           lab.appendChild(sp);
@@ -1591,7 +1586,7 @@
     } else {
       // fallback
       const input = document.createElement("input");
-      input.className = "input";
+      input.className = "pControl pText";
       input.type = "text";
       input.value = getAnswer() ?? "";
       input.addEventListener("input", () => setAnswer(input.value));
