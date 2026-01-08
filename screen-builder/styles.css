@@ -512,7 +512,6 @@ button, input, select, textarea{ font-family: inherit; }
 }
 .modal{
   width: min(980px, 100%);
-  height: min(720px, 100%);
   border-radius: 22px;
   border: 1px solid rgba(255,255,255,0.14);
   background:
