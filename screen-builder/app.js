@@ -48,27 +48,39 @@
     const html = String(inputHtml || "");
     if (!html.trim()) return "";
 
+    // Allow only basic formatting + lists. Everything else gets unwrapped.
     const allowed = new Set([
-      // Wrapper
       "DIV",
-      // Text + formatting
       "P",
       "BR",
+      "B",
+      "STRONG",
+      "I",
+      "EM",
+      "U",
+      "UL",
+      "OL",
+      "LI",
+      "SPAN",
+    ]);
 
-    const doc = new DOMParser().parseFromString(`<div>${html}</div>`, "text/html");
-    const root = doc.body.firstElementChild;
+    // Use a detached container instead of DOMParser (more robust across embeds/iframes).
+    const container = document.createElement("div");
+    container.innerHTML = html;
 
     const walk = (node) => {
-      // Remove comments
-      if (node.nodeType === Node.COMMENT_NODE) {
+      // 8 = COMMENT_NODE
+      if (node.nodeType === 8) {
         node.remove();
         return;
       }
 
-      if (node.nodeType === Node.ELEMENT_NODE) {
+      // 1 = ELEMENT_NODE
+      if (node.nodeType === 1) {
         const el = node;
 
-        // Strip all attributes (prevents XSS via on* handlers, style, href, etc.)
+        // Strip ALL attributes (prevents XSS via on* handlers, style, href, etc.)
+        // If we later want to allow safe links, we can whitelist attributes.
         [...el.attributes].forEach((a) => el.removeAttribute(a.name));
 
         // Disallowed tags: unwrap (keep text/children)
@@ -81,16 +93,14 @@
         }
       }
 
-      // Copy childNodes first because we may mutate while iterating
       const kids = [...node.childNodes];
       kids.forEach(walk);
     };
 
-    walk(root);
+    walk(container);
 
-    // Trim empty wrappers
-    const out = (root.innerHTML || "").trim();
-    return out;
+    // Trim and normalise
+    return (container.innerHTML || "").trim();
   }
 
   function selectAllContent(el) {
