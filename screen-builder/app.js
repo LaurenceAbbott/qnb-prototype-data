@@ -1741,24 +1741,56 @@
       }
 
       if (step.type === "checkboxes") {
+        // Real semantic checkboxes (Option A) but styled to match existing choice buttons.
         const list = document.createElement("div");
         list.className = "choiceGrid";
+
         const cur = Array.isArray(getAnswer()) ? getAnswer() : [];
 
-        opts.forEach((o) => {
-          const b = document.createElement("button");
-          b.type = "button";
-          const selected = cur.includes(o);
-          b.className = "choiceBtn" + (selected ? " selected" : "");
-          b.textContent = o;
-          b.addEventListener("click", () => {
+        opts.forEach((o, idx) => {
+          const id = `chk_${step.id}_${idx}`;
+
+          const label = document.createElement("label");
+          // Reuse existing choice button styling so it stays on-brand
+          label.className = "choiceBtn" + (cur.includes(o) ? " selected" : "");
+          label.setAttribute("for", id);
+          label.style.display = "flex";
+          label.style.alignItems = "center";
+          label.style.gap = "12px";
+          label.style.cursor = "pointer";
+
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.id = id;
+          cb.checked = cur.includes(o);
+          // Keep native checkbox but align with theme
+          cb.style.width = "18px";
+          cb.style.height = "18px";
+          cb.style.margin = "0";
+          cb.style.flex = "0 0 auto";
+          // Modern browsers: this will pick up your CSS variable accent if present
+          cb.style.accentColor = "var(--accent, #7c7cf6)";
+
+          const txt = document.createElement("span");
+          txt.textContent = o;
+          txt.style.flex = "1";
+          txt.style.textAlign = "left";
+
+          cb.addEventListener("change", () => {
             const next = new Set(Array.isArray(getAnswer()) ? getAnswer() : []);
-            if (next.has(o)) next.delete(o);
-            else next.add(o);
-            setAnswer(Array.from(next));
-            renderPreview();
+            if (cb.checked) next.add(o);
+            else next.delete(o);
+            const arr = Array.from(next);
+            setAnswer(arr);
+
+            // Update selected styling without a full rerender (keeps things feeling premium)
+            label.classList.toggle("selected", cb.checked);
           });
-          list.appendChild(b);
+
+          // Make clicking anywhere on the pill toggle the checkbox (label already does this)
+          label.appendChild(cb);
+          label.appendChild(txt);
+          list.appendChild(label);
         });
 
         inputWrap.appendChild(list);
