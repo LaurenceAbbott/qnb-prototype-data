@@ -594,7 +594,7 @@ button, input, select, textarea{ font-family: inherit; }
   line-height: 1.15;
 }
 .pHelp{
-  margin-top: 0px;
+  margin-top: 8px;
   color: var(--muted);
   font-size: 14px;
   line-height: 1.45;
@@ -700,21 +700,48 @@ ul {
 }
 
 /* Page preview layout */
-.previewPageStack { }
-.previewTextBlock { }
-.previewTextBlockTitle { }
-.previewTextBlockBody { }
+.previewPageStack {
+  
+}
+.previewTextBlock {
+  
+}
+.previewTextBlockTitle {
+  
+}
+.previewTextBlockBody {
+  
+}
 
-.previewGroup { }
-.previewGroupTitle { }
-.previewGroupDesc { }
-
-.previewQuestion { }
-.previewQuestionTitle { }
-.previewQuestionContent { }
+.previewGroup {
+  
+}
+.previewQuestionTitle {
+    font-weight: 600;
+    font-size: 18px;
+}
+.previewGroupDesc {
+    font-size: 16px;
+}
+.previewQuestion {
+    padding-bottom: 32px;
+}
+.previewQuestionTitle {
+}
+.previewQuestionContent {
+    padding-top: 24px;
+}
+.previewGroupTitle {
+    font-size: 24px;
+    font-weight: 600;
+}
 
 /* Checkbox styling */
-.choiceCheck { }
+}
+.choiceCheck {
+    gap: 10px;
+    display: flex;
+}
 .choiceCheckBox { }
 .choiceCheckText { }
 
