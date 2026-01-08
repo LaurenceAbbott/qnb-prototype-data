@@ -748,7 +748,11 @@ ul {
     height: 20px;
     width: 20px;
 }
-.choiceCheckText { }
+.choiceCheckText {
+}
+.canvasHeader {
+    display: none;
+}
 
 @media (max-width: 1180px){
   .layout{ grid-template-columns: 320px 1fr; }
