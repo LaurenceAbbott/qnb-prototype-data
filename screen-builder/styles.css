@@ -514,18 +514,16 @@ button, input, select, textarea{ font-family: inherit; }
   padding: 22px;
   z-index: 999;
 }
-.modal{
-  width: min(980px, 100%);
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background:
-    radial-gradient(900px 600px at 20% 10%, rgba(167,139,250,0.16), transparent 55%),
-    radial-gradient(900px 600px at 80% 15%, rgba(96,165,250,0.14), transparent 55%),
-    rgba(12,12,18,0.92);
-  box-shadow: var(--shadow);
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
+.modal {
+    width: min(980px, 100%);
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: radial-gradient(900px 600px at 20% 10%, rgba(167, 139, 250, 0.16), transparent 55%), radial-gradient(900px 600px at 80% 15%, rgba(96, 165, 250, 0.14), transparent 55%), rgba(12, 12, 18, 0.92);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: max(100%);
 }
 .modalTop{
   padding: 16px 16px 12px;
@@ -570,14 +568,20 @@ button, input, select, textarea{ font-family: inherit; }
   padding: 22px;
   outline:none;
 }
-.previewCard{
-  width: min(720px, 100%);
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(0,0,0,0.22);
-  padding: 22px;
-  box-shadow: 0 18px 60px rgba(0,0,0,0.35);
-  animation: pop .18s ease;
+.previewCard {
+    width: max(900px, 100%);
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.22);
+    padding: 80px;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+    animation: pop .18s ease;
+    gap: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 @keyframes pop{
   from{ transform: translateY(8px); opacity:0.0; }
@@ -590,7 +594,7 @@ button, input, select, textarea{ font-family: inherit; }
   line-height: 1.15;
 }
 .pHelp{
-  margin-top: 10px;
+  margin-top: 0px;
   color: var(--muted);
   font-size: 14px;
   line-height: 1.45;
@@ -600,7 +604,7 @@ button, input, select, textarea{ font-family: inherit; }
   margin-bottom: 8px;
 }
 .pInput, .pSelect, .pTextarea{
-  width:100%;
+  min-width: 400px;
   border-radius: 16px;
   padding: 14px 14px;
   border: 1px solid rgba(255,255,255,0.12);
@@ -614,13 +618,13 @@ button, input, select, textarea{ font-family: inherit; }
   border-color: rgba(96,165,250,0.62);
   box-shadow: 0 0 0 4px rgba(96,165,250,0.16);
 }
-.choiceGrid{
-  display:grid;
-  gap: 10px;
-  margin-top: 14px;
+.choiceGrid {
+    display: flex;
+    gap: 10px;
+    margin-top: 0px;
 }
 .choiceBtn{
-  text-align:left;
+  text-align: center;
   padding: 14px 14px;
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,0.12);
@@ -628,6 +632,8 @@ button, input, select, textarea{ font-family: inherit; }
   cursor:pointer;
   color: var(--text);
   transition: transform .08s ease, background .15s ease, border-color .15s ease;
+  width: fit-content;
+  min-width: 100px;
 }
 .choiceBtn:hover{ background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.18); }
 .choiceBtn:active{ transform: translateY(1px); }
