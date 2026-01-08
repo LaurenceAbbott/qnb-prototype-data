@@ -726,12 +726,13 @@ ul {
     font-size: 16px;
 }
 .previewQuestion {
-    padding-bottom: 32px;
+    padding-bottom: 48px;
 }
 .previewQuestionTitle {
 }
 .previewQuestionContent {
     padding-top: 24px;
+    margin-top: -8px;
 }
 .previewGroupTitle {
     font-size: 24px;
