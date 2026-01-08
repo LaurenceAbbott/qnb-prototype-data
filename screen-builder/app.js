@@ -49,18 +49,11 @@
     if (!html.trim()) return "";
 
     const allowed = new Set([
+      // Wrapper
+      "DIV",
+      // Text + formatting
       "P",
       "BR",
-      "B",
-      "STRONG",
-      "I",
-      "EM",
-      "U",
-      "UL",
-      "OL",
-      "LI",
-      "SPAN",
-    ]);
 
     const doc = new DOMParser().parseFromString(`<div>${html}</div>`, "text/html");
     const root = doc.body.firstElementChild;
