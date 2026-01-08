@@ -2622,11 +2622,10 @@
     previewStage.appendChild(card);
   }
 
-  function renderCompletion() {
-    // unchanged
-  }
-    // unchanged
-  }
+  // -------------------------
+  // (Reserved) Completion renderer
+  // -------------------------
+  // Note: completion UI is handled inline in the Next button handler.
 
   // -------------------------
   // Export / Import
