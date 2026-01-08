@@ -594,6 +594,7 @@ button, input, select, textarea{ font-family: inherit; }
 }
 .pInputWrap{
   margin-top: 18px;
+  margin-bottom: 8px;
 }
 .pInput, .pSelect, .pTextarea{
   width:100%;
