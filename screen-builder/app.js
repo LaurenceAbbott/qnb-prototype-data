@@ -184,6 +184,8 @@
             {
               id: groupId,
               name: "Basics",
+              description: { enabled: false, html: "" },
+              logic: { enabled: false, rules: [] },
               questions: [
                 {
                   id: q1,
@@ -245,6 +247,9 @@
       // Ensure questions have content/errorText fields (older imports)
       p.groups.forEach((g) => {
         g.questions = Array.isArray(g.questions) ? g.questions : [];
+        // Phase: group-level description + logic
+        if (g.description == null) g.description = { enabled: false, html: "" };
+        if (g.logic == null) g.logic = { enabled: false, rules: [] };
         g.questions.forEach((q) => {
           if (!q) return;
           if (q.content == null) q.content = { enabled: false, html: "" };
@@ -270,9 +275,10 @@
   // Preview state
   let preview = {
     open: false,
+    mode: "question", // "question" | "page"
     steps: [],
     index: 0,
-    answers: {}, // qid -> value
+    answers: {}, // qid -> value (shared across modes)
     lastError: "",
   };
 
@@ -861,12 +867,13 @@
         renderCanvas();
       }));
 
-      // Arrange + delete
+      // Arrange + duplicate + delete
       inspectorEl.appendChild(divider());
 
       inspectorEl.appendChild(buttonRow([
         { label: "Move up", kind: "ghost", onClick: () => moveFlowItem(p.id, tb?.id, -1) },
         { label: "Move down", kind: "ghost", onClick: () => moveFlowItem(p.id, tb?.id, +1) },
+        { label: "Duplicate", kind: "ghost", onClick: () => duplicateTextBlock(p.id, tb?.id) },
       ]));
 
       inspectorEl.appendChild(buttonRow([
@@ -899,6 +906,26 @@
       return;
     }
 
+    // Global preview settings (small step #4)
+    inspectorEl.appendChild(sectionTitle("Preview settings"));
+    inspectorEl.appendChild(fieldSelect(
+      "Preview mode",
+      preview.mode || "question",
+      [
+        { value: "question", label: "Question-by-question (Typeform)" },
+        { value: "page", label: "Page-at-a-time (layout)" },
+      ],
+      (val) => {
+        preview.mode = val;
+        // Persist mode inside schema meta for convenience
+        schema.meta = schema.meta || {};
+        schema.meta.previewMode = val;
+        saveSchema();
+      }
+    ));
+
+    inspectorEl.appendChild(divider());
+
     // Group editor (always visible)
     inspectorSubEl.textContent = q ? "Editing question" : "Editing group";
 
@@ -910,6 +937,40 @@
       renderPagesList();
       groupNameDisplayEl.textContent = g.name;
     }));
+
+    // Group description (small step #2)
+    g.description = g.description || { enabled: false, html: "" };
+    inspectorEl.appendChild(toggleRow("Add group description", g.description.enabled === true, (on) => {
+      g.description.enabled = on;
+      if (!g.description.html) g.description.html = "<p></p>";
+      saveSchema();
+      isTypingInspector = false;
+      renderAll(true);
+    }));
+
+    if (g.description.enabled) {
+      inspectorEl.appendChild(richTextEditor("Description", g.description.html || "", (html) => {
+        g.description.html = sanitizeRichHtml(html);
+        saveSchemaDebounced();
+      }));
+    }
+
+    // Group conditional logic (small step #3)
+    inspectorEl.appendChild(divider());
+    inspectorEl.appendChild(sectionTitle("Group visibility"));
+    inspectorEl.appendChild(pEl("Show this group only if the rule(s) match. (Hides all questions in the group in Preview)", "inlineHelp"));
+
+    inspectorEl.appendChild(toggleRow("Enable group logic", g.logic?.enabled === true, (on) => {
+      g.logic = g.logic || { enabled: false, rules: [] };
+      g.logic.enabled = on;
+      saveSchema();
+      isTypingInspector = false;
+      renderAll(true);
+    }));
+
+    if (g.logic?.enabled) {
+      inspectorEl.appendChild(groupLogicEditor(schema, p, g));
+    }
 
     // Move group + delete group
     inspectorEl.appendChild(buttonRow([
@@ -1557,6 +1618,167 @@
     return wrap;
   }
 
+  // Group logic editor (small step #3)
+  function groupLogicEditor(s, page, group) {
+    const wrap = document.createElement("div");
+    wrap.className = "field";
+
+    group.logic = group.logic || { enabled: true, rules: [] };
+    group.logic.rules = Array.isArray(group.logic.rules) ? group.logic.rules : [];
+
+    const availableQuestions = getAllQuestionsInOrder(s);
+
+    // Determine the earliest question index in this group; if group has no questions, allow referencing any earlier question
+    const indices = availableQuestions
+      .map((q, idx) => ({ q, idx }))
+      .filter((x) => x.q.groupId === group.id)
+      .map((x) => x.idx);
+
+    const groupStart = indices.length ? Math.min(...indices) : availableQuestions.length;
+    const earlier = groupStart > 0 ? availableQuestions.slice(0, groupStart) : [];
+
+    const hint = document.createElement("div");
+    hint.className = "inlineHelp";
+    hint.textContent = earlier.length
+      ? "Rules can reference questions that appear before this group in the flow."
+      : "Add questions before this group to use group visibility logic.";
+    wrap.appendChild(hint);
+
+    const list = document.createElement("div");
+    list.style.display = "flex";
+    list.style.flexDirection = "column";
+    list.style.gap = "10px";
+    list.style.marginTop = "10px";
+
+    const byId = Object.fromEntries(availableQuestions.map((q) => [q.id, q]));
+
+    function renderRules() {
+      list.innerHTML = "";
+
+      group.logic.rules.forEach((r, idx) => {
+        const row = document.createElement("div");
+        row.className = "toggleRow";
+        row.style.flexDirection = "column";
+        row.style.alignItems = "stretch";
+
+        const top = document.createElement("div");
+        top.style.display = "grid";
+        top.style.gridTemplateColumns = "1fr 1fr";
+        top.style.gap = "10px";
+
+        const qSel = makeSelect(
+          earlier.map((x) => ({
+            value: x.id,
+            label: `${x.title || "Untitled"} (${x.type})`,
+          })),
+          r.questionId || ""
+        );
+        qSel.addEventListener("change", () => {
+          r.questionId = qSel.value;
+          saveSchema();
+          renderRules();
+        });
+
+        const opSel = makeSelect(
+          OPERATORS.map((o) => ({ value: o.key, label: o.label })),
+          r.operator || "equals"
+        );
+        opSel.addEventListener("change", () => {
+          r.operator = opSel.value;
+          saveSchema();
+          renderRules();
+        });
+
+        top.appendChild(wrapField("If question", qSel));
+        top.appendChild(wrapField("Operator", opSel));
+        row.appendChild(top);
+
+        const refQ = byId[r.questionId];
+        const needsValue = !["is_answered", "is_not_answered"].includes(r.operator);
+
+        if (needsValue) {
+          const valueWrap = document.createElement("div");
+          valueWrap.style.marginTop = "10px";
+
+          if (refQ && isOptionType(refQ.type)) {
+            const vSel = makeSelect(
+              (refQ.options || []).map((o) => ({ value: o, label: o })),
+              r.value || ""
+            );
+            vSel.addEventListener("change", () => {
+              r.value = vSel.value;
+              saveSchema();
+            });
+            valueWrap.appendChild(wrapField("Value", vSel));
+          } else {
+            const input = document.createElement("input");
+            input.className = "input";
+            input.type = "text";
+            input.value = r.value || "";
+            input.placeholder = "Value to compare against";
+            input.addEventListener("input", () => {
+              r.value = input.value;
+              saveSchema();
+            });
+            valueWrap.appendChild(wrapField("Value", input));
+          }
+
+          row.appendChild(valueWrap);
+        }
+
+        const actions = document.createElement("div");
+        actions.style.display = "flex";
+        actions.style.gap = "10px";
+        actions.style.marginTop = "10px";
+        actions.style.justifyContent = "flex-end";
+
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "btn ghost";
+        del.textContent = "Delete rule";
+        del.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          group.logic.rules.splice(idx, 1);
+          saveSchema();
+          isTypingInspector = false;
+          renderAll(true);
+        });
+
+        actions.appendChild(del);
+        row.appendChild(actions);
+
+        list.appendChild(row);
+      });
+
+      const add = document.createElement("button");
+      add.type = "button";
+      add.className = "btn";
+      add.textContent = "+ Add rule";
+      add.disabled = earlier.length === 0;
+      if (add.disabled) add.title = "Add questions before this group to enable rules.";
+      add.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        group.logic.rules.push({
+          id: uid("rule"),
+          questionId: earlier[0]?.id || "",
+          operator: "equals",
+          value: "",
+        });
+        saveSchema();
+        isTypingInspector = false;
+        renderAll(true);
+      });
+
+      list.appendChild(add);
+    }
+
+    renderRules();
+    wrap.appendChild(list);
+    return wrap;
+  }
+
   function wrapField(labelText, el) {
     const w = document.createElement("div");
     w.className = "field";
@@ -1698,6 +1920,32 @@
     saveSchema();
     renderAll(true);
   }
+
+  function duplicateTextBlock(pageId, textId) {
+    const p = getPage(pageId);
+    if (!p || !textId) return;
+    p.flow = Array.isArray(p.flow) ? p.flow : [];
+
+    const idx = p.flow.findIndex((x) => x.type === "text" && x.id === textId);
+    if (idx < 0) return;
+
+    const src = p.flow[idx];
+    const copy = deepClone(src);
+    copy.id = uid("txt");
+    // Keep title/body, but nudge title if empty
+    if (!copy.title) copy.title = "";
+
+    p.flow.splice(idx + 1, 0, copy);
+
+    selection.pageId = p.id;
+    selection.blockType = "text";
+    selection.blockId = copy.id;
+    selection.groupId = null;
+    selection.questionId = null;
+
+    saveSchema();
+    renderAll(true);
+  }
   function addPage() {
     const pid = uid("page");
     const gid = uid("group");
@@ -1711,6 +1959,8 @@
         {
           id: gid,
           name: "Group 1",
+          description: { enabled: false, html: "" },
+          logic: { enabled: false, rules: [] },
           questions: [
             {
               id: qid,
@@ -1746,6 +1996,8 @@
     p.groups.push({
       id: gid,
       name: `Group ${p.groups.length + 1}`,
+      description: { enabled: false, html: "" },
+      logic: { enabled: false, rules: [] },
       questions: [],
     });
 
@@ -1894,15 +2146,40 @@
     });
   }
 
+  function groupShouldShow(group, allQuestionsById, answers) {
+    if (!group?.logic?.enabled) return true;
+    const rules = group.logic.rules || [];
+    if (!rules.length) return true;
+    return rules.every((r) => {
+      const refQ = allQuestionsById[r.questionId];
+      return evaluateRule(r, answers, refQ);
+    });
+  }
+
   function buildPreviewSteps() {
+    // Question mode: returns visible questions (existing behaviour)
     const all = getAllQuestionsInOrder(schema);
     const byId = Object.fromEntries(all.map((q) => [q.id, q]));
 
-    // Decide visibility based on current answers (dynamic)
-    const visible = all.filter((q) => questionShouldShow(q, byId, preview.answers));
+    // Pre-compute group visibility
+    const groupVisible = {};
+    schema.pages.forEach((p) => {
+      p.groups.forEach((g) => {
+        groupVisible[g.id] = groupShouldShow(g, byId, preview.answers);
+      });
+    });
 
-    // Also remove any steps whose page/group got deleted
+    const visible = all.filter((q) => {
+      if (groupVisible[q.groupId] === false) return false;
+      return questionShouldShow(q, byId, preview.answers);
+    });
+
     return visible;
+  }
+
+  function buildPreviewPageSteps() {
+    // Page mode: one step per page (layout preview)
+    return schema.pages.map((p) => ({ id: p.id, pageId: p.id, pageName: p.name }));
   }
 
   // -------------------------
@@ -1911,6 +2188,9 @@
 
   function openPreview() {
     if (!previewBackdrop) return;
+
+    // Load persisted preview mode if present
+    if (schema?.meta?.previewMode) preview.mode = schema.meta.previewMode;
 
     preview.open = true;
     preview.index = 0;
@@ -1945,17 +2225,44 @@
     const pct = (current / total) * 100;
 
     if (progressFill) progressFill.style.width = `${pct}%`;
-    if (progressText) progressText.textContent = `${current} / ${total}`;
+    if (progressText) {
+      const label = preview.mode === "page" ? "Page" : "Q";
+      progressText.textContent = `${label} ${current} / ${total}`;
+    }
   }
 
   function renderPreview() {
-    preview.steps = buildPreviewSteps();
+    // Steps depend on mode
+    preview.steps = preview.mode === "page" ? buildPreviewPageSteps() : buildPreviewSteps();
     preview.index = clamp(preview.index, 0, Math.max(0, preview.steps.length - 1));
 
     const steps = preview.steps;
     const step = steps[preview.index];
 
     if (previewTitle) previewTitle.textContent = schema.lineOfBusiness || "Preview";
+
+    if (preview.mode === "page") {
+      if (previewSub) previewSub.textContent = step ? `${step.pageName}` : "No pages";
+      setProgress();
+      if (btnPrev) btnPrev.disabled = preview.index === 0;
+      if (btnNext) btnNext.disabled = steps.length === 0;
+      previewStage.innerHTML = "";
+      if (!step) {
+        const wrap = document.createElement("div");
+        wrap.className = "previewCard";
+        wrap.innerHTML = `
+          <div class="pQ">No pages to preview</div>
+          <div class="pHelp">Add pages in the builder, then open Preview again.</div>
+        `;
+        previewStage.appendChild(wrap);
+        return;
+      }
+      renderPreviewPage(step.pageId);
+      if (btnNext) btnNext.disabled = false;
+      return;
+    }
+
+    // Question mode (existing behaviour)
     if (previewSub) previewSub.textContent = step ? `${step.pageName} · ${step.groupName}` : "No questions yet";
 
     setProgress();
@@ -1992,6 +2299,7 @@
     const contentHtml = step.content?.enabled ? sanitizeRichHtml(step.content.html || "") : "";
     contentEl.innerHTML = contentHtml;
     contentEl.style.display = contentHtml ? "block" : "none";
+
     const errEl = document.createElement("div");
     errEl.className = "pError";
     errEl.textContent = preview.lastError || "";
@@ -2006,6 +2314,20 @@
     };
     const getAnswer = () => preview.answers[step.id];
 
+    buildPreviewInputControl(step, inputWrap, setAnswer, getAnswer, () => renderPreview());
+
+    card.appendChild(qEl);
+    if (contentHtml) card.appendChild(contentEl);
+    if (step.help) card.appendChild(helpEl);
+    card.appendChild(inputWrap);
+    card.appendChild(errEl);
+    previewStage.appendChild(card);
+
+    // Ensure Next button is re-enabled if previously disabled by completion view
+    if (btnNext) btnNext.disabled = false;
+  }
+
+  function buildPreviewInputControl(step, inputWrap, setAnswer, getAnswer, rerender) {
     if (["text", "email", "number", "date"].includes(step.type)) {
       const input = document.createElement("input");
       input.className = "pInput";
@@ -2015,7 +2337,10 @@
       input.addEventListener("input", () => setAnswer(input.value));
       inputWrap.appendChild(input);
       setTimeout(() => input.focus(), 0);
-    } else if (step.type === "textarea") {
+      return;
+    }
+
+    if (step.type === "textarea") {
       const ta = document.createElement("textarea");
       ta.className = "pTextarea";
       ta.placeholder = step.placeholder || "";
@@ -2023,7 +2348,10 @@
       ta.addEventListener("input", () => setAnswer(ta.value));
       inputWrap.appendChild(ta);
       setTimeout(() => ta.focus(), 0);
-    } else if (step.type === "yesno") {
+      return;
+    }
+
+    if (step.type === "yesno") {
       const row = document.createElement("div");
       row.className = "choiceGrid";
 
@@ -2034,7 +2362,7 @@
         b.textContent = label;
         b.addEventListener("click", () => {
           setAnswer(val);
-          renderPreview();
+          rerender();
         });
         return b;
       };
@@ -2042,7 +2370,10 @@
       row.appendChild(mk("Yes", "Yes"));
       row.appendChild(mk("No", "No"));
       inputWrap.appendChild(row);
-    } else if (isOptionType(step.type)) {
+      return;
+    }
+
+    if (isOptionType(step.type)) {
       const opts = Array.isArray(step.options) ? step.options : [];
 
       if (step.type === "select") {
@@ -2062,6 +2393,7 @@
         sel.addEventListener("change", () => setAnswer(sel.value));
         inputWrap.appendChild(sel);
         setTimeout(() => sel.focus(), 0);
+        return;
       }
 
       if (step.type === "radio") {
@@ -2075,15 +2407,15 @@
           b.textContent = o;
           b.addEventListener("click", () => {
             setAnswer(o);
-            renderPreview();
+            rerender();
           });
           list.appendChild(b);
         });
         inputWrap.appendChild(list);
+        return;
       }
 
       if (step.type === "checkboxes") {
-        // Real semantic checkboxes (Option A) but styled to match existing choice buttons.
         const list = document.createElement("div");
         list.className = "choiceGrid";
 
@@ -2093,7 +2425,6 @@
           const id = `chk_${step.id}_${idx}`;
 
           const label = document.createElement("label");
-          // Reuse existing choice button styling so it stays on-brand
           label.className = "choiceBtn" + (cur.includes(o) ? " selected" : "");
           label.setAttribute("for", id);
           label.style.display = "flex";
@@ -2105,12 +2436,10 @@
           cb.type = "checkbox";
           cb.id = id;
           cb.checked = cur.includes(o);
-          // Keep native checkbox but align with theme
           cb.style.width = "18px";
           cb.style.height = "18px";
           cb.style.margin = "0";
           cb.style.flex = "0 0 auto";
-          // Modern browsers: this will pick up your CSS variable accent if present
           cb.style.accentColor = "var(--accent, #7c7cf6)";
 
           const txt = document.createElement("span");
@@ -2124,42 +2453,178 @@
             else next.delete(o);
             const arr = Array.from(next);
             setAnswer(arr);
-
-            // Update selected styling without a full rerender (keeps things feeling premium)
             label.classList.toggle("selected", cb.checked);
           });
 
-          // Make clicking anywhere on the pill toggle the checkbox (label already does this)
           label.appendChild(cb);
           label.appendChild(txt);
           list.appendChild(label);
         });
 
         inputWrap.appendChild(list);
+        return;
       }
-    } else {
-      // fallback
-      const input = document.createElement("input");
-      input.className = "pInput";
-      input.type = "text";
-      input.value = getAnswer() ?? "";
-      input.addEventListener("input", () => setAnswer(input.value));
-      inputWrap.appendChild(input);
-      setTimeout(() => input.focus(), 0);
     }
 
-    card.appendChild(qEl);
-    if (contentHtml) card.appendChild(contentEl);
-    if (step.help) card.appendChild(helpEl);
-    card.appendChild(inputWrap);
-    card.appendChild(errEl);
-    previewStage.appendChild(card);
+    // fallback
+    const input = document.createElement("input");
+    input.className = "pInput";
+    input.type = "text";
+    input.value = getAnswer() ?? "";
+    input.addEventListener("input", () => setAnswer(input.value));
+    inputWrap.appendChild(input);
+    setTimeout(() => input.focus(), 0);
+  }
 
-    // Ensure Next button is re-enabled if previously disabled by completion view
-    if (btnNext) btnNext.disabled = false;
+  function renderPreviewPage(pageId) {
+    const p = getPage(pageId);
+    if (!p) return;
+
+    // Build visibility maps
+    const all = getAllQuestionsInOrder(schema);
+    const byId = Object.fromEntries(all.map((q) => [q.id, q]));
+    const groupVisible = {};
+    p.groups.forEach((g) => {
+      groupVisible[g.id] = groupShouldShow(g, byId, preview.answers);
+    });
+
+    const card = document.createElement("div");
+    card.className = "previewCard";
+
+    // Page header
+    const header = document.createElement("div");
+    header.className = "pQ";
+    header.textContent = p.name || "Untitled page";
+    card.appendChild(header);
+
+    const stack = document.createElement("div");
+    stack.style.display = "flex";
+    stack.style.flexDirection = "column";
+    stack.style.gap = "14px";
+    stack.style.marginTop = "12px";
+
+    // Render page flow (text blocks + groups)
+    (p.flow || []).forEach((it) => {
+      if (it.type === "text") {
+        const level = it.level || "h3";
+        const title = (it.title || "").trim();
+        const body = sanitizeRichHtml(it.bodyHtml || "");
+
+        const block = document.createElement("div");
+        block.style.padding = "10px 0";
+
+        const titleEl = document.createElement(level === "body" ? "div" : level);
+        titleEl.style.margin = "0 0 8px 0";
+        titleEl.style.fontWeight = "800";
+        titleEl.textContent = title;
+        if (title) block.appendChild(titleEl);
+
+        if (body) {
+          const bodyEl = document.createElement("div");
+          bodyEl.className = "pHelp";
+          bodyEl.innerHTML = body;
+          block.appendChild(bodyEl);
+        }
+
+        if (title || body) stack.appendChild(block);
+        return;
+      }
+
+      if (it.type === "group") {
+        const g = p.groups.find((gg) => gg.id === it.id);
+        if (!g) return;
+        if (groupVisible[g.id] === false) return;
+
+        const groupWrap = document.createElement("div");
+        groupWrap.style.display = "flex";
+        groupWrap.style.flexDirection = "column";
+        groupWrap.style.gap = "10px";
+        groupWrap.style.padding = "10px 0";
+
+        const gTitle = document.createElement("div");
+        gTitle.style.fontWeight = "900";
+        gTitle.textContent = g.name || "Untitled group";
+        groupWrap.appendChild(gTitle);
+
+        if (g.description?.enabled) {
+          const d = sanitizeRichHtml(g.description.html || "");
+          if (d) {
+            const dEl = document.createElement("div");
+            dEl.className = "pHelp";
+            dEl.innerHTML = d;
+            groupWrap.appendChild(dEl);
+          }
+        }
+
+        const visibleQuestions = (g.questions || []).filter((qq) => questionShouldShow(qq, byId, preview.answers));
+
+        visibleQuestions.forEach((qq) => {
+          const qBlock = document.createElement("div");
+          qBlock.style.display = "flex";
+          qBlock.style.flexDirection = "column";
+          qBlock.style.gap = "8px";
+
+          const qTitle = document.createElement("div");
+          qTitle.style.fontWeight = "800";
+          qTitle.textContent = qq.title || "Untitled question";
+          qBlock.appendChild(qTitle);
+
+          if (qq.content?.enabled) {
+            const c = sanitizeRichHtml(qq.content.html || "");
+            if (c) {
+              const cEl = document.createElement("div");
+              cEl.className = "pHelp";
+              cEl.innerHTML = c;
+              qBlock.appendChild(cEl);
+            }
+          }
+
+          if (qq.help) {
+            const h = document.createElement("div");
+            h.className = "pHelp";
+            h.textContent = qq.help;
+            qBlock.appendChild(h);
+          }
+
+          const inputWrap = document.createElement("div");
+          inputWrap.className = "pInputWrap";
+
+          const setA = (v) => (preview.answers[qq.id] = v);
+          const getA = () => preview.answers[qq.id];
+
+          buildPreviewInputControl(qq, inputWrap, setA, getA, () => renderPreview());
+
+          qBlock.appendChild(inputWrap);
+
+          stack.appendChild(qBlock);
+        });
+
+        // If a group has no visible questions/content, avoid rendering empty blocks
+        if (groupWrap.childNodes.length > 1 || visibleQuestions.length) {
+          stack.appendChild(groupWrap);
+        }
+
+        return;
+      }
+    });
+
+    card.appendChild(stack);
+
+    // Error banner (page mode)
+    if (preview.lastError) {
+      const err = document.createElement("div");
+      err.className = "pError";
+      err.style.marginTop = "12px";
+      err.textContent = preview.lastError;
+      card.appendChild(err);
+    }
+
+    previewStage.appendChild(card);
   }
 
   function renderCompletion() {
+    // unchanged
+  }
     // unchanged
   }
 
@@ -2262,6 +2727,69 @@
     btnNext.addEventListener("click", () => {
       if (!preview.open) return;
 
+      // PAGE MODE: validate all required visible questions on this page, then advance page
+      if (preview.mode === "page") {
+        preview.steps = buildPreviewPageSteps();
+        preview.index = clamp(preview.index, 0, Math.max(0, preview.steps.length - 1));
+        const step = preview.steps[preview.index];
+        if (!step) return;
+
+        const p = getPage(step.pageId);
+        if (!p) return;
+
+        const all = getAllQuestionsInOrder(schema);
+        const byId = Object.fromEntries(all.map((q) => [q.id, q]));
+
+        // Determine which questions are visible on this page right now
+        const visibleQ = [];
+        (p.flow || []).forEach((it) => {
+          if (it.type !== "group") return;
+          const g = p.groups.find((gg) => gg.id === it.id);
+          if (!g) return;
+          if (groupShouldShow(g, byId, preview.answers) === false) return;
+          (g.questions || []).forEach((qq) => {
+            if (questionShouldShow(qq, byId, preview.answers)) visibleQ.push(qq);
+          });
+        });
+
+        // Validate required questions
+        for (const qq of visibleQ) {
+          if (!qq.required) continue;
+          const ans = preview.answers[qq.id];
+          const empty =
+            ans === undefined ||
+            ans === null ||
+            (typeof ans === "string" && ans.trim() === "") ||
+            (Array.isArray(ans) && ans.length === 0);
+          if (empty) {
+            preview.lastError = qq.errorText || "This field is required.";
+            renderPreview();
+            return;
+          }
+        }
+
+        preview.lastError = "";
+
+        if (preview.index >= preview.steps.length - 1) {
+          // completion
+          previewStage.innerHTML = "";
+          const wrap = document.createElement("div");
+          wrap.className = "previewCard";
+          wrap.innerHTML = `
+            <div class="pQ">All done</div>
+            <div class="pHelp">You reached the end of the preview flow.</div>
+          `;
+          previewStage.appendChild(wrap);
+          btnNext.disabled = true;
+          return;
+        }
+
+        preview.index = clamp(preview.index + 1, 0, preview.steps.length - 1);
+        renderPreview();
+        return;
+      }
+
+      // QUESTION MODE (existing)
       // rebuild steps before validating (logic can change)
       preview.steps = buildPreviewSteps();
       preview.index = clamp(preview.index, 0, Math.max(0, preview.steps.length - 1));
@@ -2329,6 +2857,11 @@
   // Ensure preview is closed on load (CSS-only control)
   if (previewBackdrop) {
     previewBackdrop.classList.remove("isOpen");
+  }
+
+  // Restore preview mode preference if present
+  if (schema?.meta?.previewMode) {
+    preview.mode = schema.meta.previewMode;
   }
 
   wire();
