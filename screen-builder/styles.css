@@ -590,6 +590,7 @@ button, input, select, textarea{ font-family: inherit; }
   font-weight: 600;
   letter-spacing: -0.2px;
   line-height: 1.15;
+  padding-bottom: 40px;
 }
 .pHelp{
   margin-top: 8px;
