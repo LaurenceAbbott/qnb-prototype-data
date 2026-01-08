@@ -2425,27 +2425,18 @@
           const id = `chk_${step.id}_${idx}`;
 
           const label = document.createElement("label");
-          label.className = "choiceBtn" + (cur.includes(o) ? " selected" : "");
+          label.className = "choiceBtn choiceCheck" + (cur.includes(o) ? " selected" : "");
           label.setAttribute("for", id);
-          label.style.display = "flex";
-          label.style.alignItems = "center";
-          label.style.gap = "12px";
-          label.style.cursor = "pointer";
 
           const cb = document.createElement("input");
+          cb.className = "choiceCheckBox";
           cb.type = "checkbox";
           cb.id = id;
           cb.checked = cur.includes(o);
-          cb.style.width = "18px";
-          cb.style.height = "18px";
-          cb.style.margin = "0";
-          cb.style.flex = "0 0 auto";
-          cb.style.accentColor = "var(--accent, #7c7cf6)";
 
           const txt = document.createElement("span");
+          txt.className = "choiceCheckText";
           txt.textContent = o;
-          txt.style.flex = "1";
-          txt.style.textAlign = "left";
 
           cb.addEventListener("change", () => {
             const next = new Set(Array.isArray(getAnswer()) ? getAnswer() : []);
@@ -2498,10 +2489,7 @@
     card.appendChild(header);
 
     const stack = document.createElement("div");
-    stack.style.display = "flex";
-    stack.style.flexDirection = "column";
-    stack.style.gap = "14px";
-    stack.style.marginTop = "12px";
+    stack.className = "previewPageStack";
 
     // Render page flow (text blocks + groups)
     (p.flow || []).forEach((it) => {
@@ -2511,17 +2499,16 @@
         const body = sanitizeRichHtml(it.bodyHtml || "");
 
         const block = document.createElement("div");
-        block.style.padding = "10px 0";
+        block.className = "previewTextBlock";
 
         const titleEl = document.createElement(level === "body" ? "div" : level);
-        titleEl.style.margin = "0 0 8px 0";
-        titleEl.style.fontWeight = "800";
+        titleEl.className = "previewTextBlockTitle";
         titleEl.textContent = title;
         if (title) block.appendChild(titleEl);
 
         if (body) {
           const bodyEl = document.createElement("div");
-          bodyEl.className = "pHelp";
+          bodyEl.className = "pHelp previewTextBlockBody";
           bodyEl.innerHTML = body;
           block.appendChild(bodyEl);
         }
@@ -2536,13 +2523,10 @@
         if (groupVisible[g.id] === false) return;
 
         const groupWrap = document.createElement("div");
-        groupWrap.style.display = "flex";
-        groupWrap.style.flexDirection = "column";
-        groupWrap.style.gap = "10px";
-        groupWrap.style.padding = "10px 0";
+        groupWrap.className = "previewGroup";
 
         const gTitle = document.createElement("div");
-        gTitle.style.fontWeight = "900";
+        gTitle.className = "previewGroupTitle";
         gTitle.textContent = g.name || "Untitled group";
         groupWrap.appendChild(gTitle);
 
@@ -2550,7 +2534,7 @@
           const d = sanitizeRichHtml(g.description.html || "");
           if (d) {
             const dEl = document.createElement("div");
-            dEl.className = "pHelp";
+            dEl.className = "pHelp previewGroupDesc";
             dEl.innerHTML = d;
             groupWrap.appendChild(dEl);
           }
@@ -2560,12 +2544,10 @@
 
         visibleQuestions.forEach((qq) => {
           const qBlock = document.createElement("div");
-          qBlock.style.display = "flex";
-          qBlock.style.flexDirection = "column";
-          qBlock.style.gap = "8px";
+          qBlock.className = "previewQuestion";
 
           const qTitle = document.createElement("div");
-          qTitle.style.fontWeight = "800";
+          qTitle.className = "previewQuestionTitle";
           qTitle.textContent = qq.title || "Untitled question";
           qBlock.appendChild(qTitle);
 
@@ -2573,7 +2555,7 @@
             const c = sanitizeRichHtml(qq.content.html || "");
             if (c) {
               const cEl = document.createElement("div");
-              cEl.className = "pHelp";
+              cEl.className = "pHelp previewQuestionContent";
               cEl.innerHTML = c;
               qBlock.appendChild(cEl);
             }
