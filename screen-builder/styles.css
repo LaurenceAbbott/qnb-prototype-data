@@ -523,7 +523,6 @@ button, input, select, textarea{ font-family: inherit; }
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: max(100%);
 }
 .modalTop{
   padding: 16px 16px 12px;
