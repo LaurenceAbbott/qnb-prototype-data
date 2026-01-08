@@ -62,6 +62,11 @@
       "OL",
       "LI",
       "SPAN",
+      // Phase 1: allow headings for text blocks
+      "H1",
+      "H2",
+      "H3",
+      "H4",
     ]);
 
     // Use a detached container instead of DOMParser (more robust across embeds/iframes).
@@ -172,6 +177,9 @@
         {
           id: pageId,
           name: "About you",
+          // Phase 1: allow text blocks between groups via a page-level flow list
+          // Backwards compatible: groups remain the source of truth for questions.
+          flow: [{ type: "group", id: groupId }],
           groups: [
             {
               id: groupId,
@@ -187,7 +195,7 @@
                   errorText: "This field is required.",
                   options: [],
                   logic: { enabled: false, rules: [] },
-      content: { enabled: false, html: "" },
+                  content: { enabled: false, html: "" },
                 },
               ],
             },
@@ -205,8 +213,56 @@
   // App state
   // -------------------------
   let schema = loadSchema() || newDefaultSchema();
+
+  // Phase 1 migration/normalisation: ensure each page has a valid flow (groups + text blocks)
+  function normaliseSchemaForFlow() {
+    if (!schema || !Array.isArray(schema.pages)) return;
+
+    schema.pages.forEach((p) => {
+      p.groups = Array.isArray(p.groups) ? p.groups : [];
+      p.flow = Array.isArray(p.flow) ? p.flow : [];
+
+      // If no flow exists (older schema), create it from existing groups in order
+      if (p.flow.length === 0) {
+        p.flow = p.groups.map((g) => ({ type: "group", id: g.id }));
+      }
+
+      // Ensure every group appears at least once in flow
+      const inFlow = new Set(p.flow.filter((x) => x?.type === "group").map((x) => x.id));
+      p.groups.forEach((g) => {
+        if (!inFlow.has(g.id)) p.flow.push({ type: "group", id: g.id });
+      });
+
+      // Ensure text blocks have required fields
+      p.flow.forEach((it) => {
+        if (it?.type !== "text") return;
+        if (!it.id) it.id = uid("txt");
+        if (!it.title) it.title = "";
+        if (!it.level) it.level = "h3"; // h1/h2/h3/body
+        if (!it.bodyHtml) it.bodyHtml = "<p></p>";
+      });
+
+      // Ensure questions have content/errorText fields (older imports)
+      p.groups.forEach((g) => {
+        g.questions = Array.isArray(g.questions) ? g.questions : [];
+        g.questions.forEach((q) => {
+          if (!q) return;
+          if (q.content == null) q.content = { enabled: false, html: "" };
+          if (q.errorText == null) q.errorText = "This field is required.";
+          if (q.logic == null) q.logic = { enabled: false, rules: [] };
+        });
+      });
+    });
+
+    saveSchema();
+  }
+
+  normaliseSchemaForFlow();
   let selection = {
     pageId: schema.pages[0]?.id || null,
+    // Phase 1: selection can be a group or a text block within a page
+    blockType: "group", // "group" | "text"
+    blockId: schema.pages[0]?.flow?.[0]?.id || schema.pages[0]?.groups[0]?.id || null,
     groupId: schema.pages[0]?.groups[0]?.id || null,
     questionId: schema.pages[0]?.groups[0]?.questions[0]?.id || null,
   };
@@ -299,12 +355,36 @@
 
   function ensureSelection() {
     if (!schema.pages.length) {
-      selection = { pageId: null, groupId: null, questionId: null };
+      selection = { pageId: null, blockType: "group", blockId: null, groupId: null, questionId: null };
       return;
     }
 
     const p = getPage(selection.pageId) || schema.pages[0];
     selection.pageId = p.id;
+    p.flow = Array.isArray(p.flow) ? p.flow : p.groups.map((g) => ({ type: "group", id: g.id }));
+
+    // Determine the selected flow item
+    let flowItem = p.flow.find((it) => it.id === selection.blockId) || null;
+
+    // If no flow item selected, default to first flow item
+    if (!flowItem) {
+      flowItem = p.flow[0] || null;
+      selection.blockId = flowItem?.id || null;
+      selection.blockType = flowItem?.type || "group";
+    }
+
+    // If selected is a text block
+    if (flowItem && flowItem.type === "text") {
+      selection.blockType = "text";
+      selection.blockId = flowItem.id;
+      selection.groupId = null;
+      selection.questionId = null;
+      return;
+    }
+
+    // Otherwise selected is a group
+    selection.blockType = "group";
+    selection.blockId = flowItem?.id || selection.groupId;
 
     if (!p.groups?.length) {
       selection.groupId = null;
@@ -312,7 +392,7 @@
       return;
     }
 
-    const g = getGroup(p.id, selection.groupId) || p.groups[0];
+    const g = getGroup(p.id, selection.groupId) || p.groups.find((gg) => gg.id === selection.blockId) || p.groups[0];
     selection.groupId = g.id;
 
     if (!g.questions?.length) {
@@ -364,6 +444,8 @@
     pagesListEl.innerHTML = "";
 
     schema.pages.forEach((p, pIdx) => {
+      p.flow = Array.isArray(p.flow) ? p.flow : p.groups.map((g) => ({ type: "group", id: g.id }));
+
       const pageDiv = document.createElement("div");
       pageDiv.className = "pageItem" + (p.id === selection.pageId ? " active" : "");
 
@@ -395,17 +477,14 @@
         e.stopPropagation();
         selection.pageId = p.id;
         ensureSelection();
-        // Make renaming effortless (no "type fast" race)
         requestAnimationFrame(() => selectAllContent(name));
       });
 
       name.addEventListener("keydown", (e) => {
-        // Enter commits rename
         if (e.key === "Enter") {
           e.preventDefault();
           name.blur();
         }
-        // Escape cancels back to stored value
         if (e.key === "Escape") {
           e.preventDefault();
           name.textContent = p.name;
@@ -424,7 +503,6 @@
       name.addEventListener("input", () => {
         p.name = safeText(name) || "Untitled page";
         saveSchemaDebounced();
-        // update header + stats without rebuilding inspector
         editorTitleEl.textContent = `Editor · ${p.name}`;
         pageNameDisplayEl.textContent = p.name;
         renderMiniStats();
@@ -432,7 +510,7 @@
 
       const meta = document.createElement("div");
       meta.className = "pageMeta";
-      const qCount = p.groups.reduce((acc, g) => acc + g.questions.length, 0);
+      const qCount = p.groups.reduce((acc, g) => acc + (g.questions?.length || 0), 0);
       meta.textContent = `${p.groups.length} group${p.groups.length !== 1 ? "s" : ""} · ${qCount} question${qCount !== 1 ? "s" : ""}`;
 
       left.appendChild(name);
@@ -441,7 +519,6 @@
       const actions = document.createElement("div");
       actions.className = "pageActions";
 
-      // rename affordance
       const renameBtn = iconButton("✎", "Rename page");
       renameBtn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -449,7 +526,6 @@
         requestAnimationFrame(() => selectAllContent(name));
       });
 
-      // reorder up/down
       const upBtn = iconButton("↑", "Move up");
       upBtn.disabled = pIdx === 0;
       upBtn.addEventListener("click", (e) => {
@@ -485,26 +561,63 @@
 
       top.appendChild(left);
       top.appendChild(actions);
-
       pageDiv.appendChild(top);
 
-      // Groups chips (select group)
+      // Flow chips (Groups + Text blocks)
       const chips = document.createElement("div");
       chips.className = "groupsMini";
-      p.groups.forEach((g) => {
-        const chip = document.createElement("button");
-        chip.type = "button";
-        chip.className = "groupChip" + (p.id === selection.pageId && g.id === selection.groupId ? " active" : "");
-        chip.textContent = g.name;
-        chip.addEventListener("click", (e) => {
-          e.stopPropagation();
-          selection.pageId = p.id;
-          selection.groupId = g.id;
-          selection.questionId = g.questions[0]?.id || null;
-          renderAll();
-        });
-        chips.appendChild(chip);
+
+      p.flow.forEach((it) => {
+        if (it.type === "group") {
+          const g = p.groups.find((gg) => gg.id === it.id);
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.className =
+            "groupChip" +
+            (p.id === selection.pageId && selection.blockType === "group" && selection.groupId === g?.id ? " active" : "");
+          chip.textContent = g?.name || "(Missing group)";
+          chip.addEventListener("click", (e) => {
+            e.stopPropagation();
+            selection.pageId = p.id;
+            selection.blockType = "group";
+            selection.blockId = it.id;
+            selection.groupId = it.id;
+            selection.questionId = g?.questions?.[0]?.id || null;
+            renderAll();
+          });
+          chips.appendChild(chip);
+        }
+
+        if (it.type === "text") {
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.className =
+            "groupChip" +
+            (p.id === selection.pageId && selection.blockType === "text" && selection.blockId === it.id ? " active" : "");
+          chip.textContent = it.title ? `📝 ${it.title}` : "📝 Text block";
+          chip.addEventListener("click", (e) => {
+            e.stopPropagation();
+            selection.pageId = p.id;
+            selection.blockType = "text";
+            selection.blockId = it.id;
+            selection.groupId = null;
+            selection.questionId = null;
+            renderAll();
+          });
+          chips.appendChild(chip);
+        }
       });
+
+      const addTextChip = document.createElement("button");
+      addTextChip.type = "button";
+      addTextChip.className = "groupChip";
+      addTextChip.textContent = "+ Text";
+      addTextChip.addEventListener("click", (e) => {
+        e.stopPropagation();
+        selection.pageId = p.id;
+        addTextBlockToPage(p.id);
+      });
+      chips.appendChild(addTextChip);
 
       const addGroupChip = document.createElement("button");
       addGroupChip.type = "button";
@@ -522,9 +635,20 @@
       // click page selects it
       pageDiv.addEventListener("click", () => {
         selection.pageId = p.id;
-        // choose first group/question
-        selection.groupId = p.groups[0]?.id || null;
-        selection.questionId = p.groups[0]?.questions[0]?.id || null;
+        // choose first flow item
+        const first = p.flow[0];
+        if (first?.type === "text") {
+          selection.blockType = "text";
+          selection.blockId = first.id;
+          selection.groupId = null;
+          selection.questionId = null;
+        } else {
+          const g0 = p.groups.find((gg) => gg.id === first?.id) || p.groups[0];
+          selection.blockType = "group";
+          selection.blockId = g0?.id || null;
+          selection.groupId = g0?.id || null;
+          selection.questionId = g0?.questions?.[0]?.id || null;
+        }
         renderAll();
       });
 
@@ -536,22 +660,41 @@
     canvasEl.innerHTML = "";
 
     const p = getPage(selection.pageId);
+    if (!p) return;
+
+    // Phase 1: if a text block is selected, show a simple preview card
+    if (selection.blockType === "text") {
+      const tb = (p.flow || []).find((x) => x.type === "text" && x.id === selection.blockId);
+
+      const card = document.createElement("div");
+      card.className = "tip";
+
+      const level = tb?.level || "h3";
+      const title = tb?.title || "Text block";
+      const body = sanitizeRichHtml(tb?.bodyHtml || "");
+
+      card.innerHTML = `
+        <div class="tipTitle">📝 ${escapeHtml(title)}</div>
+        <div class="muted">This is a text block separator. It will be used when we switch Preview to page-by-page mode.</div>
+        <div style="margin-top:10px">${body || "<p class='muted'>No content yet.</p>"}</div>
+      `;
+
+      canvasEl.appendChild(card);
+      return;
+    }
+
     const g = getGroup(selection.pageId, selection.groupId);
-    if (!p || !g) return;
+    if (!g) return;
 
     // Helper: render the contextual "+ Question" button under the list
     const renderAddQuestionCTA = () => {
-      // Move the existing toolbar button into the canvas (single source of truth)
-      // This is a JS-only DOM move (no HTML/CSS changes required)
       const wrap = document.createElement("div");
       wrap.className = "canvasAddRow";
       wrap.style.marginTop = "14px";
       wrap.style.display = "flex";
       wrap.style.justifyContent = "flex-end";
 
-      // Ensure button uses the standard styling
       btnAddQuestion.classList.add("btn");
-
       wrap.appendChild(btnAddQuestion);
       canvasEl.appendChild(wrap);
     };
@@ -585,7 +728,6 @@
       const typeBadge = document.createElement("span");
       typeBadge.className = "badge";
       typeBadge.textContent = QUESTION_TYPES.find((t) => t.key === q.type)?.label || q.type;
-
       meta.appendChild(typeBadge);
 
       if (q.required) {
@@ -631,7 +773,6 @@
         e.stopPropagation();
         const copy = deepClone(q);
         copy.id = uid("q");
-        // keep logic but reference still valid
         g.questions.splice(qIdx + 1, 0, copy);
         selection.questionId = copy.id;
         saveSchema();
@@ -664,7 +805,6 @@
       canvasEl.appendChild(card);
     });
 
-    // Add contextual "+ Question" button under the question list
     renderAddQuestionCTA();
   }
 
@@ -679,9 +819,73 @@
       return;
     }
 
+    // If a text block is selected, show a dedicated inspector
+    if (selection.blockType === "text") {
+      const tb = (p.flow || []).find((x) => x.type === "text" && x.id === selection.blockId);
+      inspectorSubEl.textContent = "Editing text block";
+
+      inspectorEl.appendChild(sectionTitle("Text block"));
+
+      // Title + level
+      inspectorEl.appendChild(fieldText("Title", tb?.title || "", (val) => {
+        if (!tb) return;
+        tb.title = val;
+        saveSchemaDebounced();
+        renderPagesList();
+        renderCanvas();
+      }));
+
+      inspectorEl.appendChild(fieldSelect(
+        "Heading size",
+        tb?.level || "h3",
+        [
+          { value: "h1", label: "H1" },
+          { value: "h2", label: "H2" },
+          { value: "h3", label: "H3" },
+          { value: "body", label: "Body" },
+        ],
+        (val) => {
+          if (!tb) return;
+          tb.level = val;
+          saveSchema();
+          renderCanvas();
+          renderPagesList();
+        }
+      ));
+
+      // Body content
+      inspectorEl.appendChild(richTextEditor("Body", tb?.bodyHtml || "<p></p>", (html) => {
+        if (!tb) return;
+        tb.bodyHtml = sanitizeRichHtml(html);
+        saveSchemaDebounced();
+        renderCanvas();
+      }));
+
+      // Arrange + delete
+      inspectorEl.appendChild(divider());
+
+      inspectorEl.appendChild(buttonRow([
+        { label: "Move up", kind: "ghost", onClick: () => moveFlowItem(p.id, tb?.id, -1) },
+        { label: "Move down", kind: "ghost", onClick: () => moveFlowItem(p.id, tb?.id, +1) },
+      ]));
+
+      inspectorEl.appendChild(buttonRow([
+        {
+          label: "Delete text block",
+          kind: "ghost",
+          onClick: () => {
+            if (!tb) return;
+            if (!confirm("Delete this text block?")) return;
+            deleteFlowItem(p.id, tb.id);
+          },
+        },
+      ]));
+
+      return;
+    }
+
     if (!g) {
       inspectorSubEl.textContent = "Select or add a group";
-      // group controls
       inspectorEl.appendChild(sectionTitle("Page"));
       inspectorEl.appendChild(fieldText("Page name", p.name, (val) => {
         p.name = val || "Untitled page";
@@ -690,9 +894,8 @@
         editorTitleEl.textContent = `Editor · ${p.name}`;
         pageNameDisplayEl.textContent = p.name;
       }));
-      inspectorEl.appendChild(buttonRow([
-        { label: "+ Group", kind: "primary", onClick: () => addGroupToPage(p.id) },
-      ]));
+      inspectorEl.appendChild(buttonRow([{ label: "+ Group", kind: "primary", onClick: () => addGroupToPage(p.id) }]));
+      inspectorEl.appendChild(buttonRow([{ label: "+ Text block", kind: "ghost", onClick: () => addTextBlockToPage(p.id) }]));
       return;
     }
 
@@ -721,8 +924,12 @@
         onClick: () => {
           if (!confirm(`Delete group "${g.name}"?`)) return;
           p.groups = p.groups.filter((x) => x.id !== g.id);
+          // also remove from flow
+          p.flow = (p.flow || []).filter((x) => !(x.type === "group" && x.id === g.id));
+          selection.blockType = "group";
+          selection.blockId = p.flow[0]?.id || p.groups[0]?.id || null;
           selection.groupId = p.groups[0]?.id || null;
-          selection.questionId = p.groups[0]?.questions[0]?.id || null;
+          selection.questionId = p.groups[0]?.questions?.[0]?.id || null;
           saveSchema();
           renderAll();
         },
@@ -964,6 +1171,31 @@
     toolbar.appendChild(mkBtn("I", "Italic", "italic"));
     toolbar.appendChild(mkBtn("U", "Underline", "underline"));
     toolbar.appendChild(mkBtn("•", "Bulleted list", "insertUnorderedList"));
+
+    const mkBlockBtn = (txt, title, tag) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "btn ghost";
+      b.textContent = txt;
+      b.title = title;
+      b.addEventListener("mousedown", (e) => e.preventDefault());
+      b.addEventListener("click", () => {
+        try {
+          document.execCommand("formatBlock", false, tag);
+        } catch {
+          // no-op
+        }
+        editor.focus();
+        onChange(editor.innerHTML);
+      });
+      return b;
+    };
+
+    // Phase 1: heading controls (useful for text blocks)
+    toolbar.appendChild(mkBlockBtn("H1", "Heading 1", "h1"));
+    toolbar.appendChild(mkBlockBtn("H2", "Heading 2", "h2"));
+    toolbar.appendChild(mkBlockBtn("H3", "Heading 3", "h3"));
+    toolbar.appendChild(mkBlockBtn("P", "Paragraph", "p"));
 
     const editor = document.createElement("div");
     editor.className = "textarea"; // reuse existing textarea styling
@@ -1395,6 +1627,77 @@
   // -------------------------
   // Actions
   // -------------------------
+
+  function addTextBlockToPage(pageId) {
+    const p = getPage(pageId);
+    if (!p) return;
+
+    p.flow = Array.isArray(p.flow) ? p.flow : p.groups.map((g) => ({ type: "group", id: g.id }));
+
+    const tid = uid("txt");
+    const item = {
+      type: "text",
+      id: tid,
+      title: "",
+      level: "h3",
+      bodyHtml: "<p></p>",
+    };
+
+    // Insert after the currently selected flow item (in this page), otherwise append
+    let insertAt = p.flow.length;
+    if (selection.pageId === p.id && selection.blockId) {
+      const idx = p.flow.findIndex((x) => x.id === selection.blockId);
+      if (idx >= 0) insertAt = idx + 1;
+    }
+
+    p.flow.splice(insertAt, 0, item);
+
+    selection.pageId = p.id;
+    selection.blockType = "text";
+    selection.blockId = tid;
+    selection.groupId = null;
+    selection.questionId = null;
+
+    saveSchema();
+    renderAll(true);
+  }
+
+  function moveFlowItem(pageId, itemId, dir) {
+    const p = getPage(pageId);
+    if (!p) return;
+    p.flow = Array.isArray(p.flow) ? p.flow : [];
+    const idx = p.flow.findIndex((x) => x.id === itemId);
+    if (idx < 0) return;
+    const to = idx + dir;
+    if (to < 0 || to >= p.flow.length) return;
+    moveItem(p.flow, idx, to);
+    saveSchema();
+    renderAll();
+  }
+
+  function deleteFlowItem(pageId, itemId) {
+    const p = getPage(pageId);
+    if (!p) return;
+    p.flow = (p.flow || []).filter((x) => x.id !== itemId);
+
+    // Reset selection to nearest sensible thing
+    const first = p.flow[0];
+    if (first?.type === "text") {
+      selection.blockType = "text";
+      selection.blockId = first.id;
+      selection.groupId = null;
+      selection.questionId = null;
+    } else {
+      const g0 = p.groups.find((gg) => gg.id === first?.id) || p.groups[0];
+      selection.blockType = "group";
+      selection.blockId = g0?.id || null;
+      selection.groupId = g0?.id || null;
+      selection.questionId = g0?.questions?.[0]?.id || null;
+    }
+
+    saveSchema();
+    renderAll(true);
+  }
   function addPage() {
     const pid = uid("page");
     const gid = uid("group");
@@ -1403,6 +1706,7 @@
     schema.pages.push({
       id: pid,
       name: `Page ${schema.pages.length + 1}`,
+      flow: [{ type: "group", id: gid }],
       groups: [
         {
           id: gid,
@@ -1413,12 +1717,12 @@
               type: "text",
               title: "New question",
               help: "",
-      placeholder: "",
-      required: false,
-      errorText: "This field is required.",
+              placeholder: "",
+              required: false,
+              errorText: "This field is required.",
               options: [],
               logic: { enabled: false, rules: [] },
-      content: { enabled: false, html: "" },
+              content: { enabled: false, html: "" },
             },
           ],
         },
@@ -1426,6 +1730,8 @@
     });
 
     selection.pageId = pid;
+    selection.blockType = "group";
+    selection.blockId = gid;
     selection.groupId = gid;
     selection.questionId = qid;
     saveSchema();
@@ -1443,7 +1749,13 @@
       questions: [],
     });
 
+    // Ensure flow exists and add group at the end
+    p.flow = Array.isArray(p.flow) ? p.flow : p.groups.map((g) => ({ type: "group", id: g.id }));
+    p.flow.push({ type: "group", id: gid });
+
     selection.pageId = p.id;
+    selection.blockType = "group";
+    selection.blockId = gid;
     selection.groupId = gid;
     selection.questionId = null;
 
@@ -1455,6 +1767,20 @@
     const p = getPage(selection.pageId);
     const g = getGroup(selection.pageId, selection.groupId);
     if (!p || !g) return;
+
+    // If user is currently on a text block, add the question to the nearest group (next group, else previous)
+    if (selection.blockType === "text") {
+      const flow = Array.isArray(p.flow) ? p.flow : [];
+      const idx = flow.findIndex((x) => x.id === selection.blockId);
+      const nextGroupId = flow.slice(idx + 1).find((x) => x.type === "group")?.id;
+      const prevGroupId = [...flow.slice(0, idx)].reverse().find((x) => x.type === "group")?.id;
+      const targetGroupId = nextGroupId || prevGroupId;
+      const target = targetGroupId ? getGroup(p.id, targetGroupId) : g;
+      if (target) selection.groupId = target.id;
+    }
+
+    const group = getGroup(selection.pageId, selection.groupId);
+    if (!group) return;
 
     const qid = uid("q");
     const q = {
@@ -1470,7 +1796,9 @@
       content: { enabled: false, html: "" },
     };
 
-    g.questions.push(q);
+    group.questions.push(q);
+    selection.blockType = "group";
+    selection.blockId = group.id;
     selection.questionId = qid;
 
     saveSchema();
