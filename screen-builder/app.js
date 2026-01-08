@@ -2289,7 +2289,7 @@
       return;
     }
 
-    // Question mode (existing behaviour)
+    // Question mode (Typeform-style)
     if (previewSub) previewSub.textContent = step ? `${step.pageName} · ${step.groupName}` : "No questions yet";
 
     setProgress();
@@ -2313,8 +2313,31 @@
     const card = document.createElement("div");
     card.className = "previewCard";
 
+    // Header: Page title, then Group title + description (matches page mode layout)
+    const pageTitleEl = document.createElement("div");
+    pageTitleEl.className = "pQ";
+    pageTitleEl.textContent = step.pageName || "Untitled page";
+    card.appendChild(pageTitleEl);
+
+    const groupTitleEl = document.createElement("div");
+    groupTitleEl.className = "previewGroupTitle";
+    groupTitleEl.textContent = step.groupName || "Untitled group";
+    card.appendChild(groupTitleEl);
+
+    const liveGroup = getGroup(step.pageId, step.groupId);
+    if (liveGroup?.description?.enabled) {
+      const gd = sanitizeRichHtml(liveGroup.description.html || "");
+      if (gd) {
+        const groupDescEl = document.createElement("div");
+        groupDescEl.className = "pHelp previewGroupDesc";
+        groupDescEl.innerHTML = gd;
+        card.appendChild(groupDescEl);
+      }
+    }
+
+    // IMPORTANT: question title must NOT reuse the page title class
     const qEl = document.createElement("div");
-    qEl.className = "pQ";
+    qEl.className = "previewQuestionTitle";
     qEl.textContent = step.title || "Untitled question";
 
     const helpEl = document.createElement("div");
