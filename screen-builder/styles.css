@@ -698,6 +698,26 @@ ul {
     padding-top: 8px;
     color: indianred;
 }
+
+/* Page preview layout */
+.previewPageStack { }
+.previewTextBlock { }
+.previewTextBlockTitle { }
+.previewTextBlockBody { }
+
+.previewGroup { }
+.previewGroupTitle { }
+.previewGroupDesc { }
+
+.previewQuestion { }
+.previewQuestionTitle { }
+.previewQuestionContent { }
+
+/* Checkbox styling */
+.choiceCheck { }
+.choiceCheckBox { }
+.choiceCheckText { }
+
 @media (max-width: 1180px){
   .layout{ grid-template-columns: 320px 1fr; }
   .panelRight{ display:none; }
