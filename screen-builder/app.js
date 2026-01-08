@@ -692,6 +692,33 @@
     const g = getGroup(selection.pageId, selection.groupId);
     if (!g) return;
 
+    // Canvas header: show Page title, then Group title + description at the top
+    const canvasHeader = document.createElement("div");
+    canvasHeader.className = "canvasHeader";
+
+    const pageTitle = document.createElement("div");
+    pageTitle.className = "canvasPageTitle";
+    pageTitle.textContent = p.name || "Untitled page";
+
+    const groupTitle = document.createElement("div");
+    groupTitle.className = "canvasGroupTitle";
+    groupTitle.textContent = g.name || "Untitled group";
+
+    canvasHeader.appendChild(pageTitle);
+    canvasHeader.appendChild(groupTitle);
+
+    if (g.description?.enabled) {
+      const descHtml = sanitizeRichHtml(g.description.html || "");
+      if (descHtml) {
+        const groupDesc = document.createElement("div");
+        groupDesc.className = "canvasGroupDesc";
+        groupDesc.innerHTML = descHtml;
+        canvasHeader.appendChild(groupDesc);
+      }
+    }
+
+    canvasEl.appendChild(canvasHeader);
+
     // Helper: render the contextual "+ Question" button under the list
     const renderAddQuestionCTA = () => {
       const wrap = document.createElement("div");
@@ -2578,11 +2605,12 @@
 
           qBlock.appendChild(inputWrap);
 
-          stack.appendChild(qBlock);
+          // IMPORTANT: keep group title/description ABOVE its questions
+          groupWrap.appendChild(qBlock);
         });
 
         // If a group has no visible questions/content, avoid rendering empty blocks
-        if (groupWrap.childNodes.length > 1 || visibleQuestions.length) {
+        if (groupWrap.childNodes.length > 2 || visibleQuestions.length) {
           stack.appendChild(groupWrap);
         }
 
