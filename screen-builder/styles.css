@@ -667,7 +667,10 @@ button, input, select, textarea{ font-family: inherit; }
   color: rgba(45,212,191,0.92);
   font-size: 13px;
 }
-
+.previewFooterRight {
+    display: flex;
+    gap: 10px;
+}
 @media (max-width: 1180px){
   .layout{ grid-template-columns: 320px 1fr; }
   .panelRight{ display:none; }
