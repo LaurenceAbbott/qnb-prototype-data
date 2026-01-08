@@ -621,17 +621,20 @@ button, input, select, textarea{ font-family: inherit; }
     gap: 10px;
     margin-top: 0px;
 }
-.choiceBtn{
-  text-align: center;
-  padding: 14px 14px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.06);
-  cursor:pointer;
-  color: var(--text);
-  transition: transform .08s ease, background .15s ease, border-color .15s ease;
-  width: fit-content;
-  min-width: 100px;
+.choiceBtn {
+    text-align: center;
+    padding: 14px 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+    color: var(--text);
+    transition: transform .08s ease, background .15s ease, border-color .15s ease;
+    width: fit-content;
+    min-width: 100px;
+    gap: 10px;
+    display: flex;
+    justify-content: center;
 }
 .choiceBtn:hover{ background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.18); }
 .choiceBtn:active{ transform: translateY(1px); }
