@@ -635,6 +635,7 @@ button, input, select, textarea{ font-family: inherit; }
     gap: 10px;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 .choiceBtn:hover{ background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.18); }
 .choiceBtn:active{ transform: translateY(1px); }
@@ -743,7 +744,10 @@ ul {
     gap: 10px;
     display: flex;
 }
-.choiceCheckBox { }
+.choiceCheckBox {
+    height: 20px;
+    width: 20px;
+}
 .choiceCheckText { }
 
 @media (max-width: 1180px){
