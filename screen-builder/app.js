@@ -769,7 +769,7 @@
     lab.textContent = label;
 
     const input = document.createElement("input");
-    input.className = "pControl pText";
+    input.className = "input";
     input.type = "text";
     input.value = value || "";
 
@@ -795,7 +795,7 @@
     lab.textContent = label;
 
     const ta = document.createElement("textarea");
-    ta.className = "pControl pTextarea";
+    ta.className = "textarea";
     ta.value = value || "";
 
     ta.addEventListener("focus", () => {
@@ -820,7 +820,7 @@
     lab.textContent = label;
 
     const sel = document.createElement("select");
-    sel.className = "pControl pSelect";
+    sel.className = "select";
     options.forEach((opt) => {
       const o = document.createElement("option");
       o.value = opt.value;
@@ -905,7 +905,7 @@
         row.className = "optItem";
 
         const input = document.createElement("input");
-        input.className = "pControl pText";
+        input.className = "input";
         input.type = "text";
         input.value = opt;
         input.addEventListener("input", () => {
@@ -1067,7 +1067,7 @@
             valueWrap.appendChild(wrapField("Value", vSel));
           } else {
             const input = document.createElement("input");
-            input.className = "pControl pText";
+            input.className = "input";
             input.type = "text";
             input.value = r.value || "";
             input.placeholder = "Value to compare against";
@@ -1150,7 +1150,7 @@
 
   function makeSelect(options, value) {
     const sel = document.createElement("select");
-    sel.className = "pControl pSelect";
+    sel.className = "select";
     const blank = document.createElement("option");
     blank.value = "";
     blank.textContent = "— Select —";
@@ -1473,7 +1473,7 @@
     errEl.style.display = preview.lastError ? "block" : "none";
 
     const inputWrap = document.createElement("div");
-    inputWrap.className = "pInput";
+    inputWrap.className = "pInputWrap";
 
     // Build input control per type
     const setAnswer = (v) => {
@@ -1483,7 +1483,7 @@
 
     if (["text", "email", "number", "date"].includes(step.type)) {
       const input = document.createElement("input");
-      input.className = "pControl pText";
+      input.className = "pInput";
       input.type = step.type === "text" ? "text" : step.type;
       input.placeholder = step.placeholder || "";
       input.value = getAnswer() ?? "";
@@ -1492,7 +1492,7 @@
       setTimeout(() => input.focus(), 0);
     } else if (step.type === "textarea") {
       const ta = document.createElement("textarea");
-      ta.className = "pControl pTextarea";
+      ta.className = "pTextarea";
       ta.placeholder = step.placeholder || "";
       ta.value = getAnswer() ?? "";
       ta.addEventListener("input", () => setAnswer(ta.value));
@@ -1500,12 +1500,12 @@
       setTimeout(() => ta.focus(), 0);
     } else if (step.type === "yesno") {
       const row = document.createElement("div");
-      row.className = "pChoices pChoicesRow";
+      row.className = "choiceGrid";
 
       const mk = (label, val) => {
         const b = document.createElement("button");
         b.type = "button";
-        b.className = "pChoice" + (getAnswer() === val ? " isActive" : "");
+        b.className = "choiceBtn" + (getAnswer() === val ? " selected" : "");
         b.textContent = label;
         b.addEventListener("click", () => {
           setAnswer(val);
@@ -1522,7 +1522,7 @@
 
       if (step.type === "select") {
         const sel = document.createElement("select");
-        sel.className = "pControl pSelect";
+        sel.className = "pSelect";
         const blank = document.createElement("option");
         blank.value = "";
         blank.textContent = "— Select —";
@@ -1541,12 +1541,12 @@
 
       if (step.type === "radio") {
         const list = document.createElement("div");
-        list.className = "pChoices";
+        list.className = "choiceGrid";
         const cur = getAnswer() ?? "";
         opts.forEach((o) => {
           const b = document.createElement("button");
           b.type = "button";
-          b.className = "pChoice" + (cur === o ? " isActive" : "");
+          b.className = "choiceBtn" + (cur === o ? " selected" : "");
           b.textContent = o;
           b.addEventListener("click", () => {
             setAnswer(o);
@@ -1559,34 +1559,31 @@
 
       if (step.type === "checkboxes") {
         const list = document.createElement("div");
-        list.className = "pChoices";
+        list.className = "choiceGrid";
         const cur = Array.isArray(getAnswer()) ? getAnswer() : [];
+
         opts.forEach((o) => {
-          const lab = document.createElement("label");
-          lab.className = "pCheckRow";
-          const cb = document.createElement("input");
-          cb.type = "checkbox";
-          cb.className = "pCheckbox";
-          cb.checked = cur.includes(o);
-          cb.addEventListener("change", () => {
+          const b = document.createElement("button");
+          b.type = "button";
+          const selected = cur.includes(o);
+          b.className = "choiceBtn" + (selected ? " selected" : "");
+          b.textContent = o;
+          b.addEventListener("click", () => {
             const next = new Set(Array.isArray(getAnswer()) ? getAnswer() : []);
-            if (cb.checked) next.add(o);
-            else next.delete(o);
+            if (next.has(o)) next.delete(o);
+            else next.add(o);
             setAnswer(Array.from(next));
+            renderPreview();
           });
-          const sp = document.createElement("span");
-          sp.className = "pCheckLabel";
-          sp.textContent = o;
-          lab.appendChild(cb);
-          lab.appendChild(sp);
-          list.appendChild(lab);
+          list.appendChild(b);
         });
+
         inputWrap.appendChild(list);
       }
     } else {
       // fallback
       const input = document.createElement("input");
-      input.className = "pControl pText";
+      input.className = "pInput";
       input.type = "text";
       input.value = getAnswer() ?? "";
       input.addEventListener("input", () => setAnswer(input.value));
