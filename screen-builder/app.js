@@ -43,6 +43,63 @@
       .replaceAll("'", "&#039;");
   }
 
+  // Very small, safe rich-text sanitizer (allows only basic formatting + lists)
+  function sanitizeRichHtml(inputHtml) {
+    const html = String(inputHtml || "");
+    if (!html.trim()) return "";
+
+    const allowed = new Set([
+      "P",
+      "BR",
+      "B",
+      "STRONG",
+      "I",
+      "EM",
+      "U",
+      "UL",
+      "OL",
+      "LI",
+      "SPAN",
+    ]);
+
+    const doc = new DOMParser().parseFromString(`<div>${html}</div>`, "text/html");
+    const root = doc.body.firstElementChild;
+
+    const walk = (node) => {
+      // Remove comments
+      if (node.nodeType === Node.COMMENT_NODE) {
+        node.remove();
+        return;
+      }
+
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const el = node;
+
+        // Strip all attributes (prevents XSS via on* handlers, style, href, etc.)
+        [...el.attributes].forEach((a) => el.removeAttribute(a.name));
+
+        // Disallowed tags: unwrap (keep text/children)
+        if (!allowed.has(el.tagName)) {
+          const parent = el.parentNode;
+          if (!parent) return;
+          while (el.firstChild) parent.insertBefore(el.firstChild, el);
+          parent.removeChild(el);
+          return;
+        }
+      }
+
+      // Copy childNodes first because we may mutate while iterating
+      const kids = [...node.childNodes];
+      kids.forEach(walk);
+    };
+
+    walk(root);
+
+    // Trim empty wrappers
+    const out = (root.innerHTML || "").trim();
+    return out;
+  }
+
   function selectAllContent(el) {
     try {
       const range = document.createRange();
@@ -126,6 +183,7 @@
                   placeholder: "e.g. Alex Taylor",
                   options: [],
                   logic: { enabled: false, rules: [] },
+      content: { enabled: false, html: "" },
                 },
               ],
             },
@@ -691,6 +749,23 @@
       saveSchemaDebounced();
     }));
 
+    // Explanatory content (rich text block shown above the answer control in Preview)
+    q.content = q.content || { enabled: false, html: "" };
+    inspectorEl.appendChild(toggleRow("Add explanatory content", q.content.enabled === true, (on) => {
+      q.content.enabled = on;
+      if (!q.content.html) q.content.html = "<p></p>";
+      saveSchema();
+      isTypingInspector = false;
+      renderAll(true);
+    }));
+
+    if (q.content.enabled) {
+      inspectorEl.appendChild(richTextEditor("Content", q.content.html || "", (html) => {
+        q.content.html = sanitizeRichHtml(html);
+        saveSchemaDebounced();
+      }));
+    }
+
     inspectorEl.appendChild(fieldSelect("Type", q.type, QUESTION_TYPES.map(t => ({ value: t.key, label: t.label })), (val) => {
       q.type = val;
       if (!isOptionType(q.type)) q.options = [];
@@ -831,6 +906,81 @@
 
     wrap.appendChild(lab);
     wrap.appendChild(ta);
+    return wrap;
+  }
+
+  // Simple rich text editor (B/I/U + bullet list) using contentEditable.
+  // NOTE: This is intentionally minimal and sanitised before saving.
+  function richTextEditor(label, html, onChange) {
+    const wrap = document.createElement("div");
+    wrap.className = "field";
+
+    const lab = document.createElement("div");
+    lab.className = "label";
+    lab.textContent = label;
+
+    const toolbar = document.createElement("div");
+    toolbar.style.display = "flex";
+    toolbar.style.gap = "8px";
+    toolbar.style.flexWrap = "wrap";
+    toolbar.style.marginBottom = "8px";
+
+    const mkBtn = (txt, title, cmd) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "btn ghost";
+      b.textContent = txt;
+      b.title = title;
+      b.addEventListener("mousedown", (e) => e.preventDefault()); // keep focus in editor
+      b.addEventListener("click", () => {
+        try {
+          document.execCommand(cmd, false, null);
+        } catch {
+          // no-op
+        }
+        editor.focus();
+        // emit
+        onChange(editor.innerHTML);
+      });
+      return b;
+    };
+
+    toolbar.appendChild(mkBtn("B", "Bold", "bold"));
+    toolbar.appendChild(mkBtn("I", "Italic", "italic"));
+    toolbar.appendChild(mkBtn("U", "Underline", "underline"));
+    toolbar.appendChild(mkBtn("•", "Bulleted list", "insertUnorderedList"));
+
+    const editor = document.createElement("div");
+    editor.className = "textarea"; // reuse existing textarea styling
+    editor.contentEditable = "true";
+    editor.spellcheck = true;
+    editor.setAttribute("role", "textbox");
+    editor.setAttribute("aria-multiline", "true");
+    editor.style.minHeight = "120px";
+    editor.style.whiteSpace = "normal";
+    editor.style.overflow = "auto";
+    editor.innerHTML = sanitizeRichHtml(html || "");
+
+    editor.addEventListener("focus", () => {
+      isTypingInspector = true;
+    });
+
+    editor.addEventListener("input", () => {
+      onChange(editor.innerHTML);
+    });
+
+    editor.addEventListener("blur", () => {
+      // normalise + prevent junk markup
+      const clean = sanitizeRichHtml(editor.innerHTML);
+      editor.innerHTML = clean;
+      onChange(clean);
+      // allow inspector to rebuild after leaving editor
+      isTypingInspector = false;
+    });
+
+    wrap.appendChild(lab);
+    wrap.appendChild(toolbar);
+    wrap.appendChild(editor);
     return wrap;
   }
 
@@ -1252,6 +1402,7 @@
               placeholder: "",
               options: [],
               logic: { enabled: false, rules: [] },
+      content: { enabled: false, html: "" },
             },
           ],
         },
@@ -1299,6 +1450,7 @@
       placeholder: "",
       options: [],
       logic: { enabled: false, rules: [] },
+      content: { enabled: false, html: "" },
     };
 
     g.questions.push(q);
@@ -1490,6 +1642,11 @@
     helpEl.className = "pHelp";
     helpEl.textContent = step.help || "";
 
+    const contentEl = document.createElement("div");
+    contentEl.className = "pHelp"; // reuse preview typography styling
+    const contentHtml = step.content?.enabled ? sanitizeRichHtml(step.content.html || "") : "";
+    contentEl.innerHTML = contentHtml;
+    contentEl.style.display = contentHtml ? "block" : "none";
     const errEl = document.createElement("div");
     errEl.className = "pError";
     errEl.textContent = preview.lastError || "";
@@ -1615,6 +1772,7 @@
     }
 
     card.appendChild(qEl);
+    if (contentHtml) card.appendChild(contentEl);
     if (step.help) card.appendChild(helpEl);
     card.appendChild(inputWrap);
     card.appendChild(errEl);
