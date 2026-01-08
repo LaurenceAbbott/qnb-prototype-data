@@ -477,6 +477,23 @@
     const g = getGroup(selection.pageId, selection.groupId);
     if (!p || !g) return;
 
+    // Helper: render the contextual "+ Question" button under the list
+    const renderAddQuestionCTA = () => {
+      // Move the existing toolbar button into the canvas (single source of truth)
+      // This is a JS-only DOM move (no HTML/CSS changes required)
+      const wrap = document.createElement("div");
+      wrap.className = "canvasAddRow";
+      wrap.style.marginTop = "14px";
+      wrap.style.display = "flex";
+      wrap.style.justifyContent = "flex-end";
+
+      // Ensure button uses the standard styling
+      btnAddQuestion.classList.add("btn");
+
+      wrap.appendChild(btnAddQuestion);
+      canvasEl.appendChild(wrap);
+    };
+
     if (!g.questions.length) {
       const empty = document.createElement("div");
       empty.className = "tip";
@@ -485,6 +502,7 @@
         <p class="muted">Add your first question to start building a Typeform-style journey.</p>
       `;
       canvasEl.appendChild(empty);
+      renderAddQuestionCTA();
       return;
     }
 
@@ -583,6 +601,9 @@
 
       canvasEl.appendChild(card);
     });
+
+    // Add contextual "+ Question" button under the question list
+    renderAddQuestionCTA();
   }
 
   function renderInspector() {
