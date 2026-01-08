@@ -182,8 +182,9 @@
                   type: "text",
                   title: "What is your full name?",
                   help: "Use your legal name as it appears on official documents.",
-                  required: true,
                   placeholder: "e.g. Alex Taylor",
+                  required: true,
+                  errorText: "This field is required.",
                   options: [],
                   logic: { enabled: false, rules: [] },
       content: { enabled: false, html: "" },
@@ -790,9 +791,20 @@
     // Required toggle
     inspectorEl.appendChild(toggleRow("Required", q.required === true, (on) => {
       q.required = on;
+      // Ensure default error text exists when toggling required on
+      if (q.required && !q.errorText) q.errorText = "This field is required.";
       saveSchema();
       renderAll();
     }));
+
+    // Custom error message (shown in Preview when validation fails)
+    // Only show this control when Required is enabled (keeps UI clean)
+    if (q.required === true) {
+      inspectorEl.appendChild(fieldTextArea("Error message", q.errorText || "This field is required.", (val) => {
+        q.errorText = val;
+        saveSchemaDebounced();
+      }));
+    }
 
     // Options editor
     if (isOptionType(q.type)) {
@@ -1401,8 +1413,9 @@
               type: "text",
               title: "New question",
               help: "",
-              required: false,
-              placeholder: "",
+      placeholder: "",
+      required: false,
+      errorText: "This field is required.",
               options: [],
               logic: { enabled: false, rules: [] },
       content: { enabled: false, html: "" },
@@ -1449,8 +1462,9 @@
       type: "text",
       title: "New question",
       help: "",
-      required: false,
       placeholder: "",
+      required: false,
+      errorText: "This field is required.",
       options: [],
       logic: { enabled: false, rules: [] },
       content: { enabled: false, html: "" },
@@ -1936,7 +1950,7 @@
           (typeof ans === "string" && ans.trim() === "") ||
           (Array.isArray(ans) && ans.length === 0);
         if (empty) {
-          preview.lastError = "This field is required.";
+          preview.lastError = step.errorText || "This field is required.";
           renderPreview();
           return;
         }
