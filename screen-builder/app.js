@@ -2295,7 +2295,7 @@
     helpEl.textContent = step.help || "";
 
     const contentEl = document.createElement("div");
-    contentEl.className = "pHelp"; // reuse preview typography styling
+    contentEl.className = "previewQuestionContent";
     const contentHtml = step.content?.enabled ? sanitizeRichHtml(step.content.html || "") : "";
     contentEl.innerHTML = contentHtml;
     contentEl.style.display = contentHtml ? "block" : "none";
