@@ -434,7 +434,8 @@
         chip.type = "button";
         chip.className = "groupChip" + (p.id === selection.pageId && g.id === selection.groupId ? " active" : "");
         chip.textContent = g.name;
-        chip.addEventListener("click", () => {
+        chip.addEventListener("click", (e) => {
+          e.stopPropagation();
           selection.pageId = p.id;
           selection.groupId = g.id;
           selection.questionId = g.questions[0]?.id || null;
@@ -447,7 +448,8 @@
       addGroupChip.type = "button";
       addGroupChip.className = "groupChip";
       addGroupChip.textContent = "+ Group";
-      addGroupChip.addEventListener("click", () => {
+      addGroupChip.addEventListener("click", (e) => {
+        e.stopPropagation();
         selection.pageId = p.id;
         addGroupToPage(p.id);
       });
