@@ -216,6 +216,9 @@
   // -------------------------
   let schema = loadSchema() || newDefaultSchema();
 
+  // Normalise schema for page flow (groups + text blocks)
+  normaliseSchemaForFlow();
+
   // Phase 1 migration/normalisation: ensure each page has a valid flow (groups + text blocks)
   function normaliseSchemaForFlow() {
     if (!schema || !Array.isArray(schema.pages)) return;
@@ -235,92 +238,48 @@
         if (!inFlow.has(g.id)) p.flow.push({ type: "group", id: g.id });
       });
 
-      // Ensure text blocks have required fields
-      p.flow.forEach((it) => {
-        // Group chip
-        if (it.type === "group") {
-          const g = p.groups.find((gg) => gg.id === it.id);
-          if (!g) return;
-
-          const chip = document.createElement("button");
-          chip.type = "button";
-          chip.className =
-            "groupChip" +
-            (selection.pageId === p.id && selection.blockType === "group" && selection.blockId === g.id
-              ? " active"
-              : "");
-          chip.textContent = g.name || "Untitled group";
-          chip.title = "Select group";
-
-          chip.addEventListener("click", (e) => {
-            e.stopPropagation();
-            selection.pageId = p.id;
-            selection.blockType = "group";
-            selection.blockId = g.id;
-            selection.groupId = g.id;
-            selection.questionId = g.questions?.[0]?.id || null;
-            renderAll(true);
-          });
-
-          chips.appendChild(chip);
-          return;
-        }
-
-        // Text block chip
-        if (it.type === "text") {
-          const chip = document.createElement("button");
-          chip.type = "button";
-          chip.className =
-            "groupChip textChip" +
-            (selection.pageId === p.id && selection.blockType === "text" && selection.blockId === it.id
-              ? " active"
-              : "");
-
-          const label = (it.title || "").trim() || "Text";
-          chip.textContent = label;
-          chip.title = "Select text block";
-
-          chip.addEventListener("click", (e) => {
-            e.stopPropagation();
-            selection.pageId = p.id;
-            selection.blockType = "text";
-            selection.blockId = it.id;
-            selection.groupId = null;
-            selection.questionId = null;
-            renderAll(true);
-          });
-
-          chips.appendChild(chip);
-        }
-      });
-
-      pageDiv.appendChild(chips);
-
-      pageDiv.addEventListener("click", () => {
-        selection.pageId = p.id;
-        // keep current block selection if it belongs to this page, else default to first flow item
-        const flowItem = (p.flow || [])[0];
-        if (!flowItem) {
-          selection.blockType = "group";
-          selection.blockId = p.groups?.[0]?.id || null;
-          selection.groupId = selection.blockId;
-          selection.questionId = getGroup(p.id, selection.groupId)?.questions?.[0]?.id || null;
-        } else {
-          selection.blockType = flowItem.type === "text" ? "text" : "group";
-          selection.blockId = flowItem.id;
-          if (selection.blockType === "group") {
-            selection.groupId = flowItem.id;
-            selection.questionId = getGroup(p.id, selection.groupId)?.questions?.[0]?.id || null;
-          } else {
-            selection.groupId = null;
-            selection.questionId = null;
+      // Ensure every flow item is well-formed
+      p.flow = p.flow
+        .map((it) => {
+          if (!it || typeof it !== "object") return null;
+          if (it.type === "group") {
+            return { type: "group", id: it.id };
           }
-        }
-        renderAll(true);
-      });
+          if (it.type === "text") {
+            return {
+              type: "text",
+              id: it.id || uid("txt"),
+              title: typeof it.title === "string" ? it.title : "",
+              level: ["h1", "h2", "h3", "h4", "body"].includes(String(it.level || "").toLowerCase())
+                ? String(it.level).toLowerCase()
+                : "body",
+              html: typeof it.html === "string" ? it.html : "",
+            };
+          }
+          return null;
+        })
+        .filter(Boolean);
 
-      pagesListEl.appendChild(pageDiv);
-    }
+      // Remove dangling group refs (if group deleted but flow item remains)
+      const groupIds = new Set(p.groups.map((g) => g.id));
+      p.flow = p.flow.filter((it) => it.type !== "group" || groupIds.has(it.id));
+
+      // If we removed everything, keep at least one group (or create one)
+      if (p.flow.length === 0) {
+        if (p.groups.length === 0) {
+          const gid = uid("group");
+          p.groups.push({
+            id: gid,
+            name: "New group",
+            description: { enabled: false, html: "" },
+            logic: { enabled: false, rules: [] },
+            questions: [],
+          });
+        }
+        p.flow = p.groups.map((g) => ({ type: "group", id: g.id }));
+      }
+    });
+  }
 
   // -------------------------
   // (Reserved) Completion renderer
