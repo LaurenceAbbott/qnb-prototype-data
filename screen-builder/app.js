@@ -519,11 +519,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
 
       const hasExisting = schema?.pages?.length > 0;
       if (hasExisting) {
-        const ok = confirm(
-          "Generate a new template and REPLACE your current journey?
-
-Tip: Export JSON first if you want a backup."
-        );
+        const ok = confirm("Generate a new template and REPLACE your current journey?");
         if (!ok) return;
       }
 
