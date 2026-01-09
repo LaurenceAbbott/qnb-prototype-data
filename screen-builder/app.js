@@ -372,7 +372,9 @@
   };
 
   // Prevent auto-focus stealing when an option click triggers a rerender (e.g. radio -> jumps to a textarea)
-  let suppressNextAutoFocus = false;
+// Use a time-based guard so multiple inputs rendered in one cycle can't "clear" the flag for each other.
+let suppressAutoFocusUntil = 0;
+const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
 
   // Drag state (builder-only; preview unaffected)
   let isDraggingUI = false;
@@ -2628,8 +2630,7 @@
       }
 
       setTimeout(() => {
-        if (!suppressNextAutoFocus) input.focus();
-        suppressNextAutoFocus = false;
+        if (!shouldSuppressAutoFocus()) input.focus();
       }, 0);
       return;
     }
@@ -2642,8 +2643,7 @@
       ta.addEventListener("input", () => setAnswer(ta.value));
       inputWrap.appendChild(ta);
       setTimeout(() => {
-        if (!suppressNextAutoFocus) ta.focus();
-        suppressNextAutoFocus = false;
+        if (!shouldSuppressAutoFocus()) ta.focus();
       }, 0);
       return;
     }
@@ -2658,6 +2658,8 @@
         b.className = "choiceBtn" + (getAnswer() === val ? " selected" : "");
         b.textContent = label;
         b.addEventListener("click", () => {
+          // Prevent any auto-focus during the re-render (page mode can render many controls)
+          suppressAutoFocusUntil = Date.now() + 300;
           setAnswer(val);
           rerender();
         });
@@ -2690,8 +2692,7 @@
         sel.addEventListener("change", () => setAnswer(sel.value));
         inputWrap.appendChild(sel);
         setTimeout(() => {
-          if (!suppressNextAutoFocus) sel.focus();
-          suppressNextAutoFocus = false;
+          if (!shouldSuppressAutoFocus()) sel.focus();
         }, 0);
         return;
       }
@@ -2707,7 +2708,7 @@
           b.textContent = o;
           b.addEventListener("click", () => {
             // Prevent re-render from auto-focusing a different control (e.g. a textarea elsewhere)
-            suppressNextAutoFocus = true;
+            suppressAutoFocusUntil = Date.now() + 300;
             setAnswer(o);
             rerender();
           });
@@ -2767,8 +2768,7 @@
     input.addEventListener("input", () => setAnswer(input.value));
     inputWrap.appendChild(input);
     setTimeout(() => {
-        if (!suppressNextAutoFocus) input.focus();
-        suppressNextAutoFocus = false;
+        if (!shouldSuppressAutoFocus()) input.focus();
       }, 0);
   }
 
