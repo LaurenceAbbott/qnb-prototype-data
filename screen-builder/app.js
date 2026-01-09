@@ -371,6 +371,16 @@
     lastError: "",
   };
 
+  // Drag state (builder-only; preview unaffected)
+  let isDraggingUI = false;
+  const markDragging = (on) => {
+    isDraggingUI = on;
+    if (!on) {
+      // allow click events to settle after drop
+      setTimeout(() => (isDraggingUI = false), 0);
+    }
+  };
+
   // Prevent inspector re-render while typing
   let isTypingInspector = false;
 
@@ -538,11 +548,70 @@
   function renderPagesList() {
     pagesListEl.innerHTML = "";
 
+    // DnD helpers (pages)
+    const canStartDragFrom = (el) => {
+      if (!el) return true;
+      // Don't start drag from editable title or action buttons
+      if (el.closest && el.closest(".pageName")) return false;
+      if (el.closest && el.closest(".iconBtn")) return false;
+      if (el.isContentEditable) return false;
+      return true;
+    };
+
     schema.pages.forEach((p, pIdx) => {
       p.flow = Array.isArray(p.flow) ? p.flow : p.groups.map((g) => ({ type: "group", id: g.id }));
 
       const pageDiv = document.createElement("div");
       pageDiv.className = "pageItem" + (p.id === selection.pageId ? " active" : "");
+
+      // Make page draggable (builder-only)
+      pageDiv.draggable = !preview.open; // builder canvas only
+      pageDiv.dataset.pageId = p.id;
+      pageDiv.dataset.pageIndex = String(pIdx);
+
+      pageDiv.addEventListener("dragstart", (e) => {
+        if (preview.open) { e.preventDefault(); return; }
+        if (!canStartDragFrom(e.target)) {
+          e.preventDefault();
+          return;
+        }
+        markDragging(true);
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/og-page", p.id);
+        e.dataTransfer.setData("text/og-page-index", String(pIdx));
+        pageDiv.classList.add("isDragging");
+      });
+
+      pageDiv.addEventListener("dragend", () => {
+        pageDiv.classList.remove("isDragging");
+        markDragging(false);
+      });
+
+      pageDiv.addEventListener("dragover", (e) => {
+        if (!e.dataTransfer.types.includes("text/og-page")) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        pageDiv.classList.add("isDragOver");
+      });
+
+      pageDiv.addEventListener("dragleave", () => {
+        pageDiv.classList.remove("isDragOver");
+      });
+
+      pageDiv.addEventListener("drop", (e) => {
+        if (!e.dataTransfer.types.includes("text/og-page")) return;
+        e.preventDefault();
+        pageDiv.classList.remove("isDragOver");
+
+        const fromIdx = Number(e.dataTransfer.getData("text/og-page-index"));
+        const toIdx = Number(pageDiv.dataset.pageIndex);
+        if (!Number.isFinite(fromIdx) || !Number.isFinite(toIdx)) return;
+        if (fromIdx === toIdx) return;
+
+        moveItem(schema.pages, fromIdx, toIdx);
+        saveSchema();
+        renderAll();
+      });
 
       const top = document.createElement("div");
       top.className = "pageTop";
@@ -729,6 +798,8 @@
 
       // click page selects it
       pageDiv.addEventListener("click", () => {
+        // Ignore click selection during/just-after drag
+        if (isDraggingUI) return;
         selection.pageId = p.id;
         // choose first flow item
         const first = p.flow[0];
@@ -756,6 +827,14 @@
 
     const p = getPage(selection.pageId);
     if (!p) return;
+
+    // DnD helpers (questions)
+    const canStartDragFromQ = (el) => {
+      if (!el) return true;
+      if (el.closest && el.closest(".iconBtn")) return false;
+      if (el.isContentEditable) return false;
+      return true;
+    };
 
     // Phase 1: if a text block is selected, show a simple preview card
     if (selection.blockType === "text") {
@@ -836,6 +915,55 @@
     g.questions.forEach((q, qIdx) => {
       const card = document.createElement("div");
       card.className = "qCard" + (q.id === selection.questionId ? " active" : "");
+
+      // Make question cards draggable (builder-only)
+      card.draggable = !preview.open; // builder canvas only
+      card.dataset.qId = q.id;
+      card.dataset.qIndex = String(qIdx);
+
+      card.addEventListener("dragstart", (e) => {
+        if (preview.open) { e.preventDefault(); return; }
+        if (!canStartDragFromQ(e.target)) {
+          e.preventDefault();
+          return;
+        }
+        markDragging(true);
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/og-q", q.id);
+        e.dataTransfer.setData("text/og-q-index", String(qIdx));
+        card.classList.add("isDragging");
+      });
+
+      card.addEventListener("dragend", () => {
+        card.classList.remove("isDragging");
+        markDragging(false);
+      });
+
+      card.addEventListener("dragover", (e) => {
+        if (!e.dataTransfer.types.includes("text/og-q")) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        card.classList.add("isDragOver");
+      });
+
+      card.addEventListener("dragleave", () => {
+        card.classList.remove("isDragOver");
+      });
+
+      card.addEventListener("drop", (e) => {
+        if (!e.dataTransfer.types.includes("text/og-q")) return;
+        e.preventDefault();
+        card.classList.remove("isDragOver");
+
+        const fromIdx = Number(e.dataTransfer.getData("text/og-q-index"));
+        const toIdx = Number(card.dataset.qIndex);
+        if (!Number.isFinite(fromIdx) || !Number.isFinite(toIdx)) return;
+        if (fromIdx === toIdx) return;
+
+        moveItem(g.questions, fromIdx, toIdx);
+        saveSchema();
+        renderAll();
+      });
 
       const left = document.createElement("div");
       left.className = "qLeft";
@@ -920,6 +1048,8 @@
       card.appendChild(actions);
 
       card.addEventListener("click", () => {
+        // Ignore click selection during/just-after drag
+        if (isDraggingUI) return;
         selection.questionId = q.id;
         renderAll();
       });
