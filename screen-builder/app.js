@@ -307,22 +307,61 @@
 
   // Phase 1 migration/normalisation: ensure each page has a valid flow (groups + text blocks)
   function normaliseSchemaForFlow() {
-    if (!schema || !Array.isArray(schema.pages)) return;
+    if (!schema || typeof schema !== "object") return;
+
+    // Ensure meta exists (AI imports may omit it)
+    schema.meta = schema.meta || {};
+    if (!schema.meta.version) schema.meta.version = 1;
+    if (!schema.meta.createdAt) schema.meta.createdAt = new Date().toISOString();
+    schema.meta.updatedAt = new Date().toISOString();
+
+    if (!Array.isArray(schema.pages)) schema.pages = [];
 
     schema.pages.forEach((p) => {
+      // Normalise page shell
+      if (!p || typeof p !== "object") return;
+      if (!p.id) p.id = uid("page");
+      if (!p.name) p.name = "Untitled page";
+
       p.groups = Array.isArray(p.groups) ? p.groups : [];
       p.flow = Array.isArray(p.flow) ? p.flow : [];
+
+      // Ensure each group has an id/name/questions
+      p.groups.forEach((g) => {
+        if (!g || typeof g !== "object") return;
+        if (!g.id) g.id = uid("group");
+        if (!g.name) g.name = "Untitled group";
+        g.questions = Array.isArray(g.questions) ? g.questions : [];
+        if (g.description == null) g.description = { enabled: false, html: "" };
+        if (g.logic == null) g.logic = { enabled: false, rules: [] };
+
+        g.questions.forEach((q) => {
+          if (!q || typeof q !== "object") return;
+          if (!q.id) q.id = uid("q");
+          if (!q.type) q.type = "text";
+          if (!q.title) q.title = "Untitled question";
+          if (q.help == null) q.help = "";
+          if (q.placeholder == null) q.placeholder = "";
+          if (q.required == null) q.required = false;
+          if (q.errorText == null) q.errorText = "This field is required.";
+          if (q.options == null) q.options = [];
+          if (q.logic == null) q.logic = { enabled: false, rules: [] };
+          if (q.content == null) q.content = { enabled: false, html: "" };
+
+          // Ensure options are present for option types
+          if (isOptionType(q.type)) {
+            q.options = Array.isArray(q.options) ? q.options : [];
+            if (q.options.length === 0) q.options = ["Option 1", "Option 2", "Option 3"];
+          } else {
+            q.options = [];
+          }
+        });
+      });
 
       // If no flow exists (older schema), create it from existing groups in order
       if (p.flow.length === 0) {
         p.flow = p.groups.map((g) => ({ type: "group", id: g.id }));
       }
-
-      // Ensure every group appears at least once in flow
-      const inFlow = new Set(p.flow.filter((x) => x?.type === "group").map((x) => x.id));
-      p.groups.forEach((g) => {
-        if (!inFlow.has(g.id)) p.flow.push({ type: "group", id: g.id });
-      });
 
       // Ensure text blocks have required fields
       p.flow.forEach((it) => {
@@ -333,18 +372,19 @@
         if (!it.bodyHtml) it.bodyHtml = "<p></p>";
       });
 
-      // Ensure questions have content/errorText fields (older imports)
+      // Remove flow items referencing missing groups
+      const groupIds = new Set(p.groups.map((g) => g.id));
+      p.flow = p.flow.filter((it) => {
+        if (!it || typeof it !== "object") return false;
+        if (it.type === "group") return groupIds.has(it.id);
+        if (it.type === "text") return true;
+        return false;
+      });
+
+      // Ensure every group appears at least once in flow
+      const inFlow = new Set(p.flow.filter((x) => x?.type === "group").map((x) => x.id));
       p.groups.forEach((g) => {
-        g.questions = Array.isArray(g.questions) ? g.questions : [];
-        // Phase: group-level description + logic
-        if (g.description == null) g.description = { enabled: false, html: "" };
-        if (g.logic == null) g.logic = { enabled: false, rules: [] };
-        g.questions.forEach((q) => {
-          if (!q) return;
-          if (q.content == null) q.content = { enabled: false, html: "" };
-          if (q.errorText == null) q.errorText = "This field is required.";
-          if (q.logic == null) q.logic = { enabled: false, rules: [] };
-        });
+        if (!inFlow.has(g.id)) p.flow.push({ type: "group", id: g.id });
       });
     });
 
@@ -407,6 +447,135 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     return !!(s && typeof s === "object" && Array.isArray(s.pages));
   }
 
+  // Coerce common AI outputs into the schema this builder expects.
+  // This fixes issues like "(Missing group)" chips and "no journey as such".
+  function coerceAiSchema(input) {
+    let s = input;
+
+    // If input is a JSON string, try parse
+    if (typeof s === "string") {
+      try { s = JSON.parse(s); } catch { return {}; }
+    }
+
+    if (!s || typeof s !== "object") return {};
+
+    // If it already looks right, keep it
+    if (Array.isArray(s.pages)) {
+      // Ensure page/group shells exist
+      s.pages = s.pages.map((p) => {
+        p = p && typeof p === "object" ? p : {};
+        if (!p.id) p.id = uid("page");
+        if (!p.name) p.name = "Untitled page";
+
+        // If page has a flat 'questions' array, wrap into a group
+        if (!Array.isArray(p.groups)) {
+          const qs = Array.isArray(p.questions) ? p.questions : [];
+          p.groups = qs.length
+            ? [{ id: uid("group"), name: "Basics", description: { enabled: false, html: "" }, logic: { enabled: false, rules: [] }, questions: qs }]
+            : [];
+        }
+
+        // If groups exist but are missing questions arrays, normalise
+        p.groups = p.groups.map((g) => {
+          g = g && typeof g === "object" ? g : {};
+          if (!g.id) g.id = uid("group");
+          if (!g.name) g.name = "Untitled group";
+          g.description = g.description || { enabled: false, html: "" };
+          g.logic = g.logic || { enabled: false, rules: [] };
+          g.questions = Array.isArray(g.questions) ? g.questions : [];
+          g.questions = g.questions.map((q) => {
+            q = q && typeof q === "object" ? q : {};
+            if (!q.id) q.id = uid("q");
+            if (!q.type) q.type = "text";
+            if (!q.title) q.title = "Untitled question";
+            if (q.help == null) q.help = "";
+            if (q.placeholder == null) q.placeholder = "";
+            if (q.required == null) q.required = false;
+            if (q.errorText == null) q.errorText = "This field is required.";
+            if (q.logic == null) q.logic = { enabled: false, rules: [] };
+            if (q.content == null) q.content = { enabled: false, html: "" };
+
+            if (isOptionType(q.type)) {
+              q.options = Array.isArray(q.options) ? q.options : [];
+              if (q.options.length === 0) q.options = ["Option 1", "Option 2", "Option 3"];
+            } else {
+              q.options = [];
+            }
+
+            return q;
+          });
+          return g;
+        });
+
+        // Flow: if absent/invalid, derive from groups
+        if (!Array.isArray(p.flow) || p.flow.length === 0) {
+          p.flow = p.groups.map((g) => ({ type: "group", id: g.id }));
+        }
+
+        // Remove flow items referencing missing groups
+        const groupIds = new Set(p.groups.map((g) => g.id));
+        p.flow = (p.flow || []).filter((it) => {
+          if (!it || typeof it !== "object") return false;
+          if (it.type === "group") return groupIds.has(it.id);
+          if (it.type === "text") {
+            if (!it.id) it.id = uid("txt");
+            if (!it.level) it.level = "h3";
+            if (!it.title) it.title = "";
+            if (!it.bodyHtml) it.bodyHtml = "<p></p>";
+            return true;
+          }
+          return false;
+        });
+
+        // Ensure every group is in the flow
+        const inFlow = new Set(p.flow.filter((x) => x.type === "group").map((x) => x.id));
+        p.groups.forEach((g) => {
+          if (!inFlow.has(g.id)) p.flow.push({ type: "group", id: g.id });
+        });
+
+        return p;
+      });
+
+      // Top-level meta/LOB
+      s.meta = s.meta || {};
+      if (!s.meta.version) s.meta.version = 1;
+      if (!s.meta.createdAt) s.meta.createdAt = new Date().toISOString();
+      s.meta.updatedAt = new Date().toISOString();
+      if (!s.lineOfBusiness) s.lineOfBusiness = "New Journey";
+
+      return s;
+    }
+
+    // If AI returned just an array of questions
+    if (Array.isArray(s.questions)) {
+      const pid = uid("page");
+      const gid = uid("group");
+      return {
+        meta: { version: 1, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        lineOfBusiness: "New Journey",
+        pages: [
+          {
+            id: pid,
+            name: "About you",
+            flow: [{ type: "group", id: gid }],
+            groups: [
+              {
+                id: gid,
+                name: "Basics",
+                description: { enabled: false, html: "" },
+                logic: { enabled: false, rules: [] },
+                questions: s.questions,
+              },
+            ],
+          },
+        ],
+      };
+    }
+
+    // Fallback: if we have no usable structure, return a minimal schema
+    return newDefaultSchema();
+  }
+
   async function requestAiTemplate(promptText) {
     const res = await fetch(AI_JOURNEY_ENDPOINT, {
       method: "POST",
@@ -423,7 +592,6 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     const rawText = await res.text().catch(() => "");
 
     if (!res.ok) {
-      // Surface the raw response for debugging
       console.error("AI HTTP error:", res.status, rawText);
       throw new Error(rawText || `AI request failed (${res.status})`);
     }
@@ -436,7 +604,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       // keep as string
     }
 
-    // Helpful debug in DevTools (won't break anything)
+    // Helpful debug in DevTools
     console.log("AI RAW RESPONSE:", data);
 
     // Accept flexible response shapes from the Worker:
@@ -458,11 +626,9 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     }
 
     if (candidate && typeof candidate === "object") {
-      // common wrappers
       if (candidate.schema && typeof candidate.schema === "object") candidate = candidate.schema;
       if (candidate.journey && typeof candidate.journey === "object") candidate = candidate.journey;
 
-      // 'result' might be either a stringified schema or an object
       if (typeof candidate.result === "string") {
         try {
           candidate = JSON.parse(candidate.result);
@@ -473,35 +639,30 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       } else if (candidate.result && typeof candidate.result === "object") {
         candidate = candidate.result;
       }
-
-      // Sometimes pages is stringified
-      if (typeof candidate.pages === "string") {
-        try {
-          candidate.pages = JSON.parse(candidate.pages);
-        } catch {
-          // ignore
-        }
-      }
     }
 
-    if (!isValidSchemaShape(candidate)) {
-      // Show what we got to make it easy to fix worker output
-      console.error("AI schema shape invalid. Expected { pages: [...] }. Got:", candidate);
+    // Coerce/upgrade partial schemas into the builder's schema shape
+    const coerced = coerceAiSchema(candidate);
+
+    if (!isValidSchemaShape(coerced)) {
+      console.error("AI schema shape invalid. Expected { pages: [...] }. Got:", coerced);
       throw new Error("AI returned an invalid schema. Expected { pages: [...] }.");
     }
 
-    return candidate;
+    return coerced;
   }
 
   function importJourneyTemplate(schemaFromAI) {
     // Replace current schema with AI schema, then normalise + re-render.
-    if (!schemaFromAI || typeof schemaFromAI !== "object" || !Array.isArray(schemaFromAI.pages)) {
+    const next = coerceAiSchema(schemaFromAI);
+
+    if (!next || typeof next !== "object" || !Array.isArray(next.pages)) {
       throw new Error("AI returned an invalid schema. Expected { pages: [...] }.");
     }
 
-    schema = schemaFromAI;
+    schema = next;
 
-    // Ensure essential fields exist (worker may not include these)
+    // Ensure essential fields exist
     schema.meta = schema.meta || {};
     if (!schema.meta.version) schema.meta.version = 1;
     if (!schema.meta.createdAt) schema.meta.createdAt = new Date().toISOString();
