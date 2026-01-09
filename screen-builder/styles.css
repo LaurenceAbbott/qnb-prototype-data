@@ -1150,7 +1150,7 @@ textarea.aiAssistInput {
 }
 .aiAssistActions {
     margin-top: 10px;
-    display: flex;
+    display: flex !important; 
     align-items: flex-start;
     flex-direction: column;
     gap: 10px;
