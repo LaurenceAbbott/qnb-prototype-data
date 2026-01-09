@@ -486,13 +486,11 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       // Replace behaviour (simple + safe). You can change this to merge/append later.
       const hasExisting = schema?.pages?.length > 0;
       if (hasExisting) {
-        const ok = confirm(
-          "Generate a new template and REPLACE your current journey?
-
-Tip: Export JSON first if you want a backup."
-        );
-        if (!ok) return;
-      }
+      const ok = confirm(
+    "Generate a new template and REPLACE your current journey?\n\nTip: Export JSON first if you want a backup."
+  );
+  if (!ok) return;
+}
 
       try {
         btn.disabled = true;
