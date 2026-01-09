@@ -419,33 +419,74 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       }),
     });
 
+    // Read as text first (Workers sometimes respond text/plain)
+    const rawText = await res.text().catch(() => "");
+
     if (!res.ok) {
-      const txt = await res.text().catch(() => "");
-      throw new Error(txt || `AI request failed (${res.status})`);
+      // Surface the raw response for debugging
+      console.error("AI HTTP error:", res.status, rawText);
+      throw new Error(rawText || `AI request failed (${res.status})`);
     }
 
-    const data = await res.json();
+    // Try to parse JSON if possible; otherwise keep string
+    let data = rawText;
+    try {
+      data = rawText ? JSON.parse(rawText) : {};
+    } catch {
+      // keep as string
+    }
+
+    // Helpful debug in DevTools (won't break anything)
+    console.log("AI RAW RESPONSE:", data);
 
     // Accept flexible response shapes from the Worker:
     // - { schema: {...} }
+    // - { journey: {...} }
     // - { result: "{...json...}" }
-    // - "{...json...}"
+    // - { result: {...} }
+    // - "{...json...}" (string)
     // - {...schema...}
     let candidate = data;
 
+    // If we got a JSON string, parse it
     if (typeof candidate === "string") {
-      candidate = JSON.parse(candidate);
+      try {
+        candidate = JSON.parse(candidate);
+      } catch {
+        // leave as string
+      }
     }
 
     if (candidate && typeof candidate === "object") {
+      // common wrappers
+      if (candidate.schema && typeof candidate.schema === "object") candidate = candidate.schema;
+      if (candidate.journey && typeof candidate.journey === "object") candidate = candidate.journey;
+
+      // 'result' might be either a stringified schema or an object
       if (typeof candidate.result === "string") {
-        candidate = JSON.parse(candidate.result);
-      } else if (candidate.schema && typeof candidate.schema === "object") {
-        candidate = candidate.schema;
+        try {
+          candidate = JSON.parse(candidate.result);
+        } catch (e) {
+          console.error("Could not JSON.parse(data.result):", candidate.result);
+          throw new Error("AI returned result but it wasn't valid JSON.");
+        }
+      } else if (candidate.result && typeof candidate.result === "object") {
+        candidate = candidate.result;
+      }
+
+      // Sometimes pages is stringified
+      if (typeof candidate.pages === "string") {
+        try {
+          candidate.pages = JSON.parse(candidate.pages);
+        } catch {
+          // ignore
+        }
       }
     }
 
     if (!isValidSchemaShape(candidate)) {
+      // Show what we got to make it easy to fix worker output
+      console.error("AI schema shape invalid. Expected { pages: [...] }. Got:", candidate);
       throw new Error("AI returned an invalid schema. Expected { pages: [...] }.");
     }
 
