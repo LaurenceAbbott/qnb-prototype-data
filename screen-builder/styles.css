@@ -1125,36 +1125,40 @@ span.flatpickr-weekday {
 .flatpickr-calendar {
   margin-top: 10px !important;
 }
-/* -----------------------------
-   Flatpickr sizing fix (no clipping)
-   Let Flatpickr control its internal widths
--------------------------------- */
+/* ---------------------------------
+   Flatpickr sizing fix (STABLE)
+   Prevent clipping AND stretching
+---------------------------------- */
 
-/* Let the calendar size naturally to its content */
+/* Keep calendar at its natural size */
 .flatpickr-calendar {
-  width: auto !important;
-  max-width: calc(100vw - 32px) !important; /* still keeps it on-screen */
+  width: 356px !important;               /* stable visual width */
+  max-width: calc(100vw - 24px) !important;
+  box-sizing: border-box;
+  overflow: hidden;                      /* keeps rounded corners clean */
 }
 
-/* Remove any forced 100% width rules (these cause right-side clipping) */
+/* Restore Flatpickr’s internal grid sizing */
+.flatpickr-innerContainer,
 .flatpickr-rContainer,
 .flatpickr-days,
 .dayContainer {
-  width: auto !important;
-  min-width: unset !important;
-  max-width: none !important;
-  box-sizing: border-box;
+  width: 308px !important;               /* Flatpickr’s intended grid width */
+  min-width: 308px !important;
+  max-width: 308px !important;
+  box-sizing: content-box;
 }
 
-/* Keep your nice padding, but don't force the grid to stretch */
+/* Allow padding without affecting width calculations */
 .flatpickr-days {
   padding: 8px 12px 12px !important;
 }
 
-/* Optional: prevent tiny 1px overflows from showing */
-.flatpickr-calendar {
-  overflow: hidden; /* keeps rounded corners tidy */
+/* Prevent layout systems (flex/grid) from stretching day cells */
+.dayContainer {
+  display: block !important;
 }
+
 
 @media (max-width: 1180px){
   .layout{ grid-template-columns: 320px 1fr; }
