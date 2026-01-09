@@ -2434,7 +2434,7 @@
     helpEl.textContent = step.help || "";
 
     const contentEl = document.createElement("div");
-    contentEl.className = "pHelp"; // reuse preview typography styling
+    contentEl.className = "previewQuestionContent";
     const contentHtml = step.content?.enabled ? sanitizeRichHtml(step.content.html || "") : "";
     contentEl.innerHTML = contentHtml;
     contentEl.style.display = contentHtml ? "block" : "none";
@@ -2713,7 +2713,7 @@
             const c = sanitizeRichHtml(qq.content.html || "");
             if (c) {
               const cEl = document.createElement("div");
-              cEl.className = "pHelp previewQuestionContent";
+              cEl.className = "previewQuestionC
               cEl.innerHTML = c;
               qBlock.appendChild(cEl);
             }
