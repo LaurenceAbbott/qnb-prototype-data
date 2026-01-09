@@ -620,9 +620,7 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
       const hasExisting = schema?.pages?.length > 0;
       if (hasExisting) {
         const ok = confirm(
-          "Generate a new template and REPLACE your current journey?
-
-Tip: Export JSON first if you want a backup."
+          "Generate a new template and REPLACE your current journey? Tip: Export JSON first if you want a backup."
         );
         if (!ok) return;
       }
