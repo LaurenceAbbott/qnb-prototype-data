@@ -396,73 +396,24 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   // -------------------------
   // AI Assist (builder-only)
   // -------------------------
-  // This adds a small "Describe your journey" box in the Structure panel.
-  // IMPORTANT: do NOT call OpenAI directly from the browser in production.
-  // Use a serverless endpoint (e.g. Cloudflare Worker) that holds secrets.
+  // Simple: user describes the journey → we POST to your Worker → it returns a schema.
+  // Endpoint is hard-coded here (so users don't see settings/auth fields).
 
-  // AI config (persisted locally so you can set it once inside the builder)
-// If you provide a default endpoint here, the AI Assist UI will work immediately (unless you override via Settings).
-const AI_JOURNEY_ENDPOINT = "https://screen-builder-ai.laurence-ogi.workers.dev";
-// Expose for quick testing in DevTools (IIFE locals don't show up in console)
-// You can override anytime with: window.OG_AI_ENDPOINT = "https://...";
-window.OG_AI_ENDPOINT = window.OG_AI_ENDPOINT || AI_JOURNEY_ENDPOINT;
-// Optional: legacy alias if you prefer typing this in the console
-window.AI_JOURNEY_ENDPOINT = window.AI_JOURNEY_ENDPOINT || AI_JOURNEY_ENDPOINT;
-const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
-
-  function getAiConfig() {
-    try {
-      const raw = localStorage.getItem(AI_CFG_KEY);
-      const parsed = raw ? JSON.parse(raw) : null;
-      const endpoint = (parsed?.endpoint || window.OG_AI_ENDPOINT || AI_JOURNEY_ENDPOINT || "").trim();
-      const auth = (parsed?.auth || "").trim(); // optional: Bearer token for your worker
-      const mode = (parsed?.mode || "replace").trim(); // replace | merge (future)
-      return { endpoint, auth, mode };
-    } catch {
-      return { endpoint: (window.OG_AI_ENDPOINT || AI_JOURNEY_ENDPOINT || "").trim(), auth: "", mode: "replace" };
-    }
-  }
-
-  function setAiConfig(next) {
-    const cur = getAiConfig();
-    const merged = {
-      endpoint: (next?.endpoint ?? cur.endpoint ?? "").trim(),
-      auth: (next?.auth ?? cur.auth ?? "").trim(),
-      mode: (next?.mode ?? cur.mode ?? "replace").trim(),
-    };
-    try {
-      localStorage.setItem(AI_CFG_KEY, JSON.stringify(merged));
-    } catch {
-      // no-op
-    }
-    return merged;
-  }
-
-  function hasAiEndpoint() {
-    return !!getAiConfig().endpoint;
-  }
+  const AI_JOURNEY_ENDPOINT = "https://screen-builder-ai.laurence-ogi.workers.dev";
+  // Expose for quick DevTools checks
+  window.AI_JOURNEY_ENDPOINT = AI_JOURNEY_ENDPOINT;
 
   function isValidSchemaShape(s) {
     return !!(s && typeof s === "object" && Array.isArray(s.pages));
   }
 
   async function requestAiTemplate(promptText) {
-    const cfg = getAiConfig();
-    if (!cfg.endpoint) {
-      throw new Error(
-        "AI endpoint not configured. Open AI Assist settings and add your serverless URL."
-      );
-    }
-
-    const headers = { "Content-Type": "application/json" };
-    if (cfg.auth) headers["Authorization"] = `Bearer ${cfg.auth}`;
-
-    const res = await fetch(cfg.endpoint, {
+    const res = await fetch(AI_JOURNEY_ENDPOINT, {
       method: "POST",
-      headers,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         prompt: String(promptText || "").slice(0, 8000),
-        // Optional context (handy for extending an existing journey)
+        // Optional context (lets the worker adapt/extend later if you choose)
         currentSchema: schema,
         schemaVersion: schema?.meta?.version || 1,
       }),
@@ -474,7 +425,25 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
     }
 
     const data = await res.json();
-    const candidate = data?.schema || data;
+
+    // Accept flexible response shapes from the Worker:
+    // - { schema: {...} }
+    // - { result: "{...json...}" }
+    // - "{...json...}"
+    // - {...schema...}
+    let candidate = data;
+
+    if (typeof candidate === "string") {
+      candidate = JSON.parse(candidate);
+    }
+
+    if (candidate && typeof candidate === "object") {
+      if (typeof candidate.result === "string") {
+        candidate = JSON.parse(candidate.result);
+      } else if (candidate.schema && typeof candidate.schema === "object") {
+        candidate = candidate.schema;
+      }
+    }
 
     if (!isValidSchemaShape(candidate)) {
       throw new Error("AI returned an invalid schema. Expected { pages: [...] }.");
@@ -483,9 +452,18 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
     return candidate;
   }
 
+  function importJourneyTemplate(schemaFromAI) {
+    // Replace current schema with AI schema, then normalise + re-render.
+    schema = schemaFromAI;
+
+    normaliseSchemaForFlow();
+    ensureSelection();
+    saveSchema();
+    renderAll(true);
+  }
+
   function mountAiAssistUI() {
     // Mount AI Assist at the top of the Structure panel.
-    // We prefer inserting above the pages list because it's always present.
     const mount = pagesListEl?.parentElement || lobTitleEl?.parentElement;
     if (!mount) return;
 
@@ -496,38 +474,16 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
     wrap.className = "aiAssist";
 
     wrap.innerHTML = `
-      <div class="aiAssistTitleRow" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-        <div class="aiAssistTitle">AI Assist</div>
-        <button type="button" class="btn ghost aiAssistSettingsBtn" style="padding:6px 10px;">Settings</button>
-      </div>
+      <div class="aiAssistTitle">AI Assist</div>
       <div class="aiAssistHelp">Describe the journey you want. We'll generate a starter template you can edit.</div>
-
-      <div class="aiAssistSettings" style="display:none; margin-top:10px;">
-        <div class="field" style="margin-bottom:10px;">
-          <div class="label">AI endpoint (serverless URL)</div>
-          <input class="input aiAssistEndpoint" type="text" placeholder="e.g. https://&lt;your-worker&gt;.workers.dev" />
-          <div class="inlineHelp" style="margin-top:6px;">This should be a Cloudflare Worker (or similar) that returns JSON schema.</div>
-        </div>
-        <div class="field" style="margin-bottom:10px;">
-          <div class="label">Auth token (optional)</div>
-          <input class="input aiAssistAuth" type="password" placeholder="Optional Bearer token" />
-          <div class="inlineHelp" style="margin-top:6px;">If your endpoint expects Authorization: Bearer …, store it here (saved locally).</div>
-        </div>
-        <div class="aiAssistActions" style="display:flex; gap:10px; align-items:center;">
-          <button type="button" class="btn ghost aiAssistSaveCfg">Save</button>
-          <button type="button" class="btn ghost aiAssistTestCfg">Test</button>
-          <div class="muted aiAssistCfgHint" style="margin-left:auto; opacity:0.85;"></div>
-        </div>
-      </div>
-
       <textarea class="aiAssistInput" rows="3" placeholder="e.g. Travel insurance quick quote: destination, policy type, email, dates, medical declaration, add-ons. Keep it short and broker-friendly."></textarea>
-      <div class="aiAssistActions" style="margin-top:10px; display:flex; gap:10px;">
+      <div class="aiAssistActions" style="margin-top:10px; display:flex; gap:10px; align-items:center;">
         <button type="button" class="btn ghost aiAssistBtn">Generate template</button>
+        <div class="aiAssistStatus muted" style="margin-left:auto; display:none;"></div>
       </div>
-      <div class="aiAssistStatus muted" style="margin-top:8px; display:none;"></div>
     `;
 
-    // Insert before the pages list if possible (best visual placement)
+    // Insert above the pages list
     if (pagesListEl && pagesListEl.parentElement === mount) {
       mount.insertBefore(wrap, pagesListEl);
     } else {
@@ -538,15 +494,6 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
     const btn = wrap.querySelector(".aiAssistBtn");
     const status = wrap.querySelector(".aiAssistStatus");
 
-    // Settings controls
-    const settingsBtn = wrap.querySelector(".aiAssistSettingsBtn");
-    const settingsPanel = wrap.querySelector(".aiAssistSettings");
-    const endpointInput = wrap.querySelector(".aiAssistEndpoint");
-    const authInput = wrap.querySelector(".aiAssistAuth");
-    const saveCfgBtn = wrap.querySelector(".aiAssistSaveCfg");
-    const testCfgBtn = wrap.querySelector(".aiAssistTestCfg");
-    const cfgHint = wrap.querySelector(".aiAssistCfgHint");
-
     const setStatus = (msg, isError = false) => {
       if (!status) return;
       status.style.display = msg ? "block" : "none";
@@ -554,63 +501,16 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
       status.style.opacity = isError ? "1" : "0.9";
     };
 
-    const refreshCfgUI = () => {
-      const cfg = getAiConfig();
-      if (endpointInput) endpointInput.value = cfg.endpoint || "";
-      if (authInput) authInput.value = cfg.auth ? "••••••••" : "";
-      if (cfgHint) cfgHint.textContent = cfg.endpoint ? "Endpoint set" : "No endpoint";
-      if (btn) btn.disabled = !cfg.endpoint;
-    };
-
-    settingsBtn?.addEventListener("click", (e) => {
-      e.preventDefault();
-      const isOpen = (settingsPanel?.style.display || "none") !== "none";
-      if (settingsPanel) settingsPanel.style.display = isOpen ? "none" : "block";
-      refreshCfgUI();
-      if (!isOpen) endpointInput?.focus();
-    });
-
-    saveCfgBtn?.addEventListener("click", (e) => {
-      e.preventDefault();
-      const endpoint = (endpointInput?.value || "").trim();
-      const rawAuth = (authInput?.value || "").trim();
-      const auth = rawAuth && rawAuth !== "••••••••" ? rawAuth : getAiConfig().auth;
-      setAiConfig({ endpoint, auth });
-      setStatus(endpoint ? "AI settings saved." : "Saved, but no endpoint set.", !endpoint);
-      if (authInput) authInput.value = auth ? "••••••••" : "";
-      refreshCfgUI();
-    });
-
-    testCfgBtn?.addEventListener("click", async (e) => {
-      e.preventDefault();
-      const cfg = getAiConfig();
-      if (!cfg.endpoint) {
-        setStatus("Add an endpoint first.", true);
-        return;
-      }
-      try {
-        testCfgBtn.disabled = true;
-        setStatus("Testing endpoint…");
-        await requestAiTemplate("Create a tiny 1-page, 1-group, 1-question template journey.");
-        setStatus("Endpoint looks OK.");
-      } catch (err) {
-        setStatus(err?.message || "Endpoint test failed.", true);
-      } finally {
-        testCfgBtn.disabled = false;
-        refreshCfgUI();
+    // Tiny UX: Cmd/Ctrl+Enter to generate
+    input?.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        btn?.click();
       }
     });
 
-    refreshCfgUI();
-
-    btn.addEventListener("click", async () => {
+    btn?.addEventListener("click", async () => {
       const promptText = (input?.value || "").trim();
-      if (!hasAiEndpoint()) {
-        setStatus("Open Settings and add your AI endpoint first.", true);
-        if (settingsPanel) settingsPanel.style.display = "block";
-        endpointInput?.focus();
-        return;
-      }
       if (!promptText) {
         setStatus("Add a short description first.", true);
         input?.focus();
@@ -620,7 +520,9 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
       const hasExisting = schema?.pages?.length > 0;
       if (hasExisting) {
         const ok = confirm(
-          "Generate a new template and REPLACE your current journey? Tip: Export JSON first if you want a backup."
+          "Generate a new template and REPLACE your current journey?
+
+Tip: Export JSON first if you want a backup."
         );
         if (!ok) return;
       }
@@ -630,14 +532,9 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
         setStatus("Generating template…");
 
         const nextSchema = await requestAiTemplate(promptText);
-        schema = nextSchema;
+        importJourneyTemplate(nextSchema);
 
-        normaliseSchemaForFlow();
-        ensureSelection();
-        saveSchema();
-        renderAll(true);
-
-        setStatus("Template applied. You can now tweak pages, groups and questions.");
+        setStatus("Template applied.");
       } catch (e) {
         setStatus(e?.message || "AI template generation failed.", true);
       } finally {
