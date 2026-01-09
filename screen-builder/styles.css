@@ -1125,6 +1125,36 @@ span.flatpickr-weekday {
 .flatpickr-calendar {
   margin-top: 10px !important;
 }
+/* -----------------------------
+   Flatpickr sizing fix (no clipping)
+   Let Flatpickr control its internal widths
+-------------------------------- */
+
+/* Let the calendar size naturally to its content */
+.flatpickr-calendar {
+  width: auto !important;
+  max-width: calc(100vw - 32px) !important; /* still keeps it on-screen */
+}
+
+/* Remove any forced 100% width rules (these cause right-side clipping) */
+.flatpickr-rContainer,
+.flatpickr-days,
+.dayContainer {
+  width: auto !important;
+  min-width: unset !important;
+  max-width: none !important;
+  box-sizing: border-box;
+}
+
+/* Keep your nice padding, but don't force the grid to stretch */
+.flatpickr-days {
+  padding: 8px 12px 12px !important;
+}
+
+/* Optional: prevent tiny 1px overflows from showing */
+.flatpickr-calendar {
+  overflow: hidden; /* keeps rounded corners tidy */
+}
 
 @media (max-width: 1180px){
   .layout{ grid-template-columns: 320px 1fr; }
