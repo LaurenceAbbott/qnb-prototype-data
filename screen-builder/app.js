@@ -392,6 +392,130 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   // -------------------------
   // DOM
   // -------------------------
+
+  // -------------------------
+  // AI Assist (builder-only)
+  // -------------------------
+  // This adds a small "Describe your journey" box in the Structure panel.
+  // IMPORTANT: do NOT call OpenAI directly from the browser in production.
+  // Instead, set window.OG_AI_ENDPOINT to your serverless endpoint.
+  const OG_AI_ENDPOINT = (window.OG_AI_ENDPOINT || "").trim();
+
+  function isValidSchemaShape(s) {
+    return !!(s && typeof s === "object" && Array.isArray(s.pages));
+  }
+
+  async function requestAiTemplate(promptText) {
+    if (!OG_AI_ENDPOINT) {
+      throw new Error(
+        "AI endpoint not configured. Set window.OG_AI_ENDPOINT to your serverless URL."
+      );
+    }
+
+    const res = await fetch(OG_AI_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        prompt: String(promptText || "").slice(0, 8000),
+        // Optional context (handy for extending an existing journey)
+        currentSchema: schema,
+        schemaVersion: schema?.meta?.version || 1,
+      }),
+    });
+
+    if (!res.ok) {
+      const txt = await res.text().catch(() => "");
+      throw new Error(txt || `AI request failed (${res.status})`);
+    }
+
+    const data = await res.json();
+    const candidate = data?.schema || data;
+
+    if (!isValidSchemaShape(candidate)) {
+      throw new Error("AI returned an invalid schema. Expected { pages: [...] }.");
+    }
+
+    return candidate;
+  }
+
+  function mountAiAssistUI() {
+    // Find a sensible mount point inside the Structure panel.
+    // We place it above the Line of Business title (lobTitleEl).
+    if (!lobTitleEl) return;
+    const mount = lobTitleEl.closest(".structureCard") || lobTitleEl.parentElement;
+    if (!mount) return;
+
+    // Avoid double-mount
+    if (mount.querySelector(".aiAssist")) return;
+
+    const wrap = document.createElement("div");
+    wrap.className = "aiAssist";
+
+    wrap.innerHTML = `
+      <div class="aiAssistTitle">AI Assist</div>
+      <div class="aiAssistHelp">Describe the journey you want. We'll generate a starter template you can edit.</div>
+      <textarea class="aiAssistInput" rows="3" placeholder="e.g. Travel insurance quick quote: destination, policy type, email, dates, medical declaration, add-ons. Keep it short and broker-friendly."></textarea>
+      <div class="aiAssistActions">
+        <button type="button" class="btn ghost aiAssistBtn">Generate template</button>
+      </div>
+      <div class="aiAssistStatus muted" style="margin-top:8px; display:none;"></div>
+    `;
+
+    // Insert above the LoB row
+    mount.insertBefore(wrap, lobTitleEl.closest(".field") || lobTitleEl.parentElement);
+
+    const input = wrap.querySelector(".aiAssistInput");
+    const btn = wrap.querySelector(".aiAssistBtn");
+    const status = wrap.querySelector(".aiAssistStatus");
+
+    const setStatus = (msg, isError = false) => {
+      if (!status) return;
+      status.style.display = msg ? "block" : "none";
+      status.textContent = msg || "";
+      status.style.opacity = isError ? "1" : "0.9";
+    };
+
+    btn.addEventListener("click", async () => {
+      const promptText = (input?.value || "").trim();
+      if (!promptText) {
+        setStatus("Add a short description first.", true);
+        input?.focus();
+        return;
+      }
+
+      // Replace behaviour (simple + safe). You can change this to merge/append later.
+      const hasExisting = schema?.pages?.length > 0;
+      if (hasExisting) {
+        const ok = confirm(
+          "Generate a new template and REPLACE your current journey?
+
+Tip: Export JSON first if you want a backup."
+        );
+        if (!ok) return;
+      }
+
+      try {
+        btn.disabled = true;
+        setStatus("Generating template…");
+
+        const nextSchema = await requestAiTemplate(promptText);
+        schema = nextSchema;
+
+        // Normalise/migrate + persist
+        normaliseSchemaForFlow();
+        ensureSelection();
+        saveSchema();
+        renderAll(true);
+
+        setStatus("Template applied. You can now tweak pages, groups and questions.");
+      } catch (e) {
+        setStatus(e?.message || "AI template generation failed.", true);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  }
+
   const $ = (sel) => document.querySelector(sel);
 
   const lobTitleEl = $("#lobTitle");
@@ -3159,6 +3283,8 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   }
 
   wire();
+  // Builder-only AI Assist (safe even if CSS/DOM doesn't have specific hooks)
+  try { mountAiAssistUI(); } catch { /* no-op */ }
   renderAll();
 
   // Auto-create friendly initial values if schema is empty or corrupted
