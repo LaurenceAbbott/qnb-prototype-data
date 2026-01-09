@@ -523,6 +523,8 @@ button, input, select, textarea{ font-family: inherit; }
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    margin-top: 24px;
+    margin-bottom: 24px;
 }
 .modalTop{
   padding: 16px 16px 12px;
@@ -578,7 +580,7 @@ button, input, select, textarea{ font-family: inherit; }
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    max-height: 80vh;
+    max-height: 60vh;
     overflow-y: auto;
 }
 @keyframes pop{
