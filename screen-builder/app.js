@@ -134,6 +134,31 @@
   }
 
   // -------------------------
+  // Date picker (Flatpickr)
+  // -------------------------
+  function initFlatpickrDateInput(inputEl, initialValue, onValue) {
+    // Only runs if Flatpickr is loaded on the page.
+    const fp = window.flatpickr;
+    if (!fp || !inputEl) return;
+
+    // Prevent double-init if a DOM node is somehow reused
+    if (inputEl._flatpickr) return;
+
+    fp(inputEl, {
+      allowInput: true,
+      dateFormat: "d/m/Y",
+      defaultDate: initialValue || null,
+      onChange: function (selectedDates, dateStr) {
+        onValue(dateStr || "");
+      },
+      onClose: function (selectedDates, dateStr) {
+        // keep answer in sync even if user typed
+        onValue(dateStr || inputEl.value || "");
+      },
+    });
+  }
+
+  // -------------------------
   // Schema model
   // -------------------------
   const QUESTION_TYPES = [
@@ -2381,11 +2406,30 @@
     if (["text", "email", "number", "date"].includes(step.type)) {
       const input = document.createElement("input");
       input.className = "pInput";
-      input.type = step.type === "text" ? "text" : step.type;
-      input.placeholder = step.placeholder || "";
+
+      // For custom date picker, render as text input and attach Flatpickr
+      if (step.type === "date") {
+        input.type = "text";
+        input.inputMode = "numeric";
+        input.placeholder = step.placeholder || "dd/mm/yyyy";
+        input.autocomplete = "off";
+      } else {
+        input.type = step.type === "text" ? "text" : step.type;
+        input.placeholder = step.placeholder || "";
+      }
+
       input.value = getAnswer() ?? "";
       input.addEventListener("input", () => setAnswer(input.value));
       inputWrap.appendChild(input);
+
+      if (step.type === "date") {
+        // Attach Flatpickr if it's loaded (safe no-op if not)
+        initFlatpickrDateInput(input, input.value, (v) => {
+          setAnswer(v);
+          input.value = v;
+        });
+      }
+
       setTimeout(() => input.focus(), 0);
       return;
     }
