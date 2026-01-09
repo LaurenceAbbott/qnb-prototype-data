@@ -1060,37 +1060,59 @@ span.flatpickr-weekday{
 .flatpickr-calendar *{
   box-sizing: border-box !important;
 }
-/* Flatpickr month navigation arrows */
-.flatpickr-months .flatpickr-prev-month,
-.flatpickr-months .flatpickr-next-month {
-  color: #fff;           /* text / fallback */
-  fill: #fff;            /* SVG arrow */
-  opacity: 0.85;
-  transition: opacity 0.15s ease, fill 0.15s ease;
+/* -----------------------------
+   Flatpickr: month nav arrows (force white + hover)
+-------------------------------- */
+
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month {
+  color: rgba(255, 255, 255, 0.92) !important; /* fallback (some themes use color) */
+  opacity: 0.90;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+  border-radius: 12px;
 }
 
-/* SVG inside the buttons */
-.flatpickr-months .flatpickr-prev-month svg,
-.flatpickr-months .flatpickr-next-month svg {
-  fill: currentColor;    /* inherit from parent */
+/* IMPORTANT: Flatpickr arrows are SVGs, so set the SVG fill explicitly */
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month svg,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month svg {
+  fill: rgba(255, 255, 255, 0.92) !important;
+  transition: fill 0.15s ease, opacity 0.15s ease;
 }
 
-/* Hover + focus states */
-.flatpickr-months .flatpickr-prev-month:hover,
-.flatpickr-months .flatpickr-next-month:hover,
-.flatpickr-months .flatpickr-prev-month:focus,
-.flatpickr-months .flatpickr-next-month:focus {
-  color: #fff;
-  fill: #fff;
+/* Hover + keyboard focus */
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month:hover,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month:hover,
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month:focus,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month:focus,
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month:focus-visible,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month:focus-visible {
   opacity: 1;
+  background: rgba(255, 255, 255, 0.06);
+  outline: none;
 }
 
-/* Disabled arrows */
-.flatpickr-months .flatpickr-prev-month.disabled,
-.flatpickr-months .flatpickr-next-month.disabled {
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month:hover svg,
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month:focus svg,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month:focus svg,
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month:focus-visible svg,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month:focus-visible svg {
+  fill: rgba(255, 255, 255, 1) !important;
+}
+
+/* Disabled state (when at min/max month) */
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month.flatpickr-disabled,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month.flatpickr-disabled {
   opacity: 0.25;
   cursor: default;
+  background: transparent !important;
 }
+
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month.flatpickr-disabled svg,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month.flatpickr-disabled svg {
+  fill: rgba(255, 255, 255, 0.35) !important;
+}
+
 
 
 
