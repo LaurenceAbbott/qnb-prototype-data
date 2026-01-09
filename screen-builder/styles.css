@@ -1125,44 +1125,45 @@ span.flatpickr-weekday {
 .flatpickr-calendar {
   margin-top: 10px !important;
 }
-/* ---------------------------------
-   Flatpickr layout fix (NO clipping, NO right-gap)
-   Keeps FP's internal sizing + anchors properly
----------------------------------- */
+/* -----------------------------
+   Flatpickr: sizing + anchoring (no clipping, stays attached)
+-------------------------------- */
 
-/* IMPORTANT: Flatpickr should be absolute, not fixed */
+/* Ensure the calendar stays anchored to the input (Flatpickr default) */
 .flatpickr-calendar {
-  position: absolute !important;          /* fixes "drifts on scroll" if CSS made it fixed */
-  left: auto;
-  right: auto;
-  width: max-content !important;          /* let it fit its content */
-  max-width: calc(100vw - 24px) !important;
-  box-sizing: border-box !important;
-  overflow: hidden;                        /* tidy rounded corners */
+  position: absolute !important;   /* prevents accidental 'static/relative/fixed' overrides */
+  box-sizing: border-box;
+  overflow: hidden;               /* keeps rounded corners tidy */
+  max-width: calc(100vw - 32px);  /* keep on-screen */
+  z-index: 9999;
 }
 
-/* Let flatpickr control its own internal widths (do NOT hard lock these) */
-.flatpickr-innerContainer,
+/* IMPORTANT:
+   Don't add horizontal padding to .flatpickr-days (it causes right-side clipping).
+   Put padding on the inner container instead. */
+.flatpickr-innerContainer {
+  box-sizing: border-box;
+  padding: 10px 12px 12px;        /* safe padding without breaking widths */
+}
+
+/* Keep the days area flush so Flatpickr's widths remain correct */
+.flatpickr-days {
+  padding: 0 !important;
+}
+
+/* DO NOT force widths on these (Flatpickr manages them) */
 .flatpickr-rContainer,
-.flatpickr-days,
 .dayContainer {
   width: auto !important;
-  min-width: 0 !important;
+  min-width: unset !important;
   max-width: none !important;
-  box-sizing: border-box !important;
 }
 
-/* Keep your spacing consistent without breaking the grid */
-.flatpickr-days {
-  padding: 8px 12px 12px !important;
+/* Optional: if you still see a 1px nudge, this prevents tiny overflow artifacts */
+.flatpickr-calendar * {
+  box-sizing: border-box;
 }
 
-/* Ensure header + weekdays align with the days padding */
-.flatpickr-months,
-.flatpickr-weekdays {
-  padding: 0 12px !important;
-  box-sizing: border-box !important;
-}
 
 @media (max-width: 1180px){
   .layout{ grid-template-columns: 320px 1fr; }
