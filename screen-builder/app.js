@@ -495,7 +495,18 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
 
   function importJourneyTemplate(schemaFromAI) {
     // Replace current schema with AI schema, then normalise + re-render.
+    if (!schemaFromAI || typeof schemaFromAI !== "object" || !Array.isArray(schemaFromAI.pages)) {
+      throw new Error("AI returned an invalid schema. Expected { pages: [...] }.");
+    }
+
     schema = schemaFromAI;
+
+    // Ensure essential fields exist (worker may not include these)
+    schema.meta = schema.meta || {};
+    if (!schema.meta.version) schema.meta.version = 1;
+    if (!schema.meta.createdAt) schema.meta.createdAt = new Date().toISOString();
+    schema.meta.updatedAt = new Date().toISOString();
+    if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
 
     normaliseSchemaForFlow();
     ensureSelection();
@@ -618,7 +629,12 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   // Persistence
   // -------------------------
   function saveSchema() {
+    // Ensure meta exists (AI imports may omit it)
+    schema.meta = schema.meta || {};
+    if (!schema.meta.version) schema.meta.version = 1;
+    if (!schema.meta.createdAt) schema.meta.createdAt = new Date().toISOString();
     schema.meta.updatedAt = new Date().toISOString();
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(schema));
   }
 
