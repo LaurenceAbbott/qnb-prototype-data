@@ -2713,7 +2713,7 @@
             const c = sanitizeRichHtml(qq.content.html || "");
             if (c) {
               const cEl = document.createElement("div");
-              cEl.className = "previewQuestionC
+              cEl.className = "previewQuestionContent";
               cEl.innerHTML = c;
               qBlock.appendChild(cEl);
             }
