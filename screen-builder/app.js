@@ -144,23 +144,54 @@
     // Prevent double-init if a DOM node is somehow reused
     if (inputEl._flatpickr) return;
 
+    // Anchor the calendar to the input wrapper so it stays "attached" in scrollable layouts
+    const anchor =
+      inputEl.closest(".pInputWrap") ||
+      inputEl.parentElement ||
+      document.body;
+
+    // Ensure the anchor is a positioning context
+    try {
+      const cs = window.getComputedStyle(anchor);
+      if (cs.position === "static") anchor.style.position = "relative";
+    } catch {
+      // no-op
+    }
+
+    const positionToAnchor = (instance) => {
+      const cal = instance?.calendarContainer;
+      if (!cal) return;
+
+      // If appended into our anchor, position using offsets relative to that anchor.
+      if (anchor && anchor.contains(cal)) {
+        cal.style.position = "absolute";
+        cal.style.top = `${inputEl.offsetTop + inputEl.offsetHeight + 10}px`;
+        cal.style.left = `${inputEl.offsetLeft}px`;
+      } else {
+        // Otherwise fall back to Flatpickr's own positioning
+        instance.positionCalendar();
+      }
+    };
+
     fp(inputEl, {
       allowInput: true,
       dateFormat: "d/m/Y",
       defaultDate: initialValue || null,
-
-      // Keep the calendar anchored to the input's layout context (prevents scroll drift)
-      appendTo: inputEl.parentElement || document.body,
+      // Render inside the nearest input wrapper so positioning is stable
+      appendTo: anchor,
 
       onOpen: function (_selectedDates, _dateStr, instance) {
-        const reposition = () => instance.positionCalendar();
-        // Capture scroll events from any scrollable parent
+        const reposition = () => positionToAnchor(instance);
+
+        // Capture scroll events from any scrollable parent (and the window)
         window.addEventListener("scroll", reposition, true);
         window.addEventListener("resize", reposition);
+
         instance._og_cleanupPositioning = () => {
           window.removeEventListener("scroll", reposition, true);
           window.removeEventListener("resize", reposition);
         };
+
         // Ensure correct position immediately on open
         reposition();
       },
@@ -180,6 +211,15 @@
         }
       },
     });
+
+    // One more nudge after init (flatpickr builds DOM async-ish)
+    try {
+      setTimeout(() => {
+        if (inputEl._flatpickr) positionToAnchor(inputEl._flatpickr);
+      }, 0);
+    } catch {
+      // no-op
+    }
   }
 
   // -------------------------
