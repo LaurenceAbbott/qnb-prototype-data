@@ -148,12 +148,36 @@
       allowInput: true,
       dateFormat: "d/m/Y",
       defaultDate: initialValue || null,
-      onChange: function (selectedDates, dateStr) {
+
+      // Keep the calendar anchored to the input's layout context (prevents scroll drift)
+      appendTo: inputEl.parentElement || document.body,
+
+      onOpen: function (_selectedDates, _dateStr, instance) {
+        const reposition = () => instance.positionCalendar();
+        // Capture scroll events from any scrollable parent
+        window.addEventListener("scroll", reposition, true);
+        window.addEventListener("resize", reposition);
+        instance._og_cleanupPositioning = () => {
+          window.removeEventListener("scroll", reposition, true);
+          window.removeEventListener("resize", reposition);
+        };
+        // Ensure correct position immediately on open
+        reposition();
+      },
+
+      onChange: function (_selectedDates, dateStr) {
         onValue(dateStr || "");
       },
-      onClose: function (selectedDates, dateStr) {
+
+      onClose: function (_selectedDates, dateStr, instance) {
         // keep answer in sync even if user typed
         onValue(dateStr || inputEl.value || "");
+
+        // cleanup scroll/resize listeners
+        if (instance && instance._og_cleanupPositioning) {
+          instance._og_cleanupPositioning();
+          instance._og_cleanupPositioning = null;
+        }
       },
     });
   }
