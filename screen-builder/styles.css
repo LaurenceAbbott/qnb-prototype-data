@@ -849,6 +849,24 @@ ul {
 select::-ms-expand {
   display: none;
 }
+/* Date input base (preview + inspector if shared) */
+.pInput[type="date"],
+.input[type="date"] {
+  color-scheme: dark; /* helps some browsers choose light icons */
+}
+
+/* WebKit calendar icon */
+.pInput[type="date"]::-webkit-calendar-picker-indicator,
+.input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.2);
+  opacity: 0.85;
+  cursor: pointer;
+}
+.pInput[type="date"]:hover::-webkit-calendar-picker-indicator,
+.input[type="date"]:hover::-webkit-calendar-picker-indicator {
+  opacity: 1;
+}
+
 @media (max-width: 1180px){
   .layout{ grid-template-columns: 320px 1fr; }
   .panelRight{ display:none; }
