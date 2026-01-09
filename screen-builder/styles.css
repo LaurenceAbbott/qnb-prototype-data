@@ -735,6 +735,7 @@ ul {
 }
 .previewQuestionContent {
     padding-top: 24px;
+    padding-bottom: 8px;
     color: white;
 }
 .previewGroupTitle {
