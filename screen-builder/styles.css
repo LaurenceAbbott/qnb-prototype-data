@@ -1126,67 +1126,43 @@ span.flatpickr-weekday {
   margin-top: 10px !important;
 }
 /* ---------------------------------
-   Flatpickr sizing fix (ALIGNED)
-   Fixes: right gap + header/grid alignment
+   Flatpickr layout fix (NO clipping, NO right-gap)
+   Keeps FP's internal sizing + anchors properly
 ---------------------------------- */
 
-/* Define a consistent calendar "content" width */
-:root {
-  --fp-grid: 308px;     /* flatpickr day grid */
-  --fp-pad-x: 18px;     /* left/right internal padding */
-  --fp-shell: calc(var(--fp-grid) + (var(--fp-pad-x) * 2));
-}
-
-/* Calendar shell should match grid + padding exactly */
+/* IMPORTANT: Flatpickr should be absolute, not fixed */
 .flatpickr-calendar {
-  width: var(--fp-shell) !important;
+  position: absolute !important;          /* fixes "drifts on scroll" if CSS made it fixed */
+  left: auto;
+  right: auto;
+  width: max-content !important;          /* let it fit its content */
   max-width: calc(100vw - 24px) !important;
   box-sizing: border-box !important;
-  overflow: hidden; /* tidy rounded corners */
+  overflow: hidden;                        /* tidy rounded corners */
 }
 
-/* Keep internal grid on Flatpickr's expected sizing */
+/* Let flatpickr control its own internal widths (do NOT hard lock these) */
 .flatpickr-innerContainer,
 .flatpickr-rContainer,
 .flatpickr-days,
 .dayContainer {
-  width: var(--fp-grid) !important;
-  min-width: var(--fp-grid) !important;
-  max-width: var(--fp-grid) !important;
-  box-sizing: content-box !important;
-}
-
-/* Apply equal padding around header + weekdays + days so everything lines up */
-.flatpickr-months,
-.flatpickr-weekdays,
-.flatpickr-days {
-  padding-left: var(--fp-pad-x) !important;
-  padding-right: var(--fp-pad-x) !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
   box-sizing: border-box !important;
 }
 
-/* Don't let other layout rules stretch/warp the day container */
-.dayContainer {
-  display: block !important;
+/* Keep your spacing consistent without breaking the grid */
+.flatpickr-days {
+  padding: 8px 12px 12px !important;
 }
 
-/* Optional: centre month header content neatly */
-.flatpickr-current-month {
-  left: 0 !important;
-  right: 0 !important;
-  width: 100% !important;
-  display: flex !important;
-  justify-content: center !important;
-  gap: 12px !important;
+/* Ensure header + weekdays align with the days padding */
+.flatpickr-months,
+.flatpickr-weekdays {
+  padding: 0 12px !important;
+  box-sizing: border-box !important;
 }
-
-/* Optional: keep nav arrows visually aligned */
-.flatpickr-months .flatpickr-prev-month,
-.flatpickr-months .flatpickr-next-month {
-  top: 12px !important;
-}
-
-
 
 @media (max-width: 1180px){
   .layout{ grid-template-columns: 320px 1fr; }
