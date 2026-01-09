@@ -2628,10 +2628,11 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
           input.value = v;
         });
       }
-
-      setTimeout(() => {
-        if (!shouldSuppressAutoFocus()) input.focus();
-      }, 0);
+      if (preview.mode === "question") {
+        setTimeout(() => {
+          if (!shouldSuppressAutoFocus()) input.focus();
+        }, 0);
+      }
       return;
     }
 
@@ -2642,9 +2643,11 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       ta.value = getAnswer() ?? "";
       ta.addEventListener("input", () => setAnswer(ta.value));
       inputWrap.appendChild(ta);
-      setTimeout(() => {
-        if (!shouldSuppressAutoFocus()) ta.focus();
-      }, 0);
+      if (preview.mode === "question") {
+        setTimeout(() => {
+          if (!shouldSuppressAutoFocus()) ta.focus();
+        }, 0);
+      }
       return;
     }
 
@@ -2691,9 +2694,11 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
         sel.value = getAnswer() ?? "";
         sel.addEventListener("change", () => setAnswer(sel.value));
         inputWrap.appendChild(sel);
-        setTimeout(() => {
-          if (!shouldSuppressAutoFocus()) sel.focus();
-        }, 0);
+        if (preview.mode === "question") {
+          setTimeout(() => {
+            if (!shouldSuppressAutoFocus()) sel.focus();
+          }, 0);
+        }
         return;
       }
 
@@ -2767,9 +2772,11 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     input.value = getAnswer() ?? "";
     input.addEventListener("input", () => setAnswer(input.value));
     inputWrap.appendChild(input);
-    setTimeout(() => {
-        if (!shouldSuppressAutoFocus()) input.focus();
-      }, 0);
+      if (preview.mode === "question") {
+        setTimeout(() => {
+          if (!shouldSuppressAutoFocus()) input.focus();
+        }, 0);
+      }
   }
 
   function renderPreviewPage(pageId) {
