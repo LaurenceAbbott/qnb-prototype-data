@@ -403,6 +403,11 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   // AI config (persisted locally so you can set it once inside the builder)
 // If you provide a default endpoint here, the AI Assist UI will work immediately (unless you override via Settings).
 const AI_JOURNEY_ENDPOINT = "https://screen-builder-ai.laurence-ogi.workers.dev";
+// Expose for quick testing in DevTools (IIFE locals don't show up in console)
+// You can override anytime with: window.OG_AI_ENDPOINT = "https://...";
+window.OG_AI_ENDPOINT = window.OG_AI_ENDPOINT || AI_JOURNEY_ENDPOINT;
+// Optional: legacy alias if you prefer typing this in the console
+window.AI_JOURNEY_ENDPOINT = window.AI_JOURNEY_ENDPOINT || AI_JOURNEY_ENDPOINT;
 const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
 
   function getAiConfig() {
@@ -479,10 +484,9 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
   }
 
   function mountAiAssistUI() {
-    // Find a sensible mount point inside the Structure panel.
-    // We place it above the Line of Business title (lobTitleEl).
-    if (!lobTitleEl) return;
-    const mount = lobTitleEl.closest(".structureCard") || lobTitleEl.parentElement;
+    // Mount AI Assist at the top of the Structure panel.
+    // We prefer inserting above the pages list because it's always present.
+    const mount = pagesListEl?.parentElement || lobTitleEl?.parentElement;
     if (!mount) return;
 
     // Avoid double-mount
@@ -501,7 +505,7 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
       <div class="aiAssistSettings" style="display:none; margin-top:10px;">
         <div class="field" style="margin-bottom:10px;">
           <div class="label">AI endpoint (serverless URL)</div>
-          <input class="input aiAssistEndpoint" type="text" placeholder="e.g. https://<your-worker>.workers.dev/ai/generate" />
+          <input class="input aiAssistEndpoint" type="text" placeholder="e.g. https://&lt;your-worker&gt;.workers.dev" />
           <div class="inlineHelp" style="margin-top:6px;">This should be a Cloudflare Worker (or similar) that returns JSON schema.</div>
         </div>
         <div class="field" style="margin-bottom:10px;">
@@ -517,14 +521,18 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
       </div>
 
       <textarea class="aiAssistInput" rows="3" placeholder="e.g. Travel insurance quick quote: destination, policy type, email, dates, medical declaration, add-ons. Keep it short and broker-friendly."></textarea>
-      <div class="aiAssistActions">
+      <div class="aiAssistActions" style="margin-top:10px; display:flex; gap:10px;">
         <button type="button" class="btn ghost aiAssistBtn">Generate template</button>
       </div>
       <div class="aiAssistStatus muted" style="margin-top:8px; display:none;"></div>
     `;
 
-    // Insert above the LoB row
-    mount.insertBefore(wrap, lobTitleEl.closest(".field") || lobTitleEl.parentElement);
+    // Insert before the pages list if possible (best visual placement)
+    if (pagesListEl && pagesListEl.parentElement === mount) {
+      mount.insertBefore(wrap, pagesListEl);
+    } else {
+      mount.insertBefore(wrap, mount.firstChild);
+    }
 
     const input = wrap.querySelector(".aiAssistInput");
     const btn = wrap.querySelector(".aiAssistBtn");
@@ -551,10 +559,9 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
       if (endpointInput) endpointInput.value = cfg.endpoint || "";
       if (authInput) authInput.value = cfg.auth ? "••••••••" : "";
       if (cfgHint) cfgHint.textContent = cfg.endpoint ? "Endpoint set" : "No endpoint";
-      if (btn) btn.disabled = !cfg.endpoint; // guide user to configure first
+      if (btn) btn.disabled = !cfg.endpoint;
     };
 
-    // Toggle settings panel
     settingsBtn?.addEventListener("click", (e) => {
       e.preventDefault();
       const isOpen = (settingsPanel?.style.display || "none") !== "none";
@@ -563,11 +570,9 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
       if (!isOpen) endpointInput?.focus();
     });
 
-    // Save config
     saveCfgBtn?.addEventListener("click", (e) => {
       e.preventDefault();
       const endpoint = (endpointInput?.value || "").trim();
-      // authInput is masked once saved; if user types a real token we store it.
       const rawAuth = (authInput?.value || "").trim();
       const auth = rawAuth && rawAuth !== "••••••••" ? rawAuth : getAiConfig().auth;
       setAiConfig({ endpoint, auth });
@@ -576,7 +581,6 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
       refreshCfgUI();
     });
 
-    // Test config (simple ping)
     testCfgBtn?.addEventListener("click", async (e) => {
       e.preventDefault();
       const cfg = getAiConfig();
@@ -597,12 +601,10 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
       }
     });
 
-    // Initial state
     refreshCfgUI();
 
     btn.addEventListener("click", async () => {
       const promptText = (input?.value || "").trim();
-      // Ensure endpoint is configured
       if (!hasAiEndpoint()) {
         setStatus("Open Settings and add your AI endpoint first.", true);
         if (settingsPanel) settingsPanel.style.display = "block";
@@ -615,14 +617,15 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
         return;
       }
 
-      // Replace behaviour (simple + safe). You can change this to merge/append later.
       const hasExisting = schema?.pages?.length > 0;
       if (hasExisting) {
-      const ok = confirm(
-    "Generate a new template and REPLACE your current journey?\n\nTip: Export JSON first if you want a backup."
-  );
-  if (!ok) return;
-}
+        const ok = confirm(
+          "Generate a new template and REPLACE your current journey?
+
+Tip: Export JSON first if you want a backup."
+        );
+        if (!ok) return;
+      }
 
       try {
         btn.disabled = true;
@@ -631,7 +634,6 @@ const AI_CFG_KEY = "og-formbuilder-ai-config-v1";
         const nextSchema = await requestAiTemplate(promptText);
         schema = nextSchema;
 
-        // Normalise/migrate + persist
         normaliseSchemaForFlow();
         ensureSelection();
         saveSchema();
