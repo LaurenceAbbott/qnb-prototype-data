@@ -577,18 +577,35 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   }
 
   async function requestAiTemplate(promptText) {
+    const AI_CAPABILITIES = {
+      schemaContract: "Must return a JSON object with { pages: [...] }",
+      questionTypes: ["text","textarea","number","email","date","select","radio","checkboxes","yesno"],
+      optionTypes: ["select","radio","checkboxes"],
+      questionFields: [
+        "id","type","title","help","placeholder","required","errorText","options","logic","content"
+      ],
+      groupFields: ["id","name","description","logic","questions"],
+      pageFields: ["id","name","groups","flow"],
+      logicOperators: OPERATORS.map(o => o.key),
+      guidance: {
+        intent: "Generate a realistic insurance QUICK QUOTE journey, not a full underwriting form",
+        preferredLength: "3–6 pages, ~25–45 questions total",
+        tone: "Broker-friendly, plain English",
+        completeness: "Populate titles, help text, placeholders, required flags and sensible option lists",
+        constraints: "Do not invent unsupported question types or fields"
+      }
+    };
+
     const res = await fetch(AI_JOURNEY_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         prompt: String(promptText || "").slice(0, 8000),
-        // Optional context (lets the worker adapt/extend later if you choose)
-        currentSchema: schema,
-        schemaVersion: schema?.meta?.version || 1,
+        builderCapabilities: AI_CAPABILITIES,
+        schemaVersion: schema?.meta?.version || 1
       }),
     });
 
-    // Read as text first (Workers sometimes respond text/plain)
     const rawText = await res.text().catch(() => "");
 
     if (!res.ok) {
@@ -596,53 +613,38 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       throw new Error(rawText || `AI request failed (${res.status})`);
     }
 
-    // Try to parse JSON if possible; otherwise keep string
     let data = rawText;
-    try {
-      data = rawText ? JSON.parse(rawText) : {};
-    } catch {
-      // keep as string
-    }
+    try { data = rawText ? JSON.parse(rawText) : {}; } catch {}
 
-    // Helpful debug in DevTools
     console.log("AI RAW RESPONSE:", data);
+    window.__AI_LAST_RAW = data;
+    window.__AI_LAST_RAW_TEXT = rawText;
 
-    // Accept flexible response shapes from the Worker:
-    // - { schema: {...} }
-    // - { journey: {...} }
-    // - { result: "{...json...}" }
-    // - { result: {...} }
-    // - "{...json...}" (string)
-    // - {...schema...}
     let candidate = data;
 
-    // If we got a JSON string, parse it
     if (typeof candidate === "string") {
-      try {
-        candidate = JSON.parse(candidate);
-      } catch {
-        // leave as string
-      }
+      try { candidate = JSON.parse(candidate); } catch {}
     }
 
     if (candidate && typeof candidate === "object") {
-      if (candidate.schema && typeof candidate.schema === "object") candidate = candidate.schema;
-      if (candidate.journey && typeof candidate.journey === "object") candidate = candidate.journey;
+      if (candidate.schema) candidate = candidate.schema;
+      if (candidate.journey) candidate = candidate.journey;
 
       if (typeof candidate.result === "string") {
         try {
           candidate = JSON.parse(candidate.result);
-        } catch (e) {
-          console.error("Could not JSON.parse(data.result):", candidate.result);
-          throw new Error("AI returned result but it wasn't valid JSON.");
+        } catch {
+          throw new Error("AI returned invalid JSON in result field");
         }
-      } else if (candidate.result && typeof candidate.result === "object") {
+      } else if (typeof candidate.result === "object") {
         candidate = candidate.result;
       }
     }
 
-    // Coerce/upgrade partial schemas into the builder's schema shape
+    window.__AI_LAST_CANDIDATE = candidate;
+
     const coerced = coerceAiSchema(candidate);
+    window.__AI_LAST_SCHEMA = coerced;
 
     if (!isValidSchemaShape(coerced)) {
       console.error("AI schema shape invalid. Expected { pages: [...] }. Got:", coerced);
