@@ -868,148 +868,137 @@ select::-ms-expand {
 .input[type="date"]:hover::-webkit-calendar-picker-indicator {
   opacity: 1;
 }
-/* =========================================================
-   Flatpickr — OGI Glass Dark (SINGLE clean block)
+/* =========================
+   Flatpickr — OGI Glass Dark (ONE block)
    Replace ALL your extra Flatpickr CSS with this.
-   Fixes: right-edge clipping, alignment, consistent width
-========================================================= */
+   ========================= */
 
 :root{
   --fp-accent: rgba(160, 140, 255, 0.95);
-  --fp-accent-soft: rgba(160, 140, 255, 0.16);
+  --fp-accent-soft: rgba(160, 140, 255, 0.18);
   --fp-bg: rgba(18, 20, 28, 0.92);
   --fp-border: rgba(255, 255, 255, 0.10);
   --fp-text: rgba(255, 255, 255, 0.92);
   --fp-text-muted: rgba(255, 255, 255, 0.60);
-
-  /* Flatpickr default day grid is ~307.875px wide.
-     Add safe padding + borders without clipping. */
-  --fp-grid-width: 308px;
-  --fp-pad-x: 12px;
-  --fp-pad-top: 10px;
-  --fp-pad-bottom: 12px;
-  --fp-radius: 18px;
 }
 
-/* ---- Calendar shell ---- */
+/* Calendar shell */
 .flatpickr-calendar{
   background: var(--fp-bg) !important;
   color: var(--fp-text) !important;
   border: 1px solid var(--fp-border) !important;
-  border-radius: var(--fp-radius) !important;
-
+  border-radius: 18px !important;
   box-shadow:
-    0 18px 60px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.06) inset !important;
-
+    0 18px 60px rgba(0,0,0,.55),
+    0 0 0 1px rgba(255,255,255,.06) inset !important;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 
-  /* keep rounded corners tidy */
+  /* keep corners clean */
   overflow: hidden !important;
 
-  /* IMPORTANT: let Flatpickr anchor it (absolute), but prevent weird overrides */
-  position: absolute !important;
+  /* keep above your UI */
   z-index: 9999 !important;
 
-  /* Set a stable width that matches the internal grid + padding */
-  box-sizing: border-box !important;
-  width: calc(var(--fp-grid-width) + (var(--fp-pad-x) * 2)) !important;
-  max-width: calc(100vw - 24px) !important;
-
-  margin-top: 10px !important;
+  /* IMPORTANT: do not force Flatpickr’s internal widths */
+  width: auto !important;
+  max-width: calc(100vw - 32px) !important;
 }
 
-/* Hide Flatpickr’s default arrow triangle */
+/* Remove Flatpickr arrow triangle */
 .flatpickr-calendar.arrowTop:before,
 .flatpickr-calendar.arrowTop:after,
 .flatpickr-calendar.arrowBottom:before,
 .flatpickr-calendar.arrowBottom:after{
-  display: none !important;
+  display:none !important;
 }
 
-/* ---- Header (month + nav) ---- */
+/* Header (month + nav) */
 .flatpickr-months{
-  padding: 10px var(--fp-pad-x) 6px !important;
-  box-sizing: border-box !important;
+  padding: 10px 12px 6px !important;
 }
-
 .flatpickr-month,
-.flatpickr-current-month,
 .flatpickr-current-month .cur-month,
 .flatpickr-current-month input.cur-year{
   color: var(--fp-text) !important;
 }
-
 .flatpickr-current-month{
   font-weight: 760 !important;
 }
 
-/* Support both possible nav selectors (Flatpickr uses prev/next-month) */
-.flatpickr-prev-month,
-.flatpickr-next-month,
+/* Prev/Next buttons */
 .flatpickr-nav-prev,
 .flatpickr-nav-next{
   border-radius: 12px !important;
   margin: 6px !important;
 }
-
-.flatpickr-prev-month:hover,
-.flatpickr-next-month:hover,
 .flatpickr-nav-prev:hover,
 .flatpickr-nav-next:hover{
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: rgba(255,255,255,.06) !important;
+}
+.flatpickr-nav-prev svg,
+.flatpickr-nav-next svg{
+  fill: rgba(255,255,255,.85) !important;
 }
 
-.flatpickr-prev-month svg,
-.flatpickr-next-month svg{
-  fill: rgba(255, 255, 255, 0.85) !important;
-}
+/* -------------------------
+   KEY FIX: Alignment + sizing
+   Put padding on ONE shared wrapper so weekdays + grid align
+-------------------------- */
 
-/* ---- Weekdays ---- */
-.flatpickr-weekdays{
-  background: transparent !important;
-  padding: 6px var(--fp-pad-x) 0 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+/* Shared horizontal padding for BOTH weekday row and day grid */
+.flatpickr-innerContainer{
+  padding: 8px 12px 12px !important;
   box-sizing: border-box !important;
 }
 
+/* Weekday row: no padding here (inherits from innerContainer) */
+.flatpickr-weekdays{
+  background: transparent !important;
+  padding: 0 !important;
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+}
+
+/* Force weekday row to be true 7-column layout */
+.flatpickr-weekdaycontainer{
+  display: flex !important;
+  width: 100% !important;
+}
 span.flatpickr-weekday{
+  flex: 1 1 0 !important;
+  text-align: center !important;
   color: var(--fp-text-muted) !important;
   font-weight: 700 !important;
 }
 
-/* ---- CRITICAL FIX ----
-   Do NOT pad .flatpickr-days horizontally (it causes right clipping).
-   Instead, pad the inner container. */
+/* Days area: remove padding so Flatpickr's math stays correct (prevents clipping) */
 .flatpickr-days{
   padding: 0 !important;
+}
+
+/* Don’t force widths on internal containers */
+.flatpickr-rContainer,
+.dayContainer{
+  width: auto !important;
+  min-width: unset !important;
+  max-width: none !important;
   box-sizing: border-box !important;
 }
 
-.flatpickr-innerContainer{
-  padding: var(--fp-pad-top) var(--fp-pad-x) var(--fp-pad-bottom) !important;
-  box-sizing: border-box !important;
-}
-
-/* Do NOT override Flatpickr’s internal width rules (dayContainer etc.)
-   They’re what keep the grid aligned. */
-
-/* ---- Day styling ---- */
+/* Day cells */
 .flatpickr-day{
-  color: rgba(255, 255, 255, 0.86) !important;
+  color: rgba(255,255,255,.86) !important;
   border-radius: 12px !important;
   border: 1px solid transparent !important;
 }
-
 .flatpickr-day:hover{
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255,255,255,.08) !important;
   border-color: transparent !important;
 }
 
 /* Today ring */
 .flatpickr-day.today{
-  border-color: rgba(160, 140, 255, 0.55) !important;
+  border-color: rgba(160,140,255,.55) !important;
 }
 
 /* Selected */
@@ -1018,11 +1007,11 @@ span.flatpickr-weekday{
 .flatpickr-day.endRange{
   background: var(--fp-accent) !important;
   border-color: var(--fp-accent) !important;
-  color: rgba(10, 10, 18, 0.95) !important;
-  box-shadow: 0 10px 26px rgba(160, 140, 255, 0.22) !important;
+  color: rgba(10,10,18,.95) !important;
+  box-shadow: 0 10px 26px rgba(160,140,255,.22) !important;
 }
 
-/* In-range */
+/* Range interior */
 .flatpickr-day.inRange{
   background: var(--fp-accent-soft) !important;
   border-color: transparent !important;
@@ -1032,13 +1021,21 @@ span.flatpickr-weekday{
 .flatpickr-day.disabled,
 .flatpickr-day.prevMonthDay,
 .flatpickr-day.nextMonthDay{
-  color: rgba(255, 255, 255, 0.28) !important;
+  color: rgba(255,255,255,.28) !important;
 }
 
-/* Time area (if enabled later) */
-.flatpickr-time{
-  border-top: 1px solid rgba(255, 255, 255, 0.10) !important;
+/* Year arrows tint */
+.flatpickr-current-month .numInputWrapper span.arrowUp:after,
+.flatpickr-current-month .numInputWrapper span.arrowDown:after{
+  border-top-color: rgba(255,255,255,.75) !important;
+  border-bottom-color: rgba(255,255,255,.75) !important;
 }
+
+/* Small gap under input */
+.flatpickr-calendar{
+  margin-top: 10px !important;
+}
+
 
 
 @media (max-width: 1180px){
