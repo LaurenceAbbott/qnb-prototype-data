@@ -371,6 +371,9 @@
     lastError: "",
   };
 
+  // Prevent auto-focus stealing when an option click triggers a rerender (e.g. radio -> jumps to a textarea)
+  let suppressNextAutoFocus = false;
+
   // Drag state (builder-only; preview unaffected)
   let isDraggingUI = false;
   const markDragging = (on) => {
@@ -2624,7 +2627,10 @@
         });
       }
 
-      setTimeout(() => input.focus(), 0);
+      setTimeout(() => {
+        if (!suppressNextAutoFocus) input.focus();
+        suppressNextAutoFocus = false;
+      }, 0);
       return;
     }
 
@@ -2635,7 +2641,10 @@
       ta.value = getAnswer() ?? "";
       ta.addEventListener("input", () => setAnswer(ta.value));
       inputWrap.appendChild(ta);
-      setTimeout(() => ta.focus(), 0);
+      setTimeout(() => {
+        if (!suppressNextAutoFocus) ta.focus();
+        suppressNextAutoFocus = false;
+      }, 0);
       return;
     }
 
@@ -2680,7 +2689,10 @@
         sel.value = getAnswer() ?? "";
         sel.addEventListener("change", () => setAnswer(sel.value));
         inputWrap.appendChild(sel);
-        setTimeout(() => sel.focus(), 0);
+        setTimeout(() => {
+          if (!suppressNextAutoFocus) sel.focus();
+          suppressNextAutoFocus = false;
+        }, 0);
         return;
       }
 
@@ -2694,6 +2706,8 @@
           b.className = "choiceBtn" + (cur === o ? " selected" : "");
           b.textContent = o;
           b.addEventListener("click", () => {
+            // Prevent re-render from auto-focusing a different control (e.g. a textarea elsewhere)
+            suppressNextAutoFocus = true;
             setAnswer(o);
             rerender();
           });
@@ -2752,7 +2766,10 @@
     input.value = getAnswer() ?? "";
     input.addEventListener("input", () => setAnswer(input.value));
     inputWrap.appendChild(input);
-    setTimeout(() => input.focus(), 0);
+    setTimeout(() => {
+        if (!suppressNextAutoFocus) input.focus();
+        suppressNextAutoFocus = false;
+      }, 0);
   }
 
   function renderPreviewPage(pageId) {
