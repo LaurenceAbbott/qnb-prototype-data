@@ -1172,6 +1172,43 @@ textarea.aiAssistInput {
     flex-direction: column !important;
     gap: 10px;
 }
+/* =========================
+   Custom Scrollbars (Dark UI)
+   ========================= */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+/* WebKit browsers (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Optional: corner */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 
 @media (max-width: 1180px){
   .layout{ grid-template-columns: 320px 1fr; }
