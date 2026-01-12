@@ -2545,7 +2545,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     return true;
   }
 
-  function followUpMatches(q, answers) {(q, answers) {
+  function followUpMatches(q, answers) {
     if (!followUpIsEnabled(q)) return false;
     const trig = String(q.followUp.triggerValue || "Yes");
     return String(answers?.[q.id] || "") === trig;
