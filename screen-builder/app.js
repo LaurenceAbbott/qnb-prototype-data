@@ -338,6 +338,40 @@ const templateLabel = (tpl) => {
   return "Form page";
 };
 
+// Apply a template context attribute/class so CSS can target special pages.
+// Your CSS can now reliably target:
+//  - [data-page-template="quote"] ...
+//  - [data-page-template="summary"] ...
+//  - [data-page-template="payment"] ...
+//  - .tpl-quote / .tpl-summary / .tpl-payment
+function setTemplateContext(template) {
+  const t = String(template || "form").toLowerCase();
+
+  // Put the attribute in a few obvious places so existing CSS selectors have the best chance of matching.
+  try {
+    document.body.dataset.pageTemplate = t;
+    document.documentElement.dataset.pageTemplate = t;
+  } catch {}
+
+  const targets = [
+    canvasEl,
+    inspectorEl,
+    pagesListEl,
+    previewBackdrop,
+    previewStage,
+  ].filter(Boolean);
+
+  targets.forEach((el) => {
+    try {
+      el.dataset.pageTemplate = t;
+      el.classList.remove("tpl-form", "tpl-quote", "tpl-summary", "tpl-payment");
+      el.classList.add(`tpl-${t}`);
+    } catch {}
+  });
+}
+
+
+
   // -------------------------
   // Page template presets
   // -------------------------
@@ -1617,6 +1651,10 @@ CH 4  UI Rendering
     // Header labels
     const p = getPage(selection.pageId);
     const g = getGroup(selection.pageId, selection.groupId);
+
+    // ✅ Key: expose the selected page template to the DOM for CSS targeting
+    setTemplateContext(p?.template || "form");
+
     editorTitleEl.textContent = p ? `Editor · ${p.name}` : "Editor";
     pageNameDisplayEl.textContent = p ? p.name : "—";
     groupNameDisplayEl.textContent = g ? g.name : "—";
@@ -1650,7 +1688,10 @@ CH 4  UI Rendering
       p.flow = Array.isArray(p.flow) ? p.flow : p.groups.map((g) => ({ type: "group", id: g.id }));
 
       const pageDiv = document.createElement("div");
-      pageDiv.className = "pageItem" + (p.id === selection.pageId ? " active" : "") + (isFixed ? " fixed" : "");
+      pageDiv.className = "pageItem" + (p.id === selection.pageId ? " active" : "") + (isFixed ? " fixed" : "") + ` tpl-${String(p.template || "form").toLowerCase()}`;
+
+      // Expose template to CSS selectors
+      pageDiv.dataset.pageTemplate = String(p.template || "form").toLowerCase();
 
       // Make page draggable (builder-only) — but never for fixed pages
       pageDiv.draggable = !preview.open && !isFixed;
@@ -4336,6 +4377,10 @@ CH 4.3  Preview / runtime (continued)
     const step = steps[preview.index];
 
     if (previewTitle) previewTitle.textContent = schema.lineOfBusiness || "Preview";
+
+    // ✅ Expose the *current* page template to the DOM for CSS targeting
+    const currentPage = step?.pageId ? getPage(step.pageId) : null;
+    setTemplateContext(currentPage?.template || "form");
 
     if (preview.mode === "page") {
       if (previewSub) previewSub.textContent = step ? `${step.pageName}` : "No pages";
