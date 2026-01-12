@@ -1219,6 +1219,19 @@ html, body {
 body {
   overscroll-behavior: none;
 }
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;       /* disables Chrome window scrollbar */
+  background: #0b0f16;
+}
+
+/* Make your main app wrapper own scrolling instead */
+.appShell, #app, .builderShell {
+  height: 100vh;
+  overflow: hidden;
+}
+
 
 
 
