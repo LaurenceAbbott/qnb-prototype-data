@@ -2595,7 +2595,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     }));
   }
 
-  function followUpQuestionsEditor(parentQ) {(parentQ) {
+   function followUpQuestionsEditor(parentQ) {
     const wrap = document.createElement("div");
     wrap.className = "field";
 
