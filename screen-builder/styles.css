@@ -1227,7 +1227,219 @@ textarea.aiAssistInput {
 /* If this embed is meant to fill the screen */
 .code-embed.w-embed.w-iframe {
   min-height: 100vh;
+}/* ==========================================================================
+   FIXED CHECKOUT PAGES
+   Quote / Summary / Payment
+   Safe, additive styles only
+   ========================================================================== */
+
+/* -------- Shared tokens (inherits your theme vars) -------- */
+:root {
+  --qnb-card-bg: var(--surface, #ffffff);
+  --qnb-card-border: var(--border, rgba(255,255,255,0.08));
+  --qnb-muted: var(--text-muted, #9aa4b2);
+  --qnb-strong: var(--text-primary, #ffffff);
+  --qnb-accent: var(--accent, #7c9cff);
+  --qnb-radius: 16px;
 }
+
+/* Utility */
+.qnb-card {
+  background: var(--qnb-card-bg);
+  border: 1px solid var(--qnb-card-border);
+  border-radius: var(--qnb-radius);
+  padding: 18px;
+}
+
+/* ==========================================================================
+   QUOTE PAGE
+   ========================================================================== */
+
+/* Page header */
+[data-page-template="quote"] h1,
+[data-page-template="quote"] h2 {
+  letter-spacing: -0.02em;
+}
+
+/* Price hero card */
+[data-page-template="quote"] .qnb-quote-card {
+  display: grid;
+  gap: 14px;
+  padding: 22px;
+  background:
+    linear-gradient(180deg, rgba(124,156,255,0.18), transparent 60%),
+    var(--qnb-card-bg);
+  border-radius: 20px;
+  border: 1px solid var(--qnb-card-border);
+}
+
+/* Big price */
+[data-page-template="quote"] .qnb-price {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+[data-page-template="quote"] .qnb-price small {
+  font-size: 14px;
+  opacity: 0.75;
+  margin-left: 6px;
+}
+
+/* Monthly / annually toggle */
+[data-page-template="quote"] .qnb-pay-toggle {
+  display: inline-flex;
+  background: rgba(255,255,255,0.04);
+  border-radius: 999px;
+  padding: 4px;
+}
+
+[data-page-template="quote"] .qnb-pay-toggle button {
+  background: transparent;
+  border: 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: var(--qnb-muted);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+[data-page-template="quote"] .qnb-pay-toggle button.is-active {
+  background: var(--qnb-accent);
+  color: #0b1020;
+}
+
+/* Why choose us */
+[data-page-template="quote"] .qnb-why {
+  margin-top: 10px;
+}
+
+[data-page-template="quote"] .qnb-why li {
+  list-style: none;
+  margin: 10px 0;
+  padding-left: 26px;
+  position: relative;
+}
+
+[data-page-template="quote"] .qnb-why li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--qnb-accent);
+  font-weight: 800;
+}
+
+/* Cover table */
+[data-page-template="quote"] .qnb-cover-table {
+  margin-top: 16px;
+  border-radius: var(--qnb-radius);
+  overflow: hidden;
+  border: 1px solid var(--qnb-card-border);
+}
+
+[data-page-template="quote"] .qnb-cover-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  padding: 12px 16px;
+  border-top: 1px solid var(--qnb-card-border);
+}
+
+[data-page-template="quote"] .qnb-cover-row:first-child {
+  border-top: 0;
+}
+
+[data-page-template="quote"] .qnb-cover-row span:last-child {
+  color: var(--qnb-accent);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   SUMMARY PAGE
+   ========================================================================== */
+
+[data-page-template="summary"] .qnb-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+[data-page-template="summary"] .qnb-summary-item {
+  background: var(--qnb-card-bg);
+  border: 1px solid var(--qnb-card-border);
+  border-radius: var(--qnb-radius);
+  padding: 16px;
+}
+
+[data-page-template="summary"] .qnb-summary-item h4 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: var(--qnb-muted);
+}
+
+[data-page-template="summary"] .qnb-summary-item strong {
+  font-size: 16px;
+}
+
+/* Declaration confirmation */
+[data-page-template="summary"] .qnb-declaration {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: var(--qnb-radius);
+  background: rgba(124,156,255,0.08);
+}
+
+/* ==========================================================================
+   PAYMENT PAGE
+   ========================================================================== */
+
+[data-page-template="payment"] .qnb-payment-methods {
+  display: grid;
+  gap: 12px;
+}
+
+[data-page-template="payment"] .qnb-payment-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border-radius: var(--qnb-radius);
+  border: 1px solid var(--qnb-card-border);
+  cursor: pointer;
+}
+
+[data-page-template="payment"] .qnb-payment-option:hover {
+  border-color: var(--qnb-accent);
+}
+
+[data-page-template="payment"] .qnb-payment-option input {
+  margin-top: 4px;
+}
+
+[data-page-template="payment"] .qnb-payment-option strong {
+  font-weight: 700;
+}
+
+/* Card details grouping */
+[data-page-template="payment"] .qnb-card-details {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: var(--qnb-radius);
+  background: rgba(255,255,255,0.04);
+}
+
+/* Sticky CTA */
+[data-page-template="payment"] .qnb-payment-cta {
+  margin-top: 22px;
+  position: sticky;
+  bottom: 16px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(0,0,0,0.45)
+  );
+  padding-top: 12px;
+}
+
 
 @media (max-width: 1400px){
   .layout{ grid-template-columns: 320px 1fr; }
