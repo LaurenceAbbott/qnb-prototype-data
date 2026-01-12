@@ -726,10 +726,10 @@ ul {
 }
 .previewGroupDesc {
     font-size: 16px;
-    margin-bottom: 48px;
+    margin-top: -24px;
 }
 .previewQuestion {
-    padding-bottom: 48px;
+    margin-top: 48px;
 }
 .previewQuestionTitle {
 }
@@ -742,6 +742,7 @@ ul {
     font-size: 24px;
     font-weight: 600;
     margin-top: 48px;
+    margin-bottom: 48px;
 }
 
 /* Checkbox styling */
