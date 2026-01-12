@@ -1731,10 +1731,15 @@ CH 4  UI Rendering
       div.style.opacity = "0.9";
       div.textContent = "Checkout pages";
       pagesListEl.appendChild(div);
-    }$1
+    }
+
+    // Render fixed pages (Quote, Summary, Payment)
+    fixedPages.forEach((p) => {
+      renderPageItem(p, -1, true);
+    });
   }
 
-  $2 {
+  function renderCanvas() {
     /* ----------------------------------------------------------------------
     CH 4.2  Main editor (page/group/question)
     ---------------------------------------------------------------------- */
@@ -1985,17 +1990,6 @@ CH 4  UI Rendering
       inspectorSubEl.textContent = "Create a page to get started";
       return;
     }
-
-    // Page settings (always available)
-    inspectorEl.appendChild(sectionTitle("Page"));
-
-    inspectorEl.appendChild(fieldText("Page name", p.name || "Untitled page", (val) => {
-      p.name = val || "Untitled page";
-      saveSchemaDebounced();
-      renderPagesList();
-      editorTitleEl.textContent = `Editor · ${p.name}`;
-      pageNameDisplayEl.textContent = p.name;
-    }));
 
     // Page settings (always available)
     inspectorEl.appendChild(sectionTitle("Page"));
@@ -3727,9 +3721,11 @@ CH 5  Actions (add/rename/delete/duplicate/move)
     // 2) Keep fixed pages at the end and keep their order Quote->Summary->Payment
     const fixedIds = new Set(FIXED_CHECKOUT_PAGES.map((x) => x.id));
     const editable = schema.pages.filter((p) => !fixedIds.has(p.id));
-    const fixed = FIXED_CHECKOUT_PAGES.map((fp) => schema.pages.find((p) => p.id === fp.id)).filter(Boolean);$1  }
+    const fixed = FIXED_CHECKOUT_PAGES.map((fp) => schema.pages.find((p) => p.id === fp.id)).filter(Boolean);
+    schema.pages = [...editable, ...fixed];
+  }
 
-  $2 {
+  function addGroupToPage(pageId) {
     const p = getPage(pageId);
     if (!p) return;
 
