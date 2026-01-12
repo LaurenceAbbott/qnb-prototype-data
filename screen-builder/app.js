@@ -241,6 +241,169 @@
     { key: "yesno", label: "Yes / No" },
   ];
 
+  // -------------------------
+  // Page templates (Q&B)
+  // -------------------------
+  // "form" = normal question pages
+  // "quote" = premium + cover/excess/documents layout
+  // "summary" = answers review + edit links (later)
+  const PAGE_TEMPLATES = [
+    { value: "form", label: "Form page" },
+    { value: "quote", label: "Quote page" },
+    { value: "payment", label: "Payment page" },
+    { value: "summary", label: "Summary page" },
+  ];
+
+  // -------------------------
+  // Page template presets
+  // -------------------------
+  function buildTemplatePreset(template) {
+    const t = String(template || "form");
+
+    // Helper to make a question with sane defaults
+    const q = (type, title, extra = {}) => ({
+      id: uid("q"),
+      type,
+      title,
+      help: extra.help || "",
+      placeholder: extra.placeholder || "",
+      required: !!extra.required,
+      errorText: extra.errorText || (extra.required ? "This field is required." : "This field is required."),
+      options: Array.isArray(extra.options) ? extra.options : [],
+      logic: { enabled: false, rules: [] },
+      content: { enabled: false, html: "" },
+      followUp: {
+        enabled: false,
+        triggerValue: "Yes",
+        name: "",
+        questions: [],
+        repeat: { enabled: false, min: 1, max: 5, addLabel: "Add another", itemLabel: "Item" },
+      },
+    });
+
+    if (t === "payment") {
+      const gid = uid("group");
+      return {
+        flow: [
+          {
+            type: "text",
+            id: uid("txt"),
+            title: "Payment",
+            level: "h2",
+            bodyHtml: "<p>Please enter your payment details to complete your purchase.</p>",
+          },
+          { type: "group", id: gid },
+        ],
+        groups: [
+          {
+            id: gid,
+            name: "Payment details",
+            description: {
+              enabled: true,
+              html: "<p>We’ll take payment securely. Your details are encrypted in transit.</p>",
+            },
+            logic: { enabled: false, rules: [] },
+            questions: [
+              q("text", "Name on card", { placeholder: "e.g. Alex Taylor", required: true }),
+              q("text", "Card number", { placeholder: "1234 5678 9012 3456", required: true }),
+              q("text", "Expiry date", { placeholder: "MM/YY", required: true }),
+              q("text", "Security code (CVC)", { placeholder: "e.g. 123", required: true }),
+              q("postcode", "Billing postcode", { placeholder: "e.g. SW1A 1AA", required: true }),
+              q("email", "Email for receipt", { placeholder: "e.g. name@example.com", required: true }),
+              q("yesno", "Do you accept the terms and conditions?", {
+                required: true,
+                errorText: "You must accept the terms and conditions to continue.",
+              }),
+            ],
+          },
+        ],
+      };
+    }
+
+    if (t === "quote") {
+      const gid1 = uid("group");
+      const gid2 = uid("group");
+      return {
+        flow: [
+          {
+            type: "text",
+            id: uid("txt"),
+            title: "Your quote",
+            level: "h2",
+            bodyHtml:
+              "<p>This page is a starter layout for a Quote &amp; Buy journey. Use groups below for cover, add-ons and declarations.</p>",
+          },
+          { type: "group", id: gid1 },
+          { type: "group", id: gid2 },
+        ],
+        groups: [
+          {
+            id: gid1,
+            name: "Cover & price",
+            description: { enabled: true, html: "<p>Confirm cover details before proceeding.</p>" },
+            logic: { enabled: false, rules: [] },
+            questions: [
+              q("currency", "Annual premium", { placeholder: "e.g. 350.00", required: true }),
+              q("currency", "Voluntary excess", { placeholder: "e.g. 250", required: false }),
+              q("select", "Payment frequency", {
+                required: true,
+                options: ["Annually", "Monthly"],
+              }),
+            ],
+          },
+          {
+            id: gid2,
+            name: "Add-ons & declarations",
+            description: { enabled: false, html: "" },
+            logic: { enabled: false, rules: [] },
+            questions: [
+              q("checkboxes", "Optional add-ons", {
+                required: false,
+                options: ["Breakdown cover", "Legal cover", "Courtesy car", "Key cover"],
+              }),
+              q("yesno", "I confirm the information provided is correct", {
+                required: true,
+                errorText: "You must confirm before continuing.",
+              }),
+            ],
+          },
+        ],
+      };
+    }
+
+    // default "form" / "summary" = no preset
+    return null;
+  }
+
+  function applyPageTemplate(pageId, template) {
+    const p = getPage(pageId);
+    if (!p) return;
+
+    const t = String(template || "form");
+    p.template = t;
+
+    const preset = buildTemplatePreset(t);
+    if (!preset) {
+      // Keep existing structure for non-preset templates
+      saveSchema();
+      return;
+    }
+
+    // Replace groups + flow with preset
+    p.groups = preset.groups;
+    p.flow = preset.flow;
+
+    // Update selection to first group/question
+    const firstGroup = p.groups[0];
+    selection.pageId = p.id;
+    selection.blockType = "group";
+    selection.blockId = firstGroup?.id || null;
+    selection.groupId = firstGroup?.id || null;
+    selection.questionId = firstGroup?.questions?.[0]?.id || null;
+
+    saveSchema();
+  }
+
   const OPERATORS = [
     { key: "equals", label: "equals" },
     { key: "not_equals", label: "does not equal" },
@@ -272,6 +435,7 @@
         {
           id: pageId,
           name: "About you",
+          template: "form",
           // Phase 1: allow text blocks between groups via a page-level flow list
           // Backwards compatible: groups remain the source of truth for questions.
           flow: [{ type: "group", id: groupId }],
@@ -329,6 +493,8 @@
     if (!Array.isArray(schema.pages)) schema.pages = [];
 
     schema.pages.forEach((p) => {
+      // Page template (Q&B): form | quote | payment | summary
+      if (!p.template) p.template = "form";
       // Normalise page shell
       if (!p || typeof p !== "object") return;
       if (!p.id) p.id = uid("page");
@@ -693,6 +859,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       return {
         id: pageId,
         name: pageName,
+        template: String(p.template || p.pageType || p.type || "form").toLowerCase(),
         flow,
         groups,
       };
@@ -1255,7 +1422,9 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       const meta = document.createElement("div");
       meta.className = "pageMeta";
       const qCount = p.groups.reduce((acc, g) => acc + (g.questions?.length || 0), 0);
-      meta.textContent = `${p.groups.length} group${p.groups.length !== 1 ? "s" : ""} · ${qCount} question${qCount !== 1 ? "s" : ""}`;
+      const tpl = String(p.template || "form");
+      const tplLabel = PAGE_TEMPLATES.find((t) => t.value === tpl)?.label || tpl;
+      meta.textContent = `${tplLabel} · ${p.groups.length} group${p.groups.length !== 1 ? "s" : ""} · ${qCount} question${qCount !== 1 ? "s" : ""}`;
 
       left.appendChild(name);
       left.appendChild(meta);
@@ -1650,6 +1819,47 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       inspectorSubEl.textContent = "Create a page to get started";
       return;
     }
+
+    // Page settings (always available)
+    inspectorEl.appendChild(sectionTitle("Page"));
+
+    inspectorEl.appendChild(fieldText("Page name", p.name || "Untitled page", (val) => {
+      p.name = val || "Untitled page";
+      saveSchemaDebounced();
+      renderPagesList();
+      editorTitleEl.textContent = `Editor · ${p.name}`;
+      pageNameDisplayEl.textContent = p.name;
+    }));
+
+    inspectorEl.appendChild(fieldSelect(
+      "Page template",
+      p.template || "form",
+      PAGE_TEMPLATES.map((t) => ({ value: t.value, label: t.label })),
+      (val) => {
+        p.template = val;
+        saveSchema();
+        renderPagesList();
+        if (preview.open) renderPreview();
+      }
+    ));
+
+    if ((p.template || "form") === "payment") {
+      inspectorEl.appendChild(pEl("Payment template: apply a ready-made payment + billing address layout to this page.", "inlineHelp"));
+      inspectorEl.appendChild(
+        buttonRow([
+          {
+            label: "Apply payment template",
+            kind: "primary",
+            onClick: () => {
+              if (!confirm("Apply payment template to this page? This will REPLACE the current groups and questions on this page.")) return;
+              applyPaymentTemplateToPage(p.id);
+            },
+          },
+        ])
+      );
+    }
+
+    inspectorEl.appendChild(divider());
 
     // If a text block is selected, show a dedicated inspector
     if (selection.blockType === "text") {
@@ -4575,4 +4785,3 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
   if (!Array.isArray(schema.pages)) schema.pages = [];
 })();
-
