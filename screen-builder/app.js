@@ -294,12 +294,9 @@ CH 2  Data Models (schemas, types, templates)
   // Fixed checkout pages (always present)
   // -------------------------
   const FIXED_CHECKOUT_PAGES = window.FIXED_CHECKOUT_PAGES || [
-  { id: "__fixed_quote__", name: "Quote", template: "quote" },
-  { id: "__fixed_summary__", name: "Summary", template: "summary" },
-  { id: "__fixed_payment__", name: "Payment", template: "payment" },
+$1
 ];
 window.FIXED_CHECKOUT_PAGES = FIXED_CHECKOUT_PAGES;
-
 
   const isFixedPage = (p) =>
     !!p && (p.isFixed === true || FIXED_CHECKOUT_PAGES.some((x) => x.id === p.id));
