@@ -391,10 +391,12 @@ const templateLabel = (tpl) => {
         ],
       };
     }
-
     if (t === "quote") {
+      // Quote page template (generic Q&B pattern)
       const gid1 = uid("group");
       const gid2 = uid("group");
+      const gid3 = uid("group");
+
       return {
         flow: [
           {
@@ -403,37 +405,109 @@ const templateLabel = (tpl) => {
             title: "Your quote",
             level: "h2",
             bodyHtml:
-              "<p>This is a starter layout for a Quote &amp; Buy journey. Use groups below for cover, add-ons and declarations.</p>",
+              "<p>This is a generic <strong>Quote</strong> page template. Use it to present premium, cover and optional add-ons before the customer proceeds.</p>",
+          },
+          {
+            type: "text",
+            id: uid("txt"),
+            title: "Price and payment",
+            level: "h3",
+            bodyHtml:
+              "<p>In a live journey this section is typically populated from rating. For now, use these fields as placeholders you can edit.</p>",
           },
           { type: "group", id: gid1 },
+          {
+            type: "text",
+            id: uid("txt"),
+            title: "Cover and add-ons",
+            level: "h3",
+            bodyHtml:
+              "<p>Customers usually choose a cover level and any optional extras here.</p>",
+          },
           { type: "group", id: gid2 },
+          {
+            type: "text",
+            id: uid("txt"),
+            title: "Declarations",
+            level: "h3",
+            bodyHtml:
+              "<p>Use clear declarations before continuing to the summary and payment steps.</p>",
+          },
+          { type: "group", id: gid3 },
         ],
         groups: [
           {
             id: gid1,
-            name: "Cover & price",
-            description: { enabled: true, html: "<p>Check your premium and cover details before you continue.</p>" },
+            name: "Premium & payment",
+            description: {
+              enabled: true,
+              html: "<p>Show the premium and allow the customer to choose how they want to pay.</p>",
+            },
             logic: { enabled: false, rules: [] },
             questions: [
-              q("currency", "Annual premium", { placeholder: "e.g. 350.00", required: true }),
-              q("currency", "Voluntary excess", { placeholder: "e.g. 250", required: false }),
+              q("currency", "Annual premium", {
+                placeholder: "e.g. 350.00",
+                required: false,
+                help: "Typically set by rating. Leave blank if not applicable.",
+              }),
+              q("currency", "Monthly premium", {
+                placeholder: "e.g. 32.50",
+                required: false,
+                help: "Typically set by rating for monthly payment plans.",
+              }),
               q("select", "Payment frequency", {
                 required: true,
                 options: ["Annually", "Monthly"],
+                help: "Choose how you’d like to pay.",
               }),
             ],
           },
           {
             id: gid2,
-            name: "Add-ons & declarations",
-            description: { enabled: true, html: "<p>Choose optional extras and confirm key declarations.</p>" },
+            name: "Cover options",
+            description: {
+              enabled: true,
+              html: "<p>Pick a cover level and any optional add-ons.</p>",
+            },
             logic: { enabled: false, rules: [] },
             questions: [
+              q("radio", "Cover level", {
+                required: true,
+                options: ["Standard", "Plus", "Premium"],
+                help: "Select the level of cover you want.",
+              }),
+              q("currency", "Voluntary excess", {
+                placeholder: "e.g. 250",
+                required: false,
+                help: "Increasing excess can reduce premium.",
+              }),
               q("checkboxes", "Optional add-ons", {
                 required: false,
-                options: ["Breakdown cover", "Legal cover", "Courtesy car", "Key cover"],
+                options: [
+                  "Breakdown cover",
+                  "Legal expenses",
+                  "Courtesy car",
+                  "Key cover",
+                  "Windscreen cover",
+                ],
+                help: "Select any optional extras you want to include.",
               }),
+            ],
+          },
+          {
+            id: gid3,
+            name: "Confirm and continue",
+            description: {
+              enabled: true,
+              html: "<p>Confirm key declarations before continuing.</p>",
+            },
+            logic: { enabled: false, rules: [] },
+            questions: [
               q("yesno", "I confirm the information provided is correct", {
+                required: true,
+                errorText: "You must confirm before continuing.",
+              }),
+              q("yesno", "I understand this quote is based on the details provided", {
                 required: true,
                 errorText: "You must confirm before continuing.",
               }),
@@ -444,7 +518,10 @@ const templateLabel = (tpl) => {
     }
 
     if (t === "summary") {
-      const gid = uid("group");
+      // Summary page template (generic answers check pattern)
+      const gid1 = uid("group");
+      const gid2 = uid("group");
+
       return {
         flow: [
           {
@@ -453,23 +530,144 @@ const templateLabel = (tpl) => {
             title: "Check your answers",
             level: "h2",
             bodyHtml:
-              "<p>Review the information you’ve provided. You can go back to change answers if needed.</p>",
+              "<p>This is a generic <strong>Summary</strong> page template. In a live journey, this often shows an answers review table with ‘Change’ links.</p>",
           },
-          { type: "group", id: gid },
+          { type: "group", id: gid1 },
+          {
+            type: "text",
+            id: uid("txt"),
+            title: "Declarations",
+            level: "h3",
+            bodyHtml:
+              "<p>Capture final confirmations before moving to payment.</p>",
+          },
+          { type: "group", id: gid2 },
         ],
         groups: [
           {
-            id: gid,
-            name: "Summary",
+            id: gid1,
+            name: "Review",
             description: {
               enabled: true,
-              html: "<p>This is a template summary page. Later we can upgrade this to render a full ‘answers review’ table.</p>",
+              html: "<p>Review the details you’ve entered. If something is wrong, go back and update it before continuing.</p>",
             },
             logic: { enabled: false, rules: [] },
             questions: [
               q("yesno", "Is everything correct?", {
                 required: true,
                 errorText: "Confirm your answers to continue.",
+                help: "Select Yes to proceed to payment.",
+              }),
+            ],
+          },
+          {
+            id: gid2,
+            name: "Final confirmations",
+            description: {
+              enabled: true,
+              html: "<p>Make sure the customer understands key points before purchase.</p>",
+            },
+            logic: { enabled: false, rules: [] },
+            questions: [
+              q("yesno", "I confirm I have read and understood the key information", {
+                required: true,
+                errorText: "You must confirm before continuing.",
+              }),
+              q("yesno", "I agree to receive documents electronically", {
+                required: false,
+                help: "Optional (edit/remove depending on your product).",
+              }),
+            ],
+          },
+        ],
+      };
+    }
+
+    if (t === "payment") {
+      // Payment page template (generic checkout pattern)
+      const gid1 = uid("group");
+      const gid2 = uid("group");
+      const gid3 = uid("group");
+
+      return {
+        flow: [
+          {
+            type: "text",
+            id: uid("txt"),
+            title: "Payment",
+            level: "h2",
+            bodyHtml:
+              "<p>This is a generic <strong>Payment</strong> page template. In production, card fields are usually provided by a payment provider (hosted fields).</p>",
+          },
+          { type: "group", id: gid1 },
+          { type: "group", id: gid2 },
+          {
+            type: "text",
+            id: uid("txt"),
+            title: "Terms",
+            level: "h3",
+            bodyHtml:
+              "<p>Capture acceptance of terms and any final consents.</p>",
+          },
+          { type: "group", id: gid3 },
+        ],
+        groups: [
+          {
+            id: gid1,
+            name: "Payment method",
+            description: {
+              enabled: true,
+              html: "<p>Select how you’d like to pay.</p>",
+            },
+            logic: { enabled: false, rules: [] },
+            questions: [
+              q("radio", "Choose payment method", {
+                required: true,
+                options: ["Card", "Direct Debit"],
+                help: "Payment method options depend on your product.",
+              }),
+              q("email", "Email for receipt", {
+                placeholder: "e.g. name@example.com",
+                required: true,
+                help: "We’ll send confirmation and documents to this address.",
+              }),
+            ],
+          },
+          {
+            id: gid2,
+            name: "Billing details",
+            description: {
+              enabled: true,
+              html: "<p>These details are used for billing and verification.</p>",
+            },
+            logic: { enabled: false, rules: [] },
+            questions: [
+              q("text", "Name on card", { placeholder: "e.g. Alex Taylor", required: true }),
+              q("text", "Address line 1", { placeholder: "e.g. 10 High Street", required: true }),
+              q("text", "Address line 2", { placeholder: "Optional", required: false }),
+              q("text", "Town or city", { placeholder: "e.g. London", required: true }),
+              q("postcode", "Postcode", { placeholder: "e.g. SW1A 1AA", required: true }),
+              q("text", "Card number", { placeholder: "1234 5678 9012 3456", required: true }),
+              q("text", "Expiry date", { placeholder: "MM/YY", required: true }),
+              q("text", "Security code (CVC)", { placeholder: "e.g. 123", required: true }),
+            ],
+          },
+          {
+            id: gid3,
+            name: "Accept and pay",
+            description: {
+              enabled: true,
+              html: "<p>Confirm acceptance of terms to complete purchase.</p>",
+            },
+            logic: { enabled: false, rules: [] },
+            questions: [
+              q("yesno", "Do you accept the terms and conditions?", {
+                required: true,
+                errorText: "You must accept the terms and conditions to continue.",
+              }),
+              q("yesno", "Would you like to receive marketing communications?", {
+                required: false,
+                help: "Optional (edit/remove depending on your product and compliance requirements).",
               }),
             ],
           },
