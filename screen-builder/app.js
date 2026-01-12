@@ -3909,6 +3909,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       row.appendChild(mk("No", "No"));
       inputWrap.appendChild(row);
       return;
+    }
 
     if (isOptionType(step.type)) {
       const opts = Array.isArray(step.options) ? step.options : [];
@@ -4007,11 +4008,13 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     input.value = getAnswer() ?? "";
     input.addEventListener("input", () => setAnswer(input.value));
     inputWrap.appendChild(input);
-      if (preview.mode === "question") {
-        setTimeout(() => {
-          if (!shouldSuppressAutoFocus()) input.focus();
-        }, 0);
-      }
+
+    if (preview.mode === "question") {
+      setTimeout(() => {
+        if (!shouldSuppressAutoFocus()) input.focus();
+      }, 0);
+    }
+    return;
   }
 
   function renderPreviewPage(pageId) {
