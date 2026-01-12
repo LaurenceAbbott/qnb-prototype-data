@@ -93,6 +93,15 @@ CH 7  Utilities (ids, cloning, formatting, sanitise)
       .replaceAll("'", "&#039;");
   }
 
+  // ---------------------------------------------------------------------------
+  // Classname bridge
+  // WHY: Your CSS has moved to the new qnb-* naming, but some preview DOM nodes
+  // were still using legacy .preview* classnames only.
+  // Fix: Always output BOTH class sets so old and new CSS can style the same DOM.
+  // ---------------------------------------------------------------------------
+  const cx = (...names) => names.filter(Boolean).join(" ");
+  const tplClass = (tpl, suffix) => `qnb-${String(tpl || "form").toLowerCase()}-${suffix}`;
+
   // Very small, safe rich-text sanitizer (allows only basic formatting + lists)
   function sanitizeRichHtml(inputHtml) {
     const html = String(inputHtml || "");
@@ -4425,16 +4434,20 @@ CH 4.3  Preview / runtime (continued)
 
     // Render the current step
     const card = document.createElement("div");
-    card.className = "previewCard";
+    card.className = cx(
+      "previewCard",
+      "qnb-preview-card",
+      tplClass(currentPage?.template || "form", "card")
+    );
 
     // Header: Page title, then Group title + description (matches page mode layout)
     const pageTitleEl = document.createElement("div");
-    pageTitleEl.className = "pQ";
+    pageTitleEl.className = cx("pQ", "qnb-preview-page-title");
     pageTitleEl.textContent = step.pageName || "Untitled page";
     card.appendChild(pageTitleEl);
 
     const groupTitleEl = document.createElement("div");
-    groupTitleEl.className = "previewGroupTitle";
+    groupTitleEl.className = cx("previewGroupTitle", "qnb-preview-group-title");
     groupTitleEl.textContent = step.groupName || "Untitled group";
     card.appendChild(groupTitleEl);
 
@@ -4451,26 +4464,26 @@ CH 4.3  Preview / runtime (continued)
 
     // IMPORTANT: question title must NOT reuse the page title class
     const qEl = document.createElement("div");
-    qEl.className = "previewQuestionTitle";
+    qEl.className = cx("previewQuestionTitle", "qnb-preview-question-title");
     qEl.textContent = step.title || "Untitled question";
 
     const helpEl = document.createElement("div");
-    helpEl.className = "pHelp";
+    helpEl.className = cx("pHelp", "qnb-preview-help");
     helpEl.textContent = step.help || "";
 
     const contentEl = document.createElement("div");
-    contentEl.className = "previewQuestionContent";
+    contentEl.className = cx("previewQuestionContent", "qnb-preview-question-content");
     const contentHtml = step.content?.enabled ? sanitizeRichHtml(step.content.html || "") : "";
     contentEl.innerHTML = contentHtml;
     contentEl.style.display = contentHtml ? "block" : "none";
 
     const errEl = document.createElement("div");
-    errEl.className = "pError";
+    errEl.className = cx("pError", "qnb-preview-error");
     errEl.textContent = preview.lastError || "";
     errEl.style.display = preview.lastError ? "block" : "none";
 
     const inputWrap = document.createElement("div");
-    inputWrap.className = "pInputWrap";
+    inputWrap.className = cx("pInputWrap", "qnb-preview-input-wrap");
 
     // Build input control per type
     const setAnswer = (v) => {
@@ -4717,7 +4730,11 @@ CH 4.3  Preview / runtime (continued)
     });
 
     const card = document.createElement("div");
-    card.className = "previewCard";
+    card.className = cx(
+      "previewCard",
+      "qnb-preview-card",
+      tplClass(p?.template || "form", "card")
+    );
 
     // Page header
     const header = document.createElement("div");
@@ -4726,7 +4743,7 @@ CH 4.3  Preview / runtime (continued)
     card.appendChild(header);
 
     const stack = document.createElement("div");
-    stack.className = "previewPageStack";
+    stack.className = cx("previewPageStack", "qnb-preview-page-stack");
 
     // Render page flow (text blocks + groups)
     (p.flow || []).forEach((it) => {
@@ -4736,16 +4753,16 @@ CH 4.3  Preview / runtime (continued)
         const body = sanitizeRichHtml(it.bodyHtml || "");
 
         const block = document.createElement("div");
-        block.className = "previewTextBlock";
+        block.className = cx("previewTextBlock", "qnb-preview-text-block");
 
         const titleEl = document.createElement(level === "body" ? "div" : level);
-        titleEl.className = "previewTextBlockTitle";
+        titleEl.className = cx("previewTextBlockTitle", "qnb-preview-text-title");
         titleEl.textContent = title;
         if (title) block.appendChild(titleEl);
 
         if (body) {
           const bodyEl = document.createElement("div");
-          bodyEl.className = "pHelp previewTextBlockBody";
+          bodyEl.className = cx("pHelp", "previewTextBlockBody", "qnb-preview-text-body");
           bodyEl.innerHTML = body;
           block.appendChild(bodyEl);
         }
@@ -4760,10 +4777,10 @@ CH 4.3  Preview / runtime (continued)
         if (groupVisible[g.id] === false) return;
 
         const groupWrap = document.createElement("div");
-        groupWrap.className = "previewGroup";
+        groupWrap.className = cx("previewGroup", "qnb-preview-group");
 
         const gTitle = document.createElement("div");
-        gTitle.className = "previewGroupTitle";
+        gTitle.className = cx("previewGroupTitle", "qnb-preview-group-title");
         gTitle.textContent = g.name || "Untitled group";
         groupWrap.appendChild(gTitle);
 
@@ -4771,7 +4788,7 @@ CH 4.3  Preview / runtime (continued)
           const d = sanitizeRichHtml(g.description.html || "");
           if (d) {
             const dEl = document.createElement("div");
-            dEl.className = "pHelp previewGroupDesc";
+            dEl.className = cx("pHelp", "previewGroupDesc", "qnb-preview-group-desc");
             dEl.innerHTML = d;
             groupWrap.appendChild(dEl);
           }
@@ -4781,10 +4798,10 @@ CH 4.3  Preview / runtime (continued)
 
         visibleQuestions.forEach((qq) => {
           const qBlock = document.createElement("div");
-          qBlock.className = "previewQuestion";
+          qBlock.className = cx("previewQuestion", "qnb-preview-question");
 
           const qTitle = document.createElement("div");
-          qTitle.className = "previewQuestionTitle";
+          qTitle.className = cx("previewQuestionTitle", "qnb-preview-question-title");
           qTitle.textContent = qq.title || "Untitled question";
           qBlock.appendChild(qTitle);
 
@@ -4792,7 +4809,7 @@ CH 4.3  Preview / runtime (continued)
             const c = sanitizeRichHtml(qq.content.html || "");
             if (c) {
               const cEl = document.createElement("div");
-              cEl.className = "previewQuestionContent";
+              cEl.className = cx("previewQuestionContent", "qnb-preview-question-content");
               cEl.innerHTML = c;
               qBlock.appendChild(cEl);
             }
@@ -5300,101 +5317,29 @@ const TEMPLATE_DEFS = {
     render(values) {
       const v = values || {};
       return `
-        <div class="qnb-quote-card">
-          <div class="qnb-quote-header">
-            <h1 class="qnb-quote-title">${escapeHtml(v.heading ?? "")}</h1>
-            <p class="qnb-quote-intro">${escapeHtml(v.intro ?? "")}</p>
+        <div class="template template-quote">
+          <div class="template-header">
+            <h1 class="template-title">${escapeHtml(v.heading ?? "")}</h1>
+            <p class="template-intro">${escapeHtml(v.intro ?? "")}</p>
           </div>
 
           ${v.showPrice ? `
-            <div class="qnb-quote-row">
-              <div class="qnb-quote-label">${escapeHtml(v.priceLabel ?? "")}</div>
-              <div class="qnb-quote-value">£1,234.56</div>
+            <div class="template-panel">
+              <div class="template-row">
+                <div class="template-label">${escapeHtml(v.priceLabel ?? "")}</div>
+                <div class="template-value">£1,234.56</div>
+              </div>
             </div>
           ` : ""}
 
-          <div class="qnb-quote-actions">
-            <button class="btn primary" type="button">
-              ${escapeHtml(v.ctaText ?? "Continue")}
-            </button>
-          </div>
-        </div>
-      `;
-    }
-  },
-
-  summary: {
-    label: "Summary page",
-    schema: [
-      { key: "heading", label: "Heading", type: "text" },
-      { key: "ctaText", label: "CTA button text", type: "text" }
-    ],
-    defaults: {
-      heading: "Review your details",
-      ctaText: "Confirm & Pay"
-    },
-    render(values) {
-      const v = values || {};
-      return `
-        <div class="qnb-summary-card">
-          <h2 class="qnb-quote-title">${escapeHtml(v.heading ?? "")}</h2>
-          <div class="qnb-summary-list">
-            <div class="qnb-summary-item">
-              <div class="qnb-summary-label">Example Field</div>
-              <div class="qnb-summary-value">Example Answer</div>
-              <button class="qnb-summary-edit" type="button">Change</button>
-            </div>
-            <div class="qnb-summary-item">
-              <div class="qnb-summary-label">Policy Start</div>
-              <div class="qnb-summary-value">Next Monday</div>
-              <button class="qnb-summary-edit" type="button">Change</button>
-            </div>
-          </div>
-          <div class="qnb-quote-actions">
-            <button class="btn primary">${escapeHtml(v.ctaText ?? "")}</button>
-          </div>
-        </div>
-      `;
-    }
-  },
-
-  payment: {
-    label: "Payment page",
-    schema: [
-      { key: "heading", label: "Heading", type: "text" },
-      { key: "ctaText", label: "CTA button text", type: "text" }
-    ],
-    defaults: {
-      heading: "Payment",
-      ctaText: "Pay Now"
-    },
-    render(values) {
-      const v = values || {};
-      return `
-        <div class="qnb-payment-container">
-          <h2 class="qnb-quote-title">${escapeHtml(v.heading ?? "")}</h2>
-          
-          <div class="qnb-payment-option">
-            <input type="radio" name="paymethod" checked>
-            <div>
-              <strong>Credit / Debit Card</strong>
-              <p style="opacity:0.6; font-size:13px; margin:0;">Pay securely via Stripe</p>
-            </div>
-          </div>
-
-          <div class="qnb-card-details">
-            <div style="height:40px; background:rgba(255,255,255,0.05); border-radius:8px; margin-bottom:12px; display:flex; align-items:center; padding-left:12px; color:rgba(255,255,255,0.3); font-size:14px;">Card number</div>
-            <div style="display:flex; gap:12px;">
-               <div style="flex:1; height:40px; background:rgba(255,255,255,0.05); border-radius:8px; display:flex; align-items:center; padding-left:12px; color:rgba(255,255,255,0.3); font-size:14px;">MM/YY</div>
-               <div style="flex:1; height:40px; background:rgba(255,255,255,0.05); border-radius:8px; display:flex; align-items:center; padding-left:12px; color:rgba(255,255,255,0.3); font-size:14px;">CVC</div>
-            </div>
-          </div>
-
-          <div class="qnb-payment-cta">
-            <button class="btn primary w-full">${escapeHtml(v.ctaText ?? "")}</button>
+          <div class="template-actions">
+            <button class="btn primary" type="button">${escapeHtml(v.ctaText ?? "Continue")}</button>
           </div>
         </div>
       `;
     }
   }
+
+  // Add more templates later...
+  // summary: { ... }
 };
