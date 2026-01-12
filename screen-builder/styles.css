@@ -1210,7 +1210,7 @@ textarea.aiAssistInput {
 }
 /* Webflow Code Embed iframe wrapper */
 .code-embed.w-embed.w-iframe {
-  background: #0b0f16;      /* match your app base */
+  background: #0b0f16 !important;      /* match your app base */
   border-radius: 0;         /* or keep if you want */
   overflow: hidden;         /* prevents white edges */
 }
