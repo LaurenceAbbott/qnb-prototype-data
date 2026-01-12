@@ -2626,7 +2626,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     return wrap;
   }
 
-  function logicEditor(page, q) {(page, q) {
+  function logicEditor(page, q) {
     const wrap = document.createElement("div");
     wrap.className = "field";
 
