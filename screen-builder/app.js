@@ -2001,7 +2001,7 @@ CH 4  UI Rendering
 
       pagesListEl.appendChild(pageDiv);
     });
-  }
+  
 
   function renderCanvas() {
     /* ----------------------------------------------------------------------
