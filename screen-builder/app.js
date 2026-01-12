@@ -4785,3 +4785,63 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
   if (!Array.isArray(schema.pages)) schema.pages = [];
 })();
+
+
+
+// ------------------------------
+// TEMPLATE REGISTRY
+// ------------------------------
+// Defines editable, schema-driven page templates for the Screen Builder.
+// Each template provides:
+// - label: human-friendly name
+// - schema: fields shown in the editor
+// - defaults: initial values
+// - render(values): returns HTML string for preview/export
+//
+// NOTE: This registry is safe to extend—add new template keys alongside `quote`.
+const TEMPLATE_DEFS = {
+  quote: {
+    label: "Quote page",
+    schema: [
+      { key: "heading", label: "Heading", type: "text" },
+      { key: "intro", label: "Intro text", type: "textarea" },
+      { key: "showPrice", label: "Show premium", type: "toggle" },
+      { key: "priceLabel", label: "Premium label", type: "text" },
+      { key: "ctaText", label: "CTA button text", type: "text" }
+    ],
+    defaults: {
+      heading: "Your quote",
+      intro: "Here’s your price based on the details you’ve provided.",
+      showPrice: true,
+      priceLabel: "Total premium",
+      ctaText: "Continue"
+    },
+    render(values) {
+      const v = values || {};
+      return `
+        <div class="template template-quote">
+          <div class="template-header">
+            <h1 class="template-title">${escapeHtml(v.heading ?? "")}</h1>
+            <p class="template-intro">${escapeHtml(v.intro ?? "")}</p>
+          </div>
+
+          ${v.showPrice ? `
+            <div class="template-panel">
+              <div class="template-row">
+                <div class="template-label">${escapeHtml(v.priceLabel ?? "")}</div>
+                <div class="template-value">£1,234.56</div>
+              </div>
+            </div>
+          ` : ""}
+
+          <div class="template-actions">
+            <button class="btn primary" type="button">${escapeHtml(v.ctaText ?? "Continue")}</button>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // Add more templates later...
+  // summary: { ... }
+};
