@@ -819,6 +819,36 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       status.style.opacity = isError ? "1" : "0.9";
     };
 
+    // Minimal spinner styling (self-contained, injected once)
+    const ensureAiAssistSpinnerStyles = () => {
+      if (document.getElementById("ogAiAssistSpinnerStyles")) return;
+      const style = document.createElement("style");
+      style.id = "ogAiAssistSpinnerStyles";
+      style.textContent = `
+        .aiAssistBtn.isLoading{ position:relative; opacity:0.9; }
+        .aiAssistBtn .ogSpinner{ display:inline-block; width:14px; height:14px; border:2px solid currentColor; border-right-color:transparent; border-radius:999px; margin-right:8px; vertical-align:-2px; animation:ogSpin 0.8s linear infinite; }
+        @keyframes ogSpin{ to{ transform:rotate(360deg); } }
+      `;
+      document.head.appendChild(style);
+    };
+
+    const setButtonLoading = (on) => {
+      if (!btn) return;
+      ensureAiAssistSpinnerStyles();
+
+      if (on) {
+        btn.dataset._label = btn.dataset._label || btn.textContent || "Generate template";
+        btn.classList.add("isLoading");
+        btn.setAttribute("aria-busy", "true");
+        btn.innerHTML = `<span class="ogSpinner" aria-hidden="true"></span><span>Generating…</span>`;
+      } else {
+        btn.classList.remove("isLoading");
+        btn.removeAttribute("aria-busy");
+        const label = btn.dataset._label || "Generate template";
+        btn.textContent = label;
+      }
+    };
+
     // Tiny UX: Cmd/Ctrl+Enter to generate
     input?.addEventListener("keydown", (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
@@ -843,7 +873,8 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
 
       try {
         btn.disabled = true;
-        setStatus("Generating template…");
+        setButtonLoading(true);
+        setStatus("");
 
         const nextSchema = await requestAiTemplate(promptText);
         importJourneyTemplate(nextSchema);
@@ -852,6 +883,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       } catch (e) {
         setStatus(e?.message || "AI template generation failed.", true);
       } finally {
+        setButtonLoading(false);
         btn.disabled = false;
       }
     });
@@ -3637,3 +3669,11 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
   if (!Array.isArray(schema.pages)) schema.pages = [];
 })();
+// Paste the FULL current working .js file here.
+// This canvas will be our stable baseline.
+
+// Rules for this canvas:
+// 1. We only make small, incremental changes
+// 2. No refactors unless explicitly agreed
+// 3. Full file is always preserved
+
