@@ -1208,32 +1208,26 @@ textarea.aiAssistInput {
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
-/* Ensure the browser page itself is never white */
-html, body {
+/* Webflow Code Embed iframe wrapper */
+.code-embed.w-embed.w-iframe {
+  background: #0b0f16;      /* match your app base */
+  border-radius: 0;         /* or keep if you want */
+  overflow: hidden;         /* prevents white edges */
+}
+
+/* The iframe itself */
+.code-embed.w-embed.w-iframe iframe {
+  display: block;           /* removes inline iframe baseline gap */
+  width: 100%;
   height: 100%;
-  margin: 0;
-  background: #0b0f16; /* match your darkest base */
+  background: #0b0f16;      /* fallback if iframe content is transparent */
+  border: 0;
 }
 
-/* Prevent overscroll "bounce" revealing white behind */
-body {
-  overscroll-behavior: none;
+/* If this embed is meant to fill the screen */
+.code-embed.w-embed.w-iframe {
+  min-height: 100vh;
 }
-html, body {
-  height: 100%;
-  margin: 0;
-  overflow: hidden;       /* disables Chrome window scrollbar */
-  background: #0b0f16;
-}
-
-/* Make your main app wrapper own scrolling instead */
-.appShell, #app, .builderShell {
-  height: 100vh;
-  overflow: hidden;
-}
-
-
-
 
 @media (max-width: 1180px){
   .layout{ grid-template-columns: 320px 1fr; }
