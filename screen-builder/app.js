@@ -359,6 +359,36 @@
           if (q.logic == null) q.logic = { enabled: false, rules: [] };
           if (q.content == null) q.content = { enabled: false, html: "" };
 
+          // Follow-up question arrays (nested questions shown when parent answer matches)
+          if (q.followUp == null || typeof q.followUp !== "object") {
+            q.followUp = { enabled: false, triggerValue: "Yes", name: "", questions: [] };
+          }
+          q.followUp.enabled = q.followUp.enabled === true;
+          q.followUp.triggerValue = String(q.followUp.triggerValue || "Yes");
+          q.followUp.name = String(q.followUp.name || "");
+          q.followUp.questions = Array.isArray(q.followUp.questions) ? q.followUp.questions : [];
+
+          q.followUp.questions.forEach((fq) => {
+            if (!fq || typeof fq !== "object") return;
+            if (!fq.id) fq.id = uid("fq");
+            if (!fq.type) fq.type = "text";
+            if (!fq.title) fq.title = "Untitled follow-up";
+            if (fq.help == null) fq.help = "";
+            if (fq.placeholder == null) fq.placeholder = "";
+            if (fq.required == null) fq.required = false;
+            if (fq.errorText == null) fq.errorText = "This field is required.";
+            if (fq.options == null) fq.options = [];
+            if (fq.logic == null) fq.logic = { enabled: false, rules: [] };
+            if (fq.content == null) fq.content = { enabled: false, html: "" };
+
+            if (isOptionType(fq.type)) {
+              fq.options = Array.isArray(fq.options) ? fq.options : [];
+              if (fq.options.length === 0) fq.options = ["Option 1", "Option 2", "Option 3"];
+            } else {
+              fq.options = [];
+            }
+          });
+
           // Ensure options are present for option types
           if (isOptionType(q.type)) {
             q.options = Array.isArray(q.options) ? q.options : [];
@@ -1948,6 +1978,74 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       inspectorEl.appendChild(optionsEditor(q));
     }
 
+    // Follow-up questions (nested array) — only for Yes/No
+    inspectorEl.appendChild(divider());
+
+    if (q.type === "yesno") {
+      inspectorEl.appendChild(sectionTitle("Follow-up questions"));
+      inspectorEl.appendChild(
+        pEl(
+          "Show a nested set of questions when the answer matches (e.g. Yes → capture conviction details).",
+          "inlineHelp"
+        )
+      );
+
+      q.followUp = q.followUp || { enabled: false, triggerValue: "Yes", name: "", questions: [] };
+
+      inspectorEl.appendChild(
+        toggleRow("Enable follow-up questions", q.followUp.enabled === true, (on) => {
+          q.followUp.enabled = on;
+          saveSchema();
+          isTypingInspector = false;
+          renderAll(true);
+        })
+      );
+
+      if (q.followUp.enabled) {
+        inspectorEl.appendChild(
+          fieldSelect(
+            "Trigger answer",
+            q.followUp.triggerValue || "Yes",
+            [
+              { value: "Yes", label: "Yes" },
+              { value: "No", label: "No" },
+            ],
+            (val) => {
+              q.followUp.triggerValue = val;
+              saveSchema();
+              renderAll(true);
+            }
+          )
+        );
+
+        inspectorEl.appendChild(
+          fieldText("Array name", q.followUp.name || "", (val) => {
+            q.followUp.name = val;
+            saveSchemaDebounced();
+          })
+        );
+
+        inspectorEl.appendChild(followUpQuestionsEditor(q));
+
+        inspectorEl.appendChild(
+          buttonRow([
+            {
+              label: "Delete follow-up array",
+              kind: "ghost",
+              onClick: () => {
+                if (!confirm("Delete these follow-up questions?")) return;
+                q.followUp.enabled = false;
+                q.followUp.name = "";
+                q.followUp.questions = [];
+                saveSchema();
+                renderAll(true);
+              },
+            },
+          ])
+        );
+      }
+    }
+
     // Conditional logic
     inspectorEl.appendChild(divider());
     inspectorEl.appendChild(sectionTitle("Conditional logic"));
@@ -2325,7 +2423,210 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     return wrap;
   }
 
-  function logicEditor(page, q) {
+  // -------------------------
+  // Follow-up questions (nested array inside a question)
+  // -------------------------
+
+  function followUpIsEnabled(q) {
+    return !!(
+      q &&
+      q.followUp &&
+      q.followUp.enabled === true &&
+      Array.isArray(q.followUp.questions) &&
+      q.followUp.questions.length
+    );
+  }
+
+  function followUpMatches(q, answers) {
+    if (!followUpIsEnabled(q)) return false;
+    const trig = String(q.followUp.triggerValue || "Yes");
+    return String(answers?.[q.id] || "") === trig;
+  }
+
+  function getActiveFollowUps(q, answers) {
+    return followUpMatches(q, answers) ? (q.followUp.questions || []) : [];
+  }
+
+  function followUpQuestionsEditor(parentQ) {
+    const wrap = document.createElement("div");
+    wrap.className = "field";
+
+    const list = document.createElement("div");
+    list.style.display = "flex";
+    list.style.flexDirection = "column";
+    list.style.gap = "10px";
+
+    const ensure = () => {
+      parentQ.followUp = parentQ.followUp || {
+        enabled: false,
+        triggerValue: "Yes",
+        name: "",
+        questions: [],
+      };
+      parentQ.followUp.questions = Array.isArray(parentQ.followUp.questions)
+        ? parentQ.followUp.questions
+        : [];
+    };
+
+    const render = () => {
+      ensure();
+      list.innerHTML = "";
+
+      (parentQ.followUp.questions || []).forEach((fq, idx) => {
+        const card = document.createElement("div");
+        card.className = "toggleRow";
+        card.style.flexDirection = "column";
+        card.style.alignItems = "stretch";
+
+        // Title
+        card.appendChild(
+          fieldText("Question text", fq.title || "", (val) => {
+            fq.title = val || "Untitled follow-up";
+            saveSchemaDebounced();
+            renderCanvas();
+          })
+        );
+
+        // Help
+        card.appendChild(
+          fieldTextArea("Help text", fq.help || "", (val) => {
+            fq.help = val;
+            saveSchemaDebounced();
+          })
+        );
+
+        // Type
+        card.appendChild(
+          fieldSelect(
+            "Type",
+            fq.type || "text",
+            QUESTION_TYPES.map((t) => ({ value: t.key, label: t.label })),
+            (val) => {
+              fq.type = val;
+              if (!isOptionType(fq.type)) fq.options = [];
+              if (isOptionType(fq.type) && (!fq.options || !fq.options.length)) {
+                fq.options = ["Option 1", "Option 2", "Option 3"];
+              }
+              saveSchema();
+              renderAll(true);
+            }
+          )
+        );
+
+        // Placeholder
+        if (["text", "email", "number", "currency", "percent", "tel", "postcode", "date"].includes(fq.type)) {
+          card.appendChild(
+            fieldText("Placeholder", fq.placeholder || "", (val) => {
+              fq.placeholder = val;
+              saveSchemaDebounced();
+            })
+          );
+        }
+
+        // Required
+        card.appendChild(
+          toggleRow("Required", fq.required === true, (on) => {
+            fq.required = on;
+            if (fq.required && !fq.errorText) fq.errorText = "This field is required.";
+            saveSchema();
+            renderAll(true);
+          })
+        );
+
+        if (fq.required) {
+          card.appendChild(
+            fieldTextArea("Error message", fq.errorText || "This field is required.", (val) => {
+              fq.errorText = val;
+              saveSchemaDebounced();
+            })
+          );
+        }
+
+        // Options if needed
+        if (isOptionType(fq.type)) {
+          card.appendChild(divider());
+          card.appendChild(sectionTitle("Options"));
+          card.appendChild(optionsEditor(fq));
+        }
+
+        // Actions
+        const actions = document.createElement("div");
+        actions.style.display = "flex";
+        actions.style.gap = "10px";
+        actions.style.justifyContent = "flex-end";
+        actions.style.marginTop = "10px";
+
+        const up = document.createElement("button");
+        up.type = "button";
+        up.className = "btn ghost";
+        up.textContent = "Move up";
+        up.disabled = idx === 0;
+        up.addEventListener("click", () => {
+          moveItem(parentQ.followUp.questions, idx, idx - 1);
+          saveSchema();
+          renderAll(true);
+        });
+
+        const down = document.createElement("button");
+        down.type = "button";
+        down.className = "btn ghost";
+        down.textContent = "Move down";
+        down.disabled = idx === parentQ.followUp.questions.length - 1;
+        down.addEventListener("click", () => {
+          moveItem(parentQ.followUp.questions, idx, idx + 1);
+          saveSchema();
+          renderAll(true);
+        });
+
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "btn ghost";
+        del.textContent = "Delete";
+        del.addEventListener("click", () => {
+          parentQ.followUp.questions.splice(idx, 1);
+          saveSchema();
+          renderAll(true);
+        });
+
+        actions.appendChild(up);
+        actions.appendChild(down);
+        actions.appendChild(del);
+        card.appendChild(actions);
+
+        list.appendChild(card);
+      });
+
+      const addBtn = document.createElement("button");
+      addBtn.type = "button";
+      addBtn.className = "btn";
+      addBtn.textContent = "+ Add follow-up question";
+      addBtn.addEventListener("click", () => {
+        ensure();
+        parentQ.followUp.questions.push({
+          id: uid("fq"),
+          type: "text",
+          title: "New follow-up question",
+          help: "",
+          placeholder: "",
+          required: false,
+          errorText: "This field is required.",
+          options: [],
+          logic: { enabled: false, rules: [] },
+          content: { enabled: false, html: "" },
+        });
+        saveSchema();
+        renderAll(true);
+      });
+
+      list.appendChild(addBtn);
+    };
+
+    render();
+    wrap.appendChild(list);
+    return wrap;
+  }
+
+  function logicEditor(page, q) {(page, q) {
     const wrap = document.createElement("div");
     wrap.className = "field";
 
@@ -3141,7 +3442,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   }
 
   function buildPreviewSteps() {
-    // Question mode: returns visible questions (existing behaviour)
+    // Question mode: returns visible questions + any active follow-up questions
     const all = getAllQuestionsInOrder(schema);
     const byId = Object.fromEntries(all.map((q) => [q.id, q]));
 
@@ -3153,12 +3454,38 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       });
     });
 
-    const visible = all.filter((q) => {
+    const mainVisible = all.filter((q) => {
       if (groupVisible[q.groupId] === false) return false;
       return questionShouldShow(q, byId, preview.answers);
     });
 
-    return visible;
+    // Build steps in display order:
+    // - main question
+    // - if it has an enabled follow-up and answer matches, inject follow-up questions immediately after
+    const steps = [];
+
+    mainVisible.forEach((q) => {
+      steps.push(q);
+
+      if (followUpMatches(q, preview.answers)) {
+        const fqs = getActiveFollowUps(q, preview.answers);
+        fqs.forEach((fq) => {
+          // decorate follow-up so the preview header shows the correct page/group
+          steps.push({
+            ...fq,
+            pageId: q.pageId,
+            groupId: q.groupId,
+            pageName: q.pageName,
+            groupName: q.groupName,
+            parentQuestionId: q.id,
+            isFollowUp: true,
+            followUpName: q.followUp?.name || "",
+          });
+        });
+      }
+    });
+
+    return steps;
   }
 
   function buildPreviewPageSteps() {
@@ -3666,6 +3993,81 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
           errEl.style.display = fieldErr ? "block" : "none";
           qBlock.appendChild(errEl);
 
+          // Follow-up questions (nested under this question)
+          if (followUpMatches(qq, preview.answers)) {
+            const fWrap = document.createElement("div");
+            fWrap.className = "previewFollowUp";
+            fWrap.style.marginTop = "12px";
+            fWrap.style.paddingLeft = "14px";
+            fWrap.style.borderLeft = "1px solid rgba(255,255,255,0.12)";
+
+            const fqs = getActiveFollowUps(qq, preview.answers);
+
+            // Optional name label
+            const fuName = String(qq.followUp?.name || "").trim();
+            if (fuName) {
+              const nm = document.createElement("div");
+              nm.className = "label";
+              nm.style.marginBottom = "6px";
+              nm.textContent = fuName;
+              fWrap.appendChild(nm);
+            }
+
+            fqs.forEach((fq) => {
+              const sub = document.createElement("div");
+              sub.className = "previewQuestion";
+              sub.style.marginTop = "10px";
+
+              const t = document.createElement("div");
+              t.className = "previewQuestionTitle";
+              t.textContent = fq.title || "Untitled question";
+              sub.appendChild(t);
+
+              if (fq.content?.enabled) {
+                const c2 = sanitizeRichHtml(fq.content.html || "");
+                if (c2) {
+                  const cEl2 = document.createElement("div");
+                  cEl2.className = "previewQuestionContent";
+                  cEl2.innerHTML = c2;
+                  sub.appendChild(cEl2);
+                }
+              }
+
+              if (fq.help) {
+                const h2 = document.createElement("div");
+                h2.className = "pHelp";
+                h2.textContent = fq.help;
+                sub.appendChild(h2);
+              }
+
+              const iw2 = document.createElement("div");
+              iw2.className = "pInputWrap";
+
+              const setF = (v) => {
+                preview.answers[fq.id] = v;
+                if (preview.pageErrors?.[fq.id]) {
+                  delete preview.pageErrors[fq.id];
+                  renderPreview();
+                }
+              };
+              const getF = () => preview.answers[fq.id];
+
+              buildPreviewInputControl(fq, iw2, setF, getF, () => renderPreview());
+              sub.appendChild(iw2);
+
+              const ferr = preview.pageErrors?.[fq.id] || "";
+              const fe = document.createElement("div");
+              fe.className = "pError";
+              fe.textContent = ferr;
+              fe.style.display = ferr ? "block" : "none";
+              sub.appendChild(fe);
+
+              fWrap.appendChild(sub);
+            });
+
+            qBlock.appendChild(fWrap);
+          }
+
           // IMPORTANT: keep group title/description ABOVE its questions
           groupWrap.appendChild(qBlock);
         });
@@ -3819,7 +4221,14 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
           if (!g) return;
           if (groupShouldShow(g, byId, preview.answers) === false) return;
           (g.questions || []).forEach((qq) => {
-            if (questionShouldShow(qq, byId, preview.answers)) visibleQ.push(qq);
+            if (!questionShouldShow(qq, byId, preview.answers)) return;
+            visibleQ.push(qq);
+
+            // If the follow-up is active, include nested questions in page-level validation
+            if (followUpMatches(qq, preview.answers)) {
+              const fqs = getActiveFollowUps(qq, preview.answers);
+              fqs.forEach((fq) => visibleQ.push(fq));
+            }
           });
         });
 
@@ -3951,3 +4360,4 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
   if (!Array.isArray(schema.pages)) schema.pages = [];
 })();
+
