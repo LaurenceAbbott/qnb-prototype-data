@@ -1738,270 +1738,331 @@ CH 4  UI Rendering
       renderPageItem(p, -1, true);
     });
   }
-      p.flow = Array.isArray(p.flow) ? p.flow : p.groups.map((g) => ({ type: "group", id: g.id }));
+      // Ensure p.flow exists and is valid
+const normalisePageFlow = (page) => {
+  const flow = Array.isArray(page.flow) ? page.flow : [];
 
-      const pageDiv = document.createElement("div");
-      pageDiv.className = "pageItem" + (p.id === selection.pageId ? " active" : "");
+  // If no flow yet, default to all groups
+  if (!flow.length) {
+    page.flow = page.groups.map((g) => ({ type: "group", id: g.id }));
+    return;
+  }
 
-      // Make page draggable (builder-only)
-      pageDiv.draggable = !preview.open; // builder canvas only
-      pageDiv.dataset.pageId = p.id;
-      pageDiv.dataset.pageIndex = String(pIdx);
+  // Filter out items that reference missing blocks
+  const groupIds = new Set(page.groups.map((g) => g.id));
+  page.flow = flow.filter((it) => {
+    if (!it || !it.type || !it.id) return false;
+    if (it.type === "group") return groupIds.has(it.id);
+    if (it.type === "text") return true; // text blocks are stored in flow only
+    return false;
+  });
 
-      pageDiv.addEventListener("dragstart", (e) => {
-        if (preview.open) { e.preventDefault(); return; }
-        if (!canStartDragFrom(e.target)) {
-          e.preventDefault();
-          return;
-        }
-        markDragging(true);
-        e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("text/og-page", p.id);
-        e.dataTransfer.setData("text/og-page-index", String(pIdx));
-        pageDiv.classList.add("isDragging");
-      });
+  // If everything got filtered out, restore groups
+  if (!page.flow.length) {
+    page.flow = page.groups.map((g) => ({ type: "group", id: g.id }));
+  }
+};
 
-      pageDiv.addEventListener("dragend", () => {
-        pageDiv.classList.remove("isDragging");
-        markDragging(false);
-      });
+const hasDType = (dt, mime) => {
+  if (!dt) return false;
+  try {
+    const t = dt.types;
+    if (!t) return false;
+    if (typeof t.contains === "function") return t.contains(mime); // DOMStringList
+    return Array.from(t).includes(mime); // array-like
+  } catch {
+    return false;
+  }
+};
 
-      pageDiv.addEventListener("dragover", (e) => {
-        if (!e.dataTransfer.types.includes("text/og-page")) return;
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "move";
-        pageDiv.classList.add("isDragOver");
-      });
+normalisePageFlow(p);
 
-      pageDiv.addEventListener("dragleave", () => {
-        pageDiv.classList.remove("isDragOver");
-      });
+const pageDiv = document.createElement("div");
+pageDiv.className = "pageItem" + (p.id === selection.pageId ? " active" : "");
 
-      pageDiv.addEventListener("drop", (e) => {
-        if (!e.dataTransfer.types.includes("text/og-page")) return;
-        e.preventDefault();
-        pageDiv.classList.remove("isDragOver");
+// Make page draggable (builder-only)
+pageDiv.draggable = !preview.open;
+pageDiv.dataset.pageId = p.id;
+pageDiv.dataset.pageIndex = String(pIdx);
 
-        const fromIdx = Number(e.dataTransfer.getData("text/og-page-index"));
-        const toIdx = Number(pageDiv.dataset.pageIndex);
-        if (!Number.isFinite(fromIdx) || !Number.isFinite(toIdx)) return;
-        if (fromIdx === toIdx) return;
+pageDiv.addEventListener("dragstart", (e) => {
+  if (preview.open) { e.preventDefault(); return; }
 
-        moveItem(schema.pages, fromIdx, toIdx);
-        saveSchema();
-        renderAll();
-      });
+  // Extra guard: don't start dragging if we're editing a contenteditable
+  const tgt = e.target;
+  if (tgt && (tgt.isContentEditable || tgt.closest?.("[contenteditable='true']"))) {
+    e.preventDefault();
+    return;
+  }
 
-      const top = document.createElement("div");
-      top.className = "pageTop";
+  if (!canStartDragFrom(e.target)) {
+    e.preventDefault();
+    return;
+  }
 
-      const left = document.createElement("div");
-      left.style.flex = "1";
-      left.style.minWidth = "0";
+  markDragging(true);
+  e.dataTransfer.effectAllowed = "move";
+  e.dataTransfer.setData("text/og-page", p.id);
+  e.dataTransfer.setData("text/og-page-index", String(pIdx));
+  pageDiv.classList.add("isDragging");
+});
 
-      const name = document.createElement("div");
-      name.className = "pageName";
-      name.contentEditable = "true";
-      name.spellcheck = false;
-      name.setAttribute("role", "textbox");
-      name.setAttribute("aria-label", "Page name");
-      name.title = "Click to rename";
-      name.textContent = p.name;
+pageDiv.addEventListener("dragend", () => {
+  pageDiv.classList.remove("isDragging");
+  markDragging(false);
+});
 
-      // CRITICAL: prevent parent click from re-rendering while editing
-      name.addEventListener("mousedown", (e) => {
-        e.stopPropagation();
-      });
-      name.addEventListener("click", (e) => {
-        e.stopPropagation();
-      });
+pageDiv.addEventListener("dragover", (e) => {
+  if (!hasDType(e.dataTransfer, "text/og-page")) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "move";
+  pageDiv.classList.add("isDragOver");
+});
 
-      name.addEventListener("focus", (e) => {
-        e.stopPropagation();
-        selection.pageId = p.id;
-        ensureSelection();
-        requestAnimationFrame(() => selectAllContent(name));
-      });
+pageDiv.addEventListener("dragleave", () => {
+  pageDiv.classList.remove("isDragOver");
+});
 
-      name.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          name.blur();
-        }
-        if (e.key === "Escape") {
-          e.preventDefault();
-          name.textContent = p.name;
-          name.blur();
-        }
-      });
+pageDiv.addEventListener("drop", (e) => {
+  if (!hasDType(e.dataTransfer, "text/og-page")) return;
+  e.preventDefault();
+  pageDiv.classList.remove("isDragOver");
 
-      name.addEventListener("blur", () => {
-        const next = safeText(name) || "Untitled page";
-        name.textContent = next;
-        p.name = next;
-        saveSchema();
-        renderAll();
-      });
+  const fromIdx = Number(e.dataTransfer.getData("text/og-page-index"));
+  const toIdx = Number(pageDiv.dataset.pageIndex);
+  if (!Number.isFinite(fromIdx) || !Number.isFinite(toIdx)) return;
+  if (fromIdx === toIdx) return;
 
-      name.addEventListener("input", () => {
-        p.name = safeText(name) || "Untitled page";
-        saveSchemaDebounced();
-        editorTitleEl.textContent = `Editor · ${p.name}`;
-        pageNameDisplayEl.textContent = p.name;
-        renderMiniStats();
-      });
+  moveItem(schema.pages, fromIdx, toIdx);
+  saveSchema();
+  renderAll();
+});
 
-      const meta = document.createElement("div");
-      meta.className = "pageMeta";
-      const qCount = p.groups.reduce((acc, g) => acc + (g.questions?.length || 0), 0);
-      const tpl = String(p.template || "form");
-      const tplLabel = PAGE_TEMPLATES.find((t) => t.value === tpl)?.label || tpl;
-      meta.textContent = `${tplLabel} · ${p.groups.length} group${p.groups.length !== 1 ? "s" : ""} · ${qCount} question${qCount !== 1 ? "s" : ""}`;
+const top = document.createElement("div");
+top.className = "pageTop";
 
-      left.appendChild(name);
-      left.appendChild(meta);
+const left = document.createElement("div");
+left.style.flex = "1";
+left.style.minWidth = "0";
 
-      const actions = document.createElement("div");
-      actions.className = "pageActions";
+const name = document.createElement("div");
+name.className = "pageName";
+name.contentEditable = "true";
+name.spellcheck = false;
+name.setAttribute("role", "textbox");
+name.setAttribute("aria-label", "Page name");
+name.title = "Click to rename";
+name.textContent = p.name;
 
-      const renameBtn = iconButton("✎", "Rename page");
-      renameBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        name.focus();
-        requestAnimationFrame(() => selectAllContent(name));
-      });
+// Prevent click/drag bubbling from editable title
+name.addEventListener("mousedown", (e) => e.stopPropagation());
+name.addEventListener("click", (e) => e.stopPropagation());
+name.addEventListener("dragstart", (e) => { e.preventDefault(); e.stopPropagation(); });
 
-      const upBtn = iconButton("↑", "Move up");
-      upBtn.disabled = pIdx === 0;
-      upBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        moveItem(schema.pages, pIdx, pIdx - 1);
-        saveSchema();
-        renderAll();
-      });
+name.addEventListener("focus", (e) => {
+  e.stopPropagation();
+  selection.pageId = p.id;
+  ensureSelection();
+  requestAnimationFrame(() => selectAllContent(name));
+});
 
-      const downBtn = iconButton("↓", "Move down");
-      downBtn.disabled = pIdx === schema.pages.length - 1;
-      downBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        moveItem(schema.pages, pIdx, pIdx + 1);
-        saveSchema();
-        renderAll();
-      });
+name.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    name.blur();
+  }
+  if (e.key === "Escape") {
+    e.preventDefault();
+    name.textContent = p.name;
+    name.blur();
+  }
+});
 
-      const delBtn = iconButton("✕", "Delete page");
-      delBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        if (!confirm(`Delete page "${p.name}"? This cannot be undone.`)) return;
-        schema.pages = schema.pages.filter((x) => x.id !== p.id);
-        saveSchema();
-        ensureSelection();
-        renderAll();
-      });
+name.addEventListener("blur", () => {
+  const next = safeText(name) || "Untitled page";
+  name.textContent = next;
+  p.name = next;
+  saveSchema();
+  renderAll();
+});
 
-      actions.appendChild(renameBtn);
-      actions.appendChild(upBtn);
-      actions.appendChild(downBtn);
-      actions.appendChild(delBtn);
+name.addEventListener("input", () => {
+  p.name = safeText(name) || "Untitled page";
+  saveSchemaDebounced();
+  editorTitleEl.textContent = `Editor · ${p.name}`;
+  pageNameDisplayEl.textContent = p.name;
+  renderMiniStats();
+});
 
-      top.appendChild(left);
-      top.appendChild(actions);
-      pageDiv.appendChild(top);
+const meta = document.createElement("div");
+meta.className = "pageMeta";
+const qCount = p.groups.reduce((acc, g) => acc + (g.questions?.length || 0), 0);
+const tpl = String(p.template || "form");
+const tplLabel = PAGE_TEMPLATES.find((t) => t.value === tpl)?.label || tpl;
+meta.textContent = `${tplLabel} · ${p.groups.length} group${p.groups.length !== 1 ? "s" : ""} · ${qCount} question${qCount !== 1 ? "s" : ""}`;
 
-      // Flow chips (Groups + Text blocks)
-      const chips = document.createElement("div");
-      chips.className = "groupsMini";
+left.appendChild(name);
+left.appendChild(meta);
 
-      p.flow.forEach((it) => {
-        if (it.type === "group") {
-          const g = p.groups.find((gg) => gg.id === it.id);
-          const chip = document.createElement("button");
-          chip.type = "button";
-          chip.className =
-            "groupChip" +
-            (p.id === selection.pageId && selection.blockType === "group" && selection.groupId === g?.id ? " active" : "");
-          chip.textContent = g?.name || "(Missing group)";
-          chip.addEventListener("click", (e) => {
-            e.stopPropagation();
-            selection.pageId = p.id;
-            selection.blockType = "group";
-            selection.blockId = it.id;
-            selection.groupId = it.id;
-            selection.questionId = g?.questions?.[0]?.id || null;
-            renderAll();
-          });
-          chips.appendChild(chip);
-        }
+const actions = document.createElement("div");
+actions.className = "pageActions";
 
-        if (it.type === "text") {
-          const chip = document.createElement("button");
-          chip.type = "button";
-          chip.className =
-            "groupChip" +
-            (p.id === selection.pageId && selection.blockType === "text" && selection.blockId === it.id ? " active" : "");
-          chip.textContent = it.title ? `📝 ${it.title}` : "📝 Text block";
-          chip.addEventListener("click", (e) => {
-            e.stopPropagation();
-            selection.pageId = p.id;
-            selection.blockType = "text";
-            selection.blockId = it.id;
-            selection.groupId = null;
-            selection.questionId = null;
-            renderAll();
-          });
-          chips.appendChild(chip);
-        }
-      });
+// Prevent action area from starting a drag
+actions.addEventListener("dragstart", (e) => { e.preventDefault(); e.stopPropagation(); });
+actions.addEventListener("mousedown", (e) => e.stopPropagation());
+actions.addEventListener("click", (e) => e.stopPropagation());
 
-      const addTextChip = document.createElement("button");
-      addTextChip.type = "button";
-      addTextChip.className = "groupChip";
-      addTextChip.textContent = "+ Text";
-      addTextChip.addEventListener("click", (e) => {
-        e.stopPropagation();
-        selection.pageId = p.id;
-        addTextBlockToPage(p.id);
-      });
-      chips.appendChild(addTextChip);
+const renameBtn = iconButton("✎", "Rename page");
+renameBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  name.focus();
+  requestAnimationFrame(() => selectAllContent(name));
+});
 
-      const addGroupChip = document.createElement("button");
-      addGroupChip.type = "button";
-      addGroupChip.className = "groupChip";
-      addGroupChip.textContent = "+ Group";
-      addGroupChip.addEventListener("click", (e) => {
-        e.stopPropagation();
-        selection.pageId = p.id;
-        addGroupToPage(p.id);
-      });
-      chips.appendChild(addGroupChip);
+const upBtn = iconButton("↑", "Move up");
+upBtn.disabled = pIdx === 0;
+upBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  moveItem(schema.pages, pIdx, pIdx - 1);
+  saveSchema();
+  renderAll();
+});
 
-      pageDiv.appendChild(chips);
+const downBtn = iconButton("↓", "Move down");
+downBtn.disabled = pIdx === schema.pages.length - 1;
+downBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  moveItem(schema.pages, pIdx, pIdx + 1);
+  saveSchema();
+  renderAll();
+});
 
-      // click page selects it
-      pageDiv.addEventListener("click", () => {
-        // Ignore click selection during/just-after drag
-        if (isDraggingUI) return;
-        selection.pageId = p.id;
-        // choose first flow item
-        const first = p.flow[0];
-        if (first?.type === "text") {
-          selection.blockType = "text";
-          selection.blockId = first.id;
-          selection.groupId = null;
-          selection.questionId = null;
-        } else {
-          const g0 = p.groups.find((gg) => gg.id === first?.id) || p.groups[0];
-          selection.blockType = "group";
-          selection.blockId = g0?.id || null;
-          selection.groupId = g0?.id || null;
-          selection.questionId = g0?.questions?.[0]?.id || null;
-        }
-        renderAll();
-      });
+const delBtn = iconButton("✕", "Delete page");
+delBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  if (!confirm(`Delete page "${p.name}"? This cannot be undone.`)) return;
+  schema.pages = schema.pages.filter((x) => x.id !== p.id);
+  saveSchema();
+  ensureSelection();
+  renderAll();
+});
 
-      pagesListEl.appendChild(pageDiv);
+actions.appendChild(renameBtn);
+actions.appendChild(upBtn);
+actions.appendChild(downBtn);
+actions.appendChild(delBtn);
+
+top.appendChild(left);
+top.appendChild(actions);
+pageDiv.appendChild(top);
+
+// Flow chips (Groups + Text blocks)
+const chips = document.createElement("div");
+chips.className = "groupsMini";
+
+p.flow.forEach((it) => {
+  if (it.type === "group") {
+    const g = p.groups.find((gg) => gg.id === it.id);
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className =
+      "groupChip" +
+      (p.id === selection.pageId &&
+      selection.blockType === "group" &&
+      selection.groupId === it.id
+        ? " active"
+        : "");
+    chip.textContent = g?.name || "(Missing group)";
+    chip.addEventListener("click", (e) => {
+      e.stopPropagation();
+      selection.pageId = p.id;
+      selection.blockType = "group";
+      selection.blockId = it.id;
+      selection.groupId = it.id;
+      selection.questionId = g?.questions?.[0]?.id || null;
+      renderAll();
     });
-  
+    chips.appendChild(chip);
+  }
+
+  if (it.type === "text") {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className =
+      "groupChip" +
+      (p.id === selection.pageId &&
+      selection.blockType === "text" &&
+      selection.blockId === it.id
+        ? " active"
+        : "");
+    chip.textContent = it.title ? `📝 ${it.title}` : "📝 Text block";
+    chip.addEventListener("click", (e) => {
+      e.stopPropagation();
+      selection.pageId = p.id;
+      selection.blockType = "text";
+      selection.blockId = it.id;
+      selection.groupId = null;
+      selection.questionId = null;
+      renderAll();
+    });
+    chips.appendChild(chip);
+  }
+});
+
+const addTextChip = document.createElement("button");
+addTextChip.type = "button";
+addTextChip.className = "groupChip";
+addTextChip.textContent = "+ Text";
+addTextChip.addEventListener("click", (e) => {
+  e.stopPropagation();
+  selection.pageId = p.id;
+  addTextBlockToPage(p.id);
+});
+chips.appendChild(addTextChip);
+
+const addGroupChip = document.createElement("button");
+addGroupChip.type = "button";
+addGroupChip.className = "groupChip";
+addGroupChip.textContent = "+ Group";
+addGroupChip.addEventListener("click", (e) => {
+  e.stopPropagation();
+  selection.pageId = p.id;
+  addGroupToPage(p.id);
+});
+chips.appendChild(addGroupChip);
+
+pageDiv.appendChild(chips);
+
+// click page selects it
+pageDiv.addEventListener("click", () => {
+  if (isDraggingUI) return;
+
+  selection.pageId = p.id;
+
+  // choose first flow item (robust)
+  const first = p.flow[0];
+  if (first?.type === "text") {
+    selection.blockType = "text";
+    selection.blockId = first.id;
+    selection.groupId = null;
+    selection.questionId = null;
+  } else {
+    const g0 =
+      (first?.id ? p.groups.find((gg) => gg.id === first.id) : null) ||
+      p.groups[0] ||
+      null;
+
+    selection.blockType = "group";
+    selection.blockId = g0?.id || null;
+    selection.groupId = g0?.id || null;
+    selection.questionId = g0?.questions?.[0]?.id || null;
+  }
+
+  renderAll();
+});
+
+pagesListEl.appendChild(pageDiv);
+
 
   function renderCanvas() {
     /* ----------------------------------------------------------------------
