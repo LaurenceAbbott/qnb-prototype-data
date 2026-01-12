@@ -1208,6 +1208,18 @@ textarea.aiAssistInput {
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+/* Ensure the browser page itself is never white */
+html, body {
+  height: 100%;
+  margin: 0;
+  background: #0b0f16; /* match your darkest base */
+}
+
+/* Prevent overscroll "bounce" revealing white behind */
+body {
+  overscroll-behavior: none;
+}
+
 
 
 @media (max-width: 1180px){
