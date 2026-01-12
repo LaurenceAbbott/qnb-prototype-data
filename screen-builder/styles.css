@@ -1229,6 +1229,11 @@ textarea.aiAssistInput {
   min-height: 100vh;
 }
 
+@media (max-width: 1400px){
+  .layout{ grid-template-columns: 320px 1fr; }
+  .panelRight{ display:none; }
+}
+
 @media (max-width: 1180px){
   .layout{ grid-template-columns: 320px 1fr; }
   .panelRight{ display:none; }
