@@ -450,130 +450,233 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   // Coerce common AI outputs into the schema this builder expects.
   // This fixes issues like "(Missing group)" chips and "no journey as such".
   function coerceAiSchema(input) {
-    let s = input;
+    // Goal: accept a wide variety of AI outputs and coerce into OUR schema shape.
+    // Our builder expects:
+    // { meta, lineOfBusiness, pages:[{id,name,flow,groups:[{id,name,description,logic,questions:[{...}]}]}] }
 
-    // If input is a JSON string, try parse
-    if (typeof s === "string") {
-      try { s = JSON.parse(s); } catch { return {}; }
-    }
+    const mapType = (t) => {
+      const x = String(t || "").toLowerCase().trim();
+      if (!x) return "text";
+      if (["text", "short_text", "short", "string"].includes(x)) return "text";
+      if (["textarea", "long_text", "long", "paragraph"].includes(x)) return "textarea";
+      if (["number", "numeric", "int", "integer", "float"].includes(x)) return "number";
+      if (["email"].includes(x)) return "email";
+      if (["date", "dob"].includes(x)) return "date";
+      if (["select", "dropdown"].includes(x)) return "select";
+      if (["radio", "single_select", "single"].includes(x)) return "radio";
+      if (["checkbox", "checkboxes", "multi_select", "multi"].includes(x)) return "checkboxes";
+      if (["yesno", "yes_no", "boolean", "bool"].includes(x)) return "yesno";
+      // fall back to text
+      return "text";
+    };
 
-    if (!s || typeof s !== "object") return {};
+    const normaliseOptions = (raw) => {
+      if (!raw) return [];
+      // strings
+      if (Array.isArray(raw)) {
+        return raw
+          .map((o) => {
+            if (typeof o === "string") return o;
+            if (o && typeof o === "object") return o.label || o.text || o.value || o.name || "";
+            return "";
+          })
+          .map((s) => String(s || "").trim())
+          .filter(Boolean);
+      }
+      // object map {key:label}
+      if (raw && typeof raw === "object") {
+        return Object.values(raw)
+          .map((v) => String(v || "").trim())
+          .filter(Boolean);
+      }
+      return [];
+    };
 
-    // If it already looks right, keep it
-    if (Array.isArray(s.pages)) {
-      // Ensure page/group shells exist
-      s.pages = s.pages.map((p) => {
-        p = p && typeof p === "object" ? p : {};
-        if (!p.id) p.id = uid("page");
-        if (!p.name) p.name = "Untitled page";
+    const normaliseQuestion = (rawQ) => {
+      const q = rawQ && typeof rawQ === "object" ? rawQ : {};
 
-        // If page has a flat 'questions' array, wrap into a group
-        if (!Array.isArray(p.groups)) {
-          const qs = Array.isArray(p.questions) ? p.questions : [];
-          p.groups = qs.length
-            ? [{ id: uid("group"), name: "Basics", description: { enabled: false, html: "" }, logic: { enabled: false, rules: [] }, questions: qs }]
-            : [];
-        }
+      const type = mapType(q.type || q.component || q.inputType || q.kind || q.widget);
 
-        // If groups exist but are missing questions arrays, normalise
-        p.groups = p.groups.map((g) => {
-          g = g && typeof g === "object" ? g : {};
-          if (!g.id) g.id = uid("group");
-          if (!g.name) g.name = "Untitled group";
-          g.description = g.description || { enabled: false, html: "" };
-          g.logic = g.logic || { enabled: false, rules: [] };
-          g.questions = Array.isArray(g.questions) ? g.questions : [];
-          g.questions = g.questions.map((q) => {
-            q = q && typeof q === "object" ? q : {};
-            if (!q.id) q.id = uid("q");
-            if (!q.type) q.type = "text";
-            if (!q.title) q.title = "Untitled question";
-            if (q.help == null) q.help = "";
-            if (q.placeholder == null) q.placeholder = "";
-            if (q.required == null) q.required = false;
-            if (q.errorText == null) q.errorText = "This field is required.";
-            if (q.logic == null) q.logic = { enabled: false, rules: [] };
-            if (q.content == null) q.content = { enabled: false, html: "" };
+      const title =
+        q.title ||
+        q.label ||
+        q.question ||
+        q.text ||
+        q.name ||
+        q.prompt ||
+        "Untitled question";
 
-            if (isOptionType(q.type)) {
-              q.options = Array.isArray(q.options) ? q.options : [];
-              if (q.options.length === 0) q.options = ["Option 1", "Option 2", "Option 3"];
-            } else {
-              q.options = [];
-            }
+      const help = q.help || q.description || q.hint || "";
+      const placeholder = q.placeholder || q.example || "";
+      const required = q.required ?? q.mandatory ?? q.isRequired ?? false;
+      const errorText = q.errorText || q.error || (required ? "This field is required." : "");
 
-            return q;
+      // Options might be in options/choices/values/items
+      const options = isOptionType(type)
+        ? normaliseOptions(q.options || q.choices || q.values || q.items)
+        : [];
+
+      return {
+        id: q.id || q.key || uid("q"),
+        type,
+        title: String(title || "Untitled question").trim() || "Untitled question",
+        help: String(help || ""),
+        placeholder: String(placeholder || ""),
+        required: !!required,
+        errorText: String(errorText || "This field is required."),
+        options: options.length ? options : isOptionType(type) ? ["Option 1", "Option 2", "Option 3"] : [],
+        logic: q.logic && typeof q.logic === "object" ? q.logic : { enabled: false, rules: [] },
+        content: q.content && typeof q.content === "object" ? q.content : { enabled: false, html: "" },
+      };
+    };
+
+    const normaliseGroup = (rawG) => {
+      const g = rawG && typeof rawG === "object" ? rawG : {};
+
+      // Questions might be nested under questions/items/fields
+      const rawQuestions =
+        (Array.isArray(g.questions) && g.questions) ||
+        (Array.isArray(g.items) && g.items) ||
+        (Array.isArray(g.fields) && g.fields) ||
+        (Array.isArray(g.inputs) && g.inputs) ||
+        [];
+
+      return {
+        id: g.id || g.key || uid("group"),
+        name: String(g.name || g.title || g.label || "Untitled group").trim() || "Untitled group",
+        description:
+          g.description && typeof g.description === "object"
+            ? g.description
+            : { enabled: false, html: "" },
+        logic: g.logic && typeof g.logic === "object" ? g.logic : { enabled: false, rules: [] },
+        questions: rawQuestions.map(normaliseQuestion),
+      };
+    };
+
+    const normalisePage = (rawP, idx) => {
+      const p = rawP && typeof rawP === "object" ? rawP : {};
+
+      // Groups might be under groups/sections/steps/blocks
+      let rawGroups =
+        (Array.isArray(p.groups) && p.groups) ||
+        (Array.isArray(p.sections) && p.sections) ||
+        (Array.isArray(p.steps) && p.steps) ||
+        (Array.isArray(p.blocks) && p.blocks) ||
+        [];
+
+      // Some AIs return a flat questions array per page
+      const pageQuestions =
+        (Array.isArray(p.questions) && p.questions) ||
+        (Array.isArray(p.fields) && p.fields) ||
+        [];
+
+      if (!rawGroups.length && pageQuestions.length) {
+        rawGroups = [{ name: "Basics", questions: pageQuestions }];
+      }
+
+      const groups = rawGroups.map(normaliseGroup);
+
+      const pageId = p.id || p.key || uid("page");
+      const pageName = String(p.name || p.title || p.label || `Page ${idx + 1}`).trim() || `Page ${idx + 1}`;
+
+      // Flow: if AI provided a flow, keep text blocks; otherwise derive from groups
+      let flow = Array.isArray(p.flow) ? p.flow : [];
+
+      // Coerce any "text blocks" style items if present
+      if (Array.isArray(p.contentBlocks) && p.contentBlocks.length) {
+        p.contentBlocks.forEach((tb) => {
+          if (!tb || typeof tb !== "object") return;
+          flow.push({
+            type: "text",
+            id: tb.id || uid("txt"),
+            title: tb.title || "",
+            level: tb.level || "h3",
+            bodyHtml: tb.bodyHtml || tb.html || "<p></p>",
           });
-          return g;
         });
+      }
 
-        // Flow: if absent/invalid, derive from groups
-        if (!Array.isArray(p.flow) || p.flow.length === 0) {
-          p.flow = p.groups.map((g) => ({ type: "group", id: g.id }));
-        }
-
-        // Remove flow items referencing missing groups
-        const groupIds = new Set(p.groups.map((g) => g.id));
-        p.flow = (p.flow || []).filter((it) => {
-          if (!it || typeof it !== "object") return false;
-          if (it.type === "group") return groupIds.has(it.id);
-          if (it.type === "text") {
-            if (!it.id) it.id = uid("txt");
-            if (!it.level) it.level = "h3";
-            if (!it.title) it.title = "";
-            if (!it.bodyHtml) it.bodyHtml = "<p></p>";
-            return true;
-          }
-          return false;
-        });
-
-        // Ensure every group is in the flow
-        const inFlow = new Set(p.flow.filter((x) => x.type === "group").map((x) => x.id));
-        p.groups.forEach((g) => {
-          if (!inFlow.has(g.id)) p.flow.push({ type: "group", id: g.id });
-        });
-
-        return p;
+      // Ensure group flow items exist
+      const groupIds = new Set(groups.map((g) => g.id));
+      const inFlow = new Set(flow.filter((x) => x && x.type === "group").map((x) => x.id));
+      groups.forEach((g) => {
+        if (!inFlow.has(g.id)) flow.push({ type: "group", id: g.id });
       });
 
-      // Top-level meta/LOB
-      s.meta = s.meta || {};
-      if (!s.meta.version) s.meta.version = 1;
-      if (!s.meta.createdAt) s.meta.createdAt = new Date().toISOString();
-      s.meta.updatedAt = new Date().toISOString();
-      if (!s.lineOfBusiness) s.lineOfBusiness = "New Journey";
+      // Filter out any broken flow items
+      flow = flow.filter((it) => {
+        if (!it || typeof it !== "object") return false;
+        if (it.type === "group") return groupIds.has(it.id);
+        if (it.type === "text") {
+          if (!it.id) it.id = uid("txt");
+          if (!it.level) it.level = "h3";
+          if (!it.title) it.title = "";
+          if (!it.bodyHtml) it.bodyHtml = "<p></p>";
+          return true;
+        }
+        return false;
+      });
 
-      return s;
-    }
-
-    // If AI returned just an array of questions
-    if (Array.isArray(s.questions)) {
-      const pid = uid("page");
-      const gid = uid("group");
       return {
-        meta: { version: 1, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-        lineOfBusiness: "New Journey",
-        pages: [
-          {
-            id: pid,
-            name: "About you",
-            flow: [{ type: "group", id: gid }],
-            groups: [
-              {
-                id: gid,
-                name: "Basics",
-                description: { enabled: false, html: "" },
-                logic: { enabled: false, rules: [] },
-                questions: s.questions,
-              },
-            ],
-          },
-        ],
+        id: pageId,
+        name: pageName,
+        flow,
+        groups,
       };
+    };
+
+    // 1) If input is a JSON string, parse
+    let s = input;
+    if (typeof s === "string") {
+      try {
+        s = JSON.parse(s);
+      } catch {
+        return newDefaultSchema();
+      }
     }
 
-    // Fallback: if we have no usable structure, return a minimal schema
-    return newDefaultSchema();
+    if (!s || typeof s !== "object") return newDefaultSchema();
+
+    // 2) Common wrappers
+    if (s.schema) s = s.schema;
+    if (s.journey) s = s.journey;
+
+    // 3) If the worker returns { result: "{...}" }
+    if (typeof s.result === "string") {
+      try {
+        s = JSON.parse(s.result);
+      } catch {
+        // If it isn't JSON, give up safely
+        return newDefaultSchema();
+      }
+    } else if (s.result && typeof s.result === "object") {
+      s = s.result;
+    }
+
+    // 4) If AI returned just an array of pages
+    if (Array.isArray(s)) {
+      s = { pages: s };
+    }
+
+    // 5) If AI returned just questions
+    if (!Array.isArray(s.pages) && Array.isArray(s.questions)) {
+      s.pages = [{ name: "About you", questions: s.questions }];
+    }
+
+    // 6) Normalise final shape
+    const pages = Array.isArray(s.pages) ? s.pages.map(normalisePage) : [];
+
+    const out = {
+      meta: {
+        version: 1,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      lineOfBusiness: String(s.lineOfBusiness || s.name || s.title || "New Journey").trim() || "New Journey",
+      pages,
+    };
+
+    return out.pages.length ? out : newDefaultSchema();
   }
 
   async function requestAiTemplate(promptText) {
