@@ -361,12 +361,33 @@
 
           // Follow-up question arrays (nested questions shown when parent answer matches)
           if (q.followUp == null || typeof q.followUp !== "object") {
-            q.followUp = { enabled: false, triggerValue: "Yes", name: "", questions: [] };
+            q.followUp = {
+              enabled: false,
+              triggerValue: "Yes",
+              name: "",
+              questions: [],
+              // Repeatable follow-up set (e.g. add multiple convictions)
+              repeat: {
+                enabled: false,
+                min: 1,
+                max: 5,
+                addLabel: "Add another",
+                itemLabel: "Item",
+              },
+            };
           }
           q.followUp.enabled = q.followUp.enabled === true;
           q.followUp.triggerValue = String(q.followUp.triggerValue || "Yes");
           q.followUp.name = String(q.followUp.name || "");
           q.followUp.questions = Array.isArray(q.followUp.questions) ? q.followUp.questions : [];
+          q.followUp.repeat = q.followUp.repeat && typeof q.followUp.repeat === "object" ? q.followUp.repeat : {};
+          q.followUp.repeat.enabled = q.followUp.repeat.enabled === true;
+          q.followUp.repeat.min = Number.isFinite(Number(q.followUp.repeat.min)) ? Number(q.followUp.repeat.min) : 1;
+          q.followUp.repeat.max = Number.isFinite(Number(q.followUp.repeat.max)) ? Number(q.followUp.repeat.max) : 5;
+          q.followUp.repeat.min = clamp(q.followUp.repeat.min, 0, 50);
+          q.followUp.repeat.max = clamp(q.followUp.repeat.max, q.followUp.repeat.min || 0, 50);
+          q.followUp.repeat.addLabel = String(q.followUp.repeat.addLabel || "Add another");
+          q.followUp.repeat.itemLabel = String(q.followUp.repeat.itemLabel || "Item");
 
           q.followUp.questions.forEach((fq) => {
             if (!fq || typeof fq !== "object") return;
@@ -1802,88 +1823,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       },
     ]));
 
-    // -------------------------
-    // Question arrays (reusable sets)
-    // -------------------------
-    inspectorEl.appendChild(divider());
-    inspectorEl.appendChild(sectionTitle("Question arrays"));
-    inspectorEl.appendChild(pEl("Save a reusable set of questions and insert it into any group.", "inlineHelp"));
-
-    const arrays = ensureQuestionArrays();
-    if (!uiState.selectedArrayId && arrays.length) uiState.selectedArrayId = arrays[0].id;
-
-    // New array name (used when saving)
-    inspectorEl.appendChild(fieldText("New array name", uiState.newArrayName || "", (val) => {
-      uiState.newArrayName = val;
-    }));
-
-    // Save from this group
-    const saveRow = document.createElement("div");
-    saveRow.style.display = "flex";
-    saveRow.style.gap = "10px";
-    saveRow.style.flexWrap = "wrap";
-
-    const btnSaveArr = document.createElement("button");
-    btnSaveArr.type = "button";
-    btnSaveArr.className = "btn primary";
-    btnSaveArr.textContent = "Save this group as array";
-    btnSaveArr.disabled = !(g.questions && g.questions.length);
-    if (btnSaveArr.disabled) btnSaveArr.title = "Add at least one question to this group first.";
-    btnSaveArr.addEventListener("click", () => {
-      const name = (uiState.newArrayName || "").trim() || g.name || "Question array";
-      createQuestionArrayFromGroup(p.id, g.id, name);
-      uiState.newArrayName = "";
-    });
-
-    saveRow.appendChild(btnSaveArr);
-    inspectorEl.appendChild(saveRow);
-
-    // Existing arrays selector
-    if (arrays.length) {
-      inspectorEl.appendChild(fieldSelect(
-        "Insert existing array",
-        uiState.selectedArrayId || arrays[0].id,
-        arrays.map((a) => ({ value: a.id, label: `${a.name} (${(a.questions || []).length})` })),
-        (val) => {
-          uiState.selectedArrayId = val;
-        }
-      ));
-
-      const insertRow = document.createElement("div");
-      insertRow.style.display = "flex";
-      insertRow.style.gap = "10px";
-      insertRow.style.flexWrap = "wrap";
-
-      const btnInsert = document.createElement("button");
-      btnInsert.type = "button";
-      btnInsert.className = "btn";
-      btnInsert.textContent = "Insert into this group";
-      btnInsert.addEventListener("click", () => {
-        const arrId = uiState.selectedArrayId || arrays[0]?.id;
-        if (!arrId) return;
-        // Insert after currently selected question (nice UX)
-        insertQuestionArrayIntoGroup(p.id, g.id, arrId, selection.questionId);
-      });
-
-      const btnDeleteArr = document.createElement("button");
-      btnDeleteArr.type = "button";
-      btnDeleteArr.className = "btn ghost";
-      btnDeleteArr.textContent = "Delete selected array";
-      btnDeleteArr.addEventListener("click", () => {
-        const arrId = uiState.selectedArrayId || arrays[0]?.id;
-        if (!arrId) return;
-        const arr = arrays.find((a) => a.id === arrId);
-        const ok = confirm(`Delete question array "${arr?.name || "Untitled"}"?`);
-        if (!ok) return;
-        deleteQuestionArray(arrId);
-      });
-
-      insertRow.appendChild(btnInsert);
-      insertRow.appendChild(btnDeleteArr);
-      inspectorEl.appendChild(insertRow);
-    } else {
-      inspectorEl.appendChild(pEl("No arrays saved yet. Use ‘Save this group as array’ to create your first one.", "inlineHelp"));
-    }
+    // (Removed) Question arrays section — follow-ups can now be repeatable inside questions.
 
     inspectorEl.appendChild(divider());
 
@@ -1990,7 +1930,14 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
         )
       );
 
-      q.followUp = q.followUp || { enabled: false, triggerValue: "Yes", name: "", questions: [] };
+      q.followUp = q.followUp || {
+        enabled: false,
+        triggerValue: "Yes",
+        name: "",
+        questions: [],
+        repeat: { enabled: false, min: 1, max: 5, addLabel: "Add another", itemLabel: "Item" },
+      };
+      q.followUp.repeat = q.followUp.repeat && typeof q.followUp.repeat === "object" ? q.followUp.repeat : { enabled: false, min: 1, max: 5, addLabel: "Add another", itemLabel: "Item" };
 
       inspectorEl.appendChild(
         toggleRow("Enable follow-up questions", q.followUp.enabled === true, (on) => {
@@ -2025,6 +1972,56 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
           })
         );
 
+        // Repeatable instances
+        inspectorEl.appendChild(divider());
+        inspectorEl.appendChild(sectionTitle("Repeatable set"));
+        inspectorEl.appendChild(
+          pEl(
+            "Allow users to add multiple instances of these follow-up questions (e.g. multiple convictions).",
+            "inlineHelp"
+          )
+        );
+
+        inspectorEl.appendChild(
+          toggleRow("Allow multiple (Add another)", q.followUp.repeat.enabled === true, (on) => {
+            q.followUp.repeat.enabled = on;
+            if (!Number.isFinite(Number(q.followUp.repeat.min))) q.followUp.repeat.min = 1;
+            if (!Number.isFinite(Number(q.followUp.repeat.max))) q.followUp.repeat.max = 5;
+            saveSchema();
+            isTypingInspector = false;
+            renderAll(true);
+          })
+        );
+
+        if (q.followUp.repeat.enabled) {
+          inspectorEl.appendChild(fieldText("Item label", q.followUp.repeat.itemLabel || "Item", (val) => {
+            q.followUp.repeat.itemLabel = val || "Item";
+            saveSchemaDebounced();
+          }));
+
+          inspectorEl.appendChild(fieldText("Add button label", q.followUp.repeat.addLabel || "Add another", (val) => {
+            q.followUp.repeat.addLabel = val || "Add another";
+            saveSchemaDebounced();
+          }));
+
+          // min/max as text inputs (keeps component set small)
+          inspectorEl.appendChild(fieldText("Minimum items", String(q.followUp.repeat.min ?? 1), (val) => {
+            const n = Number(val);
+            q.followUp.repeat.min = Number.isFinite(n) ? clamp(n, 0, 50) : 1;
+            q.followUp.repeat.max = clamp(Number(q.followUp.repeat.max ?? 5), q.followUp.repeat.min, 50);
+            saveSchema();
+            renderAll(true);
+          }));
+
+          inspectorEl.appendChild(fieldText("Maximum items", String(q.followUp.repeat.max ?? 5), (val) => {
+            const n = Number(val);
+            q.followUp.repeat.max = Number.isFinite(n) ? clamp(n, q.followUp.repeat.min ?? 1, 50) : 5;
+            saveSchema();
+            renderAll(true);
+          }));
+        }
+
+        inspectorEl.appendChild(divider());
         inspectorEl.appendChild(followUpQuestionsEditor(q));
 
         inspectorEl.appendChild(
@@ -2425,6 +2422,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
 
   // -------------------------
   // Follow-up questions (nested array inside a question)
+  // - Supports optional repeatable instances ("Add another")
   // -------------------------
 
   function followUpIsEnabled(q) {
@@ -2437,7 +2435,117 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     );
   }
 
-  function followUpMatches(q, answers) {
+  // ----- Repeatable instances storage (preview-only)
+  // We store instance ids inside preview.answers under a reserved key.
+  const FU_INSTANCES_KEY = "__fu_instances__";
+
+  function getFuInstanceMap(answers) {
+    if (!answers || typeof answers !== "object") return {};
+    answers[FU_INSTANCES_KEY] =
+      answers[FU_INSTANCES_KEY] && typeof answers[FU_INSTANCES_KEY] === "object"
+        ? answers[FU_INSTANCES_KEY]
+        : {};
+    return answers[FU_INSTANCES_KEY];
+  }
+
+  function getFollowUpInstanceIds(parentQ, answers) {
+    const map = getFuInstanceMap(answers);
+    const arr = Array.isArray(map[parentQ.id]) ? map[parentQ.id] : [];
+    return arr;
+  }
+
+  function setFollowUpInstanceIds(parentQ, answers, ids) {
+    const map = getFuInstanceMap(answers);
+    map[parentQ.id] = Array.isArray(ids) ? ids : [];
+  }
+
+  function followUpIsRepeatable(parentQ) {
+    return !!(parentQ?.followUp?.repeat?.enabled === true);
+  }
+
+  function ensureMinFollowUpInstances(parentQ, answers) {
+    if (!followUpIsEnabled(parentQ)) return;
+    if (!followUpMatches(parentQ, answers)) return;
+
+    if (!followUpIsRepeatable(parentQ)) {
+      // Non-repeatable = no instances list
+      setFollowUpInstanceIds(parentQ, answers, []);
+      return;
+    }
+
+    const min = clamp(Number(parentQ.followUp?.repeat?.min ?? 1), 0, 50);
+    const max = clamp(Number(parentQ.followUp?.repeat?.max ?? 5), min, 50);
+
+    let ids = getFollowUpInstanceIds(parentQ, answers);
+    ids = ids.filter(Boolean);
+
+    while (ids.length < min) {
+      ids.push(uid("fuinst"));
+    }
+
+    if (ids.length > max) ids = ids.slice(0, max);
+
+    setFollowUpInstanceIds(parentQ, answers, ids);
+  }
+
+  function makeFollowUpAnswerId(parentQId, baseFollowUpQuestionId, instanceId) {
+    return `fu_${parentQId}__${baseFollowUpQuestionId}__${instanceId}`;
+  }
+
+  function clearFollowUpAnswersForQuestion(parentQ, answers) {
+    if (!answers || typeof answers !== "object") return;
+
+    // Clear any repeat instance answers
+    const ids = getFollowUpInstanceIds(parentQ, answers);
+    (parentQ.followUp?.questions || []).forEach((fq) => {
+      ids.forEach((instId) => {
+        const aid = makeFollowUpAnswerId(parentQ.id, fq.id, instId);
+        if (aid in answers) delete answers[aid];
+      });
+    });
+
+    // Clear any non-repeatable answers (legacy behaviour uses fq.id)
+    (parentQ.followUp?.questions || []).forEach((fq) => {
+      if (fq?.id && fq.id in answers) delete answers[fq.id];
+    });
+
+    // Clear instance list
+    const map = getFuInstanceMap(answers);
+    delete map[parentQ.id];
+  }
+
+  function addFollowUpInstance(parentQ, answers) {
+    ensureMinFollowUpInstances(parentQ, answers);
+    const min = clamp(Number(parentQ.followUp?.repeat?.min ?? 1), 0, 50);
+    const max = clamp(Number(parentQ.followUp?.repeat?.max ?? 5), min, 50);
+
+    const ids = getFollowUpInstanceIds(parentQ, answers).slice();
+    if (ids.length >= max) return false;
+    ids.push(uid("fuinst"));
+    setFollowUpInstanceIds(parentQ, answers, ids);
+    return true;
+  }
+
+  function removeFollowUpInstance(parentQ, answers, instanceId) {
+    ensureMinFollowUpInstances(parentQ, answers);
+    const min = clamp(Number(parentQ.followUp?.repeat?.min ?? 1), 0, 50);
+
+    let ids = getFollowUpInstanceIds(parentQ, answers).slice();
+    if (ids.length <= min) return false;
+
+    ids = ids.filter((x) => x !== instanceId);
+    setFollowUpInstanceIds(parentQ, answers, ids);
+
+    // delete answers for removed instance
+    (parentQ.followUp?.questions || []).forEach((fq) => {
+      const aid = makeFollowUpAnswerId(parentQ.id, fq.id, instanceId);
+      if (aid in answers) delete answers[aid];
+    });
+
+    return true;
+  }
+
+  function followUpMatches(q, answers) {(q, answers) {
     if (!followUpIsEnabled(q)) return false;
     const trig = String(q.followUp.triggerValue || "Yes");
     return String(answers?.[q.id] || "") === trig;
@@ -2447,7 +2555,47 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     return followUpMatches(q, answers) ? (q.followUp.questions || []) : [];
   }
 
-  function followUpQuestionsEditor(parentQ) {
+  function getActiveFollowUpSteps(parentQ, answers) {
+    // Returns an array of step objects with stable unique ids for answers.
+    const fqs = getActiveFollowUps(parentQ, answers);
+    if (!fqs.length) return [];
+
+    if (followUpIsRepeatable(parentQ)) {
+      ensureMinFollowUpInstances(parentQ, answers);
+      const instIds = getFollowUpInstanceIds(parentQ, answers);
+      const steps = [];
+
+      instIds.forEach((instId, instIndex) => {
+        fqs.forEach((fq) => {
+          steps.push({
+            ...fq,
+            id: makeFollowUpAnswerId(parentQ.id, fq.id, instId),
+            baseId: fq.id,
+            instanceId: instId,
+            instanceIndex: instIndex,
+            parentQuestionId: parentQ.id,
+            isFollowUp: true,
+            isRepeatInstance: true,
+            followUpName: parentQ.followUp?.name || "",
+            followUpItemLabel: parentQ.followUp?.repeat?.itemLabel || "Item",
+          });
+        });
+      });
+
+      return steps;
+    }
+
+    // Non-repeatable follow-ups (answers keyed by fq.id)
+    return fqs.map((fq) => ({
+      ...fq,
+      parentQuestionId: parentQ.id,
+      isFollowUp: true,
+      isRepeatInstance: false,
+      followUpName: parentQ.followUp?.name || "",
+    }));
+  }
+
+  function followUpQuestionsEditor(parentQ) {(parentQ) {
     const wrap = document.createElement("div");
     wrap.className = "field";
 
@@ -2462,6 +2610,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
         triggerValue: "Yes",
         name: "",
         questions: [],
+        repeat: { enabled: false, min: 1, max: 5, addLabel: "Add another", itemLabel: "Item" },
       };
       parentQ.followUp.questions = Array.isArray(parentQ.followUp.questions)
         ? parentQ.followUp.questions
@@ -3459,27 +3608,20 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       return questionShouldShow(q, byId, preview.answers);
     });
 
-    // Build steps in display order:
-    // - main question
-    // - if it has an enabled follow-up and answer matches, inject follow-up questions immediately after
     const steps = [];
 
     mainVisible.forEach((q) => {
       steps.push(q);
 
       if (followUpMatches(q, preview.answers)) {
-        const fqs = getActiveFollowUps(q, preview.answers);
-        fqs.forEach((fq) => {
-          // decorate follow-up so the preview header shows the correct page/group
+        const fuSteps = getActiveFollowUpSteps(q, preview.answers);
+        fuSteps.forEach((fqStep) => {
           steps.push({
-            ...fq,
+            ...fqStep,
             pageId: q.pageId,
             groupId: q.groupId,
             pageName: q.pageName,
             groupName: q.groupName,
-            parentQuestionId: q.id,
-            isFollowUp: true,
-            followUpName: q.followUp?.name || "",
           });
         });
       }
@@ -3748,8 +3890,26 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
         b.addEventListener("click", () => {
           // Prevent any auto-focus during the re-render (page mode can render many controls)
           suppressAutoFocusUntil = Date.now() + 300;
+
+          // If user changes the parent answer, reset follow-up instances + answers
+          const prev = getAnswer();
           setAnswer(val);
+          if (prev !== val && step.followUp?.enabled) {
+            clearFollowUpAnswersForQuestion(step, preview.answers);
+            // If repeatable and still matches after change, ensure min instances
+            ensureMinFollowUpInstances(step, preview.answers);
+          }
+
           rerender();
+        });
+        return b;
+      };
+
+      row.appendChild(mk("Yes", "Yes"));
+      row.appendChild(mk("No", "No"));
+      inputWrap.appendChild(row);
+      return;
+    }
         });
         return b;
       };
@@ -4001,10 +4161,11 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
             fWrap.style.paddingLeft = "14px";
             fWrap.style.borderLeft = "1px solid rgba(255,255,255,0.12)";
 
-            const fqs = getActiveFollowUps(qq, preview.answers);
+            const fuName = String(qq.followUp?.name || "").trim();
+            const isRepeat = followUpIsRepeatable(qq);
+            if (isRepeat) ensureMinFollowUpInstances(qq, preview.answers);
 
             // Optional name label
-            const fuName = String(qq.followUp?.name || "").trim();
             if (fuName) {
               const nm = document.createElement("div");
               nm.className = "label";
@@ -4013,59 +4174,121 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
               fWrap.appendChild(nm);
             }
 
-            fqs.forEach((fq) => {
-              const sub = document.createElement("div");
-              sub.className = "previewQuestion";
-              sub.style.marginTop = "10px";
+            const renderInstance = (instId, instIndex) => {
+              const instanceHeader = document.createElement("div");
+              instanceHeader.style.display = "flex";
+              instanceHeader.style.alignItems = "center";
+              instanceHeader.style.justifyContent = "space-between";
+              instanceHeader.style.gap = "10px";
+              instanceHeader.style.marginTop = instIndex === 0 ? "0" : "14px";
 
-              const t = document.createElement("div");
-              t.className = "previewQuestionTitle";
-              t.textContent = fq.title || "Untitled question";
-              sub.appendChild(t);
+              const itemLabel = String(qq.followUp?.repeat?.itemLabel || "Item").trim() || "Item";
+              const title = document.createElement("div");
+              title.className = "label";
+              title.textContent = `${itemLabel} ${instIndex + 1}`;
+              instanceHeader.appendChild(title);
 
-              if (fq.content?.enabled) {
-                const c2 = sanitizeRichHtml(fq.content.html || "");
-                if (c2) {
-                  const cEl2 = document.createElement("div");
-                  cEl2.className = "previewQuestionContent";
-                  cEl2.innerHTML = c2;
-                  sub.appendChild(cEl2);
-                }
-              }
-
-              if (fq.help) {
-                const h2 = document.createElement("div");
-                h2.className = "pHelp";
-                h2.textContent = fq.help;
-                sub.appendChild(h2);
-              }
-
-              const iw2 = document.createElement("div");
-              iw2.className = "pInputWrap";
-
-              const setF = (v) => {
-                preview.answers[fq.id] = v;
-                if (preview.pageErrors?.[fq.id]) {
-                  delete preview.pageErrors[fq.id];
+              if (isRepeat) {
+                const min = clamp(Number(qq.followUp?.repeat?.min ?? 1), 0, 50);
+                const removeBtn = document.createElement("button");
+                removeBtn.type = "button";
+                removeBtn.className = "btn ghost";
+                removeBtn.textContent = "Remove";
+                removeBtn.disabled = getFollowUpInstanceIds(qq, preview.answers).length <= min;
+                removeBtn.addEventListener("click", () => {
+                  removeFollowUpInstance(qq, preview.answers, instId);
                   renderPreview();
+                });
+                instanceHeader.appendChild(removeBtn);
+              }
+
+              fWrap.appendChild(instanceHeader);
+
+              const fqs = getActiveFollowUps(qq, preview.answers);
+              fqs.forEach((fq) => {
+                const sub = document.createElement("div");
+                sub.className = "previewQuestion";
+                sub.style.marginTop = "10px";
+
+                const t = document.createElement("div");
+                t.className = "previewQuestionTitle";
+                t.textContent = fq.title || "Untitled question";
+                sub.appendChild(t);
+
+                if (fq.content?.enabled) {
+                  const c2 = sanitizeRichHtml(fq.content.html || "");
+                  if (c2) {
+                    const cEl2 = document.createElement("div");
+                    cEl2.className = "previewQuestionContent";
+                    cEl2.innerHTML = c2;
+                    sub.appendChild(cEl2);
+                  }
                 }
-              };
-              const getF = () => preview.answers[fq.id];
 
-              buildPreviewInputControl(fq, iw2, setF, getF, () => renderPreview());
-              sub.appendChild(iw2);
+                if (fq.help) {
+                  const h2 = document.createElement("div");
+                  h2.className = "pHelp";
+                  h2.textContent = fq.help;
+                  sub.appendChild(h2);
+                }
 
-              const ferr = preview.pageErrors?.[fq.id] || "";
-              const fe = document.createElement("div");
-              fe.className = "pError";
-              fe.textContent = ferr;
-              fe.style.display = ferr ? "block" : "none";
-              sub.appendChild(fe);
+                const iw2 = document.createElement("div");
+                iw2.className = "pInputWrap";
 
-              fWrap.appendChild(sub);
-            });
+                const answerId = isRepeat ? makeFollowUpAnswerId(qq.id, fq.id, instId) : fq.id;
+
+                const setF = (v) => {
+                  preview.answers[answerId] = v;
+                  if (preview.pageErrors?.[answerId]) {
+                    delete preview.pageErrors[answerId];
+                    renderPreview();
+                  }
+                };
+                const getF = () => preview.answers[answerId];
+
+                // Build control using a cloned step object so it reads correct type/options
+                const stepObj = { ...fq, id: answerId };
+                buildPreviewInputControl(stepObj, iw2, setF, getF, () => renderPreview());
+                sub.appendChild(iw2);
+
+                const ferr = preview.pageErrors?.[answerId] || "";
+                const fe = document.createElement("div");
+                fe.className = "pError";
+                fe.textContent = ferr;
+                fe.style.display = ferr ? "block" : "none";
+                sub.appendChild(fe);
+
+                fWrap.appendChild(sub);
+              });
+            };
+
+            if (isRepeat) {
+              const instIds = getFollowUpInstanceIds(qq, preview.answers);
+              instIds.forEach((instId, idx) => renderInstance(instId, idx));
+
+              const addBtn = document.createElement("button");
+              addBtn.type = "button";
+              addBtn.className = "btn";
+              addBtn.style.marginTop = "12px";
+              addBtn.textContent = String(qq.followUp?.repeat?.addLabel || "Add another");
+
+              const min = clamp(Number(qq.followUp?.repeat?.min ?? 1), 0, 50);
+              const max = clamp(Number(qq.followUp?.repeat?.max ?? 5), min, 50);
+              addBtn.disabled = instIds.length >= max;
+
+              addBtn.addEventListener("click", () => {
+                addFollowUpInstance(qq, preview.answers);
+                renderPreview();
+              });
+
+              fWrap.appendChild(addBtn);
+            } else {
+              // Single (non-repeatable) follow-up set
+              renderInstance("single", 0);
+            }
 
             qBlock.appendChild(fWrap);
+          }
           }
 
           // IMPORTANT: keep group title/description ABOVE its questions
@@ -4226,8 +4449,8 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
 
             // If the follow-up is active, include nested questions in page-level validation
             if (followUpMatches(qq, preview.answers)) {
-              const fqs = getActiveFollowUps(qq, preview.answers);
-              fqs.forEach((fq) => visibleQ.push(fq));
+              const fuSteps = getActiveFollowUpSteps(qq, preview.answers);
+              fuSteps.forEach((fqStep) => visibleQ.push(fqStep));
             }
           });
         });
