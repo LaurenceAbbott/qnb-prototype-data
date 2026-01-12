@@ -279,275 +279,21 @@ CH 2  Data Models (schemas, types, templates)
   // -------------------------
   // Schema model
   // -------------------------
-  const QUESTION_TYPES = [$1];
-
-  /* =============================================================================
-  PATCH — Fixed checkout pages (Quote / Summary / Payment)
-
-  Drop-in patch block:
-  - Ensures Quote/Summary/Payment pages ALWAYS exist, ALWAYS last, and are non-deletable/non-reorderable.
-  - Provides lightweight template presets for those pages.
-  - Designed to be safe even if your restored JS already has some of these names.
-  ============================================================================= */
-
-  // -------------------------
-  // Fixed checkout pages (always present)
-  // -------------------------
-  const FIXED_CHECKOUT_PAGES = window.FIXED_CHECKOUT_PAGES || [
-$1
-];
-window.FIXED_CHECKOUT_PAGES = FIXED_CHECKOUT_PAGES;
-
-  const isFixedPage = (p) =>
-    !!p && (p.isFixed === true || FIXED_CHECKOUT_PAGES.some((x) => x.id === p.id));
-
-  const templateLabel = (tpl) => {
-    const t = String(tpl || "form");
-    if (t === "quote") return "Quote page";
-    if (t === "summary") return "Summary page";
-    if (t === "payment") return "Payment page";
-    return "Form page";
-  };
-
-  // Minimal preset builder for the fixed pages (generic, editable placeholders)
-  function buildTemplatePreset(template) {
-    const t = String(template || "form");
-
-    // Helper to make a question with sane defaults
-    const q = (type, title, extra = {}) => ({
-      id: uid("q"),
-      type,
-      title,
-      help: extra.help || "",
-      placeholder: extra.placeholder || "",
-      required: !!extra.required,
-      errorText: extra.errorText || (extra.required ? "This field is required." : "This field is required."),
-      options: Array.isArray(extra.options) ? extra.options : [],
-      logic: { enabled: false, rules: [] },
-      content: { enabled: false, html: "" },
-      followUp: {
-        enabled: false,
-        triggerValue: "Yes",
-        name: "",
-        questions: [],
-        repeat: { enabled: false, min: 1, max: 5, addLabel: "Add another", itemLabel: "Item" },
-      },
-    });
-
-    if (t === "quote") {
-      const gid1 = uid("group");
-      const gid2 = uid("group");
-      const gid3 = uid("group");
-      return {
-        flow: [
-          { type: "text", id: uid("txt"), title: "Your quote", level: "h2", bodyHtml: "<p>Review your premium, cover and optional add-ons.</p>" },
-          { type: "group", id: gid1 },
-          { type: "text", id: uid("txt"), title: "Cover and add-ons", level: "h3", bodyHtml: "<p>Select cover level and any optional extras.</p>" },
-          { type: "group", id: gid2 },
-          { type: "text", id: uid("txt"), title: "Declarations", level: "h3", bodyHtml: "<p>Confirm key declarations before continuing.</p>" },
-          { type: "group", id: gid3 },
-        ],
-        groups: [
-          {
-            id: gid1,
-            name: "Premium & payment",
-            description: { enabled: true, html: "<p>Placeholder fields for premium and payment choice.</p>" },
-            logic: { enabled: false, rules: [] },
-            questions: [
-              q("currency", "Quote price", { placeholder: "e.g. 350.00", help: "Typically populated from rating." }),
-              q("currency", "Monthly premium", { placeholder: "e.g. 32.50", help: "Typically populated from rating." }),
-              q("select", "Payment frequency", { required: true, options: ["Annually", "Monthly"], help: "Choose how you’d like to pay." }),
-            ],
-          },
-          {
-            id: gid2,
-            name: "Cover options",
-            description: { enabled: true, html: "<p>Select your cover level and add-ons.</p>" },
-            logic: { enabled: false, rules: [] },
-            questions: [
-              q("radio", "Cover level", { required: true, options: ["Standard", "Plus", "Premium"] }),
-              q("checkboxes", "Optional add-ons", {
-                options: ["Breakdown cover", "Legal expenses", "Courtesy car", "Key cover", "Windscreen cover"],
-                help: "Select any optional extras you want to include.",
-              }),
-            ],
-          },
-          {
-            id: gid3,
-            name: "Confirm and continue",
-            description: { enabled: true, html: "<p>Confirm key declarations to continue.</p>" },
-            logic: { enabled: false, rules: [] },
-            questions: [
-              q("yesno", "I confirm the information provided is correct", { required: true, errorText: "You must confirm before continuing." }),
-              q("yesno", "I understand this quote is based on the details provided", { required: true, errorText: "You must confirm before continuing." }),
-            ],
-          },
-        ],
-      };
-    }
-
-    if (t === "summary") {
-      const gid1 = uid("group");
-      const gid2 = uid("group");
-      return {
-        flow: [
-          { type: "text", id: uid("txt"), title: "Check your answers", level: "h2", bodyHtml: "<p>Review your details before payment.</p>" },
-          { type: "group", id: gid1 },
-          { type: "text", id: uid("txt"), title: "Declarations", level: "h3", bodyHtml: "<p>Final confirmations before payment.</p>" },
-          { type: "group", id: gid2 },
-        ],
-        groups: [
-          {
-            id: gid1,
-            name: "Review",
-            description: { enabled: true, html: "<p>Confirm your answers are correct.</p>" },
-            logic: { enabled: false, rules: [] },
-            questions: [
-              q("yesno", "Is everything correct?", { required: true, errorText: "Confirm your answers to continue." }),
-            ],
-          },
-          {
-            id: gid2,
-            name: "Final confirmations",
-            description: { enabled: true, html: "<p>Capture the final declarations.</p>" },
-            logic: { enabled: false, rules: [] },
-            questions: [
-              q("yesno", "I confirm I have read and understood the key information", { required: true, errorText: "You must confirm before continuing." }),
-              q("yesno", "I agree to receive documents electronically", { required: false }),
-            ],
-          },
-        ],
-      };
-    }
-
-    if (t === "payment") {
-      const gid1 = uid("group");
-      const gid2 = uid("group");
-      return {
-        flow: [
-          { type: "text", id: uid("txt"), title: "Payment", level: "h2", bodyHtml: "<p>Pay securely to complete your purchase.</p>" },
-          { type: "group", id: gid1 },
-          { type: "group", id: gid2 },
-        ],
-        groups: [
-          {
-            id: gid1,
-            name: "Payment method",
-            description: { enabled: true, html: "<p>Select how you’d like to pay.</p>" },
-            logic: { enabled: false, rules: [] },
-            questions: [
-              q("radio", "Choose payment method", { required: true, options: ["Card", "Direct Debit"] }),
-              q("email", "Email for receipt", { required: true, placeholder: "e.g. name@example.com" }),
-            ],
-          },
-          {
-            id: gid2,
-            name: "Billing details",
-            description: { enabled: true, html: "<p>Placeholder fields for billing / verification.</p>" },
-            logic: { enabled: false, rules: [] },
-            questions: [
-              q("text", "Name on card", { required: true, placeholder: "e.g. Alex Taylor" }),
-              q("postcode", "Billing postcode", { required: true, placeholder: "e.g. SW1A 1AA" }),
-              q("yesno", "Do you accept the terms and conditions?", { required: true, errorText: "You must accept the terms and conditions to continue." }),
-            ],
-          },
-        ],
-      };
-    }
-
-    return null;
-  }
-
-  // Ensures fixed pages exist + are last (Quote → Summary → Payment)
-  function ensureFixedCheckoutPages() {
-    if (!schema || !Array.isArray(schema.pages)) return;
-
-    // Create missing
-    FIXED_CHECKOUT_PAGES.forEach((fp) => {
-      let p = schema.pages.find((x) => x.id === fp.id);
-      if (!p) {
-        p = { id: fp.id, name: fp.name, template: fp.template, isFixed: true, flow: [], groups: [] };
-        schema.pages.push(p);
-      }
-
-      // Enforce identity
-      p.isFixed = true;
-      p.template = fp.template;
-      p.name = fp.name;
-
-      // Seed if empty
-      const hasStructure = (Array.isArray(p.groups) && p.groups.length) || (Array.isArray(p.flow) && p.flow.length);
-      if (!hasStructure) {
-        const preset = buildTemplatePreset(fp.template);
-        if (preset) {
-          p.groups = preset.groups;
-          p.flow = preset.flow;
-        }
-      }
-
-      // Flow fallback
-      p.groups = Array.isArray(p.groups) ? p.groups : [];
-      p.flow = Array.isArray(p.flow) ? p.flow : [];
-      if (p.flow.length === 0 && p.groups.length) {
-        p.flow = p.groups.map((g) => ({ type: "group", id: g.id }));
-      }
-    });
-
-    // Reorder to keep fixed pages at end
-    const fixedIds = new Set(FIXED_CHECKOUT_PAGES.map((x) => x.id));
-    const editable = schema.pages.filter((p) => !fixedIds.has(p.id));
-    const fixed = FIXED_CHECKOUT_PAGES.map((fp) => schema.pages.find((p) => p.id === fp.id)).filter(Boolean);
-    schema.pages = [...editable, ...fixed];
-  }
-
-  // Optional helper if your restored JS uses templates and you want to apply/replace
-  function applyPageTemplate(pageId, template) {
-    if (!schema || !Array.isArray(schema.pages)) return;
-    const p = schema.pages.find((x) => x.id === pageId);
-    if (!p) return;
-    const t = String(template || "form");
-    p.template = t;
-    const preset = buildTemplatePreset(t);
-    if (!preset) return;
-    p.groups = preset.groups;
-    p.flow = preset.flow;
-    saveSchema?.();
-  }
-
-  // One-call patch installer — safe to run multiple times.
-  function installFixedCheckoutPagesPatch() {
-    if (window.__og_fixed_pages_patch_installed) return;
-    window.__og_fixed_pages_patch_installed = true;
-
-    // 1) Ensure pages exist now
-    try { ensureFixedCheckoutPages(); } catch {}
-
-    // 2) Wrap saveSchema to keep them enforced
-    if (typeof saveSchema === "function" && !saveSchema.__ogWrappedFixed) {
-      const _save = saveSchema;
-      const wrapped = function () {
-        try { ensureFixedCheckoutPages(); } catch {}
-        return _save.apply(this, arguments);
-      };
-      wrapped.__ogWrappedFixed = true;
-      saveSchema = wrapped;
-    }
-
-    // 3) Wrap renderPagesList (if it exists) so callers can use templateLabel/isFixedPage
-    // (No-op if your restored file already renders fixed pages correctly.)
-    if (typeof renderPagesList === "function" && !renderPagesList.__ogWrappedFixed) {
-      const _render = renderPagesList;
-      const wrapped = function () {
-        try { ensureFixedCheckoutPages(); } catch {}
-        return _render.apply(this, arguments);
-      };
-      wrapped.__ogWrappedFixed = true;
-      renderPagesList = wrapped;
-    }
-  }
-
-  // Install immediately
-  installFixedCheckoutPagesPatch();
+  const QUESTION_TYPES = [
+    { key: "text", label: "Text" },
+    { key: "textarea", label: "Long text" },
+    { key: "number", label: "Number" },
+    { key: "currency", label: "Currency" },
+    { key: "percent", label: "Percent" },
+    { key: "email", label: "Email" },
+    { key: "tel", label: "Telephone" },
+    { key: "postcode", label: "Postcode" },
+    { key: "date", label: "Date" },
+    { key: "select", label: "Dropdown" },
+    { key: "radio", label: "Radio" },
+    { key: "checkboxes", label: "Checkboxes" },
+    { key: "yesno", label: "Yes / No" },
+  ];
 
   /* =============================================================================
 CH 3  Templates
@@ -560,6 +306,37 @@ We treat Quote/Summary/Payment as FIXED pages:
 - They cannot be deleted or re-ordered.
 - They keep a starter template (editable, but the page itself remains).
 ============================================================================= */
+
+  /* =============================================================================
+CH 3  Templates
+     3.1  Form pages
+     3.2  Fixed checkout pages (Quote/Summary/Payment)
+
+We treat Quote/Summary/Payment as FIXED pages:
+- They always exist.
+- They always appear at the end of the left nav.
+- They cannot be deleted or re-ordered.
+- They keep a starter template (editable, but the page itself remains).
+============================================================================= */
+
+// -------------------------
+// Fixed checkout pages (always present)
+// -------------------------
+const FIXED_CHECKOUT_PAGES = [
+  { id: "__fixed_quote__", name: "Quote", template: "quote" },
+  { id: "__fixed_summary__", name: "Summary", template: "summary" },
+  { id: "__fixed_payment__", name: "Payment", template: "payment" },
+];
+
+const isFixedPage = (p) => !!p && (p.isFixed === true || FIXED_CHECKOUT_PAGES.some((x) => x.id === p.id));
+
+const templateLabel = (tpl) => {
+  const t = String(tpl || "form");
+  if (t === "quote") return "Quote page";
+  if (t === "summary") return "Summary page";
+  if (t === "payment") return "Payment page";
+  return "Form page";
+};
 
   // -------------------------
   // Page template presets
