@@ -409,6 +409,7 @@
     index: 0,
     answers: {}, // qid -> value (shared across modes)
     lastError: "",
+    pageErrors: {}, // page mode: qid -> errorText
   };
 
   // Prevent auto-focus stealing when an option click triggers a rerender (e.g. radio -> jumps to a textarea)
@@ -2948,6 +2949,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     preview.open = true;
     preview.index = 0;
     preview.lastError = "";
+    preview.pageErrors = {};
 
     // Reset answers per preview session
     preview.answers = {};
@@ -3385,12 +3387,30 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
           const inputWrap = document.createElement("div");
           inputWrap.className = "pInputWrap";
 
-          const setA = (v) => (preview.answers[qq.id] = v);
+          const setA = (v) => {
+            preview.answers[qq.id] = v;
+
+            // Clear error on change (page mode)
+            if (preview.pageErrors?.[qq.id]) {
+              delete preview.pageErrors[qq.id];
+              // Re-render to hide the inline message immediately
+              renderPreview();
+            }
+          };
+
           const getA = () => preview.answers[qq.id];
 
           buildPreviewInputControl(qq, inputWrap, setA, getA, () => renderPreview());
 
           qBlock.appendChild(inputWrap);
+
+          // Inline field error (page mode)
+          const fieldErr = preview.pageErrors?.[qq.id] || "";
+          const errEl = document.createElement("div");
+          errEl.className = "pError";
+          errEl.textContent = fieldErr;
+          errEl.style.display = fieldErr ? "block" : "none";
+          qBlock.appendChild(errEl);
 
           // IMPORTANT: keep group title/description ABOVE its questions
           groupWrap.appendChild(qBlock);
@@ -3516,6 +3536,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     btnPrev.addEventListener("click", () => {
       if (!preview.open) return;
       preview.lastError = "";
+      preview.pageErrors = {};
       preview.index = clamp(preview.index - 1, 0, Math.max(0, preview.steps.length - 1));
       renderPreview();
     });
@@ -3548,7 +3569,8 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
           });
         });
 
-        // Validate required questions
+        // Validate required questions (page mode: collect per-field errors)
+        const errors = {};
         for (const qq of visibleQ) {
           if (!qq.required) continue;
           const ans = preview.answers[qq.id];
@@ -3558,12 +3580,18 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
             (typeof ans === "string" && ans.trim() === "") ||
             (Array.isArray(ans) && ans.length === 0);
           if (empty) {
-            preview.lastError = qq.errorText || "This field is required.";
-            renderPreview();
-            return;
+            errors[qq.id] = qq.errorText || "This field is required.";
           }
         }
 
+        if (Object.keys(errors).length) {
+          preview.pageErrors = errors;
+          preview.lastError = "";
+          renderPreview();
+          return;
+        }
+
+        preview.pageErrors = {};
         preview.lastError = "";
 
         if (preview.index >= preview.steps.length - 1) {
@@ -3669,11 +3697,4 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
   if (!Array.isArray(schema.pages)) schema.pages = [];
 })();
-// Paste the FULL current working .js file here.
-// This canvas will be our stable baseline.
-
-// Rules for this canvas:
-// 1. We only make small, incremental changes
-// 2. No refactors unless explicitly agreed
-// 3. Full file is always preserved
 
