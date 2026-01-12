@@ -2595,7 +2595,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     }));
   }
 
-   function followUpQuestionsEditor(parentQ) {
+  function followUpQuestionsEditor(parentQ) {
     const wrap = document.createElement("div");
     wrap.className = "field";
 
@@ -3909,16 +3909,6 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       row.appendChild(mk("No", "No"));
       inputWrap.appendChild(row);
       return;
-    }
-        });
-        return b;
-      };
-
-      row.appendChild(mk("Yes", "Yes"));
-      row.appendChild(mk("No", "No"));
-      inputWrap.appendChild(row);
-      return;
-    }
 
     if (isOptionType(step.type)) {
       const opts = Array.isArray(step.options) ? step.options : [];
@@ -4289,7 +4279,6 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
 
             qBlock.appendChild(fWrap);
           }
-          }
 
           // IMPORTANT: keep group title/description ABOVE its questions
           groupWrap.appendChild(qBlock);
@@ -4583,3 +4572,4 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
   if (!Array.isArray(schema.pages)) schema.pages = [];
 })();
+
