@@ -264,6 +264,8 @@
         version: 1,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        // Reusable question arrays (templates)
+        questionArrays: [],
       },
       lineOfBusiness: "Motor Insurance",
       pages: [
@@ -315,6 +317,11 @@
 
     // Ensure meta exists (AI imports may omit it)
     schema.meta = schema.meta || {};
+    // Question arrays live in meta (reusable templates)
+    schema.meta.questionArrays = Array.isArray(schema.meta.questionArrays)
+      ? schema.meta.questionArrays
+      : [];
+
     if (!schema.meta.version) schema.meta.version = 1;
     if (!schema.meta.createdAt) schema.meta.createdAt = new Date().toISOString();
     schema.meta.updatedAt = new Date().toISOString();
@@ -414,6 +421,12 @@
     answers: {}, // qid -> value (shared across modes)
     lastError: "",
     pageErrors: {}, // page mode: qid -> errorText
+  };
+
+  // Small UI-only state (not persisted)
+  let uiState = {
+    selectedArrayId: null,
+    newArrayName: "",
   };
 
   // Prevent auto-focus stealing when an option click triggers a rerender (e.g. radio -> jumps to a textarea)
@@ -1759,6 +1772,89 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       },
     ]));
 
+    // -------------------------
+    // Question arrays (reusable sets)
+    // -------------------------
+    inspectorEl.appendChild(divider());
+    inspectorEl.appendChild(sectionTitle("Question arrays"));
+    inspectorEl.appendChild(pEl("Save a reusable set of questions and insert it into any group.", "inlineHelp"));
+
+    const arrays = ensureQuestionArrays();
+    if (!uiState.selectedArrayId && arrays.length) uiState.selectedArrayId = arrays[0].id;
+
+    // New array name (used when saving)
+    inspectorEl.appendChild(fieldText("New array name", uiState.newArrayName || "", (val) => {
+      uiState.newArrayName = val;
+    }));
+
+    // Save from this group
+    const saveRow = document.createElement("div");
+    saveRow.style.display = "flex";
+    saveRow.style.gap = "10px";
+    saveRow.style.flexWrap = "wrap";
+
+    const btnSaveArr = document.createElement("button");
+    btnSaveArr.type = "button";
+    btnSaveArr.className = "btn primary";
+    btnSaveArr.textContent = "Save this group as array";
+    btnSaveArr.disabled = !(g.questions && g.questions.length);
+    if (btnSaveArr.disabled) btnSaveArr.title = "Add at least one question to this group first.";
+    btnSaveArr.addEventListener("click", () => {
+      const name = (uiState.newArrayName || "").trim() || g.name || "Question array";
+      createQuestionArrayFromGroup(p.id, g.id, name);
+      uiState.newArrayName = "";
+    });
+
+    saveRow.appendChild(btnSaveArr);
+    inspectorEl.appendChild(saveRow);
+
+    // Existing arrays selector
+    if (arrays.length) {
+      inspectorEl.appendChild(fieldSelect(
+        "Insert existing array",
+        uiState.selectedArrayId || arrays[0].id,
+        arrays.map((a) => ({ value: a.id, label: `${a.name} (${(a.questions || []).length})` })),
+        (val) => {
+          uiState.selectedArrayId = val;
+        }
+      ));
+
+      const insertRow = document.createElement("div");
+      insertRow.style.display = "flex";
+      insertRow.style.gap = "10px";
+      insertRow.style.flexWrap = "wrap";
+
+      const btnInsert = document.createElement("button");
+      btnInsert.type = "button";
+      btnInsert.className = "btn";
+      btnInsert.textContent = "Insert into this group";
+      btnInsert.addEventListener("click", () => {
+        const arrId = uiState.selectedArrayId || arrays[0]?.id;
+        if (!arrId) return;
+        // Insert after currently selected question (nice UX)
+        insertQuestionArrayIntoGroup(p.id, g.id, arrId, selection.questionId);
+      });
+
+      const btnDeleteArr = document.createElement("button");
+      btnDeleteArr.type = "button";
+      btnDeleteArr.className = "btn ghost";
+      btnDeleteArr.textContent = "Delete selected array";
+      btnDeleteArr.addEventListener("click", () => {
+        const arrId = uiState.selectedArrayId || arrays[0]?.id;
+        if (!arrId) return;
+        const arr = arrays.find((a) => a.id === arrId);
+        const ok = confirm(`Delete question array "${arr?.name || "Untitled"}"?`);
+        if (!ok) return;
+        deleteQuestionArray(arrId);
+      });
+
+      insertRow.appendChild(btnInsert);
+      insertRow.appendChild(btnDeleteArr);
+      inspectorEl.appendChild(insertRow);
+    } else {
+      inspectorEl.appendChild(pEl("No arrays saved yet. Use ‘Save this group as array’ to create your first one.", "inlineHelp"));
+    }
+
     inspectorEl.appendChild(divider());
 
     // If no question selected
@@ -2825,6 +2921,124 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
 
     saveSchema();
     renderAll();
+  }
+
+  // -------------------------
+  // Question arrays (reusable templates)
+  // -------------------------
+
+  function ensureQuestionArrays() {
+    schema.meta = schema.meta || {};
+    schema.meta.questionArrays = Array.isArray(schema.meta.questionArrays)
+      ? schema.meta.questionArrays
+      : [];
+    return schema.meta.questionArrays;
+  }
+
+  function stripQuestionForArray(q) {
+    // Store a clean, ID-less version
+    const qq = deepClone(q);
+    delete qq.id;
+    // Keep logic, but it will be remapped on insert (for internal references)
+    return qq;
+  }
+
+  function createQuestionArrayFromGroup(pageId, groupId, name) {
+    const p = getPage(pageId);
+    const g = getGroup(pageId, groupId);
+    if (!p || !g) return;
+
+    const arrays = ensureQuestionArrays();
+    const arr = {
+      id: uid("qa"),
+      name: String(name || g.name || "Question array").trim() || "Question array",
+      createdAt: new Date().toISOString(),
+      questions: (g.questions || []).map(stripQuestionForArray),
+    };
+
+    arrays.push(arr);
+    uiState.selectedArrayId = arr.id;
+    saveSchema();
+    renderAll(true);
+  }
+
+  function insertQuestionArrayIntoGroup(pageId, groupId, arrayId, insertAfterQuestionId) {
+    const p = getPage(pageId);
+    const g = getGroup(pageId, groupId);
+    if (!p || !g) return;
+
+    const arrays = ensureQuestionArrays();
+    const src = arrays.find((a) => a.id === arrayId);
+    if (!src) return;
+
+    const srcQs = Array.isArray(src.questions) ? src.questions : [];
+    if (!srcQs.length) return;
+
+    // 1) Create new questions + map oldIndex->newId and oldId->newId (if any persisted old ids exist)
+    const idMap = {};
+    const newQs = srcQs.map((q, idx) => {
+      const next = deepClone(q);
+      const newId = uid("q");
+      // In case the stored template still had an id for any reason
+      const oldId = next.id || `__idx_${idx}`;
+      idMap[oldId] = newId;
+      idMap[`__idx_${idx}`] = newId;
+      next.id = newId;
+      // Ensure required fields exist
+      if (!next.type) next.type = "text";
+      if (!next.title) next.title = "Untitled question";
+      if (next.help == null) next.help = "";
+      if (next.placeholder == null) next.placeholder = "";
+      if (next.required == null) next.required = false;
+      if (next.errorText == null) next.errorText = "This field is required.";
+      if (next.options == null) next.options = [];
+      if (next.logic == null) next.logic = { enabled: false, rules: [] };
+      if (next.content == null) next.content = { enabled: false, html: "" };
+      // Options sanity
+      if (isOptionType(next.type)) {
+        next.options = Array.isArray(next.options) && next.options.length ? next.options : ["Option 1", "Option 2", "Option 3"];
+      } else {
+        next.options = [];
+      }
+      return next;
+    });
+
+    // 2) Remap any internal logic references (rules that point to questions within the inserted set)
+    newQs.forEach((q, idx) => {
+      if (!q.logic?.enabled || !Array.isArray(q.logic.rules)) return;
+      q.logic.rules.forEach((r) => {
+        if (!r || !r.questionId) return;
+        // If the rule references an old question ID in this template, remap it
+        if (idMap[r.questionId]) r.questionId = idMap[r.questionId];
+      });
+    });
+
+    // 3) Insert into group at the requested point
+    let insertAt = g.questions.length;
+    if (insertAfterQuestionId) {
+      const idx = g.questions.findIndex((qq) => qq.id === insertAfterQuestionId);
+      if (idx >= 0) insertAt = idx + 1;
+    }
+
+    g.questions.splice(insertAt, 0, ...newQs);
+
+    // Select first inserted question
+    selection.pageId = p.id;
+    selection.blockType = "group";
+    selection.blockId = g.id;
+    selection.groupId = g.id;
+    selection.questionId = newQs[0]?.id || null;
+
+    saveSchema();
+    renderAll(true);
+  }
+
+  function deleteQuestionArray(arrayId) {
+    const arrays = ensureQuestionArrays();
+    schema.meta.questionArrays = arrays.filter((a) => a.id !== arrayId);
+    if (uiState.selectedArrayId === arrayId) uiState.selectedArrayId = schema.meta.questionArrays[0]?.id || null;
+    saveSchema();
+    renderAll(true);
   }
 
   // -------------------------
