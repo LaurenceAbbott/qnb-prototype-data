@@ -561,25 +561,6 @@ We treat Quote/Summary/Payment as FIXED pages:
 - They keep a starter template (editable, but the page itself remains).
 ============================================================================= */
 
-// -------------------------
-// Fixed checkout pages (always present)
-// -------------------------
-const FIXED_CHECKOUT_PAGES = [
-  { id: "__fixed_quote__", name: "Quote", template: "quote" },
-  { id: "__fixed_summary__", name: "Summary", template: "summary" },
-  { id: "__fixed_payment__", name: "Payment", template: "payment" },
-];
-
-const isFixedPage = (p) => !!p && (p.isFixed === true || FIXED_CHECKOUT_PAGES.some((x) => x.id === p.id));
-
-const templateLabel = (tpl) => {
-  const t = String(tpl || "form");
-  if (t === "quote") return "Quote page";
-  if (t === "summary") return "Summary page";
-  if (t === "payment") return "Payment page";
-  return "Form page";
-};
-
   // -------------------------
   // Page template presets
   // -------------------------
