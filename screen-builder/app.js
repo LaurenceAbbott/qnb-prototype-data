@@ -1,3 +1,44 @@
+/* =============================================================================
+SCREEN BUILDER — CHAPTERD FILE (Insert-only scaffolding)
+
+How to use:
+1) Paste your FULL current working JS file below the marker:
+      // === PASTE ORIGINAL CODE BELOW ===
+   (replace everything below that marker).
+2) Tell me “pasted” in chat.
+3) I will then re-organise the file by inserting chapter headers + patch hooks
+   WITHOUT changing any executable code.
+
+NOTE: Right now this file is only a scaffold because I don’t yet have your JS.
+============================================================================= */
+
+/* =============================================================================
+TABLE OF CONTENTS (Chapters)
+
+CH 0  Boot / Globals
+CH 1  State (defaults, load/save, migrate)
+CH 2  Data Models (Page/Group/Question schemas)
+CH 3  Templates
+     3.1  Form pages
+     3.2  Fixed checkout pages (Quote/Summary/Payment)
+CH 4  UI Rendering
+     4.1  Left nav (page list)
+     4.2  Main editor (page/group/question)
+     4.3  Preview / runtime
+CH 5  Actions (add/rename/delete/duplicate/move)
+CH 6  Logic (validation, conditional display)
+CH 7  Utilities (ids, cloning, formatting)
+CH 8  Event wiring (listeners)
+CH 9  Dev / debug helpers
+
+Patch hooks we’ll use later:
+- [PATCH-HOOK: NAV_PAGES_SOURCE]
+- [PATCH-HOOK: FIXED_PAGES_APPEND]
+- [PATCH-HOOK: PAGE_TYPE_RENDER_SWITCH]
+============================================================================= */
+
+// === PASTE ORIGINAL CODE BELOW ===
+
 /* Product-grade Form Builder (vanilla JS)
    - Pages + groups + questions
    - Options editor
@@ -6,8 +47,17 @@
    - Autosave + export/import JSON
 */
 
+/* =============================================================================
+CH 0  Boot / Globals
+- IIFE boot, storage key, global helpers
+============================================================================= */
+
 (function () {
   const STORAGE_KEY = "og-formbuilder-schema-v1";
+
+  /* =============================================================================
+CH 7  Utilities (ids, cloning, formatting, sanitise)
+============================================================================= */
 
   // -------------------------
   // Utilities
@@ -222,6 +272,10 @@
     }
   }
 
+  /* =============================================================================
+CH 2  Data Models (schemas, types, templates)
+============================================================================= */
+
   // -------------------------
   // Schema model
   // -------------------------
@@ -240,6 +294,15 @@
     { key: "checkboxes", label: "Checkboxes" },
     { key: "yesno", label: "Yes / No" },
   ];
+
+  /* =============================================================================
+CH 3  Templates
+     3.1  Form pages
+     3.2  Fixed checkout pages (Quote/Summary/Payment)
+
+[PATCH-HOOK: PAGE_TYPE_RENDER_SWITCH]
+- Later: render behaviour per page template (form/quote/summary/payment)
+============================================================================= */
 
   // -------------------------
   // Page templates (Q&B)
@@ -470,6 +533,10 @@
     return type === "select" || type === "radio" || type === "checkboxes";
   }
 
+  /* =============================================================================
+CH 1  State (defaults, load/save, migrate)
+============================================================================= */
+
   // -------------------------
   // App state
   // -------------------------
@@ -663,6 +730,13 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
 
   // Prevent inspector re-render while typing
   let isTypingInspector = false;
+
+  /* =============================================================================
+CH 4  UI Rendering
+     4.1  Left nav (page list)
+     4.2  Main editor (page/group/question)
+     4.3  Preview / runtime
+============================================================================= */
 
   // -------------------------
   // DOM
@@ -1293,6 +1367,15 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   }
 
   function renderPagesList() {
+    /* ----------------------------------------------------------------------
+    CH 4.1  Left nav (page list)
+
+    [PATCH-HOOK: NAV_PAGES_SOURCE]
+    - Later: centralise page source (schema pages + fixed checkout pages)
+
+    [PATCH-HOOK: FIXED_PAGES_APPEND]
+    - Later: ensure Quote/Summary/Payment always exist at end of nav
+    ---------------------------------------------------------------------- */
     pagesListEl.innerHTML = "";
 
     // DnD helpers (pages)
@@ -1572,6 +1655,9 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   }
 
   function renderCanvas() {
+    /* ----------------------------------------------------------------------
+    CH 4.2  Main editor (page/group/question)
+    ---------------------------------------------------------------------- */
     canvasEl.innerHTML = "";
 
     const p = getPage(selection.pageId);
@@ -3372,6 +3458,10 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     renderAll();
   }
 
+  /* =============================================================================
+CH 5  Actions (add/rename/delete/duplicate/move)
+============================================================================= */
+
   // -------------------------
   // Actions
   // -------------------------
@@ -3701,6 +3791,10 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     renderAll(true);
   }
 
+  /* =============================================================================
+CH 6  Logic (validation, conditional display) + Flow building
+============================================================================= */
+
   // -------------------------
   // Flow building (Preview steps)
   // -------------------------
@@ -3845,6 +3939,10 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     return schema.pages.map((p) => ({ id: p.id, pageId: p.id, pageName: p.name }));
   }
 
+  /* =============================================================================
+CH 4.3  Preview / runtime (continued)
+============================================================================= */
+
   // -------------------------
   // Preview UI
   // -------------------------
@@ -3896,6 +3994,9 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   }
 
   function renderPreview() {
+    /* ----------------------------------------------------------------------
+    CH 4.3  Preview / runtime
+    ---------------------------------------------------------------------- */
     // Steps depend on mode
     preview.steps = preview.mode === "page" ? buildPreviewPageSteps() : buildPreviewSteps();
     preview.index = clamp(preview.index, 0, Math.max(0, preview.steps.length - 1));
@@ -4561,6 +4662,10 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     };
     reader.readAsText(file);
   }
+
+  /* =============================================================================
+CH 8  Event wiring (listeners)
+============================================================================= */
 
   // -------------------------
   // Event wiring
