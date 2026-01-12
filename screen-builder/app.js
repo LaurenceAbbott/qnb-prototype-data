@@ -5300,29 +5300,101 @@ const TEMPLATE_DEFS = {
     render(values) {
       const v = values || {};
       return `
-        <div class="template template-quote">
-          <div class="template-header">
-            <h1 class="template-title">${escapeHtml(v.heading ?? "")}</h1>
-            <p class="template-intro">${escapeHtml(v.intro ?? "")}</p>
+        <div class="qnb-quote-card">
+          <div class="qnb-quote-header">
+            <h1 class="qnb-quote-title">${escapeHtml(v.heading ?? "")}</h1>
+            <p class="qnb-quote-intro">${escapeHtml(v.intro ?? "")}</p>
           </div>
 
           ${v.showPrice ? `
-            <div class="template-panel">
-              <div class="template-row">
-                <div class="template-label">${escapeHtml(v.priceLabel ?? "")}</div>
-                <div class="template-value">£1,234.56</div>
-              </div>
+            <div class="qnb-quote-row">
+              <div class="qnb-quote-label">${escapeHtml(v.priceLabel ?? "")}</div>
+              <div class="qnb-quote-value">£1,234.56</div>
             </div>
           ` : ""}
 
-          <div class="template-actions">
-            <button class="btn primary" type="button">${escapeHtml(v.ctaText ?? "Continue")}</button>
+          <div class="qnb-quote-actions">
+            <button class="btn primary" type="button">
+              ${escapeHtml(v.ctaText ?? "Continue")}
+            </button>
+          </div>
+        </div>
+      `;
+    }
+  },
+
+  summary: {
+    label: "Summary page",
+    schema: [
+      { key: "heading", label: "Heading", type: "text" },
+      { key: "ctaText", label: "CTA button text", type: "text" }
+    ],
+    defaults: {
+      heading: "Review your details",
+      ctaText: "Confirm & Pay"
+    },
+    render(values) {
+      const v = values || {};
+      return `
+        <div class="qnb-summary-card">
+          <h2 class="qnb-quote-title">${escapeHtml(v.heading ?? "")}</h2>
+          <div class="qnb-summary-list">
+            <div class="qnb-summary-item">
+              <div class="qnb-summary-label">Example Field</div>
+              <div class="qnb-summary-value">Example Answer</div>
+              <button class="qnb-summary-edit" type="button">Change</button>
+            </div>
+            <div class="qnb-summary-item">
+              <div class="qnb-summary-label">Policy Start</div>
+              <div class="qnb-summary-value">Next Monday</div>
+              <button class="qnb-summary-edit" type="button">Change</button>
+            </div>
+          </div>
+          <div class="qnb-quote-actions">
+            <button class="btn primary">${escapeHtml(v.ctaText ?? "")}</button>
+          </div>
+        </div>
+      `;
+    }
+  },
+
+  payment: {
+    label: "Payment page",
+    schema: [
+      { key: "heading", label: "Heading", type: "text" },
+      { key: "ctaText", label: "CTA button text", type: "text" }
+    ],
+    defaults: {
+      heading: "Payment",
+      ctaText: "Pay Now"
+    },
+    render(values) {
+      const v = values || {};
+      return `
+        <div class="qnb-payment-container">
+          <h2 class="qnb-quote-title">${escapeHtml(v.heading ?? "")}</h2>
+          
+          <div class="qnb-payment-option">
+            <input type="radio" name="paymethod" checked>
+            <div>
+              <strong>Credit / Debit Card</strong>
+              <p style="opacity:0.6; font-size:13px; margin:0;">Pay securely via Stripe</p>
+            </div>
+          </div>
+
+          <div class="qnb-card-details">
+            <div style="height:40px; background:rgba(255,255,255,0.05); border-radius:8px; margin-bottom:12px; display:flex; align-items:center; padding-left:12px; color:rgba(255,255,255,0.3); font-size:14px;">Card number</div>
+            <div style="display:flex; gap:12px;">
+               <div style="flex:1; height:40px; background:rgba(255,255,255,0.05); border-radius:8px; display:flex; align-items:center; padding-left:12px; color:rgba(255,255,255,0.3); font-size:14px;">MM/YY</div>
+               <div style="flex:1; height:40px; background:rgba(255,255,255,0.05); border-radius:8px; display:flex; align-items:center; padding-left:12px; color:rgba(255,255,255,0.3); font-size:14px;">CVC</div>
+            </div>
+          </div>
+
+          <div class="qnb-payment-cta">
+            <button class="btn primary w-full">${escapeHtml(v.ctaText ?? "")}</button>
           </div>
         </div>
       `;
     }
   }
-
-  // Add more templates later...
-  // summary: { ... }
 };
