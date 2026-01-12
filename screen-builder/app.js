@@ -445,10 +445,10 @@ const templateLabel = (tpl) => {
             },
             logic: { enabled: false, rules: [] },
             questions: [
-              q("currency", "Annual premium", {
+              q("currency", "QuotePriceBlock", {
                 placeholder: "e.g. 350.00",
                 required: false,
-                help: "Typically set by rating. Leave blank if not applicable.",
+                help: "Placeholder for the quote price block (typically populated from rating).",
               }),
               q("currency", "Monthly premium", {
                 placeholder: "e.g. 32.50",
