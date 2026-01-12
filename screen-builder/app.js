@@ -229,7 +229,11 @@
     { key: "text", label: "Short text" },
     { key: "textarea", label: "Long text" },
     { key: "number", label: "Number" },
+    { key: "currency", label: "Currency" },
+    { key: "percent", label: "Percentage" },
     { key: "email", label: "Email" },
+    { key: "tel", label: "Phone" },
+    { key: "postcode", label: "Postcode" },
     { key: "date", label: "Date" },
     { key: "select", label: "Select (dropdown)" },
     { key: "radio", label: "Radio group" },
@@ -461,7 +465,11 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
       if (["text", "short_text", "short", "string"].includes(x)) return "text";
       if (["textarea", "long_text", "long", "paragraph"].includes(x)) return "textarea";
       if (["number", "numeric", "int", "integer", "float"].includes(x)) return "number";
+      if (["currency", "money", "amount", "sum_insured", "suminsured", "premium"].includes(x)) return "currency";
+      if (["percent", "percentage", "rate"].includes(x)) return "percent";
       if (["email"].includes(x)) return "email";
+      if (["tel", "phone", "telephone", "mobile"].includes(x)) return "tel";
+      if (["postcode", "postal_code", "zip", "zip_code"].includes(x)) return "postcode";
       if (["date", "dob"].includes(x)) return "date";
       if (["select", "dropdown"].includes(x)) return "select";
       if (["radio", "single_select", "single"].includes(x)) return "radio";
@@ -683,7 +691,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   async function requestAiTemplate(promptText) {
     const AI_CAPABILITIES = {
       schemaContract: "Must return a JSON object with { pages: [...] }",
-      questionTypes: ["text","textarea","number","email","date","select","radio","checkboxes","yesno"],
+      questionTypes: ["text","textarea","number","currency","percent","email","tel","postcode","date","select","radio","checkboxes","yesno"],
       optionTypes: ["select","radio","checkboxes"],
       questionFields: [
         "id","type","title","help","placeholder","required","errorText","options","logic","content"
@@ -1803,7 +1811,15 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     }));
 
     // Placeholder
-    if (q.type === "text" || q.type === "email" || q.type === "number") {
+    if (
+      q.type === "text" ||
+      q.type === "email" ||
+      q.type === "number" ||
+      q.type === "currency" ||
+      q.type === "percent" ||
+      q.type === "tel" ||
+      q.type === "postcode"
+    ) {
       inspectorEl.appendChild(fieldText("Placeholder", q.placeholder || "", (val) => {
         q.placeholder = val;
         saveSchema();
@@ -2865,7 +2881,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
     }
 
     // Number comparisons
-    const mightBeNumeric = referencedQuestion?.type === "number";
+    const mightBeNumeric = ["number", "currency", "percent"].includes(referencedQuestion?.type);
     if (["gt", "gte", "lt", "lte"].includes(op) || mightBeNumeric) {
       const a = asNumber(ans);
       const b = asNumber(val);
@@ -3106,7 +3122,7 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
   }
 
   function buildPreviewInputControl(step, inputWrap, setAnswer, getAnswer, rerender) {
-    if (["text", "email", "number", "date"].includes(step.type)) {
+    if (["text", "email", "number", "currency", "percent", "tel", "postcode", "date"].includes(step.type)) {
       const input = document.createElement("input");
       input.className = "pInput";
 
@@ -3116,6 +3132,30 @@ const shouldSuppressAutoFocus = () => Date.now() < suppressAutoFocusUntil;
         input.inputMode = "numeric";
         input.placeholder = step.placeholder || "dd/mm/yyyy";
         input.autocomplete = "off";
+      } else if (step.type === "tel") {
+        input.type = "tel";
+        input.inputMode = "tel";
+        input.placeholder = step.placeholder || "e.g. 07700 900123";
+        input.autocomplete = "tel";
+      } else if (step.type === "postcode") {
+        input.type = "text";
+        input.inputMode = "text";
+        input.placeholder = step.placeholder || "e.g. SW1A 1AA";
+        input.autocomplete = "postal-code";
+        // Light normalisation to UK-style formatting (upper-case + trim)
+        input.addEventListener("blur", () => {
+          const v = (input.value || "").trim().toUpperCase();
+          input.value = v;
+          setAnswer(v);
+        });
+      } else if (step.type === "currency") {
+        input.type = "text";
+        input.inputMode = "decimal";
+        input.placeholder = step.placeholder || "e.g. 1,250.00";
+      } else if (step.type === "percent") {
+        input.type = "text";
+        input.inputMode = "decimal";
+        input.placeholder = step.placeholder || "e.g. 10";
       } else {
         input.type = step.type === "text" ? "text" : step.type;
         input.placeholder = step.placeholder || "";
