@@ -345,7 +345,6 @@ CH 2  Data Models (schemas, types, templates)
     { key: "radio", label: "Radio" },
     { key: "checkboxes", label: "Checkboxes" },
     { key: "yesno", label: "Yes / No" },
-    { key: label: "Display element" },
   ];
 
   // Display elements (non-input blocks that can be placed inside groups)
