@@ -1152,6 +1152,12 @@ CH 4  UI Rendering
   const groupNameDisplayEl = $("#groupNameDisplay");
   const miniStatsEl = $("#miniStats");
 
+  // Page header controls (injected next to #pageNameDisplay)
+  let pageHeaderControlsEl = null;
+  let pageNameInputEl = null;
+  let pageActionsRowEl = null;
+  let pagePreviewSelectEl = null;
+
   const btnAddPage = $("#btnAddPage");
   const btnAddGroup = $("#btnAddGroup");
   const btnAddQuestion = $("#btnAddQuestion");
@@ -1223,6 +1229,13 @@ CH 4  UI Rendering
     const p = getPage(selection.pageId) || schema.pages[0];
     selection.pageId = p.id;
     p.flow = Array.isArray(p.flow) ? p.flow : p.groups.map((g) => ({ type: "group", id: g.id }));
+
+    // Allow explicit page selection (used by the header "Page settings" affordance)
+    if (selection.blockType === "page" && selection.groupId == null) {
+      selection.blockId = null;
+      selection.questionId = null;
+      return;
+    }
 
     // Determine the selected flow item
     let flowItem = p.flow.find((it) => it.id === selection.blockId) || null;
@@ -1303,6 +1316,147 @@ CH 4  UI Rendering
     editorTitleEl.textContent = p ? `Editor · ${p.name}` : "Editor";
     pageNameDisplayEl.textContent = p ? p.name : "—";
     groupNameDisplayEl.textContent = g ? g.name : "—";
+
+    renderPageHeaderControls();
+  }
+
+  function ensurePageHeaderControls() {
+    if (!pageNameDisplayEl || pageHeaderControlsEl) return;
+
+    const parent = pageNameDisplayEl.parentElement;
+    if (!parent) return;
+
+    pageHeaderControlsEl = document.createElement("div");
+    pageHeaderControlsEl.className = "pageHeaderControls";
+    pageHeaderControlsEl.style.display = "flex";
+    pageHeaderControlsEl.style.alignItems = "center";
+    pageHeaderControlsEl.style.gap = "10px";
+    pageHeaderControlsEl.style.marginTop = "8px";
+    pageHeaderControlsEl.style.flexWrap = "wrap";
+
+    // Inline page name editor (shown only when page is selected)
+    pageNameInputEl = document.createElement("input");
+    pageNameInputEl.type = "text";
+    pageNameInputEl.className = "input";
+    pageNameInputEl.style.maxWidth = "360px";
+    pageNameInputEl.style.display = "none";
+    pageNameInputEl.addEventListener("input", (e) => {
+      const p = getPage(selection.pageId);
+      if (!p) return;
+      p.name = (e.target.value || "").trim() || "Untitled page";
+      saveSchemaDebounced();
+      renderPagesList();
+      editorTitleEl.textContent = `Editor · ${p.name}`;
+      pageNameDisplayEl.textContent = p.name;
+    });
+    pageNameInputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        // Exit page edit mode back to group selection if possible
+        const p = getPage(selection.pageId);
+        const firstGroup = p?.groups?.[0]?.id || null;
+        selection.groupId = firstGroup;
+        selection.questionId = null;
+        selection.blockType = "group";
+        renderAll(true);
+      }
+    });
+
+    // Page actions (export/import)
+    pageActionsRowEl = document.createElement("div");
+    pageActionsRowEl.className = "row";
+    pageActionsRowEl.style.display = "flex";
+    pageActionsRowEl.style.gap = "8px";
+    pageActionsRowEl.style.flexWrap = "wrap";
+    pageActionsRowEl.style.display = "none";
+
+    const btnExportPage = document.createElement("button");
+    btnExportPage.type = "button";
+    btnExportPage.className = "btn ghost";
+    btnExportPage.textContent = "Export page JSON";
+    btnExportPage.addEventListener("click", () => {
+      const p = getPage(selection.pageId);
+      if (!p) return;
+      exportPageJson(p.id);
+    });
+
+    const btnImportPage = document.createElement("button");
+    btnImportPage.type = "button";
+    btnImportPage.className = "btn ghost";
+    btnImportPage.textContent = "Import page JSON";
+    btnImportPage.addEventListener("click", () => {
+      const p = getPage(selection.pageId);
+      if (!p) return;
+      importPageJsonInto(p.id);
+    });
+
+    pageActionsRowEl.appendChild(btnExportPage);
+    pageActionsRowEl.appendChild(btnImportPage);
+
+    // Preview mode (only shown when page is selected)
+    pagePreviewSelectEl = document.createElement("select");
+    pagePreviewSelectEl.className = "input";
+    pagePreviewSelectEl.style.maxWidth = "260px";
+    pagePreviewSelectEl.style.display = "none";
+    pagePreviewSelectEl.innerHTML = `
+      <option value="question">Question-by-question (Typeform)</option>
+      <option value="page">Page-at-a-time (layout)</option>
+    `;
+    pagePreviewSelectEl.addEventListener("change", (e) => {
+      preview.mode = e.target.value;
+      schema.meta = schema.meta || {};
+      schema.meta.previewMode = preview.mode;
+      saveSchema();
+    });
+
+    // Insert controls directly after the page name display
+    parent.appendChild(pageHeaderControlsEl);
+    pageHeaderControlsEl.appendChild(pageNameInputEl);
+    pageHeaderControlsEl.appendChild(pagePreviewSelectEl);
+    pageHeaderControlsEl.appendChild(pageActionsRowEl);
+
+    // Allow selecting the page from the header label
+    pageNameDisplayEl.style.cursor = "pointer";
+    pageNameDisplayEl.title = "Click to edit page settings";
+    pageNameDisplayEl.addEventListener("click", () => {
+      selection.blockType = "page";
+      selection.blockId = null;
+      selection.groupId = null;
+      selection.questionId = null;
+      renderAll(true);
+      // Focus name input after render
+      setTimeout(() => {
+        pageNameInputEl?.focus();
+        pageNameInputEl?.select();
+      }, 0);
+    });
+  }
+
+  function renderPageHeaderControls() {
+    ensurePageHeaderControls();
+    if (!pageHeaderControlsEl) return;
+
+    const p = getPage(selection.pageId);
+    const isPageSelected = selection.groupId == null && selection.questionId == null && selection.blockType === "page";
+
+    // Default: hide
+    if (!p || !isPageSelected) {
+      if (pageNameInputEl) pageNameInputEl.style.display = "none";
+      if (pageActionsRowEl) pageActionsRowEl.style.display = "none";
+      if (pagePreviewSelectEl) pagePreviewSelectEl.style.display = "none";
+      return;
+    }
+
+    // Show controls
+    if (pageNameInputEl) {
+      pageNameInputEl.style.display = "block";
+      if (pageNameInputEl.value !== (p.name || "")) pageNameInputEl.value = p.name || "";
+    }
+    if (pageActionsRowEl) pageActionsRowEl.style.display = "flex";
+    if (pagePreviewSelectEl) {
+      pagePreviewSelectEl.style.display = "block";
+      pagePreviewSelectEl.value = preview.mode || "question";
+    }
   }
 
   function renderPagesList() {
@@ -1461,7 +1615,7 @@ CH 4  UI Rendering
         renderAll();
       });
 
-      const delBtn = iconButton("✕", "Delete page");
+      const delBtn = iconButton("🗑", "Delete page");
       delBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         if (!confirm(`Delete "${p.name}"?`)) return;
@@ -1615,6 +1769,62 @@ function renderCanvas() {
       return;
     }
 
+    // If the page itself is selected (no group), show a simple page overview
+    if (selection.groupId == null) {
+      const card = document.createElement("div");
+      card.className = "tip";
+      card.innerHTML = `
+        <div class="tipTitle">Page settings</div>
+        <p class="muted">You’re editing the page. Click a group below to edit its questions.</p>
+      `;
+      canvasEl.appendChild(card);
+
+      const list = document.createElement("div");
+      list.style.display = "flex";
+      list.style.flexDirection = "column";
+      list.style.gap = "8px";
+      list.style.marginTop = "10px";
+
+      (p.groups || []).forEach((gg) => {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "btn ghost";
+        row.style.justifyContent = "flex-start";
+        row.textContent = gg.name || "Untitled group";
+        row.addEventListener("click", () => {
+          selection.groupId = gg.id;
+          selection.questionId = null;
+          selection.blockType = "group";
+          renderAll(true);
+        });
+        list.appendChild(row);
+      });
+      canvasEl.appendChild(list);
+
+      const actions = document.createElement("div");
+      actions.style.display = "flex";
+      actions.style.gap = "10px";
+      actions.style.marginTop = "14px";
+      actions.style.justifyContent = "flex-end";
+
+      const btnAddG = document.createElement("button");
+      btnAddG.type = "button";
+      btnAddG.className = "btn primary";
+      btnAddG.textContent = "+ Group";
+      btnAddG.addEventListener("click", () => addGroupToPage(p.id));
+
+      const btnAddT = document.createElement("button");
+      btnAddT.type = "button";
+      btnAddT.className = "btn ghost";
+      btnAddT.textContent = "+ Text block";
+      btnAddT.addEventListener("click", () => addTextBlockToPage(p.id));
+
+      actions.appendChild(btnAddT);
+      actions.appendChild(btnAddG);
+      canvasEl.appendChild(actions);
+      return;
+    }
+
     const g = getGroup(selection.pageId, selection.groupId);
     if (!g) return;
 
@@ -1625,13 +1835,101 @@ function renderCanvas() {
     const pageTitle = document.createElement("div");
     pageTitle.className = "canvasPageTitle";
     pageTitle.textContent = p.name || "Untitled page";
+    pageTitle.style.cursor = "pointer";
+    pageTitle.title = "Click to edit page settings";
+    pageTitle.addEventListener("click", () => {
+      selection.blockType = "page";
+      selection.blockId = null;
+      selection.groupId = null;
+      selection.questionId = null;
+      renderAll(true);
+      setTimeout(() => {
+        pageNameInputEl?.focus();
+        pageNameInputEl?.select();
+      }, 0);
+    });
 
-    const groupTitle = document.createElement("div");
-    groupTitle.className = "canvasGroupTitle";
-    groupTitle.textContent = g.name || "Untitled group";
+    const isGroupSelected = selection.groupId === g.id && selection.questionId == null && selection.blockType === "group";
+
+    let groupTitle;
+    if (isGroupSelected) {
+      const inp = document.createElement("input");
+      inp.type = "text";
+      inp.className = "input canvasGroupTitle";
+      inp.value = g.name || "";
+      inp.placeholder = "Group name";
+      inp.addEventListener("input", (e) => {
+        g.name = (e.target.value || "").trim() || "Untitled group";
+        saveSchemaDebounced();
+        groupNameDisplayEl.textContent = g.name;
+        renderPagesList();
+      });
+      inp.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          // Move focus into the first question for faster editing
+          selection.questionId = g.questions?.[0]?.id || null;
+          renderAll(true);
+        }
+      });
+      groupTitle = inp;
+    } else {
+      const div = document.createElement("div");
+      div.className = "canvasGroupTitle";
+      div.textContent = g.name || "Untitled group";
+      div.style.cursor = "pointer";
+      div.title = "Click to edit group settings";
+      div.addEventListener("click", () => {
+        selection.blockType = "group";
+        selection.blockId = g.id;
+        selection.groupId = g.id;
+        selection.questionId = null;
+        renderAll(true);
+      });
+      groupTitle = div;
+    }
 
     canvasHeader.appendChild(pageTitle);
     canvasHeader.appendChild(groupTitle);
+
+    // Group-level quick actions (live on the group container, not the inspector)
+    const groupActions = document.createElement("div");
+    groupActions.className = "canvasGroupActions";
+    groupActions.style.display = "flex";
+    groupActions.style.gap = "8px";
+    groupActions.style.marginTop = "10px";
+
+    const btnGUp = document.createElement("button");
+    btnGUp.type = "button";
+    btnGUp.className = "btn ghost";
+    btnGUp.textContent = "Move group up";
+    btnGUp.addEventListener("click", () => moveGroup(p.id, g.id, -1));
+
+    const btnGDown = document.createElement("button");
+    btnGDown.type = "button";
+    btnGDown.className = "btn ghost";
+    btnGDown.textContent = "Move group down";
+    btnGDown.addEventListener("click", () => moveGroup(p.id, g.id, +1));
+
+    const btnGDel = document.createElement("button");
+    btnGDel.type = "button";
+    btnGDel.className = "btn ghost";
+    btnGDel.textContent = "Delete group";
+    btnGDel.addEventListener("click", () => {
+      if (!confirm(`Delete group "${g.name}"?`)) return;
+      p.groups = (p.groups || []).filter((x) => x.id !== g.id);
+      p.flow = (p.flow || []).filter((x) => !(x.type === "group" && x.id === g.id));
+      selection.groupId = p.groups[0]?.id || null;
+      selection.questionId = p.groups[0]?.questions?.[0]?.id || null;
+      selection.blockType = selection.groupId ? "group" : "page";
+      saveSchema();
+      renderAll(true);
+    });
+
+    groupActions.appendChild(btnGUp);
+    groupActions.appendChild(btnGDown);
+    groupActions.appendChild(btnGDel);
+    canvasHeader.appendChild(groupActions);
 
     if (g.description?.enabled) {
       const descHtml = sanitizeRichHtml(g.description.html || "");
@@ -1838,41 +2136,7 @@ function renderCanvas() {
       return;
     }
 
-    // Page settings (always available)
-    inspectorEl.appendChild(sectionTitle("Page"));
-
-    inspectorEl.appendChild(fieldText("Page name", p.name || "Untitled page", (val) => {
-      p.name = val || "Untitled page";
-      saveSchemaDebounced();
-      renderPagesList();
-      editorTitleEl.textContent = `Editor · ${p.name}`;
-      pageNameDisplayEl.textContent = p.name;
-    }));
-
-    // Page template JSON (import/export)
-    const pageJsonRow = document.createElement("div");
-    pageJsonRow.className = "row";
-    pageJsonRow.style.display = "flex";
-    pageJsonRow.style.gap = "8px";
-    pageJsonRow.style.flexWrap = "wrap";
-
-    const btnExportPage = document.createElement("button");
-    btnExportPage.type = "button";
-    btnExportPage.className = "btn ghost";
-    btnExportPage.textContent = "Export page JSON";
-    btnExportPage.addEventListener("click", () => exportPageJson(p.id));
-
-    const btnImportPage = document.createElement("button");
-    btnImportPage.type = "button";
-    btnImportPage.className = "btn ghost";
-    btnImportPage.textContent = "Import page JSON";
-    btnImportPage.addEventListener("click", () => importPageJsonInto(p.id));
-
-    pageJsonRow.appendChild(btnExportPage);
-    pageJsonRow.appendChild(btnImportPage);
-    inspectorEl.appendChild(pageJsonRow);
-
-    inspectorEl.appendChild(divider());
+    // Inspector is contextual: it shows ONLY the selected level (page / group / question / text block).
 
     // If a text block is selected, show a dedicated inspector
     if (selection.blockType === "text") {
@@ -1940,52 +2204,350 @@ function renderCanvas() {
       return;
     }
 
-    if (!g) {
-      inspectorSubEl.textContent = "Select or add a group";
+    // Page selection: page settings live in the page header, so the inspector just offers helpful actions.
+    if (selection.blockType === "page" && selection.groupId == null) {
+      inspectorSubEl.textContent = "Editing page";
       inspectorEl.appendChild(sectionTitle("Page"));
-      inspectorEl.appendChild(fieldText("Page name", p.name, (val) => {
-        p.name = val || "Untitled page";
-        saveSchemaDebounced();
-        renderPagesList();
-        editorTitleEl.textContent = `Editor · ${p.name}`;
-        pageNameDisplayEl.textContent = p.name;
-      }));
+      inspectorEl.appendChild(pEl("Page name, Preview mode and JSON import/export live in the page header.", "inlineHelp"));
       inspectorEl.appendChild(buttonRow([{ label: "+ Group", kind: "primary", onClick: () => addGroupToPage(p.id) }]));
       inspectorEl.appendChild(buttonRow([{ label: "+ Text block", kind: "ghost", onClick: () => addTextBlockToPage(p.id) }]));
       return;
     }
 
-    // Global preview settings (small step #4)
-    inspectorEl.appendChild(sectionTitle("Preview settings"));
-    inspectorEl.appendChild(fieldSelect(
-      "Preview mode",
-      preview.mode || "question",
-      [
-        { value: "question", label: "Question-by-question (Typeform)" },
-        { value: "page", label: "Page-at-a-time (layout)" },
-      ],
-      (val) => {
-        preview.mode = val;
-        // Persist mode inside schema meta for convenience
-        schema.meta = schema.meta || {};
-        schema.meta.previewMode = val;
+    // If no group is selected/available (should be rare), guide the user.
+    if (!g) {
+      inspectorSubEl.textContent = "Select or add a group";
+      inspectorEl.appendChild(sectionTitle("Groups"));
+      inspectorEl.appendChild(pEl("Select a group to edit, or add a new one.", "inlineHelp"));
+      inspectorEl.appendChild(buttonRow([{ label: "+ Group", kind: "primary", onClick: () => addGroupToPage(p.id) }]));
+      inspectorEl.appendChild(buttonRow([{ label: "+ Text block", kind: "ghost", onClick: () => addTextBlockToPage(p.id) }]));
+      return;
+    }
+
+    // Question selection: ONLY show question settings (page/group settings live elsewhere)
+    if (q) {
+      inspectorSubEl.textContent = "Editing question";
+
+      inspectorEl.appendChild(sectionTitle("Question"));
+
+      inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
+        q.title = val || "Untitled question";
+        saveSchemaDebounced();
+        renderCanvas();
+        renderPagesList();
+      }));
+
+      inspectorEl.appendChild(fieldTextArea("Help text", q.help || "", (val) => {
+        q.help = val;
+        saveSchemaDebounced();
+      }));
+
+      // Explanatory content (rich text block shown above the answer control in Preview)
+      q.content = q.content || { enabled: false, html: "" };
+      inspectorEl.appendChild(toggleRow("Add explanatory content", q.content.enabled === true, (on) => {
+        q.content.enabled = on;
+        if (!q.content.html) q.content.html = "<p></p>";
         saveSchema();
+        isTypingInspector = false;
+        renderAll(true);
+      }));
+
+      if (q.content.enabled) {
+        inspectorEl.appendChild(richTextEditor("Content", q.content.html || "", (html) => {
+          q.content.html = sanitizeRichHtml(html);
+          saveSchemaDebounced();
+        }));
       }
-    ));
 
-    inspectorEl.appendChild(divider());
+      inspectorEl.appendChild(fieldSelect("Type", q.type, QUESTION_TYPES.map(t => ({ value: t.key, label: t.label })), (val) => {
+        q.type = val;
+        if (!isOptionType(q.type)) q.options = [];
+        if (isOptionType(q.type) && (!q.options || !q.options.length)) {
+          q.options = ["Option 1", "Option 2", "Option 3"];
+        }
+        saveSchema();
+        renderAll();
+      }));
 
-    // Group editor (always visible)
-    inspectorSubEl.textContent = q ? "Editing question" : "Editing group";
+      // Display element editor (non-input blocks)
+      if (q.type === "display") {
+        q.display = q.display && typeof q.display === "object" ? q.display : { variant: "info", tone: "neutral", title: "", subtitle: "", bodyHtml: "" };
+
+        inspectorEl.appendChild(divider());
+        inspectorEl.appendChild(sectionTitle("Display element"));
+
+        inspectorEl.appendChild(fieldSelect("Variant", q.display.variant || "info", DISPLAY_VARIANTS.map(v => ({ value: v.key, label: v.label })), (val) => {
+          q.display.variant = val;
+          // seed sensible defaults on change
+          if (val === "price") {
+            if (!q.title || q.title === "Display element") q.title = "Big price";
+            if (!q.display.title) q.display.title = "£1,250";
+            if (!q.display.subtitle) q.display.subtitle = "per year";
+            if (!q.display.prefix) q.display.prefix = "£";
+          }
+          if (val === "hero") {
+            if (!q.title || q.title === "Display element") q.title = "Hero";
+          }
+          if (val === "info") {
+            if (!q.title || q.title === "Display element") q.title = "Info";
+          }
+          saveSchema();
+          renderAll(true);
+        }));
+
+        inspectorEl.appendChild(fieldSelect("Tone", q.display.tone || "neutral", [
+          { value: "neutral", label: "Neutral" },
+          { value: "info", label: "Info" },
+          { value: "success", label: "Success" },
+          { value: "warning", label: "Warning" },
+        ], (val) => {
+          q.display.tone = val;
+          saveSchema();
+          renderAll(true);
+        }));
+
+        // Optional binding to an existing question answer
+        const allQ = getAllQuestionsInOrder(schema);
+        const bindOpts = [{ value: "", label: "— Not bound —" }]
+          .concat(allQ.filter(x => x.id !== q.id).map(x => ({ value: x.id, label: `${x.pageName} / ${x.groupName} — ${x.title || x.id}` })));
+        inspectorEl.appendChild(fieldSelect("Bind to answer (optional)", q.display.bindQuestionId || "", bindOpts, (val) => {
+          q.display.bindQuestionId = val;
+          saveSchema();
+          renderAll(true);
+        }));
+
+        if ((q.display.variant || "info") === "price") {
+          inspectorEl.appendChild(fieldText("Displayed value (fallback)", q.display.title || "", (val) => {
+            q.display.title = val;
+            saveSchemaDebounced();
+            renderCanvas();
+          }));
+
+          inspectorEl.appendChild(fieldText("Prefix", q.display.prefix ?? "£", (val) => {
+            q.display.prefix = val;
+            saveSchemaDebounced();
+          }));
+
+          inspectorEl.appendChild(fieldText("Suffix", q.display.suffix ?? "", (val) => {
+            q.display.suffix = val;
+            saveSchemaDebounced();
+          }));
+
+          inspectorEl.appendChild(fieldText("Subtitle", q.display.subtitle || "", (val) => {
+            q.display.subtitle = val;
+            saveSchemaDebounced();
+          }));
+
+          inspectorEl.appendChild(toggleRow("Add body text", !!(q.display.bodyHtml || "").trim(), (on) => {
+            if (on && !q.display.bodyHtml) q.display.bodyHtml = "<p></p>";
+            if (!on) q.display.bodyHtml = "";
+            saveSchema();
+            isTypingInspector = false;
+            renderAll(true);
+          }));
+
+          if ((q.display.bodyHtml || "").trim()) {
+            inspectorEl.appendChild(richTextEditor("Body", q.display.bodyHtml || "", (html) => {
+              q.display.bodyHtml = sanitizeRichHtml(html);
+              saveSchemaDebounced();
+            }));
+          }
+        } else if ((q.display.variant || "info") === "divider") {
+          inspectorEl.appendChild(pEl("A simple divider line to separate sections.", "inlineHelp"));
+        } else {
+          inspectorEl.appendChild(fieldText("Title", q.display.title || "", (val) => {
+            q.display.title = val;
+            saveSchemaDebounced();
+            renderCanvas();
+          }));
+
+          inspectorEl.appendChild(fieldText("Subtitle", q.display.subtitle || "", (val) => {
+            q.display.subtitle = val;
+            saveSchemaDebounced();
+          }));
+
+          inspectorEl.appendChild(richTextEditor("Body", q.display.bodyHtml || "", (html) => {
+            q.display.bodyHtml = sanitizeRichHtml(html);
+            saveSchemaDebounced();
+          }));
+        }
+
+        // Display elements should not have required/placeholder/options/follow-ups/logic
+        return;
+      }
+
+      // Placeholder
+      if (
+        q.type === "text" ||
+        q.type === "email" ||
+        q.type === "number" ||
+        q.type === "currency" ||
+        q.type === "percent" ||
+        q.type === "tel" ||
+        q.type === "postcode"
+      ) {
+        inspectorEl.appendChild(fieldText("Placeholder", q.placeholder || "", (val) => {
+          q.placeholder = val;
+          saveSchema();
+        }));
+      }
+
+      // Required toggle
+      inspectorEl.appendChild(toggleRow("Required", q.required === true, (on) => {
+        q.required = on;
+        // Ensure default error text exists when toggling required on
+        if (q.required && !q.errorText) q.errorText = "This field is required.";
+        saveSchema();
+        renderAll();
+      }));
+
+      // Custom error message (shown in Preview when validation fails)
+      if (q.required === true) {
+        inspectorEl.appendChild(fieldTextArea("Error message", q.errorText || "This field is required.", (val) => {
+          q.errorText = val;
+          saveSchemaDebounced();
+        }));
+      }
+
+      // Options editor
+      if (isOptionType(q.type)) {
+        inspectorEl.appendChild(divider());
+        inspectorEl.appendChild(sectionTitle("Options"));
+        inspectorEl.appendChild(pEl("Add, rename, reorder, or delete options.", "inlineHelp"));
+        inspectorEl.appendChild(optionsEditor(q));
+      }
+
+      // Follow-up questions (nested array) — only for Yes/No
+      inspectorEl.appendChild(divider());
+
+      if (q.type === "yesno") {
+        inspectorEl.appendChild(sectionTitle("Follow-up questions"));
+        inspectorEl.appendChild(
+          pEl(
+            "Show a nested set of questions when the answer matches (e.g. Yes → capture conviction details).",
+            "inlineHelp"
+          )
+        );
+
+        q.followUp = q.followUp || {
+          enabled: false,
+          triggerValue: "Yes",
+          name: "",
+          questions: [],
+          repeat: { enabled: false, min: 1, max: 5, addLabel: "Add another", itemLabel: "Item" },
+        };
+        q.followUp.repeat = q.followUp.repeat && typeof q.followUp.repeat === "object" ? q.followUp.repeat : { enabled: false, min: 1, max: 5, addLabel: "Add another", itemLabel: "Item" };
+
+        inspectorEl.appendChild(
+          toggleRow("Enable follow-up questions", q.followUp.enabled === true, (on) => {
+            q.followUp.enabled = on;
+            saveSchema();
+            isTypingInspector = false;
+            renderAll(true);
+          })
+        );
+
+        if (q.followUp.enabled) {
+          inspectorEl.appendChild(
+            fieldSelect(
+              "Trigger answer",
+              q.followUp.triggerValue || "Yes",
+              [
+                { value: "Yes", label: "Yes" },
+                { value: "No", label: "No" },
+              ],
+              (val) => {
+                q.followUp.triggerValue = val;
+                saveSchema();
+                renderAll(true);
+              }
+            )
+          );
+
+          inspectorEl.appendChild(
+            fieldText("Array name", q.followUp.name || "", (val) => {
+              q.followUp.name = val;
+              saveSchemaDebounced();
+            })
+          );
+
+          // Repeatable instances
+          inspectorEl.appendChild(divider());
+          inspectorEl.appendChild(sectionTitle("Repeatable set"));
+          inspectorEl.appendChild(
+            pEl(
+              "Allow users to add multiple instances of these follow-up questions (e.g. multiple convictions).",
+              "inlineHelp"
+            )
+          );
+
+          inspectorEl.appendChild(
+            toggleRow("Allow multiple (Add another)", q.followUp.repeat.enabled === true, (on) => {
+              q.followUp.repeat.enabled = on;
+              if (!Number.isFinite(Number(q.followUp.repeat.min))) q.followUp.repeat.min = 1;
+              if (!Number.isFinite(Number(q.followUp.repeat.max))) q.followUp.repeat.max = 5;
+              saveSchema();
+              isTypingInspector = false;
+              renderAll(true);
+            })
+          );
+
+          if (q.followUp.repeat.enabled) {
+            inspectorEl.appendChild(fieldText("Item label", q.followUp.repeat.itemLabel || "Item", (val) => {
+              q.followUp.repeat.itemLabel = val || "Item";
+              saveSchemaDebounced();
+            }));
+
+            inspectorEl.appendChild(fieldText("Add button label", q.followUp.repeat.addLabel || "Add another", (val) => {
+              q.followUp.repeat.addLabel = val || "Add another";
+              saveSchemaDebounced();
+            }));
+
+            inspectorEl.appendChild(fieldText("Minimum items", String(q.followUp.repeat.min ?? 1), (val) => {
+              const n = Number(val);
+              q.followUp.repeat.min = Number.isFinite(n) ? clamp(n, 0, 50) : 1;
+              q.followUp.repeat.max = clamp(Number(q.followUp.repeat.max ?? 5), q.followUp.repeat.min, 50);
+              saveSchema();
+              renderAll(true);
+            }));
+
+            inspectorEl.appendChild(fieldText("Maximum items", String(q.followUp.repeat.max ?? 5), (val) => {
+              const n = Number(val);
+              q.followUp.repeat.max = Number.isFinite(n) ? clamp(n, q.followUp.repeat.min ?? 1, 50) : 5;
+              saveSchema();
+              renderAll(true);
+            }));
+          }
+        }
+      }
+
+      // Question logic (visibility)
+      inspectorEl.appendChild(divider());
+      inspectorEl.appendChild(sectionTitle("Question visibility"));
+      inspectorEl.appendChild(pEl("Show this question only if the rule(s) match.", "inlineHelp"));
+
+      q.logic = q.logic || { enabled: false, rules: [] };
+      inspectorEl.appendChild(toggleRow("Enable question logic", q.logic?.enabled === true, (on) => {
+        q.logic = q.logic || { enabled: false, rules: [] };
+        q.logic.enabled = on;
+        saveSchema();
+        isTypingInspector = false;
+        renderAll(true);
+      }));
+
+      if (q.logic?.enabled) {
+        inspectorEl.appendChild(questionLogicEditor(schema, p, g, q));
+      }
+
+      return;
+    }
+
+    // Group selection: show only group settings
+    inspectorSubEl.textContent = "Editing group";
 
     inspectorEl.appendChild(sectionTitle("Group"));
 
-    inspectorEl.appendChild(fieldText("Group name", g.name, (val) => {
-      g.name = val || "Untitled group";
-      saveSchemaDebounced();
-      renderPagesList();
-      groupNameDisplayEl.textContent = g.name;
-    }));
+    inspectorEl.appendChild(pEl("Group name is editable in the group header.", "inlineHelp"));
 
     // Group description (small step #2)
     g.description = g.description || { enabled: false, html: "" };
@@ -2021,30 +2583,8 @@ function renderCanvas() {
       inspectorEl.appendChild(groupLogicEditor(schema, p, g));
     }
 
-    // Move group + delete group
-    inspectorEl.appendChild(buttonRow([
-      { label: "Move group up", kind: "ghost", onClick: () => moveGroup(p.id, g.id, -1) },
-      { label: "Move group down", kind: "ghost", onClick: () => moveGroup(p.id, g.id, +1) },
-    ]));
-
-    inspectorEl.appendChild(buttonRow([
-      {
-        label: "Delete group",
-        kind: "ghost",
-        onClick: () => {
-          if (!confirm(`Delete group "${g.name}"?`)) return;
-          p.groups = p.groups.filter((x) => x.id !== g.id);
-          // also remove from flow
-          p.flow = (p.flow || []).filter((x) => !(x.type === "group" && x.id === g.id));
-          selection.blockType = "group";
-          selection.blockId = p.flow[0]?.id || p.groups[0]?.id || null;
-          selection.groupId = p.groups[0]?.id || null;
-          selection.questionId = p.groups[0]?.questions?.[0]?.id || null;
-          saveSchema();
-          renderAll();
-        },
-      },
-    ]));
+    inspectorEl.appendChild(divider());
+    inspectorEl.appendChild(pEl("Move/delete group controls are available on the group header.", "inlineHelp"));
 
     // (Removed) Question arrays section — follow-ups can now be repeatable inside questions.
 
