@@ -1,3 +1,21 @@
+
+// --- ITEM LABEL HELPERS ---
+const DISPLAY_VARIANT_LABELS = {
+  info: "Info box",
+  bigPrice: "Big price",
+  hero: "Hero",
+  divider: "Divider",
+};
+
+function getItemLabel(item) {
+  if (item.type === "display") {
+    const base = DISPLAY_VARIANT_LABELS[item.variant] || "Display";
+    return item.title ? `${base}: ${item.title}` : base;
+  }
+  return getItemLabel(item);
+}
+
+
 /* =============================================================================
 SCREEN BUILDER — CHAPTERD FILE (Insert-only scaffolding)
 
@@ -2230,7 +2248,8 @@ function renderCanvas() {
 
       inspectorEl.appendChild(sectionTitle("Question"));
 
-      inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
+          if (q.type !== "display") {
+inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
         q.title = val || "Untitled question";
         saveSchemaDebounced();
         renderCanvas();
@@ -2257,7 +2276,8 @@ function renderCanvas() {
           q.content.html = sanitizeRichHtml(html);
           saveSchemaDebounced();
         }));
-      }
+      }    }
+
 
       inspectorEl.appendChild(fieldSelect("Type", q.type, QUESTION_TYPES.map(t => ({ value: t.key, label: t.label })), (val) => {
         q.type = val;
@@ -2302,16 +2322,6 @@ function renderCanvas() {
           { value: "warning", label: "Warning" },
         ], (val) => {
           q.display.tone = val;
-          saveSchema();
-          renderAll(true);
-        }));
-
-        // Optional binding to an existing question answer
-        const allQ = getAllQuestionsInOrder(schema);
-        const bindOpts = [{ value: "", label: "— Not bound —" }]
-          .concat(allQ.filter(x => x.id !== q.id).map(x => ({ value: x.id, label: `${x.pageName} / ${x.groupName} — ${x.title || x.id}` })));
-        inspectorEl.appendChild(fieldSelect("Bind to answer (optional)", q.display.bindQuestionId || "", bindOpts, (val) => {
-          q.display.bindQuestionId = val;
           saveSchema();
           renderAll(true);
         }));
@@ -2600,7 +2610,8 @@ function renderCanvas() {
     // Question inspector
     inspectorEl.appendChild(sectionTitle("Question"));
 
-    inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
+        if (q.type !== "display") {
+inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
       q.title = val || "Untitled question";
       saveSchemaDebounced();
       renderCanvas();
@@ -2627,7 +2638,8 @@ function renderCanvas() {
         q.content.html = sanitizeRichHtml(html);
         saveSchemaDebounced();
       }));
-    }
+    }    }
+
 
     inspectorEl.appendChild(fieldSelect("Type", q.type, QUESTION_TYPES.map(t => ({ value: t.key, label: t.label })), (val) => {
       q.type = val;
@@ -2676,17 +2688,7 @@ function renderCanvas() {
         renderAll(true);
       }));
 
-      // Optional binding to an existing question answer
-      const allQ = getAllQuestionsInOrder(schema);
-      const bindOpts = [{ value: "", label: "— Not bound —" }]
-        .concat(allQ.filter(x => x.id !== q.id).map(x => ({ value: x.id, label: `${x.pageName} / ${x.groupName} — ${x.title || x.id}` })));
-      inspectorEl.appendChild(fieldSelect("Bind to answer (optional)", q.display.bindQuestionId || "", bindOpts, (val) => {
-        q.display.bindQuestionId = val;
-        saveSchema();
-        renderAll(true);
-      }));
-
-      if ((q.display.variant || "info") === "price") {
+        if ((q.display.variant || "info") === "price") {
         inspectorEl.appendChild(fieldText("Displayed value (fallback)", q.display.title || "", (val) => {
           q.display.title = val;
           saveSchemaDebounced();
@@ -4328,8 +4330,6 @@ CH 5  Actions (add/rename/delete/duplicate/move)
         title: variant === "price" ? "£1,250" : "Title",
         subtitle: variant === "price" ? "per year" : "",
         bodyHtml: variant === "info" ? "<p>Use this block to highlight key information.</p>" : "",
-        // Optional: bind to an answer (e.g. show a currency answer as the big price)
-        bindQuestionId: "",
         prefix: "£",
         suffix: "",
       },
@@ -4781,11 +4781,17 @@ CH 4.3  Preview / runtime (continued)
 
     buildPreviewInputControl(step, inputWrap, setAnswer, getAnswer, () => renderPreview());
 
-    card.appendChild(qEl);
-    if (contentHtml) card.appendChild(contentEl);
-    if (step.help) card.appendChild(helpEl);
-    card.appendChild(inputWrap);
-    card.appendChild(errEl);
+    if (step.type !== "display") {
+      card.appendChild(qEl);
+      if (contentHtml) card.appendChild(contentEl);
+      if (step.help) card.appendChild(helpEl);
+      card.appendChild(inputWrap);
+      card.appendChild(errEl);
+    } else {
+      // Display elements are purely presentational (no question label/help/error)
+      card.classList.add("pCardDisplay");
+      card.appendChild(inputWrap);
+    }
     previewStage.appendChild(card);
 
     // Ensure Next button is re-enabled if previously disabled by completion view
@@ -4801,15 +4807,6 @@ CH 4.3  Preview / runtime (continued)
       const wrap = document.createElement("div");
       wrap.className = "displayEl" + " display-" + v + (tone !== "neutral" ? " tone-" + tone : "");
 
-      // Resolve bound value (optional)
-      let bound = "";
-      if (d.bindQuestionId) {
-        const ans = preview?.answers?.[d.bindQuestionId];
-        if (ans !== undefined && ans !== null && String(ans).trim() !== "") {
-          bound = String(ans);
-        }
-      }
-
       if (v === "divider") {
         const hr = document.createElement("hr");
         hr.className = "displayDivider";
@@ -4820,7 +4817,7 @@ CH 4.3  Preview / runtime (continued)
 
       const title = document.createElement("div");
       title.className = "displayTitle";
-      title.textContent = (v === "price" ? (bound || d.title || "") : (d.title || "")) || "";
+      title.textContent = (d.title || "") || "";
 
       const subtitle = document.createElement("div");
       subtitle.className = "displaySubtitle";
@@ -4841,7 +4838,7 @@ CH 4.3  Preview / runtime (continued)
 
         const value = document.createElement("div");
         value.className = "displayPriceValue";
-        value.textContent = `${prefix}${bound || d.title || ""}${suffix}`.trim();
+        value.textContent = `${prefix}${d.title || ""}${suffix}`.trim();
 
         line.appendChild(value);
         wrap.appendChild(line);
@@ -5787,4 +5784,7 @@ CH 8  Event wiring (listeners)
   if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
   if (!Array.isArray(schema.pages)) schema.pages = [];
 })();
+
+
+
 // (Template registry removed — pages are imported/exported as JSON templates.)
