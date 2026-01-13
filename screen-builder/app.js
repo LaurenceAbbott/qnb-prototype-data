@@ -20,7 +20,6 @@ CH 1  State (defaults, load/save, migrate)
 CH 2  Data Models (Page/Group/Question schemas)
 CH 3  Templates
      3.1  Form pages
-     3.2  Fixed checkout pages (Quote/Summary/Payment)
 CH 4  UI Rendering
      4.1  Left nav (page list)
      4.2  Main editor (page/group/question)
@@ -33,7 +32,6 @@ CH 9  Dev / debug helpers
 
 Patch hooks we’ll use later:
 - [PATCH-HOOK: NAV_PAGES_SOURCE]
-- [PATCH-HOOK: FIXED_PAGES_APPEND]
 - [PATCH-HOOK: PAGE_TYPE_RENDER_SWITCH]
 ============================================================================= */
 
@@ -323,6 +321,108 @@ CH 2  Data Models (schemas, types, templates)
   ];
 
 
+
+// -------------------------
+// Fixed checkout pages removed
+// -------------------------
+// Quote/Summary/Payment are no longer treated as special fixed pages.
+// If you want a Quote/Summary/Payment page, import it as a page template JSON.
+const isFixedPage = () => false;
+
+// Apply a template context attribute/class so CSS can target special pages.
+// Your CSS can now reliably target:
+//  - [data-page-template="quote"] ...
+//  - [data-page-template="summary"] ...
+//  - [data-page-template="payment"] ...
+//  - .tpl-quote / .tpl-summary / .tpl-payment
+function setTemplateContext(template) {
+  const t = String(template || "form").toLowerCase();
+
+  // Put the attribute in a few obvious places so existing CSS selectors have the best chance of matching.
+  try {
+    document.body.dataset.pageTemplate = t;
+    document.documentElement.dataset.pageTemplate = t;
+  } catch {}
+
+  const targets = [
+    canvasEl,
+    inspectorEl,
+    pagesListEl,
+    previewBackdrop,
+    previewStage,
+  ].filter(Boolean);
+
+  targets.forEach((el) => {
+    try {
+      el.dataset.pageTemplate = t;
+      el.classList.remove("tpl-form", "tpl-quote", "tpl-summary", "tpl-payment");
+      el.classList.add(`tpl-${t}`);
+    } catch {}
+  });
+}
+
+
+
+  // -------------------------
+  // -------------------------
+  // Page templates
+  // -------------------------
+  // Page templates are now imported/exported as JSON at page level.
+  // The designer no longer contains built-in page presets or generators.
+
+function newDefaultSchema() {
+    const pageId = uid("page");
+    const groupId = uid("group");
+    const q1 = uid("q");
+
+    // Base starter journey + ALWAYS appended fixed checkout pages
+    return {
+      meta: {
+        version: 1,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        questionArrays: [],
+      },
+      lineOfBusiness: "Motor Insurance",
+      pages: [
+        {
+          id: pageId,
+          name: "About you",
+          template: "form",
+          // Phase 1: allow text blocks between groups via a page-level flow list
+          // Backwards compatible: groups remain the source of truth for questions.
+          flow: [{ type: "group", id: groupId }],
+          groups: [
+            {
+              id: groupId,
+              name: "Basics",
+              description: { enabled: false, html: "" },
+              logic: { enabled: false, rules: [] },
+              questions: [
+                {
+                  id: q1,
+                  type: "text",
+                  title: "What is your full name?",
+                  help: "Use your legal name as it appears on official documents.",
+                  placeholder: "e.g. Alex Taylor",
+                  required: true,
+                  errorText: "This field is required.",
+                  options: [],
+                  logic: { enabled: false, rules: [] },
+                  content: { enabled: false, html: "" },
+                },
+              ],
+            },
+          ],
+        },
+      ]
+    };
+  }
+
+  function isOptionType(type) {
+    return type === "select" || type === "radio" || type === "checkboxes";
+  }
+
   /* =============================================================================
 CH 1  State (defaults, load/save, migrate)
 ============================================================================= */
@@ -349,8 +449,7 @@ CH 1  State (defaults, load/save, migrate)
     if (!Array.isArray(schema.pages)) schema.pages = [];
 
     // --- Ensure fixed checkout pages always exist (and remain at the end)
-    ensureFixedCheckoutPages();
-
+    
     schema.pages.forEach((p) => {
       // Page template (form | quote | summary | payment)
       if (!p.template) p.template = "form";
@@ -474,8 +573,7 @@ CH 1  State (defaults, load/save, migrate)
     });
 
     // Final: keep fixed pages at the end
-    ensureFixedCheckoutPages();
-
+    
     saveSchema();
   }
 
@@ -1167,8 +1265,8 @@ CH 4  UI Rendering
     /* ----------------------------------------------------------------------
     CH 4.1  Left nav (page list)
 
-    Fixed pages:
-    - Quote / Summary / Payment always exist and are always last.
+    Pages are rendered in the order they exist in schema.pages.
+    Quote/Summary/Payment are no longer fixed system pages — import them if needed.
     ---------------------------------------------------------------------- */
     pagesListEl.innerHTML = "";
 
@@ -1181,46 +1279,47 @@ CH 4  UI Rendering
       return true;
     };
 
-    // Split editable pages vs fixed checkout pages
-    const editablePages = (schema.pages || []).filter((p) => !isFixedPage(p));
-    const fixedPages = FIXED_CHECKOUT_PAGES
-      .map((fp) => schema.pages.find((p) => p.id === fp.id))
-      .filter(Boolean);
+    const pages = Array.isArray(schema.pages) ? schema.pages : [];
 
-    const renderPageItem = (p, pIdx, isFixed) => {
-      p.flow = Array.isArray(p.flow) ? p.flow : p.groups.map((g) => ({ type: "group", id: g.id }));
+    const renderPageItem = (p, pIdx) => {
+      p.flow = Array.isArray(p.flow) ? p.flow : (p.groups || []).map((g) => ({ type: "group", id: g.id }));
 
       const pageDiv = document.createElement("div");
-      pageDiv.className = "pageItem" + (p.id === selection.pageId ? " active" : "") + (isFixed ? " fixed" : "") + ` tpl-${String(p.template || "form").toLowerCase()}`;
+      pageDiv.className =
+        "pageItem" +
+        (p.id === selection.pageId ? " active" : "") +
+        ` tpl-${String(p.template || "form").toLowerCase()}`;
 
-      // Expose template to CSS selectors
+      // Expose template to CSS selectors (templates can be set via imported JSON)
       pageDiv.dataset.pageTemplate = String(p.template || "form").toLowerCase();
 
-      // Make page draggable (builder-only) — but never for fixed pages
-      pageDiv.draggable = !preview.open && !isFixed;
+      // Make page draggable (builder-only)
+      pageDiv.draggable = !preview.open;
       pageDiv.dataset.pageId = p.id;
       pageDiv.dataset.pageIndex = String(pIdx);
 
       pageDiv.addEventListener("dragstart", (e) => {
-        if (preview.open || isFixed) { e.preventDefault(); return; }
+        if (preview.open) {
+          e.preventDefault();
+          return;
+        }
         if (!canStartDragFrom(e.target)) {
           e.preventDefault();
           return;
         }
-        markDragging(true);
         e.dataTransfer.effectAllowed = "move";
         e.dataTransfer.setData("text/og-page", p.id);
         e.dataTransfer.setData("text/og-page-index", String(pIdx));
         pageDiv.classList.add("isDragging");
+        isDraggingUI = true;
       });
 
       pageDiv.addEventListener("dragend", () => {
         pageDiv.classList.remove("isDragging");
-        markDragging(false);
+        isDraggingUI = false;
       });
 
       pageDiv.addEventListener("dragover", (e) => {
-        if (isFixed) return;
         if (!e.dataTransfer.types.includes("text/og-page")) return;
         e.preventDefault();
         e.dataTransfer.dropEffect = "move";
@@ -1232,7 +1331,6 @@ CH 4  UI Rendering
       });
 
       pageDiv.addEventListener("drop", (e) => {
-        if (isFixed) return;
         if (!e.dataTransfer.types.includes("text/og-page")) return;
         e.preventDefault();
         pageDiv.classList.remove("isDragOver");
@@ -1243,7 +1341,6 @@ CH 4  UI Rendering
         if (fromIdx === toIdx) return;
 
         moveItem(schema.pages, fromIdx, toIdx);
-        ensureFixedCheckoutPages();
         saveSchema();
         renderAll();
       });
@@ -1252,213 +1349,176 @@ CH 4  UI Rendering
       top.className = "pageTop";
 
       const left = document.createElement("div");
-      left.style.flex = "1";
-      left.style.minWidth = "0";
+      left.className = "pageLeft";
 
       const name = document.createElement("div");
       name.className = "pageName";
-      name.contentEditable = isFixed ? "false" : "true";
+      name.contentEditable = String(!preview.open);
       name.spellcheck = false;
-      name.setAttribute("role", "textbox");
-      name.setAttribute("aria-label", "Page name");
-      name.title = isFixed ? "Fixed page" : "Click to rename";
       name.textContent = p.name;
 
-      if (!isFixed) {
-        name.addEventListener("mousedown", (e) => e.stopPropagation());
-        name.addEventListener("click", (e) => e.stopPropagation());
+      name.addEventListener("mousedown", (e) => e.stopPropagation());
+      name.addEventListener("click", (e) => e.stopPropagation());
 
-        name.addEventListener("focus", (e) => {
-          e.stopPropagation();
-          selection.pageId = p.id;
-          ensureSelection();
-          requestAnimationFrame(() => selectAllContent(name));
-        });
+      name.addEventListener("focus", (e) => {
+        e.stopPropagation();
+        selection.pageId = p.id;
+        ensureSelection();
+        requestAnimationFrame(() => selectAllContent(name));
+      });
 
-        name.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            name.blur();
-          }
-          if (e.key === "Escape") {
-            e.preventDefault();
-            name.textContent = p.name;
-            name.blur();
-          }
-        });
+      name.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          name.blur();
+        }
+        if (e.key === "Escape") {
+          e.preventDefault();
+          name.textContent = p.name;
+          name.blur();
+        }
+      });
 
-        name.addEventListener("blur", () => {
-          const next = safeText(name) || "Untitled page";
-          name.textContent = next;
-          p.name = next;
-          saveSchema();
-          renderAll();
-        });
-
-        name.addEventListener("input", () => {
-          p.name = safeText(name) || "Untitled page";
-          saveSchemaDebounced();
-          editorTitleEl.textContent = `Editor · ${p.name}`;
-          pageNameDisplayEl.textContent = p.name;
-          renderMiniStats();
-        });
-      }
-
-      const meta = document.createElement("div");
-      meta.className = "pageMeta";
-      const qCount = p.groups.reduce((acc, g) => acc + (g.questions?.length || 0), 0);
-      meta.textContent = `${templateLabel(p.template)} · ${p.groups.length} group${p.groups.length !== 1 ? "s" : ""} · ${qCount} question${qCount !== 1 ? "s" : ""}`;
+      name.addEventListener("blur", () => {
+        const next = safeText(name) || "Untitled page";
+        name.textContent = next;
+        p.name = next;
+        saveSchema();
+        renderAll();
+      });
 
       left.appendChild(name);
-      left.appendChild(meta);
 
       const actions = document.createElement("div");
       actions.className = "pageActions";
 
-      if (!isFixed) {
-        const renameBtn = iconButton("✎", "Rename page");
-        renameBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          name.focus();
-          requestAnimationFrame(() => selectAllContent(name));
-        });
+      const renameBtn = iconButton("✎", "Rename page");
+      renameBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        name.focus();
+        requestAnimationFrame(() => selectAllContent(name));
+      });
 
-        const upBtn = iconButton("↑", "Move up");
-        upBtn.disabled = pIdx === 0;
-        upBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          moveItem(schema.pages, pIdx, pIdx - 1);
-          ensureFixedCheckoutPages();
-          saveSchema();
-          renderAll();
-        });
+      const upBtn = iconButton("↑", "Move up");
+      upBtn.disabled = pIdx === 0;
+      upBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        moveItem(schema.pages, pIdx, pIdx - 1);
+        saveSchema();
+        renderAll();
+      });
 
-        const downBtn = iconButton("↓", "Move down");
-        downBtn.disabled = pIdx === editablePages.length - 1;
-        downBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          moveItem(schema.pages, pIdx, pIdx + 1);
-          ensureFixedCheckoutPages();
-          saveSchema();
-          renderAll();
-        });
+      const downBtn = iconButton("↓", "Move down");
+      downBtn.disabled = pIdx === pages.length - 1;
+      downBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        moveItem(schema.pages, pIdx, pIdx + 1);
+        saveSchema();
+        renderAll();
+      });
 
-        const delBtn = iconButton("✕", "Delete page");
-        delBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          if (!confirm(`Delete page "${p.name}"? This cannot be undone.`)) return;
-          schema.pages = schema.pages.filter((x) => x.id !== p.id);
-          ensureFixedCheckoutPages();
-          saveSchema();
-          ensureSelection();
-          renderAll();
-        });
+      const delBtn = iconButton("🗑", "Delete page");
+      delBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!confirm(`Delete "${p.name}"?`)) return;
 
-        actions.appendChild(renameBtn);
-        actions.appendChild(upBtn);
-        actions.appendChild(downBtn);
-        actions.appendChild(delBtn);
-      }
+        const idx = schema.pages.findIndex((x) => x.id === p.id);
+        if (idx >= 0) schema.pages.splice(idx, 1);
+
+        ensureSelection();
+        saveSchema();
+        renderAll();
+      });
+
+      actions.appendChild(renameBtn);
+      actions.appendChild(upBtn);
+      actions.appendChild(downBtn);
+      actions.appendChild(delBtn);
 
       top.appendChild(left);
       top.appendChild(actions);
       pageDiv.appendChild(top);
 
-      // Flow chips (only for editable pages; fixed pages are treated as templates)
-      if (!isFixed) {
-        const chips = document.createElement("div");
-        chips.className = "groupsMini";
+      // Flow chips
+      const chips = document.createElement("div");
+      chips.className = "groupsMini";
 
-        p.flow.forEach((it) => {
-          if (it.type === "group") {
-            const g = p.groups.find((gg) => gg.id === it.id);
-            const chip = document.createElement("button");
-            chip.type = "button";
-            chip.className =
-              "groupChip" +
-              (p.id === selection.pageId && selection.blockType === "group" && selection.groupId === g?.id ? " active" : "");
-            chip.textContent = g?.name || "(Missing group)";
-            chip.addEventListener("click", (e) => {
-              e.stopPropagation();
-              selection.pageId = p.id;
-              selection.blockType = "group";
-              selection.blockId = it.id;
-              selection.groupId = it.id;
-              selection.questionId = g?.questions?.[0]?.id || null;
-              renderAll();
-            });
-            chips.appendChild(chip);
-          }
+      p.flow.forEach((it) => {
+        if (it.type === "group") {
+          const g = (p.groups || []).find((gg) => gg.id === it.id);
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.className =
+            "groupChip" +
+            (p.id === selection.pageId && selection.blockType === "group" && selection.groupId === g?.id ? " active" : "");
+          chip.textContent = g?.name || "(Missing group)";
+          chip.addEventListener("click", (e) => {
+            e.stopPropagation();
+            selection.pageId = p.id;
+            selection.blockType = "group";
+            selection.blockId = g?.id || null;
+            selection.groupId = g?.id || null;
+            selection.questionId = g?.questions?.[0]?.id || null;
+            renderAll();
+          });
+          chips.appendChild(chip);
+        } else if (it.type === "text") {
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.className =
+            "groupChip" +
+            (p.id === selection.pageId && selection.blockType === "text" && selection.blockId === it.id ? " active" : "");
+          chip.textContent = it.title ? `📝 ${it.title}` : "📝 Text block";
+          chip.addEventListener("click", (e) => {
+            e.stopPropagation();
+            selection.pageId = p.id;
+            selection.blockType = "text";
+            selection.blockId = it.id;
+            selection.groupId = null;
+            selection.questionId = null;
+            renderAll();
+          });
+          chips.appendChild(chip);
+        }
+      });
 
-          if (it.type === "text") {
-            const chip = document.createElement("button");
-            chip.type = "button";
-            chip.className =
-              "groupChip" +
-              (p.id === selection.pageId && selection.blockType === "text" && selection.blockId === it.id ? " active" : "");
-            chip.textContent = it.title ? `📝 ${it.title}` : "📝 Text block";
-            chip.addEventListener("click", (e) => {
-              e.stopPropagation();
-              selection.pageId = p.id;
-              selection.blockType = "text";
-              selection.blockId = it.id;
-              selection.groupId = null;
-              selection.questionId = null;
-              renderAll();
-            });
-            chips.appendChild(chip);
-          }
-        });
+      const addTextChip = document.createElement("button");
+      addTextChip.type = "button";
+      addTextChip.className = "groupChip";
+      addTextChip.textContent = "+ Text";
+      addTextChip.addEventListener("click", (e) => {
+        e.stopPropagation();
+        selection.pageId = p.id;
+        addTextBlockToPage(p.id);
+      });
+      chips.appendChild(addTextChip);
 
-        const addTextChip = document.createElement("button");
-        addTextChip.type = "button";
-        addTextChip.className = "groupChip";
-        addTextChip.textContent = "+ Text";
-        addTextChip.addEventListener("click", (e) => {
-          e.stopPropagation();
-          selection.pageId = p.id;
-          addTextBlockToPage(p.id);
-        });
-        chips.appendChild(addTextChip);
+      const addGroupChip = document.createElement("button");
+      addGroupChip.type = "button";
+      addGroupChip.className = "groupChip";
+      addGroupChip.textContent = "+ Group";
+      addGroupChip.addEventListener("click", (e) => {
+        e.stopPropagation();
+        selection.pageId = p.id;
+        addGroupToPage(p.id);
+      });
+      chips.appendChild(addGroupChip);
 
-        const addGroupChip = document.createElement("button");
-        addGroupChip.type = "button";
-        addGroupChip.className = "groupChip";
-        addGroupChip.textContent = "+ Group";
-        addGroupChip.addEventListener("click", (e) => {
-          e.stopPropagation();
-          selection.pageId = p.id;
-          addGroupToPage(p.id);
-        });
-        chips.appendChild(addGroupChip);
+      pageDiv.appendChild(chips);
 
-        pageDiv.appendChild(chips);
-      }
-
-      // click page selects it
+      // click page selects it (default to first flow item)
       pageDiv.addEventListener("click", () => {
         if (isDraggingUI) return;
         selection.pageId = p.id;
 
-        if (isFixed) {
-          // Fixed pages: default to first group
-          const g0 = p.groups[0];
-          selection.blockType = "group";
-          selection.blockId = g0?.id || null;
-          selection.groupId = g0?.id || null;
-          selection.questionId = g0?.questions?.[0]?.id || null;
-          renderAll(true);
-          return;
-        }
-
-        const first = p.flow[0];
-        if (first?.type === "text") {
+        const first = (p.flow || [])[0];
+        if (first && first.type === "text") {
           selection.blockType = "text";
           selection.blockId = first.id;
           selection.groupId = null;
           selection.questionId = null;
         } else {
-          const g0 = p.groups.find((gg) => gg.id === first?.id) || p.groups[0];
+          const g0 = (p.groups || []).find((gg) => gg.id === first?.id) || (p.groups || [])[0];
           selection.blockType = "group";
           selection.blockId = g0?.id || null;
           selection.groupId = g0?.id || null;
@@ -1470,30 +1530,10 @@ CH 4  UI Rendering
       pagesListEl.appendChild(pageDiv);
     };
 
-    // Render editable pages (in order)
-    editablePages.forEach((p, idx) => {
-      // pIdx in schema.pages for DnD operations
-      const pIdx = schema.pages.findIndex((x) => x.id === p.id);
-      renderPageItem(p, idx, false);
-    });
-
-    // Divider label
-    if (fixedPages.length) {
-      const div = document.createElement("div");
-      div.className = "sectionTitle";
-      div.style.marginTop = "14px";
-      div.style.opacity = "0.9";
-      div.textContent = "Checkout pages";
-      pagesListEl.appendChild(div);
-    }
-
-    // Render fixed pages (Quote, Summary, Payment)
-    fixedPages.forEach((p) => {
-      renderPageItem(p, -1, true);
-    });
+    pages.forEach((p, idx) => renderPageItem(p, idx));
   }
 
-  function renderCanvas() {
+function renderCanvas() {
     /* ----------------------------------------------------------------------
     CH 4.2  Main editor (page/group/question)
     ---------------------------------------------------------------------- */
@@ -1758,8 +1798,6 @@ CH 4  UI Rendering
     inspectorEl.appendChild(sectionTitle("Page"));
 
     inspectorEl.appendChild(fieldText("Page name", p.name || "Untitled page", (val) => {
-      // Fixed pages cannot be renamed
-      if (isFixedPage(p)) return;
       p.name = val || "Untitled page";
       saveSchemaDebounced();
       renderPagesList();
@@ -1767,9 +1805,28 @@ CH 4  UI Rendering
       pageNameDisplayEl.textContent = p.name;
     }));
 
-    if (isFixedPage(p)) {
-      inspectorEl.appendChild(pEl(`This is a fixed checkout page (${templateLabel(p.template)}). It will always exist and always stay at the end of the left nav. You can still edit its groups/questions.`, "inlineHelp"));
-    }
+    // Page template JSON (import/export)
+    const pageJsonRow = document.createElement("div");
+    pageJsonRow.className = "row";
+    pageJsonRow.style.display = "flex";
+    pageJsonRow.style.gap = "8px";
+    pageJsonRow.style.flexWrap = "wrap";
+
+    const btnExportPage = document.createElement("button");
+    btnExportPage.type = "button";
+    btnExportPage.className = "btn ghost";
+    btnExportPage.textContent = "Export page JSON";
+    btnExportPage.addEventListener("click", () => exportPageJson(p.id));
+
+    const btnImportPage = document.createElement("button");
+    btnImportPage.type = "button";
+    btnImportPage.className = "btn ghost";
+    btnImportPage.textContent = "Import page JSON";
+    btnImportPage.addEventListener("click", () => importPageJsonInto(p.id));
+
+    pageJsonRow.appendChild(btnExportPage);
+    pageJsonRow.appendChild(btnImportPage);
+    inspectorEl.appendChild(pageJsonRow);
 
     inspectorEl.appendChild(divider());
 
@@ -3540,7 +3597,7 @@ CH 5  Actions (add/rename/delete/duplicate/move)
 
     const newPage = {
       id: pid,
-      name: `Page ${schema.pages.filter((p) => !isFixedPage(p)).length + 1}`,
+      name: `Page ${schema.pages.length + 1}`,
       template: "form",
       flow: [{ type: "group", id: gid }],
       groups: [
@@ -3567,13 +3624,7 @@ CH 5  Actions (add/rename/delete/duplicate/move)
       ],
     };
 
-    // Insert BEFORE the fixed checkout pages
-    const firstFixedIdx = schema.pages.findIndex((p) => isFixedPage(p));
-    if (firstFixedIdx >= 0) schema.pages.splice(firstFixedIdx, 0, newPage);
-    else schema.pages.push(newPage);
-
-    ensureFixedCheckoutPages();
-
+    schema.pages.push(newPage);
     selection.pageId = pid;
     selection.blockType = "group";
     selection.blockId = gid;
@@ -3583,55 +3634,8 @@ CH 5  Actions (add/rename/delete/duplicate/move)
     renderAll();
   }
 
-  // Ensure Quote / Summary / Payment pages always exist and stay last
-  function ensureFixedCheckoutPages() {
-    if (!Array.isArray(schema.pages)) schema.pages = [];
+  // Fixed checkout pages: removed
 
-    // 1) Create missing fixed pages
-    FIXED_CHECKOUT_PAGES.forEach((fp) => {
-      let p = schema.pages.find((x) => x.id === fp.id);
-      if (!p) {
-        p = {
-          id: fp.id,
-          name: fp.name,
-          template: fp.template,
-          isFixed: true,
-          flow: [],
-          groups: [],
-        };
-        // Append for now; we reorder at the end anyway
-        schema.pages.push(p);
-      }
-
-      // Always enforce identity
-      p.isFixed = true;
-      p.template = fp.template;
-      p.name = fp.name;
-
-      // If empty, seed with a preset
-      const hasStructure = (p.groups && p.groups.length) || (p.flow && p.flow.length);
-      if (!hasStructure) {
-        const preset = buildTemplatePreset(fp.template);
-        if (preset) {
-          p.groups = preset.groups;
-          p.flow = preset.flow;
-        }
-      }
-
-      // Ensure flow exists if groups exist
-      p.groups = Array.isArray(p.groups) ? p.groups : [];
-      p.flow = Array.isArray(p.flow) ? p.flow : [];
-      if (p.flow.length === 0 && p.groups.length) {
-        p.flow = p.groups.map((g) => ({ type: "group", id: g.id }));
-      }
-    });
-
-    // 2) Keep fixed pages at the end and keep their order Quote->Summary->Payment
-    const fixedIds = new Set(FIXED_CHECKOUT_PAGES.map((x) => x.id));
-    const editable = schema.pages.filter((p) => !fixedIds.has(p.id));
-    const fixed = FIXED_CHECKOUT_PAGES.map((fp) => schema.pages.find((p) => p.id === fp.id)).filter(Boolean);
-    schema.pages = [...editable, ...fixed];
-  }
 
   function addGroupToPage(pageId) {
     const p = getPage(pageId);
@@ -4784,7 +4788,160 @@ CH 4.3  Preview / runtime (continued)
   // -------------------------
   // Export / Import
   // -------------------------
-  function exportJson() {
+  
+  // -------------------------
+  // Page-level template JSON (import/export)
+  // -------------------------
+  function exportPageJson(pageId) {
+    const p = getPage(pageId);
+    if (!p) { alert("No page selected."); return; }
+
+    // Export only the page object (portable between journeys)
+    const payload = {
+      _schema: "page@1",
+      page: JSON.parse(JSON.stringify(p)),
+    };
+
+    const data = JSON.stringify(payload, null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+
+    const safeName = String(p.name || "page")
+      .toLowerCase()
+      .replace(/[^a-z0-9\-_]+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${safeName || "page"}.page.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function importPageJsonInto(pageId) {
+    const target = getPage(pageId);
+    if (!target) { alert("No page selected."); return; }
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json,.json";
+    input.style.display = "none";
+
+    input.addEventListener("change", async () => {
+      const file = input.files && input.files[0];
+      input.remove();
+      if (!file) return;
+
+      try {
+        const raw = await file.text();
+        const parsed = JSON.parse(raw);
+
+        const incoming = parsed?.page && parsed?._schema ? parsed.page : parsed;
+
+        if (!incoming || typeof incoming !== "object") throw new Error("Invalid JSON");
+        if (!Array.isArray(incoming.groups) || !Array.isArray(incoming.flow)) {
+          throw new Error("Page JSON must include 'flow' and 'groups' arrays.");
+        }
+
+        const imported = JSON.parse(JSON.stringify(incoming));
+
+        // Keep the existing page id in this journey (stable reference)
+        const keepId = target.id;
+
+        // Remap all nested IDs to avoid collisions
+        remapIdsInObject(imported);
+
+        imported.id = keepId;
+
+        // Replace page in schema
+        const idx = schema.pages.findIndex((p) => p.id === keepId);
+        if (idx < 0) throw new Error("Target page not found in schema.");
+
+        schema.pages[idx] = imported;
+
+        // Update selection to first item on the imported page
+        selection.pageId = keepId;
+        const first = (imported.flow || [])[0];
+        if (first && first.type === "text") {
+          selection.blockType = "text";
+          selection.blockId = first.id;
+          selection.groupId = null;
+          selection.questionId = null;
+        } else {
+          const g0 = (imported.groups || [])[0];
+          selection.blockType = "group";
+          selection.blockId = g0?.id || null;
+          selection.groupId = g0?.id || null;
+          selection.questionId = g0?.questions?.[0]?.id || null;
+        }
+
+        saveSchema();
+        renderAll(true);
+        alert("Page imported.");
+      } catch (e) {
+        alert("Page import failed: " + (e?.message || "Unknown error"));
+      }
+    });
+
+    document.body.appendChild(input);
+    input.click();
+  }
+
+  // Remap IDs in an object tree. Any string value matching a known id gets replaced.
+  // This is intentionally generic so it works with questions, logic rules, bindings, etc.
+  function remapIdsInObject(root) {
+    const idMap = new Map();
+
+    const guessPrefix = (id) => {
+      const m = String(id || "").match(/^([a-zA-Z]+)[\-_]/);
+      if (!m) return "id";
+      const p = m[1].toLowerCase();
+      if (p.length > 12) return "id";
+      return p;
+    };
+
+    const collectIds = (node) => {
+      if (!node) return;
+      if (Array.isArray(node)) {
+        node.forEach(collectIds);
+        return;
+      }
+      if (typeof node === "object") {
+        if (typeof node.id === "string" && node.id) {
+          if (!idMap.has(node.id)) idMap.set(node.id, uid(guessPrefix(node.id)));
+        }
+        Object.values(node).forEach(collectIds);
+      }
+    };
+
+    const replaceIds = (node) => {
+      if (!node) return;
+      if (Array.isArray(node)) {
+        node.forEach(replaceIds);
+        return;
+      }
+      if (typeof node === "object") {
+        Object.keys(node).forEach((k) => {
+          const v = node[k];
+          if (typeof v === "string" && idMap.has(v)) {
+            node[k] = idMap.get(v);
+          } else {
+            replaceIds(v);
+          }
+        });
+        if (typeof node.id === "string" && idMap.has(node.id)) {
+          node.id = idMap.get(node.id);
+        }
+      }
+    };
+
+    collectIds(root);
+    replaceIds(root);
+  }
+
+function exportJson() {
     saveSchema();
     const data = JSON.stringify(schema, null, 2);
     const blob = new Blob([data], { type: "application/json" });
@@ -5046,3 +5203,7 @@ CH 8  Event wiring (listeners)
   if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
   if (!Array.isArray(schema.pages)) schema.pages = [];
 })();
+
+
+
+// (Template registry removed — pages are imported/exported as JSON templates.)
