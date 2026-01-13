@@ -210,9 +210,11 @@ button, input, select, textarea{ font-family: inherit; }
 }
 .pageTop{
   display:flex;
-  justify-content:space-between;
+  justify-content:flex-start;
   align-items:flex-start;
   gap:10px;
+  flex-wrap:wrap;
+  flex-direction: column;
 }
 .pageName{
   font-weight: 760;
