@@ -1,21 +1,3 @@
-/*
-  Screen Builder — Fixed Template Components (JS)
-  ------------------------------------------------
-  Paste your current full .JS file below this header.
-
-  Plan for what we’ll implement in this canvas:
-  - Hard-coded template blocks for special pages (Quote / Summary / Payment)
-  - These blocks always render (even if no builder questions exist)
-  - Template blocks can read/playback answers captured earlier (risk summary)
-  - Builder-defined question blocks still render underneath/around templates
-  - Hooks + stable CSS classnames so you can style everything in your .css
-
-  Instructions:
-  1) Paste your current full JS beneath this comment.
-  2) Leave this header intact so we can find the insertion points.
-*/
-
-// ===== PASTE YOUR CURRENT FULL JS BELOW THIS LINE =====
 /* =============================================================================
 SCREEN BUILDER — CHAPTERD FILE (Insert-only scaffolding)
 
@@ -110,15 +92,6 @@ CH 7  Utilities (ids, cloning, formatting, sanitise)
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
   }
-
-  // ---------------------------------------------------------------------------
-  // Classname bridge
-  // WHY: Your CSS has moved to the new qnb-* naming, but some preview DOM nodes
-  // were still using legacy .preview* classnames only.
-  // Fix: Always output BOTH class sets so old and new CSS can style the same DOM.
-  // ---------------------------------------------------------------------------
-  const cx = (...names) => names.filter(Boolean).join(" ");
-  const tplClass = (tpl, suffix) => `qnb-${String(tpl || "form").toLowerCase()}-${suffix}`;
 
   // Very small, safe rich-text sanitizer (allows only basic formatting + lists)
   function sanitizeRichHtml(inputHtml) {
@@ -1711,18 +1684,11 @@ CH 4  UI Rendering
       .map((fp) => schema.pages.find((p) => p.id === fp.id))
       .filter(Boolean);
 
-    // IMPORTANT:
-    // We must store *schema index* for drag/drop moves (because schema.pages includes fixed pages).
-    // We also keep an *editable index* for enabling/disabling move up/down buttons.
-    const renderPageItem = (p, schemaIdx, editableIdx, isFixed) => {
+    const renderPageItem = (p, pIdx, isFixed) => {
       p.flow = Array.isArray(p.flow) ? p.flow : p.groups.map((g) => ({ type: "group", id: g.id }));
 
       const pageDiv = document.createElement("div");
-      pageDiv.className =
-        "pageItem" +
-        (p.id === selection.pageId ? " active" : "") +
-        (isFixed ? " fixed" : "") +
-        ` tpl-${String(p.template || "form").toLowerCase()}`;
+      pageDiv.className = "pageItem" + (p.id === selection.pageId ? " active" : "") + (isFixed ? " fixed" : "") + ` tpl-${String(p.template || "form").toLowerCase()}`;
 
       // Expose template to CSS selectors
       pageDiv.dataset.pageTemplate = String(p.template || "form").toLowerCase();
@@ -1730,13 +1696,10 @@ CH 4  UI Rendering
       // Make page draggable (builder-only) — but never for fixed pages
       pageDiv.draggable = !preview.open && !isFixed;
       pageDiv.dataset.pageId = p.id;
-      pageDiv.dataset.schemaIndex = String(schemaIdx);
+      pageDiv.dataset.pageIndex = String(pIdx);
 
       pageDiv.addEventListener("dragstart", (e) => {
-        if (preview.open || isFixed) {
-          e.preventDefault();
-          return;
-        }
+        if (preview.open || isFixed) { e.preventDefault(); return; }
         if (!canStartDragFrom(e.target)) {
           e.preventDefault();
           return;
@@ -1744,7 +1707,7 @@ CH 4  UI Rendering
         markDragging(true);
         e.dataTransfer.effectAllowed = "move";
         e.dataTransfer.setData("text/og-page", p.id);
-        e.dataTransfer.setData("text/og-page-schema-index", String(schemaIdx));
+        e.dataTransfer.setData("text/og-page-index", String(pIdx));
         pageDiv.classList.add("isDragging");
       });
 
@@ -1771,12 +1734,11 @@ CH 4  UI Rendering
         e.preventDefault();
         pageDiv.classList.remove("isDragOver");
 
-        const fromIdx = Number(e.dataTransfer.getData("text/og-page-schema-index"));
-        const toIdx = Number(pageDiv.dataset.schemaIndex);
+        const fromIdx = Number(e.dataTransfer.getData("text/og-page-index"));
+        const toIdx = Number(pageDiv.dataset.pageIndex);
         if (!Number.isFinite(fromIdx) || !Number.isFinite(toIdx)) return;
         if (fromIdx === toIdx) return;
 
-        // Move within schema.pages by schema indices, then re-enforce fixed pages at end
         moveItem(schema.pages, fromIdx, toIdx);
         ensureFixedCheckoutPages();
         saveSchema();
@@ -1859,21 +1821,20 @@ CH 4  UI Rendering
         });
 
         const upBtn = iconButton("↑", "Move up");
-        upBtn.disabled = editableIdx === 0;
+        upBtn.disabled = pIdx === 0;
         upBtn.addEventListener("click", (e) => {
           e.stopPropagation();
-          // Move within schema.pages by schema index
-          moveItem(schema.pages, schemaIdx, schemaIdx - 1);
+          moveItem(schema.pages, pIdx, pIdx - 1);
           ensureFixedCheckoutPages();
           saveSchema();
           renderAll();
         });
 
         const downBtn = iconButton("↓", "Move down");
-        downBtn.disabled = editableIdx === editablePages.length - 1;
+        downBtn.disabled = pIdx === editablePages.length - 1;
         downBtn.addEventListener("click", (e) => {
           e.stopPropagation();
-          moveItem(schema.pages, schemaIdx, schemaIdx + 1);
+          moveItem(schema.pages, pIdx, pIdx + 1);
           ensureFixedCheckoutPages();
           saveSchema();
           renderAll();
@@ -2007,9 +1968,10 @@ CH 4  UI Rendering
     };
 
     // Render editable pages (in order)
-    editablePages.forEach((p, editableIdx) => {
-      const schemaIdx = schema.pages.findIndex((x) => x.id === p.id);
-      renderPageItem(p, schemaIdx, editableIdx, false);
+    editablePages.forEach((p, idx) => {
+      // pIdx in schema.pages for DnD operations
+      const pIdx = schema.pages.findIndex((x) => x.id === p.id);
+      renderPageItem(p, idx, false);
     });
 
     // Divider label
@@ -4305,10 +4267,7 @@ CH 6  Logic (validation, conditional display) + Flow building
   }
 
   function buildPreviewSteps() {
-    // Question mode: returns visible questions + any active follow-up questions,
-    // BUT for fixed checkout pages (Quote/Summary/Payment) we insert a SINGLE
-    // page-step so Question-by-question renders IDENTICALLY to Page-at-a-time.
-
+    // Question mode: returns visible questions + any active follow-up questions
     const all = getAllQuestionsInOrder(schema);
     const byId = Object.fromEntries(all.map((q) => [q.id, q]));
 
@@ -4320,64 +4279,28 @@ CH 6  Logic (validation, conditional display) + Flow building
       });
     });
 
-    // Helper: determine if a page is one of our special checkout templates
-    const isCheckoutTemplate = (tpl) => {
-      const t = String(tpl || "").toLowerCase();
-      return t === "quote" || t === "summary" || t === "payment";
-    };
+    const mainVisible = all.filter((q) => {
+      if (groupVisible[q.groupId] === false) return false;
+      return questionShouldShow(q, byId, preview.answers);
+    });
 
     const steps = [];
 
-    // Build steps in PAGE order so we can inject checkout page-steps.
-    schema.pages.forEach((p) => {
-      const tpl = String(p.template || "form").toLowerCase();
+    mainVisible.forEach((q) => {
+      steps.push(q);
 
-      // ✅ Checkout pages: one step per page (identical rendering to page mode)
-      if (isCheckoutTemplate(tpl)) {
-        steps.push({
-          id: `__page__${p.id}`,
-          type: "__page__",
-          pageId: p.id,
-          pageName: p.name,
-          groupName: "",
-        });
-        return;
-      }
-
-      // Normal pages: question-by-question
-      p.groups.forEach((g) => {
-        if (groupVisible[g.id] === false) return;
-
-        (g.questions || []).forEach((q) => {
-          // Respect question conditional logic
-          const qCtx = byId[q.id];
-          if (!questionShouldShow(qCtx, byId, preview.answers)) return;
-
-          // Main question step
+      if (followUpMatches(q, preview.answers)) {
+        const fuSteps = getActiveFollowUpSteps(q, preview.answers);
+        fuSteps.forEach((fqStep) => {
           steps.push({
-            id: q.id,
-            pageId: p.id,
-            groupId: g.id,
-            pageName: p.name,
-            groupName: g.name,
-            ...q,
+            ...fqStep,
+            pageId: q.pageId,
+            groupId: q.groupId,
+            pageName: q.pageName,
+            groupName: q.groupName,
           });
-
-          // Follow-ups (if active)
-          if (followUpMatches(q, preview.answers)) {
-            const fuSteps = getActiveFollowUpSteps(q, preview.answers);
-            fuSteps.forEach((fqStep) => {
-              steps.push({
-                ...fqStep,
-                pageId: p.id,
-                groupId: g.id,
-                pageName: p.name,
-                groupName: g.name,
-              });
-            });
-          }
         });
-      });
+      }
     });
 
     return steps;
@@ -4502,20 +4425,16 @@ CH 4.3  Preview / runtime (continued)
 
     // Render the current step
     const card = document.createElement("div");
-    card.className = cx(
-      "previewCard",
-      "qnb-preview-card",
-      tplClass(currentPage?.template || "form", "card")
-    );
+    card.className = "previewCard";
 
     // Header: Page title, then Group title + description (matches page mode layout)
     const pageTitleEl = document.createElement("div");
-    pageTitleEl.className = cx("pQ", "qnb-preview-page-title");
+    pageTitleEl.className = "pQ";
     pageTitleEl.textContent = step.pageName || "Untitled page";
     card.appendChild(pageTitleEl);
 
     const groupTitleEl = document.createElement("div");
-    groupTitleEl.className = cx("previewGroupTitle", "qnb-preview-group-title");
+    groupTitleEl.className = "previewGroupTitle";
     groupTitleEl.textContent = step.groupName || "Untitled group";
     card.appendChild(groupTitleEl);
 
@@ -4532,26 +4451,26 @@ CH 4.3  Preview / runtime (continued)
 
     // IMPORTANT: question title must NOT reuse the page title class
     const qEl = document.createElement("div");
-    qEl.className = cx("previewQuestionTitle", "qnb-preview-question-title");
+    qEl.className = "previewQuestionTitle";
     qEl.textContent = step.title || "Untitled question";
 
     const helpEl = document.createElement("div");
-    helpEl.className = cx("pHelp", "qnb-preview-help");
+    helpEl.className = "pHelp";
     helpEl.textContent = step.help || "";
 
     const contentEl = document.createElement("div");
-    contentEl.className = cx("previewQuestionContent", "qnb-preview-question-content");
+    contentEl.className = "previewQuestionContent";
     const contentHtml = step.content?.enabled ? sanitizeRichHtml(step.content.html || "") : "";
     contentEl.innerHTML = contentHtml;
     contentEl.style.display = contentHtml ? "block" : "none";
 
     const errEl = document.createElement("div");
-    errEl.className = cx("pError", "qnb-preview-error");
+    errEl.className = "pError";
     errEl.textContent = preview.lastError || "";
     errEl.style.display = preview.lastError ? "block" : "none";
 
     const inputWrap = document.createElement("div");
-    inputWrap.className = cx("pInputWrap", "qnb-preview-input-wrap");
+    inputWrap.className = "pInputWrap";
 
     // Build input control per type
     const setAnswer = (v) => {
@@ -4798,11 +4717,7 @@ CH 4.3  Preview / runtime (continued)
     });
 
     const card = document.createElement("div");
-    card.className = cx(
-      "previewCard",
-      "qnb-preview-card",
-      tplClass(p?.template || "form", "card")
-    );
+    card.className = "previewCard";
 
     // Page header
     const header = document.createElement("div");
@@ -4811,7 +4726,7 @@ CH 4.3  Preview / runtime (continued)
     card.appendChild(header);
 
     const stack = document.createElement("div");
-    stack.className = cx("previewPageStack", "qnb-preview-page-stack");
+    stack.className = "previewPageStack";
 
     // Render page flow (text blocks + groups)
     (p.flow || []).forEach((it) => {
@@ -4821,16 +4736,16 @@ CH 4.3  Preview / runtime (continued)
         const body = sanitizeRichHtml(it.bodyHtml || "");
 
         const block = document.createElement("div");
-        block.className = cx("previewTextBlock", "qnb-preview-text-block");
+        block.className = "previewTextBlock";
 
         const titleEl = document.createElement(level === "body" ? "div" : level);
-        titleEl.className = cx("previewTextBlockTitle", "qnb-preview-text-title");
+        titleEl.className = "previewTextBlockTitle";
         titleEl.textContent = title;
         if (title) block.appendChild(titleEl);
 
         if (body) {
           const bodyEl = document.createElement("div");
-          bodyEl.className = cx("pHelp", "previewTextBlockBody", "qnb-preview-text-body");
+          bodyEl.className = "pHelp previewTextBlockBody";
           bodyEl.innerHTML = body;
           block.appendChild(bodyEl);
         }
@@ -4845,10 +4760,10 @@ CH 4.3  Preview / runtime (continued)
         if (groupVisible[g.id] === false) return;
 
         const groupWrap = document.createElement("div");
-        groupWrap.className = cx("previewGroup", "qnb-preview-group");
+        groupWrap.className = "previewGroup";
 
         const gTitle = document.createElement("div");
-        gTitle.className = cx("previewGroupTitle", "qnb-preview-group-title");
+        gTitle.className = "previewGroupTitle";
         gTitle.textContent = g.name || "Untitled group";
         groupWrap.appendChild(gTitle);
 
@@ -4856,7 +4771,7 @@ CH 4.3  Preview / runtime (continued)
           const d = sanitizeRichHtml(g.description.html || "");
           if (d) {
             const dEl = document.createElement("div");
-            dEl.className = cx("pHelp", "previewGroupDesc", "qnb-preview-group-desc");
+            dEl.className = "pHelp previewGroupDesc";
             dEl.innerHTML = d;
             groupWrap.appendChild(dEl);
           }
@@ -4866,10 +4781,10 @@ CH 4.3  Preview / runtime (continued)
 
         visibleQuestions.forEach((qq) => {
           const qBlock = document.createElement("div");
-          qBlock.className = cx("previewQuestion", "qnb-preview-question");
+          qBlock.className = "previewQuestion";
 
           const qTitle = document.createElement("div");
-          qTitle.className = cx("previewQuestionTitle", "qnb-preview-question-title");
+          qTitle.className = "previewQuestionTitle";
           qTitle.textContent = qq.title || "Untitled question";
           qBlock.appendChild(qTitle);
 
@@ -4877,7 +4792,7 @@ CH 4.3  Preview / runtime (continued)
             const c = sanitizeRichHtml(qq.content.html || "");
             if (c) {
               const cEl = document.createElement("div");
-              cEl.className = cx("previewQuestionContent", "qnb-preview-question-content");
+              cEl.className = "previewQuestionContent";
               cEl.innerHTML = c;
               qBlock.appendChild(cEl);
             }
