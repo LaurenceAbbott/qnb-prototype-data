@@ -5227,6 +5227,4 @@ CH 8  Event wiring (listeners)
   if (!Array.isArray(schema.pages)) schema.pages = [];
 })();
 
-
-
 // (Template registry removed — pages are imported/exported as JSON templates.)
