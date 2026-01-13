@@ -477,10 +477,16 @@ function setTemplateContext(template) {
           {
             type: "text",
             id: uid("txt"),
-            title: "Your quote",
+            title: "Your cover",
             level: "h2",
+          },
+          {
+            type: "text",
+            id: uid("txt"),
+            title: "Your online all the time cover.",
+            level: "h3",
             bodyHtml:
-              "<p>This is a generic <strong>Quote</strong> page template. Use it to present premium, cover and optional add-ons before the customer proceeds.</p>",
+              "<p>This means we save you money and keep our call centre for claims only!</p>",
           },
           {
             type: "text",
