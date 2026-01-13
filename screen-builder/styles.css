@@ -625,6 +625,8 @@ button, input, select, textarea{ font-family: inherit; }
     display: flex;
     gap: 10px;
     margin-top: 0px;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 .choiceBtn {
     text-align: center;
