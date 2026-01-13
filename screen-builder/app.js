@@ -4371,7 +4371,7 @@ CH 4.3  Preview / runtime (continued)
   }
 
   function buildPreviewInputControl(step, inputWrap, setAnswer, getAnswer, rerender) {
-    if (step.type === ) {
+    if (step.type === "display") {
       const d = step.display || {};
       const v = String(d.variant || "info");
       const tone = String(d.tone || "neutral");
@@ -5230,7 +5230,7 @@ CH 8  Event wiring (listeners)
         // Validate required questions (page mode: collect per-field errors)
         const errors = {};
         for (const qq of visibleQ) {
-          if (qq.type === ) continue;
+          if (qq.type === "display") continue;
           if (!qq.required) continue;
           const ans = preview.answers[qq.id];
           const empty =
