@@ -4353,7 +4353,7 @@ CH 4.3  Preview / runtime (continued)
 
     buildPreviewInputControl(step, inputWrap, setAnswer, getAnswer, () => renderPreview());
 
-    if (step.type !== ) {
+    if (step.type !== "display") {
       card.appendChild(qEl);
       if (contentHtml) card.appendChild(contentEl);
       if (step.help) card.appendChild(helpEl);
