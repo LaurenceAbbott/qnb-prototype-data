@@ -1,4 +1,16 @@
 
+
+/* ================================
+   INSPECTOR HIERARCHY (UX)
+   --------------------------------
+   1) Page settings (accordion)
+   2) Group settings (accordion)
+   3) Question / Display settings
+   Display elements are created via
+   + Text block only.
+   ================================ */
+
+
 // --- ITEM LABEL HELPERS ---
 const DISPLAY_VARIANT_LABELS = {
   info: "Info box",
@@ -8,8 +20,8 @@ const DISPLAY_VARIANT_LABELS = {
 };
 
 function getItemLabel(item) {
-  if (item.type === "display") {
-    const base = DISPLAY_VARIANT_LABELS[item.variant] || "Display";
+  if (item.type === ) {
+    const base = DISPLAY_VARIANT_LABELS[item.variant] || ;
     return item.title ? `${base}: ${item.title}` : base;
   }
   return getItemLabel(item);
@@ -328,7 +340,7 @@ CH 2  Data Models (schemas, types, templates)
     { key: "radio", label: "Radio" },
     { key: "checkboxes", label: "Checkboxes" },
     { key: "yesno", label: "Yes / No" },
-    { key: "display", label: "Display element" },
+    { key: label: "Display element" },
   ];
 
   // Display elements (non-input blocks that can be placed inside groups)
@@ -2357,7 +2369,7 @@ actions.appendChild(btnGroupOpts);
     inspectorEl.appendChild(sectionTitle("Question"));
 
     // Display elements should not show question-only fields
-    if (q.type !== "display") {
+    if (q.type !== ) {
       inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
         q.title = val || "Untitled question";
         saveSchemaDebounced();
@@ -3871,8 +3883,7 @@ CH 5  Actions (add/rename/delete/duplicate/move)
     const qid = uid("q");
     const q = {
       id: qid,
-      type: "display",
-      title: variant === "price" ? "Big price" : "Display element",
+      type: title: variant === "price" ? "Big price" : "Display element",
       required: false,
       help: "",
       placeholder: "",
@@ -4337,7 +4348,7 @@ CH 4.3  Preview / runtime (continued)
 
     buildPreviewInputControl(step, inputWrap, setAnswer, getAnswer, () => renderPreview());
 
-    if (step.type !== "display") {
+    if (step.type !== ) {
       card.appendChild(qEl);
       if (contentHtml) card.appendChild(contentEl);
       if (step.help) card.appendChild(helpEl);
@@ -4355,7 +4366,7 @@ CH 4.3  Preview / runtime (continued)
   }
 
   function buildPreviewInputControl(step, inputWrap, setAnswer, getAnswer, rerender) {
-    if (step.type === "display") {
+    if (step.type === ) {
       const d = step.display || {};
       const v = String(d.variant || "info");
       const tone = String(d.tone || "neutral");
@@ -5214,7 +5225,7 @@ CH 8  Event wiring (listeners)
         // Validate required questions (page mode: collect per-field errors)
         const errors = {};
         for (const qq of visibleQ) {
-          if (qq.type === "display") continue;
+          if (qq.type === ) continue;
           if (!qq.required) continue;
           const ans = preview.answers[qq.id];
           const empty =
