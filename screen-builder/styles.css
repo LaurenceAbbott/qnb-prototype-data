@@ -509,10 +509,13 @@ button, input, select, textarea{ font-family: inherit; }
   inset:0;
   background: rgba(0,0,0,0.60);
   backdrop-filter: blur(10px);
-  display:grid;
+  display:none;
   place-items:center;
   padding: 22px;
   z-index: 999;
+}
+.modalBackdrop.isOpen{
+  display:grid;
 }
 .modal {
     width: min(980px, 100%);
@@ -1316,7 +1319,5 @@ div#inspectorSub {
   .topbar{ flex-direction:column; align-items:flex-start; gap:10px; }
   .topActions{ width:100%; justify-content:flex-end; }
 }
-  .modalBackdrop{ display:none; }
-  .modalBackdrop.isOpen{ display:grid; }
 
 }
