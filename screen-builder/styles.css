@@ -1235,6 +1235,70 @@ div#inspectorSub {
     display: none;
 }
 
+  /* =========================================================
+   Display elements (new question type: "display")
+========================================================= */
+
+.displayEl {
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  padding: 16px;
+  background: rgba(255,255,255,0.03);
+}
+
+.displayEl.tone-info { border-color: rgba(130,222,250,0.45); }
+.displayEl.tone-success { border-color: rgba(120,255,170,0.35); }
+.displayEl.tone-warning { border-color: rgba(255,210,120,0.40); }
+
+.displayTitle {
+  font-weight: 780;
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.displaySubtitle {
+  opacity: 0.8;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.displayBody {
+  opacity: 0.95;
+  line-height: 1.4;
+}
+
+.displayDivider {
+  border: 0;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  margin: 6px 0;
+}
+
+/* Big price variant */
+.display-price {
+  padding: 18px;
+}
+
+.displayPriceLine {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.displayPriceValue {
+  font-size: 42px;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+/* Hero variant (optional styling) */
+.display-hero {
+  padding: 20px;
+  background: rgba(15,64,197,0.12);
+  border-color: rgba(130,222,250,0.25);
+}
+
 
 @media (max-width: 1400px){
   .layout{ grid-template-columns: 320px 1fr; }
