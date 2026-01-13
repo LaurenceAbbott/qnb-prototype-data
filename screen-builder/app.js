@@ -4850,10 +4850,17 @@ CH 4.3  Preview / runtime (continued)
     page.flow.forEach((it) => {
       if (it.type === "text") {
         renderTextBlock(it);
+        return;
       }
+
       if (it.type === "group") {
         const g = page.groups.find((gg) => gg.id === it.id);
-        if (g) renderGroup(g, page);
+        if (!g) return;
+
+        // Respect group visibility (used by preview modes)
+        if (typeof groupVisible === "object" && groupVisible[g.id] === false) return;
+
+        renderGroup(g, page);
       }
     });
   }
