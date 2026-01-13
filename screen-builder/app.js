@@ -637,7 +637,7 @@ CH 1  State (defaults, load/save, migrate)
   // Preview state
   let preview = {
     open: false,
-    mode: "question", // "question" | "page"
+    mode: "page", // "page"
     steps: [],
     index: 0,
     answers: {}, // qid -> value (shared across modes)
@@ -649,6 +649,7 @@ CH 1  State (defaults, load/save, migrate)
   let uiState = {
     selectedArrayId: null,
     newArrayName: "",
+    groupOptionsOpen: false,
   };
 
   // Prevent auto-focus stealing when an option click triggers a rerender (e.g. radio -> jumps to a textarea)
@@ -1176,6 +1177,9 @@ CH 4  UI Rendering
   let pageActionsRowEl = null;
   let pagePreviewSelectEl = null;
 
+  // Group options popover (UI only)
+  let groupOptionsPopoverEl = null;
+
   const btnAddPage = $("#btnAddPage");
   const btnAddGroup = $("#btnAddGroup");
   const btnAddQuestion = $("#btnAddQuestion");
@@ -1335,10 +1339,89 @@ CH 4  UI Rendering
     pageNameDisplayEl.textContent = p ? p.name : "—";
     groupNameDisplayEl.textContent = g ? g.name : "—";
 
+    renderGroupOptionsPopover();
     renderPageHeaderControls();
   }
 
-  function ensurePageHeaderControls() {
+  
+  function renderGroupOptionsPopover() {
+    // Show popover when toggled on and we have a group context
+    const p = getPage(selection.pageId);
+    const g = getGroup(selection.pageId, selection.groupId);
+
+    // Ensure element exists
+    if (!groupOptionsPopoverEl) {
+      groupOptionsPopoverEl = document.createElement("div");
+      groupOptionsPopoverEl.className = "panel groupOptionsPopover";
+      groupOptionsPopoverEl.style.position = "fixed";
+      groupOptionsPopoverEl.style.right = "24px";
+      groupOptionsPopoverEl.style.top = "180px";
+      groupOptionsPopoverEl.style.width = "340px";
+      groupOptionsPopoverEl.style.zIndex = "9999";
+      groupOptionsPopoverEl.style.display = "none";
+      groupOptionsPopoverEl.style.padding = "14px";
+      groupOptionsPopoverEl.style.borderRadius = "16px";
+      groupOptionsPopoverEl.style.boxShadow = "0 20px 60px rgba(0,0,0,0.45)";
+      document.body.appendChild(groupOptionsPopoverEl);
+
+      // Close if user clicks outside
+      document.addEventListener("click", (e) => {
+        if (!uiState.groupOptionsOpen) return;
+        const inside = groupOptionsPopoverEl && groupOptionsPopoverEl.contains(e.target);
+        const isBtn = e.target && e.target.closest && e.target.closest(".btn") && e.target.closest(".btn").textContent === "Group options";
+        if (!inside && !isBtn) {
+          uiState.groupOptionsOpen = false;
+          renderAll(true);
+        }
+      }, true);
+    }
+
+    const shouldShow = uiState.groupOptionsOpen && !!p && !!g;
+
+    groupOptionsPopoverEl.style.display = shouldShow ? "block" : "none";
+    if (!shouldShow) return;
+
+    // Build content
+    groupOptionsPopoverEl.innerHTML = "";
+    const title = document.createElement("div");
+    title.style.fontWeight = "780";
+    title.style.fontSize = "18px";
+    title.style.marginBottom = "10px";
+    title.textContent = "Group options";
+    groupOptionsPopoverEl.appendChild(title);
+
+    const sub = document.createElement("div");
+    sub.className = "muted";
+    sub.style.marginBottom = "12px";
+    sub.textContent = g.name || "Selected group";
+    groupOptionsPopoverEl.appendChild(sub);
+
+    // Description toggle
+    g.description = g.description || { enabled: false, html: "" };
+    groupOptionsPopoverEl.appendChild(toggleRow("Add group description", g.description.enabled === true, (on) => {
+      g.description.enabled = on;
+      if (!g.description.html) g.description.html = "<p></p>";
+      saveSchema();
+      renderAll(true);
+    }));
+
+    // Logic toggle (only enabling/disabling here)
+    groupOptionsPopoverEl.appendChild(document.createElement("div")).style.height = "10px";
+    g.logic = g.logic || { enabled: false, rules: [] };
+    groupOptionsPopoverEl.appendChild(toggleRow("Enable group logic", g.logic.enabled === true, (on) => {
+      g.logic.enabled = on;
+      saveSchema();
+      renderAll(true);
+    }));
+
+    const note = document.createElement("div");
+    note.className = "inlineHelp";
+    note.style.marginTop = "10px";
+    note.textContent = "Move/delete group controls are available on the group header.";
+    groupOptionsPopoverEl.appendChild(note);
+  }
+
+function ensurePageHeaderControls() {
     if (!pageNameDisplayEl || pageHeaderControlsEl) return;
 
     const parent = pageNameDisplayEl.parentElement;
@@ -1391,7 +1474,7 @@ CH 4  UI Rendering
     const btnExportPage = document.createElement("button");
     btnExportPage.type = "button";
     btnExportPage.className = "btn ghost";
-    btnExportPage.textContent = "Export page JSON";
+    btnExportPage.textContent = "Export";
     btnExportPage.addEventListener("click", () => {
       const p = getPage(selection.pageId);
       if (!p) return;
@@ -1401,7 +1484,7 @@ CH 4  UI Rendering
     const btnImportPage = document.createElement("button");
     btnImportPage.type = "button";
     btnImportPage.className = "btn ghost";
-    btnImportPage.textContent = "Import page JSON";
+    btnImportPage.textContent = "Import";
     btnImportPage.addEventListener("click", () => {
       const p = getPage(selection.pageId);
       if (!p) return;
@@ -1417,7 +1500,6 @@ CH 4  UI Rendering
     pagePreviewSelectEl.style.maxWidth = "260px";
     pagePreviewSelectEl.style.display = "none";
     pagePreviewSelectEl.innerHTML = `
-      <option value="question">Question-by-question (Typeform)</option>
       <option value="page">Page-at-a-time (layout)</option>
     `;
     pagePreviewSelectEl.addEventListener("change", (e) => {
@@ -1655,73 +1737,6 @@ CH 4  UI Rendering
       top.appendChild(actions);
       pageDiv.appendChild(top);
 
-      // Flow chips
-      const chips = document.createElement("div");
-      chips.className = "groupsMini";
-
-      p.flow.forEach((it) => {
-        if (it.type === "group") {
-          const g = (p.groups || []).find((gg) => gg.id === it.id);
-          const chip = document.createElement("button");
-          chip.type = "button";
-          chip.className =
-            "groupChip" +
-            (p.id === selection.pageId && selection.blockType === "group" && selection.groupId === g?.id ? " active" : "");
-          chip.textContent = g?.name || "(Missing group)";
-          chip.addEventListener("click", (e) => {
-            e.stopPropagation();
-            selection.pageId = p.id;
-            selection.blockType = "group";
-            selection.blockId = g?.id || null;
-            selection.groupId = g?.id || null;
-            selection.questionId = g?.questions?.[0]?.id || null;
-            renderAll();
-          });
-          chips.appendChild(chip);
-        } else if (it.type === "text") {
-          const chip = document.createElement("button");
-          chip.type = "button";
-          chip.className =
-            "groupChip" +
-            (p.id === selection.pageId && selection.blockType === "text" && selection.blockId === it.id ? " active" : "");
-          chip.textContent = it.title ? `📝 ${it.title}` : "📝 Text block";
-          chip.addEventListener("click", (e) => {
-            e.stopPropagation();
-            selection.pageId = p.id;
-            selection.blockType = "text";
-            selection.blockId = it.id;
-            selection.groupId = null;
-            selection.questionId = null;
-            renderAll();
-          });
-          chips.appendChild(chip);
-        }
-      });
-
-      const addTextChip = document.createElement("button");
-      addTextChip.type = "button";
-      addTextChip.className = "groupChip";
-      addTextChip.textContent = "+ Text";
-      addTextChip.addEventListener("click", (e) => {
-        e.stopPropagation();
-        selection.pageId = p.id;
-        addTextBlockToPage(p.id);
-      });
-      chips.appendChild(addTextChip);
-
-      const addGroupChip = document.createElement("button");
-      addGroupChip.type = "button";
-      addGroupChip.className = "groupChip";
-      addGroupChip.textContent = "+ Group";
-      addGroupChip.addEventListener("click", (e) => {
-        e.stopPropagation();
-        selection.pageId = p.id;
-        addGroupToPage(p.id);
-      });
-      chips.appendChild(addGroupChip);
-
-      pageDiv.appendChild(chips);
-
       // click page selects it (default to first flow item)
       pageDiv.addEventListener("click", () => {
         if (isDraggingUI) return;
@@ -1837,6 +1852,19 @@ function renderCanvas() {
       btnAddT.textContent = "+ Text block";
       btnAddT.addEventListener("click", () => addTextBlockToPage(p.id));
 
+            const btnGroupOpts = document.createElement("button");
+      btnGroupOpts.type = "button";
+      btnGroupOpts.className = "btn ghost";
+      btnGroupOpts.textContent = "Group options";
+      btnGroupOpts.addEventListener("click", () => {
+        uiState.groupOptionsOpen = !uiState.groupOptionsOpen;
+        // Ensure we have a current group context
+        const gCtx = selection.groupId || (p.groups || [])[0]?.id || null;
+        if (gCtx) selection.groupId = gCtx;
+        renderAll(true);
+      });
+
+actions.appendChild(btnGroupOpts);
       actions.appendChild(btnAddT);
       actions.appendChild(btnAddG);
       canvasEl.appendChild(actions);
@@ -4245,9 +4273,10 @@ CH 5  Actions (add/rename/delete/duplicate/move)
     selection.blockId = gid;
     selection.groupId = gid;
     selection.questionId = null;
+    uiState.groupOptionsOpen = true;
 
     saveSchema();
-    renderAll();
+    renderAll(true);
   }
 
   function addQuestion() {
@@ -4624,7 +4653,7 @@ CH 4.3  Preview / runtime (continued)
     if (!previewBackdrop) return;
 
     // Load persisted preview mode if present
-    if (schema?.meta?.previewMode) preview.mode = schema.meta.previewMode;
+    preview.mode = "page";
 
     preview.open = true;
     preview.index = 0;
@@ -5771,9 +5800,7 @@ CH 8  Event wiring (listeners)
   }
 
   // Restore preview mode preference if present
-  if (schema?.meta?.previewMode) {
-    preview.mode = schema.meta.previewMode;
-  }
+  preview.mode = "page";
 
   wire();
   // Builder-only AI Assist (safe even if CSS/DOM doesn't have specific hooks)
@@ -5784,5 +5811,7 @@ CH 8  Event wiring (listeners)
   if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
   if (!Array.isArray(schema.pages)) schema.pages = [];
 })();
+
+
 
 // (Template registry removed — pages are imported/exported as JSON templates.)
