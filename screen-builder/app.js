@@ -5787,7 +5787,4 @@ CH 8  Event wiring (listeners)
   if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
   if (!Array.isArray(schema.pages)) schema.pages = [];
 })();
-
-
-
 // (Template registry removed — pages are imported/exported as JSON templates.)
