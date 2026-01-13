@@ -15,51 +15,6 @@
   2) Leave this header intact so we can find the insertion points.
 */
 
-// ===== FIXED TEMPLATE RENDERERS (SYSTEM OWNED) =====
-
-function renderQuoteTemplate(page) {
-  const wrap = document.createElement("div");
-  wrap.className = "qnb-template qnb-template-quote";
-
-  wrap.innerHTML = `
-    <div class="qnb-preview-card qnb-quote-card">
-      <div class="qnb-preview-group-title">Your quote</div>
-      <div class="qnb-quote-priceCard">Quote price will appear here</div>
-      <div class="qnb-quote-coverSummary">Cover summary will appear here</div>
-    </div>
-  `;
-
-  return wrap;
-}
-
-function renderSummaryTemplate(page) {
-  const wrap = document.createElement("div");
-  wrap.className = "qnb-template qnb-template-summary";
-
-  wrap.innerHTML = `
-    <div class="qnb-preview-card qnb-summary-card">
-      <div class="qnb-preview-group-title">Check your answers</div>
-      <div class="qnb-summary-reviewTable">Answer playback will appear here</div>
-    </div>
-  `;
-
-  return wrap;
-}
-
-function renderPaymentTemplate(page) {
-  const wrap = document.createElement("div");
-  wrap.className = "qnb-template qnb-template-payment";
-
-  wrap.innerHTML = `
-    <div class="qnb-preview-card qnb-payment-card">
-      <div class="qnb-preview-group-title">Payment</div>
-      <div class="qnb-payment-summaryCard">Payment summary will appear here</div>
-    </div>
-  `;
-
-  return wrap;
-}
-
 // ===== PASTE YOUR CURRENT FULL JS BELOW THIS LINE =====
 /* =============================================================================
 SCREEN BUILDER — CHAPTERD FILE (Insert-only scaffolding)
@@ -2069,8 +2024,7 @@ CH 4  UI Rendering
 
     // Render fixed pages (Quote, Summary, Payment)
     fixedPages.forEach((p) => {
-      const schemaIdx = schema.pages.findIndex((x) => x.id === p.id);
-      renderPageItem(p, schemaIdx, -1, true);
+      renderPageItem(p, -1, true);
     });
   }
 
@@ -4832,227 +4786,300 @@ CH 4.3  Preview / runtime (continued)
   }
 
   function renderPreviewPage(pageId) {
-    // Page-at-a-time preview renderer.
-    // Renders fixed template blocks (Quote/Summary/Payment) first, then the page flow.
+    const p = getPage(pageId);
+    if (!p) return;
 
-    const page = typeof pageId === "string" ? getPage(pageId) : pageId;
-    if (!page || !previewStage) return;
-
-    // Wrapper stack for a page
-    const stack = document.createElement("div");
-    stack.className = "previewPageStack qnb-preview-page-stack";
-
-    // Compute visibility context (group + question logic)
+    // Build visibility maps
     const all = getAllQuestionsInOrder(schema);
     const byId = Object.fromEntries(all.map((q) => [q.id, q]));
-
     const groupVisible = {};
-    (page.groups || []).forEach((g) => {
+    p.groups.forEach((g) => {
       groupVisible[g.id] = groupShouldShow(g, byId, preview.answers);
     });
 
-    const questionVisible = (qCtx) => questionShouldShow(qCtx, byId, preview.answers);
+    const card = document.createElement("div");
+    card.className = cx(
+      "previewCard",
+      "qnb-preview-card",
+      tplClass(p?.template || "form", "card")
+    );
 
-    const renderTextBlock = (tb) => {
-      const card = document.createElement("div");
-      card.className = cx("previewCard", "qnb-preview-card", "qnb-preview-text-block");
+    // Page header
+    const header = document.createElement("div");
+    header.className = "pQ";
+    header.textContent = p.name || "Untitled page";
+    card.appendChild(header);
 
-      const title = tb?.title ? escapeHtml(tb.title) : "";
-      const body = sanitizeRichHtml(tb?.bodyHtml || "");
-      const level = String(tb?.level || "h3").toLowerCase();
-      const tag = ["h1", "h2", "h3", "h4"].includes(level) ? level : "div";
+    const stack = document.createElement("div");
+    stack.className = cx("previewPageStack", "qnb-preview-page-stack");
 
-      card.innerHTML = `
-        ${title ? `<${tag} class="pQ qnb-preview-text-title">${title}</${tag}>` : ""}
-        ${body ? `<div class="pHelp qnb-preview-text-body">${body}</div>` : ""}
-      `;
-
-      if (title || body) stack.appendChild(card);
-    };
-
-    const renderGroup = (g) => {
-      const groupCard = document.createElement("div");
-      groupCard.className = cx(
-        "previewCard",
-        "qnb-preview-card",
-        tplClass(page?.template || "form", "card")
-      );
-
-      // Group header
-      const groupTitleEl = document.createElement("div");
-      groupTitleEl.className = cx("previewGroupTitle", "qnb-preview-group-title");
-      groupTitleEl.textContent = g?.name || "Untitled group";
-      groupCard.appendChild(groupTitleEl);
-
-      if (g?.description?.enabled) {
-        const gd = sanitizeRichHtml(g.description.html || "");
-        if (gd) {
-          const groupDescEl = document.createElement("div");
-          groupDescEl.className = cx("pHelp", "previewGroupDesc", "qnb-preview-group-desc");
-          groupDescEl.innerHTML = gd;
-          groupCard.appendChild(groupDescEl);
-        }
-      }
-
-      // Questions
-      (g?.questions || []).forEach((q) => {
-        const qCtx = byId[q.id] || { ...q, pageId: page.id, groupId: g.id };
-        if (!questionVisible(qCtx)) return;
-
-        const qWrap = document.createElement("div");
-        qWrap.className = "qnb-preview-question-block";
-
-        const qTitle = document.createElement("div");
-        qTitle.className = cx("previewQuestionTitle", "qnb-preview-question-title");
-        qTitle.textContent = q.title || "Untitled question";
-
-        const contentHtml = q.content?.enabled ? sanitizeRichHtml(q.content.html || "") : "";
-        const qContent = document.createElement("div");
-        qContent.className = cx("previewQuestionContent", "qnb-preview-question-content");
-        qContent.innerHTML = contentHtml;
-        qContent.style.display = contentHtml ? "block" : "none";
-
-        const qHelp = document.createElement("div");
-        qHelp.className = cx("pHelp", "qnb-preview-help");
-        qHelp.textContent = q.help || "";
-        qHelp.style.display = q.help ? "block" : "none";
-
-        const inputWrap = document.createElement("div");
-        inputWrap.className = cx("pInputWrap", "qnb-preview-input-wrap");
-
-        const step = {
-          ...q,
-          id: q.id,
-          pageId: page.id,
-          groupId: g.id,
-          pageName: page.name,
-          groupName: g.name,
-        };
-
-        const setAnswer = (v) => {
-          preview.answers[step.id] = v;
-        };
-        const getAnswer = () => preview.answers[step.id];
-
-        buildPreviewInputControl(step, inputWrap, setAnswer, getAnswer, () => {
-          // Re-render the current page in place
-          previewStage.innerHTML = "";
-          renderPreviewPage(page.id);
-          setProgress();
-        });
-
-        qWrap.appendChild(qTitle);
-        if (contentHtml) qWrap.appendChild(qContent);
-        if (q.help) qWrap.appendChild(qHelp);
-        qWrap.appendChild(inputWrap);
-
-        groupCard.appendChild(qWrap);
-
-        // Follow-ups (if active)
-        if (followUpMatches(q, preview.answers)) {
-          const fuSteps = getActiveFollowUpSteps(q, preview.answers);
-          fuSteps.forEach((fqStep) => {
-            const fuWrap = document.createElement("div");
-            fuWrap.className = "qnb-preview-question-block qnb-preview-followup";
-
-            const fuTitle = document.createElement("div");
-            fuTitle.className = cx("previewQuestionTitle", "qnb-preview-question-title");
-            fuTitle.textContent = fqStep.title || "Untitled follow-up";
-
-            const fuHelp = document.createElement("div");
-            fuHelp.className = cx("pHelp", "qnb-preview-help");
-            fuHelp.textContent = fqStep.help || "";
-            fuHelp.style.display = fqStep.help ? "block" : "none";
-
-            const fuInputWrap = document.createElement("div");
-            fuInputWrap.className = cx("pInputWrap", "qnb-preview-input-wrap");
-
-            const fuSet = (v) => {
-              preview.answers[fqStep.id] = v;
-            };
-            const fuGet = () => preview.answers[fqStep.id];
-
-            buildPreviewInputControl(fqStep, fuInputWrap, fuSet, fuGet, () => {
-              previewStage.innerHTML = "";
-              renderPreviewPage(page.id);
-              setProgress();
-            });
-
-            fuWrap.appendChild(fuTitle);
-            if (fqStep.help) fuWrap.appendChild(fuHelp);
-            fuWrap.appendChild(fuInputWrap);
-
-            groupCard.appendChild(fuWrap);
-          });
-        }
-      });
-
-      stack.appendChild(groupCard);
-    };
-
-    // Page title card (nice for layout preview)
-    const pageHeader = document.createElement("div");
-    pageHeader.className = "previewCard qnb-preview-card qnb-preview-page-header";
-    pageHeader.innerHTML = `<div class="pQ qnb-preview-page-title">${escapeHtml(page.name || "Untitled page")}</div>`;
-    stack.appendChild(pageHeader);
-
-    // Fixed template blocks
-    const tpl = String(page.template || "form").toLowerCase();
-    if (tpl === "quote") stack.appendChild(renderQuoteTemplate(page));
-    if (tpl === "summary") stack.appendChild(renderSummaryTemplate(page));
-    if (tpl === "payment") stack.appendChild(renderPaymentTemplate(page));
-
-    // Flow render
-    (page.flow || []).forEach((it) => {
-      if (it?.type === "text") {
-        renderTextBlock(it);
-        return;
-      }
-      if (it?.type === "group") {
-        const g = (page.groups || []).find((gg) => gg.id === it.id);
-        if (!g) return;
-        if (groupVisible[g.id] === false) return;
-        renderGroup(g);
-      }
-    });
-
-    previewStage.appendChild(stack);
-  }
-
-  // Legacy implementation (kept for reference, not used)
-  function renderPreviewPage_OLD(page) {
-    previewContentEl.innerHTML = "";
-
-    const tpl = String(page.template || "form").toLowerCase();
-
-    // ---- FIXED TEMPLATE BLOCKS (always render first) ----
-    if (tpl === "quote") {
-      previewContentEl.appendChild(renderQuoteTemplate(page));
-    }
-    if (tpl === "summary") {
-      previewContentEl.appendChild(renderSummaryTemplate(page));
-    }
-    if (tpl === "payment") {
-      previewContentEl.appendChild(renderPaymentTemplate(page));
-    }
-
-    // ---- EXISTING GROUP / TEXT RENDERING ----
-    page.flow.forEach((it) => {
+    // Render page flow (text blocks + groups)
+    (p.flow || []).forEach((it) => {
       if (it.type === "text") {
-        renderTextBlock(it);
+        const level = it.level || "h3";
+        const title = (it.title || "").trim();
+        const body = sanitizeRichHtml(it.bodyHtml || "");
+
+        const block = document.createElement("div");
+        block.className = cx("previewTextBlock", "qnb-preview-text-block");
+
+        const titleEl = document.createElement(level === "body" ? "div" : level);
+        titleEl.className = cx("previewTextBlockTitle", "qnb-preview-text-title");
+        titleEl.textContent = title;
+        if (title) block.appendChild(titleEl);
+
+        if (body) {
+          const bodyEl = document.createElement("div");
+          bodyEl.className = cx("pHelp", "previewTextBlockBody", "qnb-preview-text-body");
+          bodyEl.innerHTML = body;
+          block.appendChild(bodyEl);
+        }
+
+        if (title || body) stack.appendChild(block);
         return;
       }
 
       if (it.type === "group") {
-        const g = page.groups.find((gg) => gg.id === it.id);
+        const g = p.groups.find((gg) => gg.id === it.id);
         if (!g) return;
+        if (groupVisible[g.id] === false) return;
 
-        // Respect group visibility (used by preview modes)
-        if (typeof groupVisible === "object" && groupVisible[g.id] === false) return;
+        const groupWrap = document.createElement("div");
+        groupWrap.className = cx("previewGroup", "qnb-preview-group");
 
-        renderGroup(g, page);
+        const gTitle = document.createElement("div");
+        gTitle.className = cx("previewGroupTitle", "qnb-preview-group-title");
+        gTitle.textContent = g.name || "Untitled group";
+        groupWrap.appendChild(gTitle);
+
+        if (g.description?.enabled) {
+          const d = sanitizeRichHtml(g.description.html || "");
+          if (d) {
+            const dEl = document.createElement("div");
+            dEl.className = cx("pHelp", "previewGroupDesc", "qnb-preview-group-desc");
+            dEl.innerHTML = d;
+            groupWrap.appendChild(dEl);
+          }
+        }
+
+        const visibleQuestions = (g.questions || []).filter((qq) => questionShouldShow(qq, byId, preview.answers));
+
+        visibleQuestions.forEach((qq) => {
+          const qBlock = document.createElement("div");
+          qBlock.className = cx("previewQuestion", "qnb-preview-question");
+
+          const qTitle = document.createElement("div");
+          qTitle.className = cx("previewQuestionTitle", "qnb-preview-question-title");
+          qTitle.textContent = qq.title || "Untitled question";
+          qBlock.appendChild(qTitle);
+
+          if (qq.content?.enabled) {
+            const c = sanitizeRichHtml(qq.content.html || "");
+            if (c) {
+              const cEl = document.createElement("div");
+              cEl.className = cx("previewQuestionContent", "qnb-preview-question-content");
+              cEl.innerHTML = c;
+              qBlock.appendChild(cEl);
+            }
+          }
+
+          if (qq.help) {
+            const h = document.createElement("div");
+            h.className = "pHelp";
+            h.textContent = qq.help;
+            qBlock.appendChild(h);
+          }
+
+          const inputWrap = document.createElement("div");
+          inputWrap.className = "pInputWrap";
+
+          const setA = (v) => {
+            preview.answers[qq.id] = v;
+
+            // Clear error on change (page mode)
+            if (preview.pageErrors?.[qq.id]) {
+              delete preview.pageErrors[qq.id];
+              // Re-render to hide the inline message immediately
+              renderPreview();
+            }
+          };
+
+          const getA = () => preview.answers[qq.id];
+
+          buildPreviewInputControl(qq, inputWrap, setA, getA, () => renderPreview());
+
+          qBlock.appendChild(inputWrap);
+
+          // Inline field error (page mode)
+          const fieldErr = preview.pageErrors?.[qq.id] || "";
+          const errEl = document.createElement("div");
+          errEl.className = "pError";
+          errEl.textContent = fieldErr;
+          errEl.style.display = fieldErr ? "block" : "none";
+          qBlock.appendChild(errEl);
+
+          // Follow-up questions (nested under this question)
+          if (followUpMatches(qq, preview.answers)) {
+            const fWrap = document.createElement("div");
+            fWrap.className = "previewFollowUp";
+            fWrap.style.marginTop = "12px";
+            fWrap.style.paddingLeft = "14px";
+            fWrap.style.borderLeft = "1px solid rgba(255,255,255,0.12)";
+
+            const fuName = String(qq.followUp?.name || "").trim();
+            const isRepeat = followUpIsRepeatable(qq);
+            if (isRepeat) ensureMinFollowUpInstances(qq, preview.answers);
+
+            // Optional name label
+            if (fuName) {
+              const nm = document.createElement("div");
+              nm.className = "label";
+              nm.style.marginBottom = "6px";
+              nm.textContent = fuName;
+              fWrap.appendChild(nm);
+            }
+
+            const renderInstance = (instId, instIndex) => {
+              const instanceHeader = document.createElement("div");
+              instanceHeader.style.display = "flex";
+              instanceHeader.style.alignItems = "center";
+              instanceHeader.style.justifyContent = "space-between";
+              instanceHeader.style.gap = "10px";
+              instanceHeader.style.marginTop = instIndex === 0 ? "0" : "14px";
+
+              const itemLabel = String(qq.followUp?.repeat?.itemLabel || "Item").trim() || "Item";
+              const title = document.createElement("div");
+              title.className = "label";
+              title.textContent = `${itemLabel} ${instIndex + 1}`;
+              instanceHeader.appendChild(title);
+
+              if (isRepeat) {
+                const min = clamp(Number(qq.followUp?.repeat?.min ?? 1), 0, 50);
+                const removeBtn = document.createElement("button");
+                removeBtn.type = "button";
+                removeBtn.className = "btn ghost";
+                removeBtn.textContent = "Remove";
+                removeBtn.disabled = getFollowUpInstanceIds(qq, preview.answers).length <= min;
+                removeBtn.addEventListener("click", () => {
+                  removeFollowUpInstance(qq, preview.answers, instId);
+                  renderPreview();
+                });
+                instanceHeader.appendChild(removeBtn);
+              }
+
+              fWrap.appendChild(instanceHeader);
+
+              const fqs = getActiveFollowUps(qq, preview.answers);
+              fqs.forEach((fq) => {
+                const sub = document.createElement("div");
+                sub.className = "previewQuestion";
+                sub.style.marginTop = "10px";
+
+                const t = document.createElement("div");
+                t.className = "previewQuestionTitle";
+                t.textContent = fq.title || "Untitled question";
+                sub.appendChild(t);
+
+                if (fq.content?.enabled) {
+                  const c2 = sanitizeRichHtml(fq.content.html || "");
+                  if (c2) {
+                    const cEl2 = document.createElement("div");
+                    cEl2.className = "previewQuestionContent";
+                    cEl2.innerHTML = c2;
+                    sub.appendChild(cEl2);
+                  }
+                }
+
+                if (fq.help) {
+                  const h2 = document.createElement("div");
+                  h2.className = "pHelp";
+                  h2.textContent = fq.help;
+                  sub.appendChild(h2);
+                }
+
+                const iw2 = document.createElement("div");
+                iw2.className = "pInputWrap";
+
+                const answerId = isRepeat ? makeFollowUpAnswerId(qq.id, fq.id, instId) : fq.id;
+
+                const setF = (v) => {
+                  preview.answers[answerId] = v;
+                  if (preview.pageErrors?.[answerId]) {
+                    delete preview.pageErrors[answerId];
+                    renderPreview();
+                  }
+                };
+                const getF = () => preview.answers[answerId];
+
+                // Build control using a cloned step object so it reads correct type/options
+                const stepObj = { ...fq, id: answerId };
+                buildPreviewInputControl(stepObj, iw2, setF, getF, () => renderPreview());
+                sub.appendChild(iw2);
+
+                const ferr = preview.pageErrors?.[answerId] || "";
+                const fe = document.createElement("div");
+                fe.className = "pError";
+                fe.textContent = ferr;
+                fe.style.display = ferr ? "block" : "none";
+                sub.appendChild(fe);
+
+                fWrap.appendChild(sub);
+              });
+            };
+
+            if (isRepeat) {
+              const instIds = getFollowUpInstanceIds(qq, preview.answers);
+              instIds.forEach((instId, idx) => renderInstance(instId, idx));
+
+              const addBtn = document.createElement("button");
+              addBtn.type = "button";
+              addBtn.className = "btn";
+              addBtn.style.marginTop = "12px";
+              addBtn.textContent = String(qq.followUp?.repeat?.addLabel || "Add another");
+
+              const min = clamp(Number(qq.followUp?.repeat?.min ?? 1), 0, 50);
+              const max = clamp(Number(qq.followUp?.repeat?.max ?? 5), min, 50);
+              addBtn.disabled = instIds.length >= max;
+
+              addBtn.addEventListener("click", () => {
+                addFollowUpInstance(qq, preview.answers);
+                renderPreview();
+              });
+
+              fWrap.appendChild(addBtn);
+            } else {
+              // Single (non-repeatable) follow-up set
+              renderInstance("single", 0);
+            }
+
+            qBlock.appendChild(fWrap);
+          }
+
+          // IMPORTANT: keep group title/description ABOVE its questions
+          groupWrap.appendChild(qBlock);
+        });
+
+        // If a group has no visible questions/content, avoid rendering empty blocks
+        if (groupWrap.childNodes.length > 2 || visibleQuestions.length) {
+          stack.appendChild(groupWrap);
+        }
+
+        return;
       }
     });
+
+    card.appendChild(stack);
+
+    // Error banner (page mode)
+    if (preview.lastError) {
+      const err = document.createElement("div");
+      err.className = "pError";
+      err.style.marginTop = "12px";
+      err.textContent = preview.lastError;
+      card.appendChild(err);
+    }
+
+    previewStage.appendChild(card);
   }
 
   // -------------------------
