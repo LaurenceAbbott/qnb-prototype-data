@@ -20,11 +20,16 @@ const DISPLAY_VARIANT_LABELS = {
 };
 
 function getItemLabel(item) {
-  if (item.type === ) {
-    const base = DISPLAY_VARIANT_LABELS[item.variant] || ;
-    return item.title ? `${base}: ${item.title}` : base;
+  if (item.type === "display") {
+    const base =
+      DISPLAY_VARIANT_LABELS[item.variant] || "Display";
+    return item.title
+      ? `${base}: ${item.title}`
+      : base;
   }
-  return getItemLabel(item);
+
+  // Question fallback
+  return item.text || "New question";
 }
 
 
