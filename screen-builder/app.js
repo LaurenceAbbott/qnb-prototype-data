@@ -1,3 +1,21 @@
+/*
+  Screen Builder — Fixed Template Components (JS)
+  ------------------------------------------------
+  Paste your current full .JS file below this header.
+
+  Plan for what we’ll implement in this canvas:
+  - Hard-coded template blocks for special pages (Quote / Summary / Payment)
+  - These blocks always render (even if no builder questions exist)
+  - Template blocks can read/playback answers captured earlier (risk summary)
+  - Builder-defined question blocks still render underneath/around templates
+  - Hooks + stable CSS classnames so you can style everything in your .css
+
+  Instructions:
+  1) Paste your current full JS beneath this comment.
+  2) Leave this header intact so we can find the insertion points.
+*/
+
+// ===== PASTE YOUR CURRENT FULL JS BELOW THIS LINE =====
 /* =============================================================================
 SCREEN BUILDER — CHAPTERD FILE (Insert-only scaffolding)
 
@@ -1693,11 +1711,18 @@ CH 4  UI Rendering
       .map((fp) => schema.pages.find((p) => p.id === fp.id))
       .filter(Boolean);
 
-    const renderPageItem = (p, pIdx, isFixed) => {
+    // IMPORTANT:
+    // We must store *schema index* for drag/drop moves (because schema.pages includes fixed pages).
+    // We also keep an *editable index* for enabling/disabling move up/down buttons.
+    const renderPageItem = (p, schemaIdx, editableIdx, isFixed) => {
       p.flow = Array.isArray(p.flow) ? p.flow : p.groups.map((g) => ({ type: "group", id: g.id }));
 
       const pageDiv = document.createElement("div");
-      pageDiv.className = "pageItem" + (p.id === selection.pageId ? " active" : "") + (isFixed ? " fixed" : "") + ` tpl-${String(p.template || "form").toLowerCase()}`;
+      pageDiv.className =
+        "pageItem" +
+        (p.id === selection.pageId ? " active" : "") +
+        (isFixed ? " fixed" : "") +
+        ` tpl-${String(p.template || "form").toLowerCase()}`;
 
       // Expose template to CSS selectors
       pageDiv.dataset.pageTemplate = String(p.template || "form").toLowerCase();
@@ -1705,10 +1730,13 @@ CH 4  UI Rendering
       // Make page draggable (builder-only) — but never for fixed pages
       pageDiv.draggable = !preview.open && !isFixed;
       pageDiv.dataset.pageId = p.id;
-      pageDiv.dataset.pageIndex = String(pIdx);
+      pageDiv.dataset.schemaIndex = String(schemaIdx);
 
       pageDiv.addEventListener("dragstart", (e) => {
-        if (preview.open || isFixed) { e.preventDefault(); return; }
+        if (preview.open || isFixed) {
+          e.preventDefault();
+          return;
+        }
         if (!canStartDragFrom(e.target)) {
           e.preventDefault();
           return;
@@ -1716,7 +1744,7 @@ CH 4  UI Rendering
         markDragging(true);
         e.dataTransfer.effectAllowed = "move";
         e.dataTransfer.setData("text/og-page", p.id);
-        e.dataTransfer.setData("text/og-page-index", String(pIdx));
+        e.dataTransfer.setData("text/og-page-schema-index", String(schemaIdx));
         pageDiv.classList.add("isDragging");
       });
 
@@ -1743,11 +1771,12 @@ CH 4  UI Rendering
         e.preventDefault();
         pageDiv.classList.remove("isDragOver");
 
-        const fromIdx = Number(e.dataTransfer.getData("text/og-page-index"));
-        const toIdx = Number(pageDiv.dataset.pageIndex);
+        const fromIdx = Number(e.dataTransfer.getData("text/og-page-schema-index"));
+        const toIdx = Number(pageDiv.dataset.schemaIndex);
         if (!Number.isFinite(fromIdx) || !Number.isFinite(toIdx)) return;
         if (fromIdx === toIdx) return;
 
+        // Move within schema.pages by schema indices, then re-enforce fixed pages at end
         moveItem(schema.pages, fromIdx, toIdx);
         ensureFixedCheckoutPages();
         saveSchema();
@@ -1830,20 +1859,21 @@ CH 4  UI Rendering
         });
 
         const upBtn = iconButton("↑", "Move up");
-        upBtn.disabled = pIdx === 0;
+        upBtn.disabled = editableIdx === 0;
         upBtn.addEventListener("click", (e) => {
           e.stopPropagation();
-          moveItem(schema.pages, pIdx, pIdx - 1);
+          // Move within schema.pages by schema index
+          moveItem(schema.pages, schemaIdx, schemaIdx - 1);
           ensureFixedCheckoutPages();
           saveSchema();
           renderAll();
         });
 
         const downBtn = iconButton("↓", "Move down");
-        downBtn.disabled = pIdx === editablePages.length - 1;
+        downBtn.disabled = editableIdx === editablePages.length - 1;
         downBtn.addEventListener("click", (e) => {
           e.stopPropagation();
-          moveItem(schema.pages, pIdx, pIdx + 1);
+          moveItem(schema.pages, schemaIdx, schemaIdx + 1);
           ensureFixedCheckoutPages();
           saveSchema();
           renderAll();
@@ -1977,10 +2007,9 @@ CH 4  UI Rendering
     };
 
     // Render editable pages (in order)
-    editablePages.forEach((p, idx) => {
-      // pIdx in schema.pages for DnD operations
-      const pIdx = schema.pages.findIndex((x) => x.id === p.id);
-      renderPageItem(p, idx, false);
+    editablePages.forEach((p, editableIdx) => {
+      const schemaIdx = schema.pages.findIndex((x) => x.id === p.id);
+      renderPageItem(p, schemaIdx, editableIdx, false);
     });
 
     // Divider label
@@ -4276,7 +4305,10 @@ CH 6  Logic (validation, conditional display) + Flow building
   }
 
   function buildPreviewSteps() {
-    // Question mode: returns visible questions + any active follow-up questions
+    // Question mode: returns visible questions + any active follow-up questions,
+    // BUT for fixed checkout pages (Quote/Summary/Payment) we insert a SINGLE
+    // page-step so Question-by-question renders IDENTICALLY to Page-at-a-time.
+
     const all = getAllQuestionsInOrder(schema);
     const byId = Object.fromEntries(all.map((q) => [q.id, q]));
 
@@ -4288,28 +4320,64 @@ CH 6  Logic (validation, conditional display) + Flow building
       });
     });
 
-    const mainVisible = all.filter((q) => {
-      if (groupVisible[q.groupId] === false) return false;
-      return questionShouldShow(q, byId, preview.answers);
-    });
+    // Helper: determine if a page is one of our special checkout templates
+    const isCheckoutTemplate = (tpl) => {
+      const t = String(tpl || "").toLowerCase();
+      return t === "quote" || t === "summary" || t === "payment";
+    };
 
     const steps = [];
 
-    mainVisible.forEach((q) => {
-      steps.push(q);
+    // Build steps in PAGE order so we can inject checkout page-steps.
+    schema.pages.forEach((p) => {
+      const tpl = String(p.template || "form").toLowerCase();
 
-      if (followUpMatches(q, preview.answers)) {
-        const fuSteps = getActiveFollowUpSteps(q, preview.answers);
-        fuSteps.forEach((fqStep) => {
-          steps.push({
-            ...fqStep,
-            pageId: q.pageId,
-            groupId: q.groupId,
-            pageName: q.pageName,
-            groupName: q.groupName,
-          });
+      // ✅ Checkout pages: one step per page (identical rendering to page mode)
+      if (isCheckoutTemplate(tpl)) {
+        steps.push({
+          id: `__page__${p.id}`,
+          type: "__page__",
+          pageId: p.id,
+          pageName: p.name,
+          groupName: "",
         });
+        return;
       }
+
+      // Normal pages: question-by-question
+      p.groups.forEach((g) => {
+        if (groupVisible[g.id] === false) return;
+
+        (g.questions || []).forEach((q) => {
+          // Respect question conditional logic
+          const qCtx = byId[q.id];
+          if (!questionShouldShow(qCtx, byId, preview.answers)) return;
+
+          // Main question step
+          steps.push({
+            id: q.id,
+            pageId: p.id,
+            groupId: g.id,
+            pageName: p.name,
+            groupName: g.name,
+            ...q,
+          });
+
+          // Follow-ups (if active)
+          if (followUpMatches(q, preview.answers)) {
+            const fuSteps = getActiveFollowUpSteps(q, preview.answers);
+            fuSteps.forEach((fqStep) => {
+              steps.push({
+                ...fqStep,
+                pageId: p.id,
+                groupId: g.id,
+                pageName: p.name,
+                groupName: g.name,
+              });
+            });
+          }
+        });
+      });
     });
 
     return steps;
