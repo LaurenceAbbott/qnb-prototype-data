@@ -1,16 +1,4 @@
 
-
-/* ================================
-   INSPECTOR HIERARCHY (UX)
-   --------------------------------
-   1) Page settings (accordion)
-   2) Group settings (accordion)
-   3) Question / Display settings
-   Display elements are created via
-   + Text block only.
-   ================================ */
-
-
 // --- ITEM LABEL HELPERS ---
 const DISPLAY_VARIANT_LABELS = {
   info: "Info box",
@@ -21,7 +9,7 @@ const DISPLAY_VARIANT_LABELS = {
 
 function getItemLabel(item) {
   if (item.type === "display") {
-    const base = DISPLAY_VARIANT_LABELS[item.variant] || ;
+    const base = DISPLAY_VARIANT_LABELS[item.variant] || "Display";
     return item.title ? `${base}: ${item.title}` : base;
   }
   return getItemLabel(item);
@@ -340,7 +328,7 @@ CH 2  Data Models (schemas, types, templates)
     { key: "radio", label: "Radio" },
     { key: "checkboxes", label: "Checkboxes" },
     { key: "yesno", label: "Yes / No" },
-    { key: label: "Display element" },
+    { key: "display", label: "Display element" },
   ];
 
   // Display elements (non-input blocks that can be placed inside groups)
@@ -1735,53 +1723,23 @@ function renderCanvas() {
     const groupPills = document.createElement("div");
     groupPills.className = "groupPills";
 
-    // Build pills in flow order so Text blocks can appear as tabs too
-    const flowItems = Array.isArray(p.flow) && p.flow.length ? p.flow : (p.groups || []).map(gx => ({ type: "group", id: gx.id }));
-    flowItems.forEach((it) => {
-      if (it.type === "group") {
-        const gg = (p.groups || []).find((x) => x.id === it.id);
-        if (!gg) return;
-        const pill = document.createElement("button");
-        pill.type = "button";
-        pill.className =
-          "groupPill" +
-          (selection.blockType === "group" && selection.groupId === gg.id ? " selected" : "");
-        pill.textContent = gg.name || "Group";
-        pill.addEventListener("click", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          selection.pageId = p.id;
-          selection.blockType = "group";
-          selection.blockId = gg.id;
-          selection.groupId = gg.id;
-          selection.questionId = null;
-          saveSchema();
-          renderAll(true);
-        });
-        groupPills.appendChild(pill);
-      }
-
-      if (it.type === "text") {
-        const tb = (p.flow || []).find((x) => x.type === "text" && x.id === it.id);
-        const pill = document.createElement("button");
-        pill.type = "button";
-        pill.className =
-          "groupPill" +
-          (selection.blockType === "text" && selection.blockId === it.id ? " selected" : "");
-        pill.textContent = tb?.title || "Text block";
-        pill.addEventListener("click", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          selection.pageId = p.id;
-          selection.blockType = "text";
-          selection.blockId = it.id;
-          selection.groupId = null;
-          selection.questionId = null;
-          saveSchema();
-          renderAll(true);
-        });
-        groupPills.appendChild(pill);
-      }
+    (p.groups || []).forEach((gg) => {
+      const pill = document.createElement("button");
+      pill.type = "button";
+      pill.className = "groupPill" + (selection.groupId === gg.id && selection.blockType === "group" ? " selected" : "");
+      pill.textContent = gg.name || "Group";
+      pill.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        selection.pageId = p.id;
+        selection.blockType = "group";
+        selection.blockId = gg.id;
+        selection.groupId = gg.id;
+        selection.questionId = null;
+        saveSchema();
+        renderAll(true);
+      });
+      groupPills.appendChild(pill);
     });
 
     groupBarLeft.appendChild(groupBarLabel);
@@ -2285,71 +2243,67 @@ actions.appendChild(btnGroupOpts);
       inspectorEl.appendChild(buttonRow([
         { label: "+ Group", kind: "primary", onClick: () => addGroupToPage(p.id) },
       ]));
-      // If we're editing a text block, don't bail out — allow the Text block editor to render below.
-      if (selection.blockType !== "text") return;
+      return;
     }
 
-    if (g) {
     // Group name
-        inspectorEl.appendChild(fieldText("Group name", g.name || "", (val) => {
-          g.name = val || "Untitled group";
-          saveSchemaDebounced();
-          renderCanvas();
-          renderPagesList();
-          renderGroupHeader(); // keep header display in sync
-        }));
-    
-        // Group description
-        g.description = g.description || { enabled: false, html: "" };
-        inspectorEl.appendChild(toggleRow("Add group description", g.description.enabled === true, (on) => {
-          g.description.enabled = on;
-          if (!g.description.html) g.description.html = "<p></p>";
-          saveSchema();
-          isTypingInspector = false;
-          renderAll(true);
-        }));
-    
-        if (g.description.enabled) {
-          inspectorEl.appendChild(richTextEditor("Description", g.description.html || "<p></p>", (html) => {
-            g.description.html = sanitizeRichHtml(html);
-            saveSchemaDebounced();
-          }));
-        }
-    
-        // Group visibility / logic
-        inspectorEl.appendChild(divider());
-        inspectorEl.appendChild(sectionTitle("Group visibility"));
-        inspectorEl.appendChild(pEl("Show this group only if the rule(s) match. (Hides all questions in the group in Preview)", "inlineHelp"));
-    
-        inspectorEl.appendChild(toggleRow("Enable group logic", g.logic?.enabled === true, (on) => {
-          g.logic = g.logic || { enabled: false, rules: [] };
-          g.logic.enabled = on;
-          saveSchema();
-          isTypingInspector = false;
-          renderAll(true);
-        }));
-    
-        if (g.logic?.enabled) {
-          inspectorEl.appendChild(groupLogicEditor(schema, p, g));
-        }
-    
-        // Group order / delete (kept here to avoid accidental clicks while editing questions)
-        inspectorEl.appendChild(divider());
-        inspectorEl.appendChild(buttonRow([
-          { label: "Move group up", kind: "ghost", onClick: () => moveGroup(p.id, g.id, -1) },
-          { label: "Move group down", kind: "ghost", onClick: () => moveGroup(p.id, g.id, +1) },
-        ]));
-        inspectorEl.appendChild(buttonRow([
-          { label: "Delete group", kind: "danger", onClick: () => {
-              if (!confirm(`Delete group "${g.name}"?`)) return;
-              deleteGroupFromPage(p.id, g.id);
-            } 
-          },
-        ]));
-    
-        inspectorEl.appendChild(divider());
+    inspectorEl.appendChild(fieldText("Group name", g.name || "", (val) => {
+      g.name = val || "Untitled group";
+      saveSchemaDebounced();
+      renderCanvas();
+      renderPagesList();
+      renderGroupHeader(); // keep header display in sync
+    }));
+
+    // Group description
+    g.description = g.description || { enabled: false, html: "" };
+    inspectorEl.appendChild(toggleRow("Add group description", g.description.enabled === true, (on) => {
+      g.description.enabled = on;
+      if (!g.description.html) g.description.html = "<p></p>";
+      saveSchema();
+      isTypingInspector = false;
+      renderAll(true);
+    }));
+
+    if (g.description.enabled) {
+      inspectorEl.appendChild(richTextEditor("Description", g.description.html || "<p></p>", (html) => {
+        g.description.html = sanitizeRichHtml(html);
+        saveSchemaDebounced();
+      }));
     }
 
+    // Group visibility / logic
+    inspectorEl.appendChild(divider());
+    inspectorEl.appendChild(sectionTitle("Group visibility"));
+    inspectorEl.appendChild(pEl("Show this group only if the rule(s) match. (Hides all questions in the group in Preview)", "inlineHelp"));
+
+    inspectorEl.appendChild(toggleRow("Enable group logic", g.logic?.enabled === true, (on) => {
+      g.logic = g.logic || { enabled: false, rules: [] };
+      g.logic.enabled = on;
+      saveSchema();
+      isTypingInspector = false;
+      renderAll(true);
+    }));
+
+    if (g.logic?.enabled) {
+      inspectorEl.appendChild(groupLogicEditor(schema, p, g));
+    }
+
+    // Group order / delete (kept here to avoid accidental clicks while editing questions)
+    inspectorEl.appendChild(divider());
+    inspectorEl.appendChild(buttonRow([
+      { label: "Move group up", kind: "ghost", onClick: () => moveGroup(p.id, g.id, -1) },
+      { label: "Move group down", kind: "ghost", onClick: () => moveGroup(p.id, g.id, +1) },
+    ]));
+    inspectorEl.appendChild(buttonRow([
+      { label: "Delete group", kind: "danger", onClick: () => {
+          if (!confirm(`Delete group "${g.name}"?`)) return;
+          deleteGroupFromPage(p.id, g.id);
+        } 
+      },
+    ]));
+
+    inspectorEl.appendChild(divider());
 
     // -------------------------
     // QUESTION / TEXT BLOCK (shown last)
@@ -3897,20 +3851,8 @@ CH 5  Actions (add/rename/delete/duplicate/move)
 
   function addDisplayElement(variant = "price") {
     const p = getPage(selection.pageId);
-    if (!p) return;
-
-    // Determine target group even if user is currently on a text block or no group is selected
-    if (selection.blockType === "text") {
-      const flow = Array.isArray(p.flow) ? p.flow : [];
-      const idx = flow.findIndex((x) => x.id === selection.blockId);
-      const nextGroupId = flow.slice(idx + 1).find((x) => x.type === "group")?.id;
-      const prevGroupId = [...flow.slice(0, idx)].reverse().find((x) => x.type === "group")?.id;
-      selection.groupId = nextGroupId || prevGroupId || p.groups?.[0]?.id || null;
-    }
-    if (!selection.groupId) selection.groupId = p.groups?.[0]?.id || null;
-
     const g = getGroup(selection.pageId, selection.groupId);
-    if (!g) return;
+    if (!p || !g) return;
 
     // If user is currently on a text block, add the element to the nearest group
     if (selection.blockType === "text") {
