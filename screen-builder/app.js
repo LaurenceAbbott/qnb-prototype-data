@@ -1100,7 +1100,26 @@ CH 4  UI Rendering
       document.head.appendChild(style);
     };
 
-    const setButtonLoading = (on) => {
+    
+    const ensureGroupBarStyles = () => {
+      if (document.getElementById("ogGroupBarStyles")) return;
+      const style = document.createElement("style");
+      style.id = "ogGroupBarStyles";
+      style.textContent = `
+        .groupBar{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 12px; margin:0 0 12px 0; border-radius:14px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); }
+        .groupBarLeft{ display:flex; align-items:center; gap:12px; min-width:0; }
+        .groupBarLabel{ font-weight:600; opacity:0.85; }
+        .groupPills{ display:flex; gap:8px; flex-wrap:wrap; }
+        .groupPill{ border:1px solid rgba(255,255,255,0.14); background:rgba(0,0,0,0.15); color:inherit; padding:6px 10px; border-radius:999px; cursor:pointer; font-size:13px; }
+        .groupPill.selected{ border-color: rgba(130,222,250,0.65); box-shadow: 0 0 0 3px rgba(130,222,250,0.12); }
+        .groupBarRight{ display:flex; align-items:center; gap:8px; }
+        .btn.tiny{ padding:6px 10px; min-width:36px; }
+      `;
+      document.head.appendChild(style);
+    };
+    ensureGroupBarStyles();
+
+const setButtonLoading = (on) => {
       if (!btn) return;
       ensureAiAssistSpinnerStyles();
 
@@ -1688,6 +1707,101 @@ function renderCanvas() {
       if (el.isContentEditable) return false;
       return true;
     };
+
+
+    // --- Group switcher bar (tabs) + quick actions ---
+    const groupBar = document.createElement("div");
+    groupBar.className = "groupBar";
+
+    const groupBarLeft = document.createElement("div");
+    groupBarLeft.className = "groupBarLeft";
+
+    const groupBarLabel = document.createElement("div");
+    groupBarLabel.className = "groupBarLabel";
+    groupBarLabel.textContent = "Groups";
+
+    const groupPills = document.createElement("div");
+    groupPills.className = "groupPills";
+
+    (p.groups || []).forEach((gg) => {
+      const pill = document.createElement("button");
+      pill.type = "button";
+      pill.className = "groupPill" + (selection.groupId === gg.id && selection.blockType === "group" ? " selected" : "");
+      pill.textContent = gg.name || "Group";
+      pill.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        selection.pageId = p.id;
+        selection.blockType = "group";
+        selection.blockId = gg.id;
+        selection.groupId = gg.id;
+        selection.questionId = null;
+        saveSchema();
+        renderAll(true);
+      });
+      groupPills.appendChild(pill);
+    });
+
+    groupBarLeft.appendChild(groupBarLabel);
+    groupBarLeft.appendChild(groupPills);
+
+    const groupBarRight = document.createElement("div");
+    groupBarRight.className = "groupBarRight";
+
+    // Reorder buttons (like before)
+    const btnUp = document.createElement("button");
+    btnUp.type = "button";
+    btnUp.className = "btn ghost tiny";
+    btnUp.textContent = "↑";
+    btnUp.title = "Move group up";
+    btnUp.disabled = !selection.groupId || (p.groups || []).findIndex((x) => x.id === selection.groupId) <= 0;
+    btnUp.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (selection.groupId) moveGroup(p.id, selection.groupId, -1);
+    });
+
+    const btnDown = document.createElement("button");
+    btnDown.type = "button";
+    btnDown.className = "btn ghost tiny";
+    btnDown.textContent = "↓";
+    btnDown.title = "Move group down";
+    const gi = selection.groupId ? (p.groups || []).findIndex((x) => x.id === selection.groupId) : -1;
+    btnDown.disabled = gi < 0 || gi >= (p.groups || []).length - 1;
+    btnDown.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (selection.groupId) moveGroup(p.id, selection.groupId, +1);
+    });
+
+    const btnAddGroup = document.createElement("button");
+    btnAddGroup.type = "button";
+    btnAddGroup.className = "btn ghost";
+    btnAddGroup.textContent = "+ Add new group";
+    btnAddGroup.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      addGroupToPage(p.id);
+    });
+
+    const btnAddText = document.createElement("button");
+    btnAddText.type = "button";
+    btnAddText.className = "btn ghost";
+    btnAddText.textContent = "+ Text block";
+    btnAddText.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      addTextBlockToPage(p.id);
+    });
+
+    groupBarRight.appendChild(btnUp);
+    groupBarRight.appendChild(btnDown);
+    groupBarRight.appendChild(btnAddGroup);
+    groupBarRight.appendChild(btnAddText);
+
+    groupBar.appendChild(groupBarLeft);
+    groupBar.appendChild(groupBarRight);
+    canvasEl.appendChild(groupBar);
 
     // Phase 1: if a text block is selected, show a simple preview card
     if (selection.blockType === "text") {
