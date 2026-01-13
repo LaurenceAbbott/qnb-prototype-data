@@ -637,7 +637,7 @@ CH 1  State (defaults, load/save, migrate)
   // Preview state
   let preview = {
     open: false,
-    mode: "page", // "page"
+    mode: "question", // "question" | "page"
     steps: [],
     index: 0,
     answers: {}, // qid -> value (shared across modes)
@@ -1177,8 +1177,7 @@ CH 4  UI Rendering
   let pageActionsRowEl = null;
   let pagePreviewSelectEl = null;
 
-  // Group options popover (UI only)
-  let groupOptionsPopoverEl = null;
+  // Group options now render inline in the Inspector
 
   const btnAddPage = $("#btnAddPage");
   const btnAddGroup = $("#btnAddGroup");
@@ -1339,86 +1338,13 @@ CH 4  UI Rendering
     pageNameDisplayEl.textContent = p ? p.name : "—";
     groupNameDisplayEl.textContent = g ? g.name : "—";
 
-    renderGroupOptionsPopover();
     renderPageHeaderControls();
   }
 
-  
+
+
   function renderGroupOptionsPopover() {
-    // Show popover when toggled on and we have a group context
-    const p = getPage(selection.pageId);
-    const g = getGroup(selection.pageId, selection.groupId);
-
-    // Ensure element exists
-    if (!groupOptionsPopoverEl) {
-      groupOptionsPopoverEl = document.createElement("div");
-      groupOptionsPopoverEl.className = "panel groupOptionsPopover";
-      groupOptionsPopoverEl.style.position = "fixed";
-      groupOptionsPopoverEl.style.right = "24px";
-      groupOptionsPopoverEl.style.top = "180px";
-      groupOptionsPopoverEl.style.width = "340px";
-      groupOptionsPopoverEl.style.zIndex = "9999";
-      groupOptionsPopoverEl.style.display = "none";
-      groupOptionsPopoverEl.style.padding = "14px";
-      groupOptionsPopoverEl.style.borderRadius = "16px";
-      groupOptionsPopoverEl.style.boxShadow = "0 20px 60px rgba(0,0,0,0.45)";
-      document.body.appendChild(groupOptionsPopoverEl);
-
-      // Close if user clicks outside
-      document.addEventListener("click", (e) => {
-        if (!uiState.groupOptionsOpen) return;
-        const inside = groupOptionsPopoverEl && groupOptionsPopoverEl.contains(e.target);
-        const isBtn = e.target && e.target.closest && e.target.closest(".btn") && e.target.closest(".btn").textContent === "Group options";
-        if (!inside && !isBtn) {
-          uiState.groupOptionsOpen = false;
-          renderAll(true);
-        }
-      }, true);
-    }
-
-    const shouldShow = uiState.groupOptionsOpen && !!p && !!g;
-
-    groupOptionsPopoverEl.style.display = shouldShow ? "block" : "none";
-    if (!shouldShow) return;
-
-    // Build content
-    groupOptionsPopoverEl.innerHTML = "";
-    const title = document.createElement("div");
-    title.style.fontWeight = "780";
-    title.style.fontSize = "18px";
-    title.style.marginBottom = "10px";
-    title.textContent = "Group options";
-    groupOptionsPopoverEl.appendChild(title);
-
-    const sub = document.createElement("div");
-    sub.className = "muted";
-    sub.style.marginBottom = "12px";
-    sub.textContent = g.name || "Selected group";
-    groupOptionsPopoverEl.appendChild(sub);
-
-    // Description toggle
-    g.description = g.description || { enabled: false, html: "" };
-    groupOptionsPopoverEl.appendChild(toggleRow("Add group description", g.description.enabled === true, (on) => {
-      g.description.enabled = on;
-      if (!g.description.html) g.description.html = "<p></p>";
-      saveSchema();
-      renderAll(true);
-    }));
-
-    // Logic toggle (only enabling/disabling here)
-    groupOptionsPopoverEl.appendChild(document.createElement("div")).style.height = "10px";
-    g.logic = g.logic || { enabled: false, rules: [] };
-    groupOptionsPopoverEl.appendChild(toggleRow("Enable group logic", g.logic.enabled === true, (on) => {
-      g.logic.enabled = on;
-      saveSchema();
-      renderAll(true);
-    }));
-
-    const note = document.createElement("div");
-    note.className = "inlineHelp";
-    note.style.marginTop = "10px";
-    note.textContent = "Move/delete group controls are available on the group header.";
-    groupOptionsPopoverEl.appendChild(note);
+    // no-op: group options now render inline in the Inspector (page -> group -> question)
   }
 
 function ensurePageHeaderControls() {
@@ -1474,7 +1400,7 @@ function ensurePageHeaderControls() {
     const btnExportPage = document.createElement("button");
     btnExportPage.type = "button";
     btnExportPage.className = "btn ghost";
-    btnExportPage.textContent = "Export";
+    btnExportPage.textContent = "Export page JSON";
     btnExportPage.addEventListener("click", () => {
       const p = getPage(selection.pageId);
       if (!p) return;
@@ -1484,7 +1410,7 @@ function ensurePageHeaderControls() {
     const btnImportPage = document.createElement("button");
     btnImportPage.type = "button";
     btnImportPage.className = "btn ghost";
-    btnImportPage.textContent = "Import";
+    btnImportPage.textContent = "Import page JSON";
     btnImportPage.addEventListener("click", () => {
       const p = getPage(selection.pageId);
       if (!p) return;
@@ -1500,6 +1426,7 @@ function ensurePageHeaderControls() {
     pagePreviewSelectEl.style.maxWidth = "260px";
     pagePreviewSelectEl.style.display = "none";
     pagePreviewSelectEl.innerHTML = `
+      <option value="question">Question-by-question (Typeform)</option>
       <option value="page">Page-at-a-time (layout)</option>
     `;
     pagePreviewSelectEl.addEventListener("change", (e) => {
@@ -1533,30 +1460,11 @@ function ensurePageHeaderControls() {
   }
 
   function renderPageHeaderControls() {
+    // Page settings live in the inspector now; keep the header display-only.
     ensurePageHeaderControls();
-    if (!pageHeaderControlsEl) return;
-
-    const p = getPage(selection.pageId);
-    const isPageSelected = selection.groupId == null && selection.questionId == null && selection.blockType === "page";
-
-    // Default: hide
-    if (!p || !isPageSelected) {
-      if (pageNameInputEl) pageNameInputEl.style.display = "none";
-      if (pageActionsRowEl) pageActionsRowEl.style.display = "none";
-      if (pagePreviewSelectEl) pagePreviewSelectEl.style.display = "none";
-      return;
-    }
-
-    // Show controls
-    if (pageNameInputEl) {
-      pageNameInputEl.style.display = "block";
-      if (pageNameInputEl.value !== (p.name || "")) pageNameInputEl.value = p.name || "";
-    }
-    if (pageActionsRowEl) pageActionsRowEl.style.display = "flex";
-    if (pagePreviewSelectEl) {
-      pagePreviewSelectEl.style.display = "block";
-      pagePreviewSelectEl.value = preview.mode || "question";
-    }
+    if (pageNameInputEl) pageNameInputEl.style.display = "none";
+    if (pageActionsRowEl) pageActionsRowEl.style.display = "none";
+    if (pagePreviewSelectEl) pagePreviewSelectEl.style.display = "none";
   }
 
   function renderPagesList() {
@@ -2174,6 +2082,7 @@ actions.appendChild(btnGroupOpts);
   function renderInspector() {
     inspectorEl.innerHTML = "";
     const p = getPage(selection.pageId);
+    // Note: group/question depend on selection; we still show sections in a natural hierarchy.
     const g = getGroup(selection.pageId, selection.groupId);
     const q = getQuestion(selection.pageId, selection.groupId, selection.questionId);
 
@@ -2182,412 +2091,57 @@ actions.appendChild(btnGroupOpts);
       return;
     }
 
-    // Inspector is contextual: it shows ONLY the selected level (page / group / question / text block).
+    // -------------------------
+    // PAGE (always shown first)
+    // -------------------------
+    inspectorSubEl.textContent =
+      selection.blockType === "text" ? "Editing text block" :
+      selection.questionId ? "Editing question" :
+      selection.groupId ? "Editing group" :
+      "Editing page";
 
-    // If a text block is selected, show a dedicated inspector
-    if (selection.blockType === "text") {
-      const tb = (p.flow || []).find((x) => x.type === "text" && x.id === selection.blockId);
-      inspectorSubEl.textContent = "Editing text block";
+    inspectorEl.appendChild(sectionTitle("Page"));
 
-      inspectorEl.appendChild(sectionTitle("Text block"));
+    // Page name
+    inspectorEl.appendChild(fieldText("Page name", p.name || "", (val) => {
+      p.name = val || "Untitled page";
+      saveSchemaDebounced();
+      renderPagesList();
+      renderCanvas();
+      renderPageHeader(); // keep header display in sync
+    }));
 
-      // Title + level
-      inspectorEl.appendChild(fieldText("Title", tb?.title || "", (val) => {
-        if (!tb) return;
-        tb.title = val;
-        saveSchemaDebounced();
-        renderPagesList();
-        renderCanvas();
-      }));
+    // Page actions (template workflow)
+    inspectorEl.appendChild(buttonRow([
+      { label: "Export", kind: "ghost", onClick: () => exportPageJson(p.id) },
+      { label: "Import", kind: "ghost", onClick: () => importPageJsonInto(p.id) },
+    ]));
 
-      inspectorEl.appendChild(fieldSelect(
-        "Heading size",
-        tb?.level || "h3",
-        [
-          { value: "h1", label: "H1" },
-          { value: "h2", label: "H2" },
-          { value: "h3", label: "H3" },
-          { value: "body", label: "Body" },
-        ],
-        (val) => {
-          if (!tb) return;
-          tb.level = val;
-          saveSchema();
-          renderCanvas();
-          renderPagesList();
-        }
-      ));
+    inspectorEl.appendChild(divider());
 
-      // Body content
-      inspectorEl.appendChild(richTextEditor("Body", tb?.bodyHtml || "<p></p>", (html) => {
-        if (!tb) return;
-        tb.bodyHtml = sanitizeRichHtml(html);
-        saveSchemaDebounced();
-        renderCanvas();
-      }));
-
-      // Arrange + duplicate + delete
-      inspectorEl.appendChild(divider());
-
-      inspectorEl.appendChild(buttonRow([
-        { label: "Move up", kind: "ghost", onClick: () => moveFlowItem(p.id, tb?.id, -1) },
-        { label: "Move down", kind: "ghost", onClick: () => moveFlowItem(p.id, tb?.id, +1) },
-        { label: "Duplicate", kind: "ghost", onClick: () => duplicateTextBlock(p.id, tb?.id) },
-      ]));
-
-      inspectorEl.appendChild(buttonRow([
-        {
-          label: "Delete text block",
-          kind: "ghost",
-          onClick: () => {
-            if (!tb) return;
-            if (!confirm("Delete this text block?")) return;
-            deleteFlowItem(p.id, tb.id);
-          },
-        },
-      ]));
-
-      return;
-    }
-
-    // Page selection: page settings live in the page header, so the inspector just offers helpful actions.
-    if (selection.blockType === "page" && selection.groupId == null) {
-      inspectorSubEl.textContent = "Editing page";
-      inspectorEl.appendChild(sectionTitle("Page"));
-      inspectorEl.appendChild(pEl("Page name, Preview mode and JSON import/export live in the page header.", "inlineHelp"));
-      inspectorEl.appendChild(buttonRow([{ label: "+ Group", kind: "primary", onClick: () => addGroupToPage(p.id) }]));
-      inspectorEl.appendChild(buttonRow([{ label: "+ Text block", kind: "ghost", onClick: () => addTextBlockToPage(p.id) }]));
-      return;
-    }
-
-    // If no group is selected/available (should be rare), guide the user.
-    if (!g) {
-      inspectorSubEl.textContent = "Select or add a group";
-      inspectorEl.appendChild(sectionTitle("Groups"));
-      inspectorEl.appendChild(pEl("Select a group to edit, or add a new one.", "inlineHelp"));
-      inspectorEl.appendChild(buttonRow([{ label: "+ Group", kind: "primary", onClick: () => addGroupToPage(p.id) }]));
-      inspectorEl.appendChild(buttonRow([{ label: "+ Text block", kind: "ghost", onClick: () => addTextBlockToPage(p.id) }]));
-      return;
-    }
-
-    // Question selection: ONLY show question settings (page/group settings live elsewhere)
-    if (q) {
-      inspectorSubEl.textContent = "Editing question";
-
-      inspectorEl.appendChild(sectionTitle("Question"));
-
-          if (q.type !== "display") {
-inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
-        q.title = val || "Untitled question";
-        saveSchemaDebounced();
-        renderCanvas();
-        renderPagesList();
-      }));
-
-      inspectorEl.appendChild(fieldTextArea("Help text", q.help || "", (val) => {
-        q.help = val;
-        saveSchemaDebounced();
-      }));
-
-      // Explanatory content (rich text block shown above the answer control in Preview)
-      q.content = q.content || { enabled: false, html: "" };
-      inspectorEl.appendChild(toggleRow("Add explanatory content", q.content.enabled === true, (on) => {
-        q.content.enabled = on;
-        if (!q.content.html) q.content.html = "<p></p>";
-        saveSchema();
-        isTypingInspector = false;
-        renderAll(true);
-      }));
-
-      if (q.content.enabled) {
-        inspectorEl.appendChild(richTextEditor("Content", q.content.html || "", (html) => {
-          q.content.html = sanitizeRichHtml(html);
-          saveSchemaDebounced();
-        }));
-      }    }
-
-
-      inspectorEl.appendChild(fieldSelect("Type", q.type, QUESTION_TYPES.map(t => ({ value: t.key, label: t.label })), (val) => {
-        q.type = val;
-        if (!isOptionType(q.type)) q.options = [];
-        if (isOptionType(q.type) && (!q.options || !q.options.length)) {
-          q.options = ["Option 1", "Option 2", "Option 3"];
-        }
-        saveSchema();
-        renderAll();
-      }));
-
-      // Display element editor (non-input blocks)
-      if (q.type === "display") {
-        q.display = q.display && typeof q.display === "object" ? q.display : { variant: "info", tone: "neutral", title: "", subtitle: "", bodyHtml: "" };
-
-        inspectorEl.appendChild(divider());
-        inspectorEl.appendChild(sectionTitle("Display element"));
-
-        inspectorEl.appendChild(fieldSelect("Variant", q.display.variant || "info", DISPLAY_VARIANTS.map(v => ({ value: v.key, label: v.label })), (val) => {
-          q.display.variant = val;
-          // seed sensible defaults on change
-          if (val === "price") {
-            if (!q.title || q.title === "Display element") q.title = "Big price";
-            if (!q.display.title) q.display.title = "£1,250";
-            if (!q.display.subtitle) q.display.subtitle = "per year";
-            if (!q.display.prefix) q.display.prefix = "£";
-          }
-          if (val === "hero") {
-            if (!q.title || q.title === "Display element") q.title = "Hero";
-          }
-          if (val === "info") {
-            if (!q.title || q.title === "Display element") q.title = "Info";
-          }
-          saveSchema();
-          renderAll(true);
-        }));
-
-        inspectorEl.appendChild(fieldSelect("Tone", q.display.tone || "neutral", [
-          { value: "neutral", label: "Neutral" },
-          { value: "info", label: "Info" },
-          { value: "success", label: "Success" },
-          { value: "warning", label: "Warning" },
-        ], (val) => {
-          q.display.tone = val;
-          saveSchema();
-          renderAll(true);
-        }));
-
-        if ((q.display.variant || "info") === "price") {
-          inspectorEl.appendChild(fieldText("Displayed value (fallback)", q.display.title || "", (val) => {
-            q.display.title = val;
-            saveSchemaDebounced();
-            renderCanvas();
-          }));
-
-          inspectorEl.appendChild(fieldText("Prefix", q.display.prefix ?? "£", (val) => {
-            q.display.prefix = val;
-            saveSchemaDebounced();
-          }));
-
-          inspectorEl.appendChild(fieldText("Suffix", q.display.suffix ?? "", (val) => {
-            q.display.suffix = val;
-            saveSchemaDebounced();
-          }));
-
-          inspectorEl.appendChild(fieldText("Subtitle", q.display.subtitle || "", (val) => {
-            q.display.subtitle = val;
-            saveSchemaDebounced();
-          }));
-
-          inspectorEl.appendChild(toggleRow("Add body text", !!(q.display.bodyHtml || "").trim(), (on) => {
-            if (on && !q.display.bodyHtml) q.display.bodyHtml = "<p></p>";
-            if (!on) q.display.bodyHtml = "";
-            saveSchema();
-            isTypingInspector = false;
-            renderAll(true);
-          }));
-
-          if ((q.display.bodyHtml || "").trim()) {
-            inspectorEl.appendChild(richTextEditor("Body", q.display.bodyHtml || "", (html) => {
-              q.display.bodyHtml = sanitizeRichHtml(html);
-              saveSchemaDebounced();
-            }));
-          }
-        } else if ((q.display.variant || "info") === "divider") {
-          inspectorEl.appendChild(pEl("A simple divider line to separate sections.", "inlineHelp"));
-        } else {
-          inspectorEl.appendChild(fieldText("Title", q.display.title || "", (val) => {
-            q.display.title = val;
-            saveSchemaDebounced();
-            renderCanvas();
-          }));
-
-          inspectorEl.appendChild(fieldText("Subtitle", q.display.subtitle || "", (val) => {
-            q.display.subtitle = val;
-            saveSchemaDebounced();
-          }));
-
-          inspectorEl.appendChild(richTextEditor("Body", q.display.bodyHtml || "", (html) => {
-            q.display.bodyHtml = sanitizeRichHtml(html);
-            saveSchemaDebounced();
-          }));
-        }
-
-        // Display elements should not have required/placeholder/options/follow-ups/logic
-        return;
-      }
-
-      // Placeholder
-      if (
-        q.type === "text" ||
-        q.type === "email" ||
-        q.type === "number" ||
-        q.type === "currency" ||
-        q.type === "percent" ||
-        q.type === "tel" ||
-        q.type === "postcode"
-      ) {
-        inspectorEl.appendChild(fieldText("Placeholder", q.placeholder || "", (val) => {
-          q.placeholder = val;
-          saveSchema();
-        }));
-      }
-
-      // Required toggle
-      inspectorEl.appendChild(toggleRow("Required", q.required === true, (on) => {
-        q.required = on;
-        // Ensure default error text exists when toggling required on
-        if (q.required && !q.errorText) q.errorText = "This field is required.";
-        saveSchema();
-        renderAll();
-      }));
-
-      // Custom error message (shown in Preview when validation fails)
-      if (q.required === true) {
-        inspectorEl.appendChild(fieldTextArea("Error message", q.errorText || "This field is required.", (val) => {
-          q.errorText = val;
-          saveSchemaDebounced();
-        }));
-      }
-
-      // Options editor
-      if (isOptionType(q.type)) {
-        inspectorEl.appendChild(divider());
-        inspectorEl.appendChild(sectionTitle("Options"));
-        inspectorEl.appendChild(pEl("Add, rename, reorder, or delete options.", "inlineHelp"));
-        inspectorEl.appendChild(optionsEditor(q));
-      }
-
-      // Follow-up questions (nested array) — only for Yes/No
-      inspectorEl.appendChild(divider());
-
-      if (q.type === "yesno") {
-        inspectorEl.appendChild(sectionTitle("Follow-up questions"));
-        inspectorEl.appendChild(
-          pEl(
-            "Show a nested set of questions when the answer matches (e.g. Yes → capture conviction details).",
-            "inlineHelp"
-          )
-        );
-
-        q.followUp = q.followUp || {
-          enabled: false,
-          triggerValue: "Yes",
-          name: "",
-          questions: [],
-          repeat: { enabled: false, min: 1, max: 5, addLabel: "Add another", itemLabel: "Item" },
-        };
-        q.followUp.repeat = q.followUp.repeat && typeof q.followUp.repeat === "object" ? q.followUp.repeat : { enabled: false, min: 1, max: 5, addLabel: "Add another", itemLabel: "Item" };
-
-        inspectorEl.appendChild(
-          toggleRow("Enable follow-up questions", q.followUp.enabled === true, (on) => {
-            q.followUp.enabled = on;
-            saveSchema();
-            isTypingInspector = false;
-            renderAll(true);
-          })
-        );
-
-        if (q.followUp.enabled) {
-          inspectorEl.appendChild(
-            fieldSelect(
-              "Trigger answer",
-              q.followUp.triggerValue || "Yes",
-              [
-                { value: "Yes", label: "Yes" },
-                { value: "No", label: "No" },
-              ],
-              (val) => {
-                q.followUp.triggerValue = val;
-                saveSchema();
-                renderAll(true);
-              }
-            )
-          );
-
-          inspectorEl.appendChild(
-            fieldText("Array name", q.followUp.name || "", (val) => {
-              q.followUp.name = val;
-              saveSchemaDebounced();
-            })
-          );
-
-          // Repeatable instances
-          inspectorEl.appendChild(divider());
-          inspectorEl.appendChild(sectionTitle("Repeatable set"));
-          inspectorEl.appendChild(
-            pEl(
-              "Allow users to add multiple instances of these follow-up questions (e.g. multiple convictions).",
-              "inlineHelp"
-            )
-          );
-
-          inspectorEl.appendChild(
-            toggleRow("Allow multiple (Add another)", q.followUp.repeat.enabled === true, (on) => {
-              q.followUp.repeat.enabled = on;
-              if (!Number.isFinite(Number(q.followUp.repeat.min))) q.followUp.repeat.min = 1;
-              if (!Number.isFinite(Number(q.followUp.repeat.max))) q.followUp.repeat.max = 5;
-              saveSchema();
-              isTypingInspector = false;
-              renderAll(true);
-            })
-          );
-
-          if (q.followUp.repeat.enabled) {
-            inspectorEl.appendChild(fieldText("Item label", q.followUp.repeat.itemLabel || "Item", (val) => {
-              q.followUp.repeat.itemLabel = val || "Item";
-              saveSchemaDebounced();
-            }));
-
-            inspectorEl.appendChild(fieldText("Add button label", q.followUp.repeat.addLabel || "Add another", (val) => {
-              q.followUp.repeat.addLabel = val || "Add another";
-              saveSchemaDebounced();
-            }));
-
-            inspectorEl.appendChild(fieldText("Minimum items", String(q.followUp.repeat.min ?? 1), (val) => {
-              const n = Number(val);
-              q.followUp.repeat.min = Number.isFinite(n) ? clamp(n, 0, 50) : 1;
-              q.followUp.repeat.max = clamp(Number(q.followUp.repeat.max ?? 5), q.followUp.repeat.min, 50);
-              saveSchema();
-              renderAll(true);
-            }));
-
-            inspectorEl.appendChild(fieldText("Maximum items", String(q.followUp.repeat.max ?? 5), (val) => {
-              const n = Number(val);
-              q.followUp.repeat.max = Number.isFinite(n) ? clamp(n, q.followUp.repeat.min ?? 1, 50) : 5;
-              saveSchema();
-              renderAll(true);
-            }));
-          }
-        }
-      }
-
-      // Question logic (visibility)
-      inspectorEl.appendChild(divider());
-      inspectorEl.appendChild(sectionTitle("Question visibility"));
-      inspectorEl.appendChild(pEl("Show this question only if the rule(s) match.", "inlineHelp"));
-
-      q.logic = q.logic || { enabled: false, rules: [] };
-      inspectorEl.appendChild(toggleRow("Enable question logic", q.logic?.enabled === true, (on) => {
-        q.logic = q.logic || { enabled: false, rules: [] };
-        q.logic.enabled = on;
-        saveSchema();
-        isTypingInspector = false;
-        renderAll(true);
-      }));
-
-      if (q.logic?.enabled) {
-        inspectorEl.appendChild(questionLogicEditor(schema, p, g, q));
-      }
-
-      return;
-    }
-
-    // Group selection: show only group settings
-    inspectorSubEl.textContent = "Editing group";
-
+    // -------------------------
+    // GROUP (shown when a group is selected)
+    // -------------------------
     inspectorEl.appendChild(sectionTitle("Group"));
 
-    inspectorEl.appendChild(pEl("Group name is editable in the group header.", "inlineHelp"));
+    if (!g) {
+      inspectorEl.appendChild(pEl("Select a group in the canvas, or add a new one.", "inlineHelp"));
+      inspectorEl.appendChild(buttonRow([
+        { label: "+ Group", kind: "primary", onClick: () => addGroupToPage(p.id) },
+      ]));
+      return;
+    }
 
-    // Group description (small step #2)
+    // Group name
+    inspectorEl.appendChild(fieldText("Group name", g.name || "", (val) => {
+      g.name = val || "Untitled group";
+      saveSchemaDebounced();
+      renderCanvas();
+      renderPagesList();
+      renderGroupHeader(); // keep header display in sync
+    }));
+
+    // Group description
     g.description = g.description || { enabled: false, html: "" };
     inspectorEl.appendChild(toggleRow("Add group description", g.description.enabled === true, (on) => {
       g.description.enabled = on;
@@ -2598,13 +2152,13 @@ inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
     }));
 
     if (g.description.enabled) {
-      inspectorEl.appendChild(richTextEditor("Description", g.description.html || "", (html) => {
+      inspectorEl.appendChild(richTextEditor("Description", g.description.html || "<p></p>", (html) => {
         g.description.html = sanitizeRichHtml(html);
         saveSchemaDebounced();
       }));
     }
 
-    // Group conditional logic (small step #3)
+    // Group visibility / logic
     inspectorEl.appendChild(divider());
     inspectorEl.appendChild(sectionTitle("Group visibility"));
     inspectorEl.appendChild(pEl("Show this group only if the rule(s) match. (Hides all questions in the group in Preview)", "inlineHelp"));
@@ -2621,346 +2175,205 @@ inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
       inspectorEl.appendChild(groupLogicEditor(schema, p, g));
     }
 
+    // Group order / delete (kept here to avoid accidental clicks while editing questions)
     inspectorEl.appendChild(divider());
-    inspectorEl.appendChild(pEl("Move/delete group controls are available on the group header.", "inlineHelp"));
-
-    // (Removed) Question arrays section — follow-ups can now be repeatable inside questions.
+    inspectorEl.appendChild(buttonRow([
+      { label: "Move group up", kind: "ghost", onClick: () => moveGroup(p.id, g.id, -1) },
+      { label: "Move group down", kind: "ghost", onClick: () => moveGroup(p.id, g.id, +1) },
+    ]));
+    inspectorEl.appendChild(buttonRow([
+      { label: "Delete group", kind: "danger", onClick: () => {
+          if (!confirm(`Delete group "${g.name}"?`)) return;
+          deleteGroupFromPage(p.id, g.id);
+        } 
+      },
+    ]));
 
     inspectorEl.appendChild(divider());
+
+    // -------------------------
+    // QUESTION / TEXT BLOCK (shown last)
+    // -------------------------
+
+    // Text block inspector (page-level content block)
+    if (selection.blockType === "text") {
+      const tb = (p.flow || []).find((x) => x.type === "text" && x.id === selection.blockId);
+      inspectorEl.appendChild(sectionTitle("Text block"));
+
+      inspectorEl.appendChild(fieldText("Title", tb?.title || "", (val) => {
+        if (!tb) return;
+        tb.title = val;
+        saveSchemaDebounced();
+        renderPagesList();
+        renderCanvas();
+      }));
+
+      inspectorEl.appendChild(fieldSelect("Heading level", tb?.level || "h2", [
+        { value: "h1", label: "H1" },
+        { value: "h2", label: "H2" },
+        { value: "h3", label: "H3" },
+        { value: "h4", label: "H4" },
+        { value: "p", label: "Paragraph" },
+      ], (val) => {
+        if (!tb) return;
+        tb.level = val;
+        saveSchemaDebounced();
+        renderPagesList();
+        renderCanvas();
+      }));
+
+      inspectorEl.appendChild(richTextEditor("Body", tb?.bodyHtml || "<p></p>", (html) => {
+        if (!tb) return;
+        tb.bodyHtml = sanitizeRichHtml(html);
+        saveSchemaDebounced();
+        renderCanvas();
+      }));
+
+      return;
+    }
 
     // If no question selected
     if (!q) {
-      inspectorEl.appendChild(sectionTitle("Questions"));
+      inspectorEl.appendChild(sectionTitle("Question"));
       inspectorEl.appendChild(pEl("Select a question in the canvas to edit its settings.", "inlineHelp"));
       return;
     }
 
-    // Question inspector
+    // Question inspector (existing behaviour)
     inspectorEl.appendChild(sectionTitle("Question"));
 
-        if (q.type !== "display") {
-inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
-      q.title = val || "Untitled question";
+    // Display elements should not show question-only fields
+    if (q.type !== "display") {
+      inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
+        q.title = val || "Untitled question";
+        saveSchemaDebounced();
+        renderCanvas();
+        renderPagesList();
+      }));
+
+      inspectorEl.appendChild(fieldTextArea("Help text", q.help || "", (val) => {
+        q.help = val;
+        saveSchemaDebounced();
+      }));
+
+      // Explanatory content
+      q.content = q.content || { enabled: false, html: "" };
+      inspectorEl.appendChild(toggleRow("Add explanatory content", q.content.enabled === true, (on) => {
+        q.content.enabled = on;
+        if (!q.content.html) q.content.html = "<p></p>";
+        saveSchema();
+        isTypingInspector = false;
+        renderAll(true);
+      }));
+
+      if (q.content.enabled) {
+        inspectorEl.appendChild(richTextEditor("Explanatory content", q.content.html || "<p></p>", (html) => {
+          q.content.html = sanitizeRichHtml(html);
+          saveSchemaDebounced();
+        }));
+      }
+
+      // Question type / placeholder
+      inspectorEl.appendChild(divider());
+      inspectorEl.appendChild(fieldSelect("Type", q.type || "text", QUESTION_TYPES, (val) => {
+        q.type = val;
+        // Reset type-specific
+        if (val === "radio" || val === "select" || val === "checkboxes") {
+          q.options = q.options && q.options.length ? q.options : ["Option 1", "Option 2"];
+        }
+        saveSchema();
+        isTypingInspector = false;
+        renderAll(true);
+      }));
+
+      if (q.type === "text" || q.type === "currency" || q.type === "number" || q.type === "date") {
+        inspectorEl.appendChild(fieldText("Placeholder", q.placeholder || "", (val) => {
+          q.placeholder = val;
+          saveSchemaDebounced();
+          renderCanvas();
+        }));
+      }
+
+      // Required
+      inspectorEl.appendChild(divider());
+      inspectorEl.appendChild(toggleRow("Required", q.required === true, (on) => {
+        q.required = on;
+        saveSchemaDebounced();
+        renderCanvas();
+      }));
+
+      if (q.required) {
+        inspectorEl.appendChild(fieldTextArea("Error message", q.errorText || "This field is required.", (val) => {
+          q.errorText = val;
+          saveSchemaDebounced();
+        }));
+      }
+
+      // Question visibility logic
+      inspectorEl.appendChild(divider());
+      inspectorEl.appendChild(sectionTitle("Question visibility"));
+      inspectorEl.appendChild(pEl("Show this question only if the rule(s) match.", "inlineHelp"));
+
+      inspectorEl.appendChild(toggleRow("Enable question logic", q.logic?.enabled === true, (on) => {
+        q.logic = q.logic || { enabled: false, rules: [] };
+        q.logic.enabled = on;
+        saveSchema();
+        isTypingInspector = false;
+        renderAll(true);
+      }));
+
+      if (q.logic?.enabled) {
+        inspectorEl.appendChild(logicEditor(p, q));
+      }
+
+      return;
+    }
+
+    // Display element inspector
+    q.display = q.display || { variant: "info", tone: "neutral", title: "", subtitle: "", bodyHtml: "<p></p>" };
+
+    inspectorEl.appendChild(fieldSelect("Variant", q.display.variant || "info", [
+      { value: "info", label: "Info box" },
+      { value: "bigPrice", label: "Big price" },
+      { value: "hero", label: "Hero" },
+      { value: "divider", label: "Divider" },
+    ], (val) => {
+      q.display.variant = val;
+      saveSchema();
+      isTypingInspector = false;
+      renderAll(true);
+    }));
+
+    inspectorEl.appendChild(fieldSelect("Tone", q.display.tone || "neutral", [
+      { value: "neutral", label: "Neutral" },
+      { value: "info", label: "Info" },
+      { value: "success", label: "Success" },
+      { value: "warning", label: "Warning" },
+      { value: "danger", label: "Danger" },
+    ], (val) => {
+      q.display.tone = val;
+      saveSchemaDebounced();
+      renderCanvas();
+    }));
+
+    inspectorEl.appendChild(fieldText("Title", q.display.title || "", (val) => {
+      q.display.title = val;
       saveSchemaDebounced();
       renderCanvas();
       renderPagesList();
     }));
 
-    inspectorEl.appendChild(fieldTextArea("Help text", q.help || "", (val) => {
-      q.help = val;
+    inspectorEl.appendChild(fieldText("Subtitle", q.display.subtitle || "", (val) => {
+      q.display.subtitle = val;
       saveSchemaDebounced();
+      renderCanvas();
     }));
 
-    // Explanatory content (rich text block shown above the answer control in Preview)
-    q.content = q.content || { enabled: false, html: "" };
-    inspectorEl.appendChild(toggleRow("Add explanatory content", q.content.enabled === true, (on) => {
-      q.content.enabled = on;
-      if (!q.content.html) q.content.html = "<p></p>";
-      saveSchema();
-      isTypingInspector = false;
-      renderAll(true);
+    inspectorEl.appendChild(richTextEditor("Body", q.display.bodyHtml || "<p></p>", (html) => {
+      q.display.bodyHtml = sanitizeRichHtml(html);
+      saveSchemaDebounced();
+      renderCanvas();
     }));
-
-    if (q.content.enabled) {
-      inspectorEl.appendChild(richTextEditor("Content", q.content.html || "", (html) => {
-        q.content.html = sanitizeRichHtml(html);
-        saveSchemaDebounced();
-      }));
-    }    }
-
-
-    inspectorEl.appendChild(fieldSelect("Type", q.type, QUESTION_TYPES.map(t => ({ value: t.key, label: t.label })), (val) => {
-      q.type = val;
-      if (!isOptionType(q.type)) q.options = [];
-      if (isOptionType(q.type) && (!q.options || !q.options.length)) {
-        q.options = ["Option 1", "Option 2", "Option 3"];
-      }
-      saveSchema();
-      renderAll();
-    }));
-
-    // Display element editor (non-input blocks)
-    if (q.type === "display") {
-      q.display = q.display && typeof q.display === "object" ? q.display : { variant: "info", tone: "neutral", title: "", subtitle: "", bodyHtml: "" };
-
-      inspectorEl.appendChild(divider());
-      inspectorEl.appendChild(sectionTitle("Display element"));
-
-      inspectorEl.appendChild(fieldSelect("Variant", q.display.variant || "info", DISPLAY_VARIANTS.map(v => ({ value: v.key, label: v.label })), (val) => {
-        q.display.variant = val;
-        // seed sensible defaults on change
-        if (val === "price") {
-          if (!q.title || q.title === "Display element") q.title = "Big price";
-          if (!q.display.title) q.display.title = "£1,250";
-          if (!q.display.subtitle) q.display.subtitle = "per year";
-          if (!q.display.prefix) q.display.prefix = "£";
-        }
-        if (val === "hero") {
-          if (!q.title || q.title === "Display element") q.title = "Hero";
-        }
-        if (val === "info") {
-          if (!q.title || q.title === "Display element") q.title = "Info";
-        }
-        saveSchema();
-        renderAll(true);
-      }));
-
-      inspectorEl.appendChild(fieldSelect("Tone", q.display.tone || "neutral", [
-        { value: "neutral", label: "Neutral" },
-        { value: "info", label: "Info" },
-        { value: "success", label: "Success" },
-        { value: "warning", label: "Warning" },
-      ], (val) => {
-        q.display.tone = val;
-        saveSchema();
-        renderAll(true);
-      }));
-
-        if ((q.display.variant || "info") === "price") {
-        inspectorEl.appendChild(fieldText("Displayed value (fallback)", q.display.title || "", (val) => {
-          q.display.title = val;
-          saveSchemaDebounced();
-          renderCanvas();
-        }));
-
-        inspectorEl.appendChild(fieldText("Prefix", q.display.prefix ?? "£", (val) => {
-          q.display.prefix = val;
-          saveSchemaDebounced();
-        }));
-
-        inspectorEl.appendChild(fieldText("Suffix", q.display.suffix ?? "", (val) => {
-          q.display.suffix = val;
-          saveSchemaDebounced();
-        }));
-
-        inspectorEl.appendChild(fieldText("Subtitle", q.display.subtitle || "", (val) => {
-          q.display.subtitle = val;
-          saveSchemaDebounced();
-        }));
-
-        inspectorEl.appendChild(toggleRow("Add body text", !!(q.display.bodyHtml || "").trim(), (on) => {
-          if (on && !q.display.bodyHtml) q.display.bodyHtml = "<p></p>";
-          if (!on) q.display.bodyHtml = "";
-          saveSchema();
-          isTypingInspector = false;
-          renderAll(true);
-        }));
-
-        if ((q.display.bodyHtml || "").trim()) {
-          inspectorEl.appendChild(richTextEditor("Body", q.display.bodyHtml || "", (html) => {
-            q.display.bodyHtml = sanitizeRichHtml(html);
-            saveSchemaDebounced();
-          }));
-        }
-      } else if ((q.display.variant || "info") === "divider") {
-        inspectorEl.appendChild(pEl("A simple divider line to separate sections.", "inlineHelp"));
-      } else {
-        inspectorEl.appendChild(fieldText("Title", q.display.title || "", (val) => {
-          q.display.title = val;
-          saveSchemaDebounced();
-          renderCanvas();
-        }));
-
-        inspectorEl.appendChild(fieldText("Subtitle", q.display.subtitle || "", (val) => {
-          q.display.subtitle = val;
-          saveSchemaDebounced();
-        }));
-
-        inspectorEl.appendChild(richTextEditor("Body", q.display.bodyHtml || "", (html) => {
-          q.display.bodyHtml = sanitizeRichHtml(html);
-          saveSchemaDebounced();
-        }));
-      }
-
-      // Display elements should not have required/placeholder/options/follow-ups/logic
-      return;
-    }
-
-
-    // Placeholder
-    if (
-      q.type === "text" ||
-      q.type === "email" ||
-      q.type === "number" ||
-      q.type === "currency" ||
-      q.type === "percent" ||
-      q.type === "tel" ||
-      q.type === "postcode"
-    ) {
-      inspectorEl.appendChild(fieldText("Placeholder", q.placeholder || "", (val) => {
-        q.placeholder = val;
-        saveSchema();
-      }));
-    }
-
-    // Required toggle
-    inspectorEl.appendChild(toggleRow("Required", q.required === true, (on) => {
-      q.required = on;
-      // Ensure default error text exists when toggling required on
-      if (q.required && !q.errorText) q.errorText = "This field is required.";
-      saveSchema();
-      renderAll();
-    }));
-
-    // Custom error message (shown in Preview when validation fails)
-    // Only show this control when Required is enabled (keeps UI clean)
-    if (q.required === true) {
-      inspectorEl.appendChild(fieldTextArea("Error message", q.errorText || "This field is required.", (val) => {
-        q.errorText = val;
-        saveSchemaDebounced();
-      }));
-    }
-
-    // Options editor
-    if (isOptionType(q.type)) {
-      inspectorEl.appendChild(divider());
-      inspectorEl.appendChild(sectionTitle("Options"));
-      inspectorEl.appendChild(pEl("Add, rename, reorder, or delete options.", "inlineHelp"));
-      inspectorEl.appendChild(optionsEditor(q));
-    }
-
-    // Follow-up questions (nested array) — only for Yes/No
-    inspectorEl.appendChild(divider());
-
-    if (q.type === "yesno") {
-      inspectorEl.appendChild(sectionTitle("Follow-up questions"));
-      inspectorEl.appendChild(
-        pEl(
-          "Show a nested set of questions when the answer matches (e.g. Yes → capture conviction details).",
-          "inlineHelp"
-        )
-      );
-
-      q.followUp = q.followUp || {
-        enabled: false,
-        triggerValue: "Yes",
-        name: "",
-        questions: [],
-        repeat: { enabled: false, min: 1, max: 5, addLabel: "Add another", itemLabel: "Item" },
-      };
-      q.followUp.repeat = q.followUp.repeat && typeof q.followUp.repeat === "object" ? q.followUp.repeat : { enabled: false, min: 1, max: 5, addLabel: "Add another", itemLabel: "Item" };
-
-      inspectorEl.appendChild(
-        toggleRow("Enable follow-up questions", q.followUp.enabled === true, (on) => {
-          q.followUp.enabled = on;
-          saveSchema();
-          isTypingInspector = false;
-          renderAll(true);
-        })
-      );
-
-      if (q.followUp.enabled) {
-        inspectorEl.appendChild(
-          fieldSelect(
-            "Trigger answer",
-            q.followUp.triggerValue || "Yes",
-            [
-              { value: "Yes", label: "Yes" },
-              { value: "No", label: "No" },
-            ],
-            (val) => {
-              q.followUp.triggerValue = val;
-              saveSchema();
-              renderAll(true);
-            }
-          )
-        );
-
-        inspectorEl.appendChild(
-          fieldText("Array name", q.followUp.name || "", (val) => {
-            q.followUp.name = val;
-            saveSchemaDebounced();
-          })
-        );
-
-        // Repeatable instances
-        inspectorEl.appendChild(divider());
-        inspectorEl.appendChild(sectionTitle("Repeatable set"));
-        inspectorEl.appendChild(
-          pEl(
-            "Allow users to add multiple instances of these follow-up questions (e.g. multiple convictions).",
-            "inlineHelp"
-          )
-        );
-
-        inspectorEl.appendChild(
-          toggleRow("Allow multiple (Add another)", q.followUp.repeat.enabled === true, (on) => {
-            q.followUp.repeat.enabled = on;
-            if (!Number.isFinite(Number(q.followUp.repeat.min))) q.followUp.repeat.min = 1;
-            if (!Number.isFinite(Number(q.followUp.repeat.max))) q.followUp.repeat.max = 5;
-            saveSchema();
-            isTypingInspector = false;
-            renderAll(true);
-          })
-        );
-
-        if (q.followUp.repeat.enabled) {
-          inspectorEl.appendChild(fieldText("Item label", q.followUp.repeat.itemLabel || "Item", (val) => {
-            q.followUp.repeat.itemLabel = val || "Item";
-            saveSchemaDebounced();
-          }));
-
-          inspectorEl.appendChild(fieldText("Add button label", q.followUp.repeat.addLabel || "Add another", (val) => {
-            q.followUp.repeat.addLabel = val || "Add another";
-            saveSchemaDebounced();
-          }));
-
-          // min/max as text inputs (keeps component set small)
-          inspectorEl.appendChild(fieldText("Minimum items", String(q.followUp.repeat.min ?? 1), (val) => {
-            const n = Number(val);
-            q.followUp.repeat.min = Number.isFinite(n) ? clamp(n, 0, 50) : 1;
-            q.followUp.repeat.max = clamp(Number(q.followUp.repeat.max ?? 5), q.followUp.repeat.min, 50);
-            saveSchema();
-            renderAll(true);
-          }));
-
-          inspectorEl.appendChild(fieldText("Maximum items", String(q.followUp.repeat.max ?? 5), (val) => {
-            const n = Number(val);
-            q.followUp.repeat.max = Number.isFinite(n) ? clamp(n, q.followUp.repeat.min ?? 1, 50) : 5;
-            saveSchema();
-            renderAll(true);
-          }));
-        }
-
-        inspectorEl.appendChild(divider());
-        inspectorEl.appendChild(followUpQuestionsEditor(q));
-
-        inspectorEl.appendChild(
-          buttonRow([
-            {
-              label: "Delete follow-up array",
-              kind: "ghost",
-              onClick: () => {
-                if (!confirm("Delete these follow-up questions?")) return;
-                q.followUp.enabled = false;
-                q.followUp.name = "";
-                q.followUp.questions = [];
-                saveSchema();
-                renderAll(true);
-              },
-            },
-          ])
-        );
-      }
-    }
-
-    // Conditional logic
-    inspectorEl.appendChild(divider());
-    inspectorEl.appendChild(sectionTitle("Conditional logic"));
-    inspectorEl.appendChild(pEl("Show this question only if the rule(s) match.", "inlineHelp"));
-
-    inspectorEl.appendChild(toggleRow("Enable logic", q.logic?.enabled === true, (on) => {
-      q.logic = q.logic || { enabled: false, rules: [] };
-      q.logic.enabled = on;
-      saveSchema();
-      // this changes inspector structure, so force a rebuild
-      isTypingInspector = false;
-      renderAll(true);
-    }));
-
-    if (q.logic?.enabled) {
-      inspectorEl.appendChild(logicEditor(p, q));
-    }
   }
 
   function renderMiniStats() {
@@ -4653,7 +4066,7 @@ CH 4.3  Preview / runtime (continued)
     if (!previewBackdrop) return;
 
     // Load persisted preview mode if present
-    preview.mode = "page";
+    if (schema?.meta?.previewMode) preview.mode = schema.meta.previewMode;
 
     preview.open = true;
     preview.index = 0;
@@ -5800,7 +5213,9 @@ CH 8  Event wiring (listeners)
   }
 
   // Restore preview mode preference if present
-  preview.mode = "page";
+  if (schema?.meta?.previewMode) {
+    preview.mode = schema.meta.previewMode;
+  }
 
   wire();
   // Builder-only AI Assist (safe even if CSS/DOM doesn't have specific hooks)
