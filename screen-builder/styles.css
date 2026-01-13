@@ -1231,12 +1231,6 @@ textarea.aiAssistInput {
 .code-embed.w-embed.w-iframe {
   min-height: 100vh;
 
-div#inspectorSub {
-    display: none;
-}
-.sectionTitle {
-    display: none;
-}
 
   /* =========================================================
    Display elements (new question type: "display")
