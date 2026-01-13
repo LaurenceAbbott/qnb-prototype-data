@@ -2373,7 +2373,7 @@ actions.appendChild(btnGroupOpts);
     inspectorEl.appendChild(sectionTitle("Question"));
 
     // Display elements should not show question-only fields
-    if (q.type !== ) {
+    if (q.type !== "display") {
       inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
         q.title = val || "Untitled question";
         saveSchemaDebounced();
