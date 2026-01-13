@@ -1461,7 +1461,7 @@ CH 4  UI Rendering
         renderAll();
       });
 
-      const delBtn = iconButton("🗑", "Delete page");
+      const delBtn = iconButton("✕", "Delete page");
       delBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         if (!confirm(`Delete "${p.name}"?`)) return;
