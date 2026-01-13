@@ -15,6 +15,51 @@
   2) Leave this header intact so we can find the insertion points.
 */
 
+// ===== FIXED TEMPLATE RENDERERS (SYSTEM OWNED) =====
+
+function renderQuoteTemplate(page) {
+  const wrap = document.createElement("div");
+  wrap.className = "qnb-template qnb-template-quote";
+
+  wrap.innerHTML = `
+    <div class="qnb-preview-card qnb-quote-card">
+      <div class="qnb-preview-group-title">Your quote</div>
+      <div class="qnb-quote-priceCard">Quote price will appear here</div>
+      <div class="qnb-quote-coverSummary">Cover summary will appear here</div>
+    </div>
+  `;
+
+  return wrap;
+}
+
+function renderSummaryTemplate(page) {
+  const wrap = document.createElement("div");
+  wrap.className = "qnb-template qnb-template-summary";
+
+  wrap.innerHTML = `
+    <div class="qnb-preview-card qnb-summary-card">
+      <div class="qnb-preview-group-title">Check your answers</div>
+      <div class="qnb-summary-reviewTable">Answer playback will appear here</div>
+    </div>
+  `;
+
+  return wrap;
+}
+
+function renderPaymentTemplate(page) {
+  const wrap = document.createElement("div");
+  wrap.className = "qnb-template qnb-template-payment";
+
+  wrap.innerHTML = `
+    <div class="qnb-preview-card qnb-payment-card">
+      <div class="qnb-preview-group-title">Payment</div>
+      <div class="qnb-payment-summaryCard">Payment summary will appear here</div>
+    </div>
+  `;
+
+  return wrap;
+}
+
 // ===== PASTE YOUR CURRENT FULL JS BELOW THIS LINE =====
 /* =============================================================================
 SCREEN BUILDER — CHAPTERD FILE (Insert-only scaffolding)
@@ -4785,55 +4830,33 @@ CH 4.3  Preview / runtime (continued)
     return;
   }
 
-  function renderPreviewPage(pageId) {
-    const p = getPage(pageId);
-    if (!p) return;
+  function renderPreviewPage(page) {
+    previewContentEl.innerHTML = "";
 
-    // Build visibility maps
-    const all = getAllQuestionsInOrder(schema);
-    const byId = Object.fromEntries(all.map((q) => [q.id, q]));
-    const groupVisible = {};
-    p.groups.forEach((g) => {
-      groupVisible[g.id] = groupShouldShow(g, byId, preview.answers);
-    });
+    const tpl = String(page.template || "form").toLowerCase();
 
-    const card = document.createElement("div");
-    card.className = cx(
-      "previewCard",
-      "qnb-preview-card",
-      tplClass(p?.template || "form", "card")
-    );
+    // ---- FIXED TEMPLATE BLOCKS (always render first) ----
+    if (tpl === "quote") {
+      previewContentEl.appendChild(renderQuoteTemplate(page));
+    }
+    if (tpl === "summary") {
+      previewContentEl.appendChild(renderSummaryTemplate(page));
+    }
+    if (tpl === "payment") {
+      previewContentEl.appendChild(renderPaymentTemplate(page));
+    }
 
-    // Page header
-    const header = document.createElement("div");
-    header.className = "pQ";
-    header.textContent = p.name || "Untitled page";
-    card.appendChild(header);
-
-    const stack = document.createElement("div");
-    stack.className = cx("previewPageStack", "qnb-preview-page-stack");
-
-    // Render page flow (text blocks + groups)
-    (p.flow || []).forEach((it) => {
+    // ---- EXISTING GROUP / TEXT RENDERING ----
+    page.flow.forEach((it) => {
       if (it.type === "text") {
-        const level = it.level || "h3";
-        const title = (it.title || "").trim();
-        const body = sanitizeRichHtml(it.bodyHtml || "");
-
-        const block = document.createElement("div");
-        block.className = cx("previewTextBlock", "qnb-preview-text-block");
-
-        const titleEl = document.createElement(level === "body" ? "div" : level);
-        titleEl.className = cx("previewTextBlockTitle", "qnb-preview-text-title");
-        titleEl.textContent = title;
-        if (title) block.appendChild(titleEl);
-
-        if (body) {
-          const bodyEl = document.createElement("div");
-          bodyEl.className = cx("pHelp", "previewTextBlockBody", "qnb-preview-text-body");
-          bodyEl.innerHTML = body;
-          block.appendChild(bodyEl);
-        }
+        renderTextBlock(it);
+      }
+      if (it.type === "group") {
+        const g = page.groups.find((gg) => gg.id === it.id);
+        if (g) renderGroup(g, page);
+      }
+    });
+  }
 
         if (title || body) stack.appendChild(block);
         return;
@@ -5411,3 +5434,5 @@ const TEMPLATE_DEFS = {
   // Add more templates later...
   // summary: { ... }
 };
+
+
