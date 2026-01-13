@@ -20,6 +20,7 @@ CH 1  State (defaults, load/save, migrate)
 CH 2  Data Models (Page/Group/Question schemas)
 CH 3  Templates
      3.1  Form pages
+     3.2  Fixed checkout pages (Quote/Summary/Payment)
 CH 4  UI Rendering
      4.1  Left nav (page list)
      4.2  Main editor (page/group/question)
@@ -32,6 +33,7 @@ CH 9  Dev / debug helpers
 
 Patch hooks we’ll use later:
 - [PATCH-HOOK: NAV_PAGES_SOURCE]
+- [PATCH-HOOK: FIXED_PAGES_APPEND]
 - [PATCH-HOOK: PAGE_TYPE_RENDER_SWITCH]
 ============================================================================= */
 
@@ -322,6 +324,33 @@ CH 2  Data Models (schemas, types, templates)
 
 
 
+  /* =============================================================================
+CH 3  Templates
+     3.1  Form pages
+     3.2  Fixed checkout pages (Quote/Summary/Payment)
+
+We treat Quote/Summary/Payment as FIXED pages:
+- They always exist.
+- They always appear at the end of the left nav.
+- They cannot be deleted or re-ordered.
+- They keep a starter template (editable, but the page itself remains).
+============================================================================= */
+
+  /* =============================================================================
+CH 3  Templates
+     3.1  Form pages
+     3.2  Fixed checkout pages (Quote/Summary/Payment)
+
+We treat Quote/Summary/Payment as FIXED pages:
+- They always exist.
+- They always appear at the end of the left nav.
+- They cannot be deleted or re-ordered.
+- They keep a starter template (editable, but the page itself remains).
+============================================================================= */
+
+// -------------------------
+// Fixed checkout pages (always present)
+// -------------------------
 // -------------------------
 // Fixed checkout pages removed
 // -------------------------
@@ -642,6 +671,21 @@ CH 4  UI Rendering
   const AI_JOURNEY_ENDPOINT = "https://screen-builder-ai.laurence-ogi.workers.dev";
   // Expose for quick DevTools checks
   window.AI_JOURNEY_ENDPOINT = AI_JOURNEY_ENDPOINT;
+
+  // Logic operators used across the builder (rules editor + AI capability contract).
+  // The AI Assist reads this list to avoid generating unsupported operators.
+  const OPERATORS = [
+    { key: "equals", label: "equals" },
+    { key: "not_equals", label: "does not equal" },
+    { key: "contains", label: "contains" },
+    { key: "not_contains", label: "does not contain" },
+    { key: "gt", label: ">" },
+    { key: "gte", label: ">=" },
+    { key: "lt", label: "<" },
+    { key: "lte", label: "<=" },
+    { key: "is_answered", label: "is answered" },
+    { key: "is_not_answered", label: "is not answered" },
+  ];
 
   function isValidSchemaShape(s) {
     return !!(s && typeof s === "object" && Array.isArray(s.pages));
