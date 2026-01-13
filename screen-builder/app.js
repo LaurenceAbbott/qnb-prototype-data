@@ -117,6 +117,11 @@ CH 7  Utilities (ids, cloning, formatting, sanitise)
       "H2",
       "H3",
       "H4",
+      "H5",
+      "A",
+      "HR",
+      "BLOCKQUOTE",
+      "SMALL",
     ]);
 
     // Use a detached container instead of DOMParser (more robust across embeds/iframes).
@@ -134,9 +139,21 @@ CH 7  Utilities (ids, cloning, formatting, sanitise)
       if (node.nodeType === 1) {
         const el = node;
 
-        // Strip ALL attributes (prevents XSS via on* handlers, style, href, etc.)
-        // If we later want to allow safe links, we can whitelist attributes.
-        [...el.attributes].forEach((a) => el.removeAttribute(a.name));
+        // Strip attributes by default (prevents XSS via on* handlers, style, etc.)
+        // Allow safe links on <a> only (href + target + rel).
+        if (el.tagName === "A") {
+          const href = el.getAttribute("href") || "";
+          const safe = /^(https?:\/\/|mailto:|tel:)/i.test(href.trim());
+          // remove everything first
+          [...el.attributes].forEach((a) => el.removeAttribute(a.name));
+          if (safe) {
+            el.setAttribute("href", href.trim());
+            el.setAttribute("target", "_blank");
+            el.setAttribute("rel", "noopener noreferrer");
+          }
+        } else {
+          [...el.attributes].forEach((a) => el.removeAttribute(a.name));
+        }
 
         // Disallowed tags: unwrap (keep text/children)
         if (!allowed.has(el.tagName)) {
@@ -293,7 +310,19 @@ CH 2  Data Models (schemas, types, templates)
     { key: "radio", label: "Radio" },
     { key: "checkboxes", label: "Checkboxes" },
     { key: "yesno", label: "Yes / No" },
+    { key: "display", label: "Display element" },
   ];
+
+  // Display elements (non-input blocks that can be placed inside groups)
+  // These render in Preview but do not collect answers.
+  const DISPLAY_VARIANTS = [
+    { key: "hero", label: "Hero / banner" },
+    { key: "price", label: "Big price" },
+    { key: "info", label: "Info box" },
+    { key: "divider", label: "Divider" },
+  ];
+
+
 
   /* =============================================================================
 CH 3  Templates
@@ -1527,11 +1556,6 @@ CH 4  UI Rendering
   const progressFill = $("#progressFill");
   const progressText = $("#progressText");
 
-  // Ensure the app loads into the builder (never auto-open Preview)
-  // This protects against the preview backdrop being left open in the HTML/CSS.
-  if (previewBackdrop) previewBackdrop.classList.remove("isOpen");
-  if (previewStage) previewStage.innerHTML = "";
-
   // -------------------------
   // Persistence
   // -------------------------
@@ -2072,6 +2096,15 @@ CH 4  UI Rendering
       wrap.style.justifyContent = "flex-end";
 
       btnAddQuestion.classList.add("btn");
+
+      const btnDisplay = document.createElement("button");
+      btnDisplay.type = "button";
+      btnDisplay.className = "btn ghost";
+      btnDisplay.textContent = "+ Display";
+      btnDisplay.addEventListener("click", () => addDisplayElement("price"));
+
+      wrap.style.gap = "10px";
+      wrap.appendChild(btnDisplay);
       wrap.appendChild(btnAddQuestion);
       canvasEl.appendChild(wrap);
     };
@@ -2491,6 +2524,114 @@ CH 4  UI Rendering
       renderAll();
     }));
 
+    // Display element editor (non-input blocks)
+    if (q.type === "display") {
+      q.display = q.display && typeof q.display === "object" ? q.display : { variant: "info", tone: "neutral", title: "", subtitle: "", bodyHtml: "" };
+
+      inspectorEl.appendChild(divider());
+      inspectorEl.appendChild(sectionTitle("Display element"));
+
+      inspectorEl.appendChild(fieldSelect("Variant", q.display.variant || "info", DISPLAY_VARIANTS.map(v => ({ value: v.key, label: v.label })), (val) => {
+        q.display.variant = val;
+        // seed sensible defaults on change
+        if (val === "price") {
+          if (!q.title || q.title === "Display element") q.title = "Big price";
+          if (!q.display.title) q.display.title = "£1,250";
+          if (!q.display.subtitle) q.display.subtitle = "per year";
+          if (!q.display.prefix) q.display.prefix = "£";
+        }
+        if (val === "hero") {
+          if (!q.title || q.title === "Display element") q.title = "Hero";
+        }
+        if (val === "info") {
+          if (!q.title || q.title === "Display element") q.title = "Info";
+        }
+        saveSchema();
+        renderAll(true);
+      }));
+
+      inspectorEl.appendChild(fieldSelect("Tone", q.display.tone || "neutral", [
+        { value: "neutral", label: "Neutral" },
+        { value: "info", label: "Info" },
+        { value: "success", label: "Success" },
+        { value: "warning", label: "Warning" },
+      ], (val) => {
+        q.display.tone = val;
+        saveSchema();
+        renderAll(true);
+      }));
+
+      // Optional binding to an existing question answer
+      const allQ = getAllQuestionsInOrder(schema);
+      const bindOpts = [{ value: "", label: "— Not bound —" }]
+        .concat(allQ.filter(x => x.id !== q.id).map(x => ({ value: x.id, label: `${x.pageName} / ${x.groupName} — ${x.title || x.id}` })));
+      inspectorEl.appendChild(fieldSelect("Bind to answer (optional)", q.display.bindQuestionId || "", bindOpts, (val) => {
+        q.display.bindQuestionId = val;
+        saveSchema();
+        renderAll(true);
+      }));
+
+      if ((q.display.variant || "info") === "price") {
+        inspectorEl.appendChild(fieldText("Displayed value (fallback)", q.display.title || "", (val) => {
+          q.display.title = val;
+          saveSchemaDebounced();
+          renderCanvas();
+        }));
+
+        inspectorEl.appendChild(fieldText("Prefix", q.display.prefix ?? "£", (val) => {
+          q.display.prefix = val;
+          saveSchemaDebounced();
+        }));
+
+        inspectorEl.appendChild(fieldText("Suffix", q.display.suffix ?? "", (val) => {
+          q.display.suffix = val;
+          saveSchemaDebounced();
+        }));
+
+        inspectorEl.appendChild(fieldText("Subtitle", q.display.subtitle || "", (val) => {
+          q.display.subtitle = val;
+          saveSchemaDebounced();
+        }));
+
+        inspectorEl.appendChild(toggleRow("Add body text", !!(q.display.bodyHtml || "").trim(), (on) => {
+          if (on && !q.display.bodyHtml) q.display.bodyHtml = "<p></p>";
+          if (!on) q.display.bodyHtml = "";
+          saveSchema();
+          isTypingInspector = false;
+          renderAll(true);
+        }));
+
+        if ((q.display.bodyHtml || "").trim()) {
+          inspectorEl.appendChild(richTextEditor("Body", q.display.bodyHtml || "", (html) => {
+            q.display.bodyHtml = sanitizeRichHtml(html);
+            saveSchemaDebounced();
+          }));
+        }
+      } else if ((q.display.variant || "info") === "divider") {
+        inspectorEl.appendChild(pEl("A simple divider line to separate sections.", "inlineHelp"));
+      } else {
+        inspectorEl.appendChild(fieldText("Title", q.display.title || "", (val) => {
+          q.display.title = val;
+          saveSchemaDebounced();
+          renderCanvas();
+        }));
+
+        inspectorEl.appendChild(fieldText("Subtitle", q.display.subtitle || "", (val) => {
+          q.display.subtitle = val;
+          saveSchemaDebounced();
+        }));
+
+        inspectorEl.appendChild(richTextEditor("Body", q.display.bodyHtml || "", (html) => {
+          q.display.bodyHtml = sanitizeRichHtml(html);
+          saveSchemaDebounced();
+        }));
+      }
+
+      // Display elements should not have required/placeholder/options/follow-ups/logic
+      return;
+    }
+
+
     // Placeholder
     if (
       q.type === "text" ||
@@ -2808,6 +2949,41 @@ CH 4  UI Rendering
     toolbar.appendChild(mkBtn("I", "Italic", "italic"));
     toolbar.appendChild(mkBtn("U", "Underline", "underline"));
     toolbar.appendChild(mkBtn("•", "Bulleted list", "insertUnorderedList"));
+    toolbar.appendChild(mkBtn("1.", "Numbered list", "insertOrderedList"));
+    toolbar.appendChild(mkBtn("↤", "Align left", "justifyLeft"));
+    toolbar.appendChild(mkBtn("↔", "Align centre", "justifyCenter"));
+    toolbar.appendChild(mkBtn("↦", "Align right", "justifyRight"));
+
+    // Link helpers
+    const linkBtn = document.createElement("button");
+    linkBtn.type = "button";
+    linkBtn.className = "btn ghost";
+    linkBtn.textContent = "🔗";
+    linkBtn.title = "Insert link";
+    linkBtn.addEventListener("mousedown", (e) => e.preventDefault());
+    linkBtn.addEventListener("click", () => {
+      const url = prompt("Link URL (https://, mailto:, tel:)", "https://");
+      if (!url) return;
+      try { document.execCommand("createLink", false, url); } catch {}
+      editor.focus();
+      onChange(editor.innerHTML);
+    });
+    toolbar.appendChild(linkBtn);
+
+    toolbar.appendChild(mkBtn("⛔", "Remove link", "unlink"));
+
+    const hrBtn = document.createElement("button");
+    hrBtn.type = "button";
+    hrBtn.className = "btn ghost";
+    hrBtn.textContent = "—";
+    hrBtn.title = "Divider";
+    hrBtn.addEventListener("mousedown", (e) => e.preventDefault());
+    hrBtn.addEventListener("click", () => {
+      try { document.execCommand("insertHorizontalRule", false, null); } catch {}
+      editor.focus();
+      onChange(editor.innerHTML);
+    });
+    toolbar.appendChild(hrBtn);
 
     const mkBlockBtn = (txt, title, tag) => {
       const b = document.createElement("button");
@@ -2832,6 +3008,8 @@ CH 4  UI Rendering
     toolbar.appendChild(mkBlockBtn("H1", "Heading 1", "h1"));
     toolbar.appendChild(mkBlockBtn("H2", "Heading 2", "h2"));
     toolbar.appendChild(mkBlockBtn("H3", "Heading 3", "h3"));
+    toolbar.appendChild(mkBlockBtn("H4", "Heading 4", "h4"));
+    toolbar.appendChild(mkBlockBtn("❝", "Quote", "blockquote"));
     toolbar.appendChild(mkBlockBtn("P", "Paragraph", "p"));
 
     const editor = document.createElement("div");
@@ -4050,8 +4228,64 @@ CH 5  Actions (add/rename/delete/duplicate/move)
     renderAll();
   }
 
+
+  function addDisplayElement(variant = "price") {
+    const p = getPage(selection.pageId);
+    const g = getGroup(selection.pageId, selection.groupId);
+    if (!p || !g) return;
+
+    // If user is currently on a text block, add the element to the nearest group
+    if (selection.blockType === "text") {
+      const flow = Array.isArray(p.flow) ? p.flow : [];
+      const idx = flow.findIndex((x) => x.id === selection.blockId);
+      const nextGroupId = flow.slice(idx + 1).find((x) => x.type === "group")?.id;
+      const prevGroupId = [...flow.slice(0, idx)].reverse().find((x) => x.type === "group")?.id;
+      const targetGroupId = nextGroupId || prevGroupId;
+      const target = targetGroupId ? getGroup(p.id, targetGroupId) : g;
+      if (target) selection.groupId = target.id;
+    }
+
+    const group = getGroup(selection.pageId, selection.groupId);
+    if (!group) return;
+
+    const qid = uid("q");
+    const q = {
+      id: qid,
+      type: "display",
+      title: variant === "price" ? "Big price" : "Display element",
+      required: false,
+      help: "",
+      placeholder: "",
+      errorText: "",
+      options: [],
+      logic: { enabled: false, rules: [] },
+      content: { enabled: false, html: "" },
+      display: {
+        variant,
+        tone: "neutral", // neutral | info | success | warning
+        title: variant === "price" ? "£1,250" : "Title",
+        subtitle: variant === "price" ? "per year" : "",
+        bodyHtml: variant === "info" ? "<p>Use this block to highlight key information.</p>" : "",
+        // Optional: bind to an answer (e.g. show a currency answer as the big price)
+        bindQuestionId: "",
+        prefix: "£",
+        suffix: "",
+      },
+    };
+
+    group.questions.push(q);
+    selection.blockType = "group";
+    selection.blockId = group.id;
+    selection.questionId = qid;
+
+    saveSchema();
+    renderAll();
+  }
+
   // -------------------------
   // Question arrays (reusable templates)
+  // -------------------------
+
   // -------------------------
 
   function ensureQuestionArrays() {
@@ -4497,6 +4731,72 @@ CH 4.3  Preview / runtime (continued)
   }
 
   function buildPreviewInputControl(step, inputWrap, setAnswer, getAnswer, rerender) {
+    if (step.type === "display") {
+      const d = step.display || {};
+      const v = String(d.variant || "info");
+      const tone = String(d.tone || "neutral");
+
+      const wrap = document.createElement("div");
+      wrap.className = "displayEl" + " display-" + v + (tone !== "neutral" ? " tone-" + tone : "");
+
+      // Resolve bound value (optional)
+      let bound = "";
+      if (d.bindQuestionId) {
+        const ans = preview?.answers?.[d.bindQuestionId];
+        if (ans !== undefined && ans !== null && String(ans).trim() !== "") {
+          bound = String(ans);
+        }
+      }
+
+      if (v === "divider") {
+        const hr = document.createElement("hr");
+        hr.className = "displayDivider";
+        wrap.appendChild(hr);
+        inputWrap.appendChild(wrap);
+        return;
+      }
+
+      const title = document.createElement("div");
+      title.className = "displayTitle";
+      title.textContent = (v === "price" ? (bound || d.title || "") : (d.title || "")) || "";
+
+      const subtitle = document.createElement("div");
+      subtitle.className = "displaySubtitle";
+      subtitle.textContent = d.subtitle || (v === "price" ? "" : "");
+
+      const body = document.createElement("div");
+      body.className = "displayBody";
+      body.innerHTML = sanitizeRichHtml(d.bodyHtml || "");
+      body.style.display = body.innerHTML.trim() ? "block" : "none";
+
+      if (v === "price") {
+        // Optional prefix/suffix for price display
+        const line = document.createElement("div");
+        line.className = "displayPriceLine";
+
+        const prefix = (d.prefix || "").trim();
+        const suffix = (d.suffix || "").trim();
+
+        const value = document.createElement("div");
+        value.className = "displayPriceValue";
+        value.textContent = `${prefix}${bound || d.title || ""}${suffix}`.trim();
+
+        line.appendChild(value);
+        wrap.appendChild(line);
+        if (d.subtitle) wrap.appendChild(subtitle);
+        if (body.style.display !== "none") wrap.appendChild(body);
+        inputWrap.appendChild(wrap);
+        return;
+      }
+
+      if (title.textContent) wrap.appendChild(title);
+      if (subtitle.textContent) wrap.appendChild(subtitle);
+      if (body.style.display !== "none") wrap.appendChild(body);
+
+      inputWrap.appendChild(wrap);
+      return;
+    }
+
     if (["text", "email", "number", "currency", "percent", "tel", "postcode", "date"].includes(step.type)) {
       const input = document.createElement("input");
       input.className = "pInput";
@@ -5146,6 +5446,7 @@ CH 8  Event wiring (listeners)
         // Validate required questions (page mode: collect per-field errors)
         const errors = {};
         for (const qq of visibleQ) {
+          if (qq.type === "display") continue;
           if (!qq.required) continue;
           const ans = preview.answers[qq.id];
           const empty =
