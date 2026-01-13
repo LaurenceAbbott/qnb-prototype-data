@@ -3887,7 +3887,8 @@ CH 5  Actions (add/rename/delete/duplicate/move)
     const qid = uid("q");
     const q = {
       id: qid,
-      type: title: variant === "price" ? "Big price" : "Display element",
+      type: "display",
+      variant: title.variant === "price" ? "Big price" : "default",
       required: false,
       help: "",
       placeholder: "",
