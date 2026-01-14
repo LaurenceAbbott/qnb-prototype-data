@@ -192,6 +192,14 @@ button, input, select, textarea{ font-family: inherit; }
   min-height:0;
 }
 
+.pagesActions{
+  padding: 0 10px 12px;
+}
+.pagesActions .btn{
+  width: 100%;
+  justify-content: center;
+}
+
 .pageItem{
   border: 1px solid rgba(255,255,255,0.10);
   background: rgba(255,255,255,0.04);
