@@ -4512,6 +4512,14 @@ CH 4.3  Preview / runtime (continued)
     /* ----------------------------------------------------------------------
     CH 4.3  Preview / runtime
     ---------------------------------------------------------------------- */
+        const previousCardScrollTop = previewStage?.querySelector(".previewCard")?.scrollTop ?? 0;
+    const restorePreviewCardScroll = () => {
+      const card = previewStage?.querySelector(".previewCard");
+      if (card) {
+        card.scrollTop = previousCardScrollTop;
+      }
+    };
+
     // Steps depend on mode
     preview.steps = preview.mode === "page" ? buildPreviewPageSteps() : buildPreviewSteps();
     preview.index = clamp(preview.index, 0, Math.max(0, preview.steps.length - 1));
