@@ -439,6 +439,40 @@ button, input, select, textarea{ font-family: inherit; }
   color: rgba(255,255,255,0.86);
   margin-top: 4px;
 }
+.inspectorAccordion{
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.03);
+  padding: 6px 10px;
+}
+.inspectorAccordion__summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  cursor: pointer;
+  font-weight: 760;
+  color: rgba(255,255,255,0.9);
+  list-style: none;
+  padding: 6px 4px;
+}
+.inspectorAccordion__summary::-webkit-details-marker{
+  display:none;
+}
+.inspectorAccordion__chevron{
+  font-size: 14px;
+  opacity: 0.8;
+  transition: transform .15s ease;
+}
+.inspectorAccordion[open] .inspectorAccordion__chevron{
+  transform: rotate(180deg);
+}
+.inspectorAccordion__body{
+  display:flex;
+  flex-direction:column;
+  gap: 14px;
+  padding: 6px 4px 10px;
+}
 .inlineHelp{ color: var(--muted2); font-size: 12px; line-height:1.4; }
 
 .optList{
