@@ -1750,7 +1750,8 @@ function renderCanvas() {
 
       if (item.type === "text") {
         const pill = document.createElement("button");
-        const label = item.title?.trim() || "Text block";
+        const rawLabel = item.title?.trim() || "Text block";
+        const label = rawLabel.length > 7 ? `${rawLabel.slice(0, 4)}...` : rawLabel;
         pill.type = "button";
         pill.className = "groupPill isTextBlock" + (selection.blockType === "text" && selection.blockId === item.id ? " selected" : "");
         pill.textContent = label;
