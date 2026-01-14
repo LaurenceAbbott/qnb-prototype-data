@@ -519,6 +519,7 @@ function newDefaultSchema() {
                   required: true,
                   errorText: "This field is required.",
                   options: [],
+                                 defaultAnswer: null,
                   logic: { enabled: false, rules: [] },
                   content: { enabled: false, html: "" },
                 },
@@ -532,6 +533,28 @@ function newDefaultSchema() {
 
   function isOptionType(type) {
     return type === "select" || type === "radio" || type === "checkboxes";
+  }
+
+   function normalizeDefaultAnswerForQuestion(question) {
+    if (!question || typeof question !== "object") return null;
+    const type = question.type;
+    const options = Array.isArray(question.options) ? question.options : [];
+    const raw = question.defaultAnswer;
+
+    if (type === "yesno") {
+      return raw === "Yes" || raw === "No" ? raw : null;
+    }
+
+    if (type === "checkboxes") {
+      const values = Array.isArray(raw) ? raw.filter((opt) => options.includes(opt)) : [];
+      return values.length ? values : null;
+    }
+
+    if (type === "radio" || type === "select") {
+      return options.includes(raw) ? raw : null;
+    }
+
+    return null;
   }
 
   /* =============================================================================
@@ -590,6 +613,7 @@ CH 1  State (defaults, load/save, migrate)
           if (q.required == null) q.required = false;
           if (q.errorText == null) q.errorText = "This field is required.";
           if (q.options == null) q.options = [];
+                    if (q.defaultAnswer === undefined) q.defaultAnswer = null;
           if (q.logic == null) q.logic = { enabled: false, rules: [] };
           if (q.content == null) q.content = { enabled: false, html: "" };
           if (q.type === "display") {
@@ -646,6 +670,7 @@ CH 1  State (defaults, load/save, migrate)
             if (fq.required == null) fq.required = false;
             if (fq.errorText == null) fq.errorText = "This field is required.";
             if (fq.options == null) fq.options = [];
+                        if (fq.defaultAnswer === undefined) fq.defaultAnswer = null;
             if (fq.logic == null) fq.logic = { enabled: false, rules: [] };
             if (fq.content == null) fq.content = { enabled: false, html: "" };
 
@@ -655,6 +680,7 @@ CH 1  State (defaults, load/save, migrate)
             } else {
               fq.options = [];
             }
+                        fq.defaultAnswer = normalizeDefaultAnswerForQuestion(fq);
           });
 
           // Ensure options are present for option types
@@ -664,6 +690,7 @@ CH 1  State (defaults, load/save, migrate)
           } else {
             q.options = [];
           }
+                    q.defaultAnswer = normalizeDefaultAnswerForQuestion(q);
         });
       });
 
@@ -862,7 +889,7 @@ CH 4  UI Rendering
         ? normaliseOptions(q.options || q.choices || q.values || q.items)
         : [];
 
-      return {
+      const normalized = {
         id: q.id || q.key || uid("q"),
         type,
         title: String(title || "Untitled question").trim() || "Untitled question",
@@ -874,6 +901,12 @@ CH 4  UI Rendering
         logic: q.logic && typeof q.logic === "object" ? q.logic : { enabled: false, rules: [] },
         content: q.content && typeof q.content === "object" ? q.content : { enabled: false, html: "" },
       };
+            normalized.defaultAnswer = normalizeDefaultAnswerForQuestion({
+        ...normalized,
+        defaultAnswer: q.defaultAnswer,
+      });
+
+      return normalized;
     };
 
     const normaliseGroup = (rawG) => {
@@ -2566,6 +2599,7 @@ actions.appendChild(btnGroupOpts);
       inspectorEl.appendChild(divider());
       inspectorEl.appendChild(fieldSelect("Type", q.type || "text", QUESTION_TYPES, (val) => {
         q.type = val;
+                q.defaultAnswer = null;
         // Reset type-specific
         if (val === "radio" || val === "select" || val === "checkboxes") {
           q.options = q.options && q.options.length ? q.options : ["Option 1", "Option 2"];
@@ -2583,10 +2617,17 @@ actions.appendChild(btnGroupOpts);
         }));
       }
 
-            if (isOptionType(q.type)) {
+      if (isOptionType(q.type)) {
         inspectorEl.appendChild(divider());
         inspectorEl.appendChild(sectionTitle("Options"));
         inspectorEl.appendChild(optionsEditor(q));
+      }
+
+            if (q.type === "yesno" || isOptionType(q.type)) {
+        inspectorEl.appendChild(divider());
+        inspectorEl.appendChild(sectionTitle("Default answer"));
+        inspectorEl.appendChild(pEl("Choose an option to preselect in Preview.", "inlineHelp"));
+        inspectorEl.appendChild(defaultAnswerEditor(q));
       }
 
       // Required
@@ -3031,7 +3072,14 @@ actions.appendChild(btnGroupOpts);
         input.type = "text";
         input.value = opt;
         input.addEventListener("input", () => {
+                    const prev = q.options[idx];
           q.options[idx] = input.value;
+                    if (Array.isArray(q.defaultAnswer)) {
+            q.defaultAnswer = q.defaultAnswer.map((value) => (value === prev ? input.value : value));
+          } else if (q.defaultAnswer === prev) {
+            q.defaultAnswer = input.value;
+          }
+          q.defaultAnswer = normalizeDefaultAnswerForQuestion(q);
           saveSchema();
           renderCanvas(); // keep snappy without full rerender
         });
@@ -3055,6 +3103,7 @@ actions.appendChild(btnGroupOpts);
         const del = iconButton("✕", "Delete option");
         del.addEventListener("click", () => {
           q.options.splice(idx, 1);
+                    q.defaultAnswer = normalizeDefaultAnswerForQuestion(q);
           saveSchema();
           render();
         });
@@ -3077,6 +3126,7 @@ actions.appendChild(btnGroupOpts);
       addBtn.textContent = "+ Add option";
       addBtn.addEventListener("click", () => {
         q.options.push(`Option ${q.options.length + 1}`);
+                q.defaultAnswer = normalizeDefaultAnswerForQuestion(q);
         saveSchema();
         render();
       });
@@ -3087,6 +3137,7 @@ actions.appendChild(btnGroupOpts);
       seedBtn.textContent = "Seed 3 options";
       seedBtn.addEventListener("click", () => {
         q.options = ["Option 1", "Option 2", "Option 3"];
+                q.defaultAnswer = normalizeDefaultAnswerForQuestion(q);
         saveSchema();
         render();
       });
@@ -3098,6 +3149,79 @@ actions.appendChild(btnGroupOpts);
 
     render();
     return wrap;
+  }
+
+    function defaultCheckboxesEditor(q) {
+    const wrap = document.createElement("div");
+    wrap.className = "field";
+
+    const lab = document.createElement("div");
+    lab.className = "label";
+    lab.textContent = "Default selections";
+    wrap.appendChild(lab);
+
+    const opts = Array.isArray(q.options) ? q.options : [];
+    if (!opts.length) {
+      wrap.appendChild(pEl("Add options to enable default selections.", "inlineHelp"));
+      return wrap;
+    }
+
+    const list = document.createElement("div");
+    list.style.display = "flex";
+    list.style.flexDirection = "column";
+    list.style.gap = "6px";
+
+    const current = new Set(Array.isArray(q.defaultAnswer) ? q.defaultAnswer : []);
+
+    opts.forEach((opt) => {
+      const row = document.createElement("label");
+      row.style.display = "flex";
+      row.style.alignItems = "center";
+      row.style.gap = "8px";
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = current.has(opt);
+
+      const text = document.createElement("span");
+      text.textContent = opt;
+
+      cb.addEventListener("change", () => {
+        const next = new Set(Array.isArray(q.defaultAnswer) ? q.defaultAnswer : []);
+        if (cb.checked) next.add(opt);
+        else next.delete(opt);
+        const nextArr = opts.filter((value) => next.has(value));
+        q.defaultAnswer = nextArr.length ? nextArr : null;
+        q.defaultAnswer = normalizeDefaultAnswerForQuestion(q);
+        saveSchema();
+      });
+
+      row.appendChild(cb);
+      row.appendChild(text);
+      list.appendChild(row);
+    });
+
+    wrap.appendChild(list);
+    return wrap;
+  }
+
+  function defaultAnswerEditor(q) {
+    if (q.type === "checkboxes") {
+      return defaultCheckboxesEditor(q);
+    }
+
+    const options = q.type === "yesno" ? ["Yes", "No"] : q.options || [];
+    const selectOptions = [
+      { value: "", label: "— None —" },
+      ...options.map((opt) => ({ value: opt, label: opt })),
+    ];
+    const current = typeof q.defaultAnswer === "string" ? q.defaultAnswer : "";
+
+    return fieldSelect("Default selection", current, selectOptions, (val) => {
+      q.defaultAnswer = val || null;
+      q.defaultAnswer = normalizeDefaultAnswerForQuestion(q);
+      saveSchema();
+    });
   }
 
   // -------------------------
@@ -3332,6 +3456,7 @@ actions.appendChild(btnGroupOpts);
             QUESTION_TYPES.map((t) => ({ value: t.key, label: t.label })),
             (val) => {
               fq.type = val;
+                            fq.defaultAnswer = null;
               if (!isOptionType(fq.type)) fq.options = [];
               if (isOptionType(fq.type) && (!fq.options || !fq.options.length)) {
                 fq.options = ["Option 1", "Option 2", "Option 3"];
@@ -3440,6 +3565,7 @@ actions.appendChild(btnGroupOpts);
           required: false,
           errorText: "This field is required.",
           options: [],
+                    defaultAnswer: null,
           logic: { enabled: false, rules: [] },
           content: { enabled: false, html: "" },
         });
@@ -4120,6 +4246,7 @@ CH 5  Actions (add/rename/delete/duplicate/move)
       required: false,
       errorText: "This field is required.",
       options: [],
+            defaultAnswer: null,
       logic: { enabled: false, rules: [] },
       content: { enabled: false, html: "" },
     };
@@ -4455,6 +4582,15 @@ CH 6  Logic (validation, conditional display) + Flow building
     return schema.pages.map((p) => ({ id: p.id, pageId: p.id, pageName: p.name }));
   }
 
+   function applyDefaultAnswers(answers, s) {
+    const all = getAllQuestionsInOrder(s);
+    all.forEach((q) => {
+      const normalized = normalizeDefaultAnswerForQuestion(q);
+      if (normalized == null) return;
+      answers[q.id] = Array.isArray(normalized) ? [...normalized] : normalized;
+    });
+  }
+ 
   /* =============================================================================
 CH 4.3  Preview / runtime (continued)
 ============================================================================= */
@@ -4476,6 +4612,7 @@ CH 4.3  Preview / runtime (continued)
 
     // Reset answers per preview session
     preview.answers = {};
+        applyDefaultAnswers(preview.answers, schema);
 
     // Show modal via CSS class only
     previewBackdrop.classList.add("isOpen");
