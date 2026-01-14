@@ -1356,6 +1356,11 @@ textarea.aiAssistInput {
   text-align: center !important;
 }
 
+.display-price .displayBody p {
+  text-align: center !important;
+  margin: 0;
+}
+
 /* Hero variant (optional styling) */
 .display-hero {
     padding: 24px;
