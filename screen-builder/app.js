@@ -2770,7 +2770,7 @@ actions.appendChild(btnGroupOpts);
 
     const chevron = document.createElement("span");
     chevron.className = "inspectorAccordion__chevron";
-    chevron.textContent = "▾";
+    chevron.textContent = "＋";
 
     summary.appendChild(label);
     summary.appendChild(chevron);
