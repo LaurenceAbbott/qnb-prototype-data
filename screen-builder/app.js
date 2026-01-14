@@ -1840,13 +1840,14 @@ function renderCanvas() {
 
             const header = document.createElement("div");
       header.className = "textBlockHeader";
-      header.innerHTML = `<div class="textBlockTitle">📝 Text block</div>`;
+      const textBlockTitle = tb?.title?.trim() || "Untitled";
+      header.innerHTML = `<div class="textBlockTitle">📝 Text Block: ${escapeHtml(textBlockTitle)}</div>`;
 
             const hint = document.createElement("div");
       hint.className = "muted";
-      hint.textContent = "Edit the rich text content and label below.";
+            hint.textContent = "Edit the rich text content and title below.";
 
-      const titleField = fieldText("Label", tb?.title || "", (val) => {
+            const titleField = fieldText("Title", tb?.title || "", (val) => {
         if (!tb) return;
         tb.title = val;
         saveSchemaDebounced();
