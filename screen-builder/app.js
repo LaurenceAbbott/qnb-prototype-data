@@ -2407,6 +2407,12 @@ actions.appendChild(btnGroupOpts);
         }));
       }
 
+            if (isOptionType(q.type)) {
+        inspectorEl.appendChild(divider());
+        inspectorEl.appendChild(sectionTitle("Options"));
+        inspectorEl.appendChild(optionsEditor(q));
+      }
+
       // Required
       inspectorEl.appendChild(divider());
       inspectorEl.appendChild(toggleRow("Required", q.required === true, (on) => {
