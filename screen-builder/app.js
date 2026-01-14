@@ -1204,6 +1204,7 @@ const setButtonLoading = (on) => {
   const btnPreview = $("#btnPreview");
   const btnExport = $("#btnExport");
   const btnImport = $("#btnImport");
+  const btnImportPages = $("#btnImportPages");
   const fileInput = $("#fileInput");
   const emptyAddPage = $("#emptyAddPage");
 
@@ -1419,7 +1420,7 @@ function ensurePageHeaderControls() {
     const btnExportPage = document.createElement("button");
     btnExportPage.type = "button";
     btnExportPage.className = "btn ghost";
-    btnExportPage.textContent = "Export page JSON";
+    btnExportPage.textContent = "Export pages";
     btnExportPage.addEventListener("click", () => {
       const p = getPage(selection.pageId);
       if (!p) return;
@@ -1429,7 +1430,7 @@ function ensurePageHeaderControls() {
     const btnImportPage = document.createElement("button");
     btnImportPage.type = "button";
     btnImportPage.className = "btn ghost";
-    btnImportPage.textContent = "Import page JSON";
+    btnImportPage.textContent = "Import pages";
     btnImportPage.addEventListener("click", () => {
       const p = getPage(selection.pageId);
       if (!p) return;
@@ -2278,8 +2279,7 @@ actions.appendChild(btnGroupOpts);
 
     // Page actions (template workflow)
     inspectorEl.appendChild(buttonRow([
-      { label: "Export", kind: "ghost", onClick: () => exportPageJson(p.id) },
-      { label: "Import", kind: "ghost", onClick: () => importPageJsonInto(p.id) },
+            { label: "Export pages", kind: "ghost", onClick: () => exportPageJson(p.id) },
     ]));
 
     inspectorEl.appendChild(divider());
@@ -5490,6 +5490,18 @@ CH 8  Event wiring (listeners)
       if (f) importJsonFile(f);
       fileInput.value = "";
     });
+    
+ if (btnImportPages) {
+      btnImportPages.addEventListener("click", () => {
+        const target = getPage(selection.pageId) || schema.pages[0];
+        if (!target) {
+          alert("Create a page before importing.");
+          return;
+        }
+        selection.pageId = target.id;
+        importPageJsonInto(target.id);
+      });
+    }
 
     // ESC closes preview
     document.addEventListener("keydown", (e) => {
