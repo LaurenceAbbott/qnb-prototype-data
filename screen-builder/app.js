@@ -7,6 +7,66 @@ const DISPLAY_VARIANT_LABELS = {
   divider: "Divider",
 };
 
+const DISPLAY_VARIANT_DEFAULTS = {
+  bigPrice: {
+    title: "£1,250",
+    subtitle: "per year",
+    bodyHtml: "",
+    prefix: "",
+    suffix: "",
+  },
+  info: {
+    title: "Title",
+    subtitle: "",
+    bodyHtml: "<p>Use this block to highlight key information.</p>",
+    prefix: "",
+    suffix: "",
+  },
+  hero: {
+    title: "Hero title",
+    subtitle: "",
+    bodyHtml: "<p>Supporting copy goes here.</p>",
+    prefix: "",
+    suffix: "",
+  },
+  divider: {
+    title: "",
+    subtitle: "",
+    bodyHtml: "",
+    prefix: "",
+    suffix: "",
+  },
+};
+
+function normalizeDisplayVariant(variant) {
+  if (variant === "price") return "bigPrice";
+  if (!variant || !DISPLAY_VARIANT_LABELS[variant]) return "info";
+  return variant;
+}
+
+function applyDisplayDefaults(display, variant) {
+  const normalized = normalizeDisplayVariant(variant);
+  const defaults = DISPLAY_VARIANT_DEFAULTS[normalized] || DISPLAY_VARIANT_DEFAULTS.info;
+  return {
+    ...display,
+    variant: normalized,
+    tone: display?.tone || "neutral",
+    title: defaults.title,
+    subtitle: defaults.subtitle,
+    bodyHtml: defaults.bodyHtml,
+    prefix: defaults.prefix,
+    suffix: defaults.suffix,
+  };
+}
+
+function getDisplayCardTitle(display) {
+  const normalized = normalizeDisplayVariant(display?.variant);
+  const base = DISPLAY_VARIANT_LABELS[normalized] || "Display";
+  if (normalized === "divider") return base;
+  const title = String(display?.title || "").trim();
+  return title ? `${base}: ${title}` : base;
+}
+
 function getItemLabel(item) {
   if (item.type === "display") {
     const base = DISPLAY_VARIANT_LABELS[item.variant] || "Display";
@@ -334,7 +394,7 @@ CH 2  Data Models (schemas, types, templates)
   // These render in Preview but do not collect answers.
   const DISPLAY_VARIANTS = [
     { key: "hero", label: "Hero / banner" },
-    { key: "price", label: "Big price" },
+    { key: "bigPrice", label: "Big price" },
     { key: "info", label: "Info box" },
     { key: "divider", label: "Divider" },
   ];
@@ -527,7 +587,19 @@ CH 1  State (defaults, load/save, migrate)
           if (q.options == null) q.options = [];
           if (q.logic == null) q.logic = { enabled: false, rules: [] };
           if (q.content == null) q.content = { enabled: false, html: "" };
-
+          if (q.type === "display") {
+            q.display = q.display && typeof q.display === "object" ? q.display : {};
+            const normalizedVariant = normalizeDisplayVariant(q.display.variant);
+            const defaults = DISPLAY_VARIANT_DEFAULTS[normalizedVariant] || DISPLAY_VARIANT_DEFAULTS.info;
+            q.display.variant = normalizedVariant;
+            q.display.tone = q.display.tone || "neutral";
+            q.display.title = q.display.title ?? defaults.title;
+            q.display.subtitle = q.display.subtitle ?? defaults.subtitle;
+            q.display.bodyHtml = q.display.bodyHtml ?? defaults.bodyHtml;
+            q.display.prefix = q.display.prefix ?? defaults.prefix;
+            q.display.suffix = q.display.suffix ?? defaults.suffix;
+          }
+          
           // Follow-up question arrays (nested questions shown when parent answer matches)
           if (q.followUp == null || typeof q.followUp !== "object") {
             q.followUp = {
@@ -2080,8 +2152,8 @@ actions.appendChild(btnGroupOpts);
       btnDisplay.type = "button";
       btnDisplay.className = "btn ghost";
       btnDisplay.textContent = "+ Display";
-      btnDisplay.addEventListener("click", () => addDisplayElement("price"));
-
+      btnDisplay.addEventListener("click", () => addDisplayElement("bigPrice"));
+      
       wrap.style.gap = "10px";
       wrap.appendChild(btnDisplay);
       wrap.appendChild(btnAddQuestion);
@@ -2158,7 +2230,9 @@ actions.appendChild(btnGroupOpts);
 
       const title = document.createElement("div");
       title.className = "qTitle";
-      title.textContent = q.title || "Untitled question";
+            title.textContent = q.type === "display"
+        ? getDisplayCardTitle(q.display)
+        : (q.title || "Untitled question");
 
       const meta = document.createElement("div");
       meta.className = "qMeta";
@@ -2542,14 +2616,21 @@ actions.appendChild(btnGroupOpts);
 
     // Display element inspector
     q.display = q.display || { variant: "info", tone: "neutral", title: "", subtitle: "", bodyHtml: "<p></p>" };
-
+    q.display.variant = normalizeDisplayVariant(q.display.variant);
+    
     inspectorEl.appendChild(fieldSelect("Variant", q.display.variant || "info", [
       { value: "info", label: "Info box" },
       { value: "bigPrice", label: "Big price" },
       { value: "hero", label: "Hero" },
       { value: "divider", label: "Divider" },
     ], (val) => {
-      q.display.variant = val;
+            const previous = normalizeDisplayVariant(q.display.variant);
+      const next = normalizeDisplayVariant(val);
+      if (previous !== next) {
+        q.display = applyDisplayDefaults(q.display, next);
+      } else {
+        q.display.variant = next;
+      }
       saveSchema();
       isTypingInspector = false;
       renderAll(true);
@@ -2567,24 +2648,27 @@ actions.appendChild(btnGroupOpts);
       renderCanvas();
     }));
 
-    inspectorEl.appendChild(fieldText("Title", q.display.title || "", (val) => {
-      q.display.title = val;
-      saveSchemaDebounced();
-      renderCanvas();
-      renderPagesList();
-    }));
+       const isDivider = q.display.variant === "divider";
+    if (!isDivider) {
+      inspectorEl.appendChild(fieldText("Title", q.display.title || "", (val) => {
+        q.display.title = val;
+        saveSchemaDebounced();
+        renderCanvas();
+        renderPagesList();
+      }));
 
-    inspectorEl.appendChild(fieldText("Subtitle", q.display.subtitle || "", (val) => {
-      q.display.subtitle = val;
-      saveSchemaDebounced();
-      renderCanvas();
-    }));
+     inspectorEl.appendChild(fieldText("Subtitle", q.display.subtitle || "", (val) => {
+        q.display.subtitle = val;
+        saveSchemaDebounced();
+        renderCanvas();
+      }));
 
-    inspectorEl.appendChild(richTextEditor("Body", q.display.bodyHtml || "<p></p>", (html) => {
-      q.display.bodyHtml = sanitizeRichHtml(html);
-      saveSchemaDebounced();
-      renderCanvas();
-    }));
+       inspectorEl.appendChild(richTextEditor("Body", q.display.bodyHtml || "<p></p>", (html) => {
+        q.display.bodyHtml = sanitizeRichHtml(html);
+        saveSchemaDebounced();
+        renderCanvas();
+      }));
+    }
   }
 
   function renderMiniStats() {
@@ -4031,7 +4115,7 @@ CH 5  Actions (add/rename/delete/duplicate/move)
   }
 
 
-  function addDisplayElement(variant = "price") {
+    function addDisplayElement(variant = "bigPrice") {
     const p = getPage(selection.pageId);
     const g = getGroup(selection.pageId, selection.groupId);
     if (!p || !g) return;
@@ -4051,10 +4135,12 @@ CH 5  Actions (add/rename/delete/duplicate/move)
     if (!group) return;
 
     const qid = uid("q");
+          const normalizedVariant = normalizeDisplayVariant(variant);
+    const displayDefaults = DISPLAY_VARIANT_DEFAULTS[normalizedVariant] || DISPLAY_VARIANT_DEFAULTS.info;
     const q = {
       id: qid,
       type: "display",
-      title: variant === "price" ? "Big price" : "Display element",
+      title: normalizedVariant === "bigPrice" ? "Big price" : "Display element",
       required: false,
       help: "",
       placeholder: "",
@@ -4063,13 +4149,13 @@ CH 5  Actions (add/rename/delete/duplicate/move)
       logic: { enabled: false, rules: [] },
       content: { enabled: false, html: "" },
       display: {
-        variant,
+                variant: normalizedVariant,
         tone: "neutral", // neutral | info | success | warning
-        title: variant === "price" ? "£1,250" : "Title",
-        subtitle: variant === "price" ? "per year" : "",
-        bodyHtml: variant === "info" ? "<p>Use this block to highlight key information.</p>" : "",
-        prefix: "£",
-        suffix: "",
+                title: displayDefaults.title,
+        subtitle: displayDefaults.subtitle,
+        bodyHtml: displayDefaults.bodyHtml,
+        prefix: displayDefaults.prefix,
+        suffix: displayDefaults.suffix,
       },
     };
 
@@ -4539,7 +4625,7 @@ CH 4.3  Preview / runtime (continued)
   function buildPreviewInputControl(step, inputWrap, setAnswer, getAnswer, rerender) {
     if (step.type === "display") {
       const d = step.display || {};
-      const v = String(d.variant || "info");
+            const v = normalizeDisplayVariant(String(d.variant || "info"));
       const tone = String(d.tone || "neutral");
 
       const wrap = document.createElement("div");
@@ -4559,14 +4645,14 @@ CH 4.3  Preview / runtime (continued)
 
       const subtitle = document.createElement("div");
       subtitle.className = "displaySubtitle";
-      subtitle.textContent = d.subtitle || (v === "price" ? "" : "");
+            subtitle.textContent = d.subtitle || "";
 
       const body = document.createElement("div");
       body.className = "displayBody";
       body.innerHTML = sanitizeRichHtml(d.bodyHtml || "");
       body.style.display = body.innerHTML.trim() ? "block" : "none";
 
-      if (v === "price") {
+            if (v === "bigPrice") {
         // Optional prefix/suffix for price display
         const line = document.createElement("div");
         line.className = "displayPriceLine";
