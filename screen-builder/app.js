@@ -758,6 +758,11 @@ CH 1  State (defaults, load/save, migrate)
     groupOptionsOpen: false,
   };
 
+    let inspectorAccordionState = {
+    page: false,
+    group: false,
+  };
+
   // Prevent auto-focus stealing when an option click triggers a rerender (e.g. radio -> jumps to a textarea)
 // Use a time-based guard so multiple inputs rendered in one cycle can't "clear" the flag for each other.
 let suppressAutoFocusUntil = 0;
@@ -2384,10 +2389,11 @@ actions.appendChild(btnGroupOpts);
       selection.groupId ? "Editing group" :
       "Editing page";
 
-    inspectorEl.appendChild(sectionTitle("Page"));
+    const pageAccordion = inspectorAccordion("Page", "page");
+    inspectorEl.appendChild(pageAccordion.details);
 
     // Page name
-    inspectorEl.appendChild(fieldText("Page name", p.name || "", (val) => {
+    pageAccordion.body.appendChild(fieldText("Page name", p.name || "", (val) => {
       p.name = val || "Untitled page";
       saveSchemaDebounced();
       renderPagesList();
@@ -2396,11 +2402,11 @@ actions.appendChild(btnGroupOpts);
     }));
 
     // Page actions (template workflow)
-    inspectorEl.appendChild(buttonRow([
-            { label: "Export pages", kind: "ghost", onClick: () => exportPageJson(p.id) },
+    pageAccordion.body.appendChild(buttonRow([
+      { label: "Export pages", kind: "ghost", onClick: () => exportPageJson(p.id) },
     ]));
 
-    inspectorEl.appendChild(divider());
+    pageAccordion.body.appendChild(divider());
 
             if (selection.blockType === "text") {
       const tb = (p.flow || []).find((x) => x.type === "text" && x.id === selection.blockId);
@@ -2432,18 +2438,19 @@ actions.appendChild(btnGroupOpts);
     // -------------------------
     // GROUP (shown when a group is selected)
     // -------------------------
-    inspectorEl.appendChild(sectionTitle("Group"));
+    const groupAccordion = inspectorAccordion("Group", "group");
+    inspectorEl.appendChild(groupAccordion.details);
 
     if (!g) {
-      inspectorEl.appendChild(pEl("Select a group in the canvas, or add a new one.", "inlineHelp"));
-      inspectorEl.appendChild(buttonRow([
+      groupAccordion.body.appendChild(pEl("Select a group in the canvas, or add a new one.", "inlineHelp"));
+      groupAccordion.body.appendChild(buttonRow([
         { label: "+ Group", kind: "primary", onClick: () => addGroupToPage(p.id) },
       ]));
       return;
     }
 
     // Group name
-    inspectorEl.appendChild(fieldText("Group name", g.name || "", (val) => {
+    groupAccordion.body.appendChild(fieldText("Group name", g.name || "", (val) => {
       g.name = val || "Untitled group";
       saveSchemaDebounced();
       renderCanvas();
@@ -2453,7 +2460,7 @@ actions.appendChild(btnGroupOpts);
 
     // Group description
     g.description = g.description || { enabled: false, html: "" };
-    inspectorEl.appendChild(toggleRow("Add group description", g.description.enabled === true, (on) => {
+    groupAccordion.body.appendChild(toggleRow("Add group description", g.description.enabled === true, (on) => {
       g.description.enabled = on;
       if (!g.description.html) g.description.html = "<p></p>";
       saveSchema();
@@ -2462,18 +2469,18 @@ actions.appendChild(btnGroupOpts);
     }));
 
     if (g.description.enabled) {
-      inspectorEl.appendChild(richTextEditor("Description", g.description.html || "<p></p>", (html) => {
+      groupAccordion.body.appendChild(richTextEditor("Description", g.description.html || "<p></p>", (html) => {
         g.description.html = sanitizeRichHtml(html);
         saveSchemaDebounced();
       }));
     }
 
     // Group visibility / logic
-    inspectorEl.appendChild(divider());
-    inspectorEl.appendChild(sectionTitle("Group visibility"));
-    inspectorEl.appendChild(pEl("Show this group only if the rule(s) match. (Hides all questions in the group in Preview)", "inlineHelp"));
+        groupAccordion.body.appendChild(divider());
+    groupAccordion.body.appendChild(sectionTitle("Group visibility"));
+    groupAccordion.body.appendChild(pEl("Show this group only if the rule(s) match. (Hides all questions in the group in Preview)", "inlineHelp"));
 
-    inspectorEl.appendChild(toggleRow("Enable group logic", g.logic?.enabled === true, (on) => {
+    groupAccordion.body.appendChild(toggleRow("Enable group logic", g.logic?.enabled === true, (on) => {
       g.logic = g.logic || { enabled: false, rules: [] };
       g.logic.enabled = on;
       saveSchema();
@@ -2482,16 +2489,16 @@ actions.appendChild(btnGroupOpts);
     }));
 
     if (g.logic?.enabled) {
-      inspectorEl.appendChild(groupLogicEditor(schema, p, g));
+          groupAccordion.body.appendChild(groupLogicEditor(schema, p, g));
     }
 
     // Group order / delete (kept here to avoid accidental clicks while editing questions)
-    inspectorEl.appendChild(divider());
-    inspectorEl.appendChild(buttonRow([
+    groupAccordion.body.appendChild(divider());
+    groupAccordion.body.appendChild(buttonRow([
       { label: "Move group up", kind: "ghost", onClick: () => moveGroup(p.id, g.id, -1) },
       { label: "Move group down", kind: "ghost", onClick: () => moveGroup(p.id, g.id, +1) },
     ]));
-    inspectorEl.appendChild(buttonRow([
+    groupAccordion.body.appendChild(buttonRow([
       { label: "Delete group", kind: "danger", onClick: () => {
           if (!confirm(`Delete group "${g.name}"?`)) return;
           deleteGroupFromPage(p.id, g.id);
@@ -2499,7 +2506,7 @@ actions.appendChild(btnGroupOpts);
       },
     ]));
 
-    inspectorEl.appendChild(divider());
+    groupAccordion.body.appendChild(divider());
 
     // -------------------------
     // QUESTION / TEXT BLOCK (shown last)
@@ -2750,6 +2757,36 @@ actions.appendChild(btnGroupOpts);
   // -------------------------
   // Components (Inspector)
   // -------------------------
+    function inspectorAccordion(title, key) {
+    const details = document.createElement("details");
+    details.className = "inspectorAccordion";
+    details.open = Boolean(inspectorAccordionState[key]);
+
+    const summary = document.createElement("summary");
+    summary.className = "inspectorAccordion__summary";
+
+    const label = document.createElement("span");
+    label.textContent = title;
+
+    const chevron = document.createElement("span");
+    chevron.className = "inspectorAccordion__chevron";
+    chevron.textContent = "▾";
+
+    summary.appendChild(label);
+    summary.appendChild(chevron);
+    details.appendChild(summary);
+
+    const body = document.createElement("div");
+    body.className = "inspectorAccordion__body";
+    details.appendChild(body);
+
+    details.addEventListener("toggle", () => {
+      inspectorAccordionState[key] = details.open;
+    });
+
+    return { details, body };
+  }
+
   function sectionTitle(text) {
     const d = document.createElement("div");
     d.className = "sectionTitle";
