@@ -300,7 +300,7 @@ button, input, select, textarea{ font-family: inherit; }
 }
 #canvasCard{
   position: sticky;
-  top: 14px;
+  top: 0;
   z-index: 2;
 }
 .cardHeader{
