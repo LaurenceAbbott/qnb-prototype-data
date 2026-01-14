@@ -1357,6 +1357,9 @@ const setButtonLoading = (on) => {
     editorTitleEl.textContent = p ? `Editor · ${p.name}` : "Editor";
     pageNameDisplayEl.textContent = p ? p.name : "—";
     groupNameDisplayEl.textContent = g ? g.name : "—";
+      if (groupNameDisplayEl?.parentElement) {
+      groupNameDisplayEl.parentElement.style.display = selection.blockType === "text" ? "none" : "";
+    }
 
     renderPageHeaderControls();
   }
