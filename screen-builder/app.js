@@ -721,6 +721,7 @@ CH 1  State (defaults, load/save, migrate)
     answers: {}, // qid -> value (shared across modes)
     lastError: "",
     pageErrors: {}, // page mode: qid -> errorText
+        lastCardScrollTop: 0,
   };
 
   // Small UI-only state (not persisted)
@@ -4512,11 +4513,16 @@ CH 4.3  Preview / runtime (continued)
     /* ----------------------------------------------------------------------
     CH 4.3  Preview / runtime
     ---------------------------------------------------------------------- */
-        const previousCardScrollTop = previewStage?.querySelector(".previewCard")?.scrollTop ?? 0;
+      const currentCardScrollTop = previewStage?.querySelector(".previewCard")?.scrollTop;
+    const previousCardScrollTop =
+      typeof currentCardScrollTop === "number" ? currentCardScrollTop : preview.lastCardScrollTop;
+    preview.lastCardScrollTop = previousCardScrollTop;
     const restorePreviewCardScroll = () => {
       const card = previewStage?.querySelector(".previewCard");
       if (card) {
-        card.scrollTop = previousCardScrollTop;
+        requestAnimationFrame(() => {
+          card.scrollTop = previousCardScrollTop;
+        });
       }
     };
 
@@ -4547,9 +4553,11 @@ CH 4.3  Preview / runtime (continued)
           <div class="pHelp">Add pages in the builder, then open Preview again.</div>
         `;
         previewStage.appendChild(wrap);
+                restorePreviewCardScroll();
         return;
       }
       renderPreviewPage(step.pageId);
+            restorePreviewCardScroll();
       if (btnNext) btnNext.disabled = false;
       return;
     }
@@ -4571,6 +4579,7 @@ CH 4.3  Preview / runtime (continued)
         <div class="pHelp">Add questions in the builder, then open Preview again.</div>
       `;
       previewStage.appendChild(wrap);
+            restorePreviewCardScroll();
       return;
     }
 
@@ -4643,6 +4652,7 @@ CH 4.3  Preview / runtime (continued)
       card.appendChild(inputWrap);
     }
     previewStage.appendChild(card);
+        restorePreviewCardScroll();
 
     // Ensure Next button is re-enabled if previously disabled by completion view
     if (btnNext) btnNext.disabled = false;
