@@ -740,6 +740,8 @@ ul {
   
 }
 .previewTextBlock {
+    padding-top: 40px;
+}
   
 }
 .previewTextBlockTitle {
@@ -1304,7 +1306,7 @@ textarea.aiAssistInput {
 .displaySubtitle {
   opacity: 0.8;
   font-size: 14px;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
   text-align: center;
 }
 
@@ -1351,6 +1353,7 @@ textarea.aiAssistInput {
   font-size: 13px;
   opacity: 0.7;
   margin-top: 10px;
+  text-align: center;
 }
 
 /* Hero variant (optional styling) */
