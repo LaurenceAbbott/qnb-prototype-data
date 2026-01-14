@@ -434,6 +434,9 @@ button, input, select, textarea{ font-family: inherit; }
   background: rgba(255,255,255,0.10);
   margin: 4px 0;
 }
+.inspectorAccordion__body > .hr:last-child{
+  display:none;
+}
 .sectionTitle{
   font-weight: 760;
   color: rgba(255,255,255,0.86);
