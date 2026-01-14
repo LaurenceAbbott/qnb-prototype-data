@@ -1,7 +1,7 @@
 
 // --- ITEM LABEL HELPERS ---
 const DISPLAY_VARIANT_LABELS = {
-  info: "Info box",
+  info: "Alert",
   bigPrice: "Big price",
   hero: "Hero",
   divider: "Divider",
@@ -44,13 +44,18 @@ function normalizeDisplayVariant(variant) {
   return variant;
 }
 
+function displaySupportsTone(variant) {
+  return normalizeDisplayVariant(variant) === "info";
+}
+
 function applyDisplayDefaults(display, variant) {
   const normalized = normalizeDisplayVariant(variant);
   const defaults = DISPLAY_VARIANT_DEFAULTS[normalized] || DISPLAY_VARIANT_DEFAULTS.info;
+    const supportsTone = displaySupportsTone(normalized);
   return {
     ...display,
     variant: normalized,
-    tone: display?.tone || "neutral",
+    tone: supportsTone ? display?.tone || "neutral" : "neutral",
     title: defaults.title,
     subtitle: defaults.subtitle,
     bodyHtml: defaults.bodyHtml,
@@ -395,7 +400,7 @@ CH 2  Data Models (schemas, types, templates)
   const DISPLAY_VARIANTS = [
     { key: "hero", label: "Hero / banner" },
     { key: "bigPrice", label: "Big price" },
-    { key: "info", label: "Info box" },
+    { key: "info", label: "Alert" },
     { key: "divider", label: "Divider" },
   ];
 
@@ -592,7 +597,9 @@ CH 1  State (defaults, load/save, migrate)
             const normalizedVariant = normalizeDisplayVariant(q.display.variant);
             const defaults = DISPLAY_VARIANT_DEFAULTS[normalizedVariant] || DISPLAY_VARIANT_DEFAULTS.info;
             q.display.variant = normalizedVariant;
-            q.display.tone = q.display.tone || "neutral";
+                        q.display.tone = displaySupportsTone(normalizedVariant)
+              ? q.display.tone || "neutral"
+              : "neutral";
             q.display.title = q.display.title ?? defaults.title;
             q.display.subtitle = q.display.subtitle ?? defaults.subtitle;
             q.display.bodyHtml = q.display.bodyHtml ?? defaults.bodyHtml;
@@ -2619,9 +2626,12 @@ actions.appendChild(btnGroupOpts);
     // Display element inspector
     q.display = q.display || { variant: "info", tone: "neutral", title: "", subtitle: "", bodyHtml: "<p></p>" };
     q.display.variant = normalizeDisplayVariant(q.display.variant);
+        if (!displaySupportsTone(q.display.variant)) {
+      q.display.tone = "neutral";
+    }
     
     inspectorEl.appendChild(fieldSelect("Variant", q.display.variant || "info", [
-      { value: "info", label: "Info box" },
+      { value: "info", label: "Alert" },
       { value: "bigPrice", label: "Big price" },
       { value: "hero", label: "Hero" },
       { value: "divider", label: "Divider" },
@@ -2633,22 +2643,27 @@ actions.appendChild(btnGroupOpts);
       } else {
         q.display.variant = next;
       }
+            if (!displaySupportsTone(next)) {
+        q.display.tone = "neutral";
+      }
       saveSchema();
       isTypingInspector = false;
       renderAll(true);
     }));
 
-    inspectorEl.appendChild(fieldSelect("Tone", q.display.tone || "neutral", [
-      { value: "neutral", label: "Neutral" },
-      { value: "info", label: "Info" },
-      { value: "success", label: "Success" },
-      { value: "warning", label: "Warning" },
-      { value: "danger", label: "Danger" },
-    ], (val) => {
-      q.display.tone = val;
-      saveSchemaDebounced();
-      renderCanvas();
-    }));
+          if (displaySupportsTone(q.display.variant)) {
+      inspectorEl.appendChild(fieldSelect("Tone", q.display.tone || "neutral", [
+        { value: "neutral", label: "Neutral" },
+        { value: "info", label: "Info" },
+        { value: "success", label: "Success" },
+        { value: "warning", label: "Warning" },
+        { value: "danger", label: "Danger" },
+      ], (val) => {
+        q.display.tone = val;
+        saveSchemaDebounced();
+        renderCanvas();
+      }));
+    }
 
        const isDivider = q.display.variant === "divider";
     if (!isDivider) {
@@ -4137,7 +4152,7 @@ CH 5  Actions (add/rename/delete/duplicate/move)
     if (!group) return;
 
     const qid = uid("q");
-          const normalizedVariant = normalizeDisplayVariant(variant);
+              const normalizedVariant = normalizeDisplayVariant(variant);
     const displayDefaults = DISPLAY_VARIANT_DEFAULTS[normalizedVariant] || DISPLAY_VARIANT_DEFAULTS.info;
     const q = {
       id: qid,
@@ -4151,9 +4166,9 @@ CH 5  Actions (add/rename/delete/duplicate/move)
       logic: { enabled: false, rules: [] },
       content: { enabled: false, html: "" },
       display: {
-                variant: normalizedVariant,
-        tone: "neutral", // neutral | info | success | warning
-                title: displayDefaults.title,
+                       variant: normalizedVariant,
+        tone: "neutral", // used for alert tone presets only
+        title: displayDefaults.title,
         subtitle: displayDefaults.subtitle,
         bodyHtml: displayDefaults.bodyHtml,
         prefix: displayDefaults.prefix,
@@ -4627,11 +4642,12 @@ CH 4.3  Preview / runtime (continued)
   function buildPreviewInputControl(step, inputWrap, setAnswer, getAnswer, rerender) {
     if (step.type === "display") {
       const d = step.display || {};
-            const v = normalizeDisplayVariant(String(d.variant || "info"));
+                  const v = normalizeDisplayVariant(String(d.variant || "info"));
       const tone = String(d.tone || "neutral");
+            const supportsTone = displaySupportsTone(v);
 
       const wrap = document.createElement("div");
-      wrap.className = "displayEl" + " display-" + v + (tone !== "neutral" ? " tone-" + tone : "");
+            wrap.className = "displayEl" + " display-" + v + (supportsTone && tone !== "neutral" ? " tone-" + tone : "");
 
       if (v === "divider") {
         const hr = document.createElement("hr");
