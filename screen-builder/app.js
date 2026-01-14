@@ -1723,7 +1723,7 @@ function renderCanvas() {
     const groupPills = document.createElement("div");
     groupPills.className = "groupPills";
 
-       const flowItems = Array.isArray(p.flow) ? p.flow : [];
+       const flowItems = Array.isArray(p.flow) ? p.flow : p.groups.map((g) => ({ type: "group", id: g.id }));
     flowItems.forEach((item) => {
       if (!item || typeof item !== "object") return;
       if (item.type === "group") {
@@ -1780,25 +1780,25 @@ function renderCanvas() {
     btnUp.type = "button";
     btnUp.className = "btn ghost tiny";
     btnUp.textContent = "↑";
-    btnUp.title = "Move group up";
-    btnUp.disabled = !selection.groupId || (p.groups || []).findIndex((x) => x.id === selection.groupId) <= 0;
+    btnUp.title = "Move item up";
+    const selectedFlowIndex = selection.blockId ? flowItems.findIndex((x) => x.id === selection.blockId) : -1;
+    btnUp.disabled = selectedFlowIndex <= 0;
     btnUp.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      if (selection.groupId) moveGroup(p.id, selection.groupId, -1);
+      if (selection.blockId) moveFlowItem(p.id, selection.blockId, -1);
     });
 
     const btnDown = document.createElement("button");
     btnDown.type = "button";
     btnDown.className = "btn ghost tiny";
     btnDown.textContent = "↓";
-    btnDown.title = "Move group down";
-    const gi = selection.groupId ? (p.groups || []).findIndex((x) => x.id === selection.groupId) : -1;
-    btnDown.disabled = gi < 0 || gi >= (p.groups || []).length - 1;
+     btnDown.title = "Move item down";
+    btnDown.disabled = selectedFlowIndex < 0 || selectedFlowIndex >= flowItems.length - 1;
     btnDown.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      if (selection.groupId) moveGroup(p.id, selection.groupId, +1);
+      if (selection.blockId) moveFlowItem(p.id, selection.blockId, +1);
     });
 
     const btnAddGroup = document.createElement("button");
@@ -2040,13 +2040,7 @@ actions.appendChild(btnGroupOpts);
     btnGDel.textContent = "Delete group";
     btnGDel.addEventListener("click", () => {
       if (!confirm(`Delete group "${g.name}"?`)) return;
-      p.groups = (p.groups || []).filter((x) => x.id !== g.id);
-      p.flow = (p.flow || []).filter((x) => !(x.type === "group" && x.id === g.id));
-      selection.groupId = p.groups[0]?.id || null;
-      selection.questionId = p.groups[0]?.questions?.[0]?.id || null;
-      selection.blockType = selection.groupId ? "group" : "page";
-      saveSchema();
-      renderAll(true);
+      deleteGroupFromPage(p.id, g.id);
     });
 
     groupActions.appendChild(btnGUp);
@@ -2404,6 +2398,16 @@ actions.appendChild(btnGroupOpts);
         renderCanvas();
       }));
 
+      inspectorEl.appendChild(divider());
+      inspectorEl.appendChild(buttonRow([
+        { label: "Delete text block", kind: "danger", onClick: () => {
+            if (!tb) return;
+            if (!confirm("Delete this text block?")) return;
+            deleteFlowItem(p.id, tb.id);
+          } 
+        },
+      ]));
+      
       return;
     }
 
@@ -3698,13 +3702,31 @@ actions.appendChild(btnGroupOpts);
     arr.splice(to, 0, it);
   }
 
+  function syncGroupsOrderFromFlow(page) {
+    if (!page) return;
+    const order = (page.flow || [])
+      .filter((item) => item?.type === "group")
+      .map((item) => item.id);
+    if (!order.length) return;
+    const groupMap = new Map((page.groups || []).map((g) => [g.id, g]));
+    const next = [];
+    order.forEach((id) => {
+      const g = groupMap.get(id);
+      if (g) next.push(g);
+    });
+    const leftovers = (page.groups || []).filter((g) => !order.includes(g.id));
+    page.groups = [...next, ...leftovers];
+  }
+
   function moveGroup(pageId, groupId, dir) {
     const p = getPage(pageId);
     if (!p) return;
-    const idx = p.groups.findIndex((g) => g.id === groupId);
+        p.flow = Array.isArray(p.flow) ? p.flow : p.groups.map((g) => ({ type: "group", id: g.id }));
+    const idx = p.flow.findIndex((item) => item.type === "group" && item.id === groupId);
     const to = idx + dir;
-    if (idx < 0 || to < 0 || to >= p.groups.length) return;
-    moveItem(p.groups, idx, to);
+    if (idx < 0 || to < 0 || to >= p.flow.length) return;
+    moveItem(p.flow, idx, to);
+    syncGroupsOrderFromFlow(p);
     saveSchema();
     renderAll();
   }
@@ -3754,23 +3776,39 @@ CH 5  Actions (add/rename/delete/duplicate/move)
   function moveFlowItem(pageId, itemId, dir) {
     const p = getPage(pageId);
     if (!p) return;
-    p.flow = Array.isArray(p.flow) ? p.flow : [];
+    p.flow = Array.isArray(p.flow) ? p.flow : p.groups.map((g) => ({ type: "group", id: g.id }));
     const idx = p.flow.findIndex((x) => x.id === itemId);
     if (idx < 0) return;
+    const item = p.flow[idx];
     const to = idx + dir;
     if (to < 0 || to >= p.flow.length) return;
     moveItem(p.flow, idx, to);
+    if (item?.type === "group") {
+      syncGroupsOrderFromFlow(p);
+    }
     saveSchema();
     renderAll();
   }
-
+  
   function deleteFlowItem(pageId, itemId) {
     const p = getPage(pageId);
     if (!p) return;
     p.flow = (p.flow || []).filter((x) => x.id !== itemId);
+        if (p.flow.length === 0 && p.groups?.length) {
+      p.flow = p.groups.map((g) => ({ type: "group", id: g.id }));
+    }
 
     // Reset selection to nearest sensible thing
     const first = p.flow[0];
+        if (!first) {
+      selection.blockType = "page";
+      selection.blockId = null;
+      selection.groupId = null;
+      selection.questionId = null;
+      saveSchema();
+      renderAll(true);
+      return;
+    }
     if (first?.type === "text") {
       selection.blockType = "text";
       selection.blockId = first.id;
@@ -3778,6 +3816,42 @@ CH 5  Actions (add/rename/delete/duplicate/move)
       selection.questionId = null;
     } else {
       const g0 = p.groups.find((gg) => gg.id === first?.id) || p.groups[0];
+      selection.blockType = "group";
+      selection.blockId = g0?.id || null;
+      selection.groupId = g0?.id || null;
+      selection.questionId = g0?.questions?.[0]?.id || null;
+    }
+
+    saveSchema();
+    renderAll(true);
+  }
+
+    function deleteGroupFromPage(pageId, groupId) {
+    const p = getPage(pageId);
+    if (!p || !groupId) return;
+
+    p.groups = (p.groups || []).filter((g) => g.id !== groupId);
+    p.flow = (p.flow || []).filter((item) => !(item.type === "group" && item.id === groupId));
+    syncGroupsOrderFromFlow(p);
+
+    if (p.flow.length === 0) {
+      selection.blockType = "page";
+      selection.blockId = null;
+      selection.groupId = null;
+      selection.questionId = null;
+      saveSchema();
+      renderAll(true);
+      return;
+    }
+
+    const first = p.flow[0];
+    if (first.type === "text") {
+      selection.blockType = "text";
+      selection.blockId = first.id;
+      selection.groupId = null;
+      selection.questionId = null;
+    } else {
+      const g0 = p.groups.find((gg) => gg.id === first.id) || p.groups[0];
       selection.blockType = "group";
       selection.blockId = g0?.id || null;
       selection.groupId = g0?.id || null;
