@@ -756,6 +756,8 @@ CH 1  State (defaults, load/save, migrate)
     selectedArrayId: null,
     newArrayName: "",
     groupOptionsOpen: false,
+    aiQuestionAssistOpen: {},
+    aiQuestionAssistChats: {},
   };
 
     let inspectorAccordionState = {
@@ -1163,6 +1165,150 @@ CH 4  UI Rendering
     ensureSelection();
     saveSchema();
     renderAll(true);
+  }
+
+    function getQuestionAiState(questionId) {
+    if (!questionId) return null;
+    uiState.aiQuestionAssistChats = uiState.aiQuestionAssistChats || {};
+    if (!uiState.aiQuestionAssistChats[questionId]) {
+      uiState.aiQuestionAssistChats[questionId] = {
+        messages: [],
+        draft: "",
+        status: "",
+        loading: false,
+        lastSuggestion: null,
+      };
+    }
+    return uiState.aiQuestionAssistChats[questionId];
+  }
+
+  function extractJsonFromText(text) {
+    if (!text) return null;
+    const blockMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (blockMatch?.[1]) {
+      try { return JSON.parse(blockMatch[1]); } catch {}
+    }
+    const start = text.indexOf("{");
+    const end = text.lastIndexOf("}");
+    if (start !== -1 && end > start) {
+      const slice = text.slice(start, end + 1);
+      try { return JSON.parse(slice); } catch {}
+    }
+    return null;
+  }
+
+  function normalizeQuestionSuggestion(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    const source = raw.suggestion && typeof raw.suggestion === "object" ? raw.suggestion : raw;
+    const suggestion = {};
+    const title = source.title || source.questionText;
+    if (typeof title === "string" && title.trim()) suggestion.title = title.trim();
+    const help = source.help || source.helperText || source.helpText;
+    if (typeof help === "string") suggestion.help = help.trim();
+    const placeholder = source.placeholder;
+    if (typeof placeholder === "string") suggestion.placeholder = placeholder.trim();
+    const errorText = source.errorText || source.errorMessage;
+    if (typeof errorText === "string") suggestion.errorText = errorText.trim();
+    const contentHtml = source.contentHtml || source.explanatoryContent || source.content;
+    if (typeof contentHtml === "string" && contentHtml.trim()) {
+      suggestion.contentHtml = contentHtml.trim();
+    }
+    const options = source.options || source.items || source.choices;
+    if (Array.isArray(options)) {
+      const cleaned = options.map((opt) => String(opt || "").trim()).filter(Boolean);
+      if (cleaned.length) suggestion.options = cleaned;
+    }
+    if (typeof source.required === "boolean") suggestion.required = source.required;
+    return Object.keys(suggestion).length ? suggestion : null;
+  }
+
+  function applyQuestionSuggestion(question, suggestion) {
+    if (!question || !suggestion) return;
+    if (suggestion.title) question.title = suggestion.title;
+    if (suggestion.help != null) question.help = suggestion.help;
+    if (suggestion.placeholder != null) question.placeholder = suggestion.placeholder;
+    if (suggestion.errorText != null) question.errorText = suggestion.errorText;
+    if (typeof suggestion.required === "boolean") question.required = suggestion.required;
+    if (suggestion.options && isOptionType(question.type)) {
+      question.options = suggestion.options;
+      question.defaultAnswer = normalizeDefaultAnswerForQuestion(question);
+    }
+    if (suggestion.contentHtml) {
+      question.content = question.content || { enabled: false, html: "" };
+      question.content.enabled = true;
+      question.content.html = sanitizeRichHtml(suggestion.contentHtml);
+    }
+  }
+
+  async function requestAiQuestionAssist(promptText, question) {
+    const AI_QUESTION_CAPABILITIES = {
+      intent: "Question assist",
+      questionTypes: ["text","textarea","number","currency","percent","email","tel","postcode","date","select","radio","checkboxes","yesno"],
+      optionTypes: ["select","radio","checkboxes"],
+      questionFields: ["title","help","placeholder","required","errorText","options","content"],
+      responseFormat: {
+        message: "Short reply for the user",
+        suggestion: {
+          title: "string",
+          help: "string",
+          placeholder: "string",
+          required: "boolean",
+          errorText: "string",
+          options: ["string"],
+          contentHtml: "string"
+        }
+      }
+    };
+
+    const res = await fetch(AI_JOURNEY_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        prompt: String(promptText || "").slice(0, 8000),
+        builderCapabilities: AI_QUESTION_CAPABILITIES,
+        schemaVersion: schema?.meta?.version || 1,
+        questionContext: {
+          title: question?.title || "",
+          type: question?.type || "text",
+          help: question?.help || "",
+          placeholder: question?.placeholder || "",
+          errorText: question?.errorText || "",
+          options: Array.isArray(question?.options) ? question.options : [],
+          content: question?.content?.html || ""
+        }
+      }),
+    });
+
+    const rawText = await res.text().catch(() => "");
+    if (!res.ok) {
+      console.error("AI HTTP error:", res.status, rawText);
+      throw new Error(rawText || `AI request failed (${res.status})`);
+    }
+
+    let data = rawText;
+    try { data = rawText ? JSON.parse(rawText) : {}; } catch {}
+
+    let candidate = data;
+    if (candidate && typeof candidate === "object") {
+      candidate = candidate.result || candidate.reply || candidate.response || candidate;
+    }
+    if (typeof candidate === "string") {
+      const extracted = extractJsonFromText(candidate);
+      if (extracted) candidate = extracted;
+    }
+
+    let suggestion = normalizeQuestionSuggestion(candidate);
+    if (!suggestion) {
+      const extracted = extractJsonFromText(typeof data === "string" ? data : rawText);
+      suggestion = normalizeQuestionSuggestion(extracted);
+    }
+
+    const assistantText =
+      (data && typeof data === "object" && (data.message || data.summary)) ||
+      (typeof candidate === "string" ? candidate : "") ||
+      String(rawText || "Suggestion ready.");
+
+    return { assistantText, suggestion };
   }
 
   function mountAiAssistUI() {
@@ -2573,6 +2719,8 @@ actions.appendChild(btnGroupOpts);
 
     // Display elements should not show question-only fields
     if (q.type !== "display") {
+            inspectorEl.appendChild(questionAssistPanel(q));
+
       inspectorEl.appendChild(fieldText("Question text", q.title, (val) => {
         q.title = val || "Untitled question";
         saveSchemaDebounced();
@@ -2792,6 +2940,20 @@ actions.appendChild(btnGroupOpts);
     d.className = "sectionTitle";
     d.textContent = text;
     return d;
+  }
+
+   function sectionTitleRow(titleText, actions = []) {
+    const row = document.createElement("div");
+    row.className = "sectionTitleRow";
+    const title = document.createElement("div");
+    title.className = "sectionTitle";
+    title.textContent = titleText;
+    const actionsWrap = document.createElement("div");
+    actionsWrap.className = "sectionTitleActions";
+    actions.forEach((action) => actionsWrap.appendChild(action));
+    row.appendChild(title);
+    row.appendChild(actionsWrap);
+    return row;
   }
 
   function pEl(text, className) {
@@ -3185,6 +3347,136 @@ actions.appendChild(btnGroupOpts);
     };
 
     render();
+    return wrap;
+  }
+
+  function questionAssistPanel(q) {
+    const aiState = getQuestionAiState(q?.id);
+    const open = uiState.aiQuestionAssistOpen?.[q?.id] === true;
+    const wrap = document.createElement("div");
+    wrap.className = "aiQuestionAssist";
+
+    const toggleBtn = document.createElement("button");
+    toggleBtn.type = "button";
+    toggleBtn.className = "iconBtn";
+    toggleBtn.setAttribute("aria-label", open ? "Close AI question assist" : "Open AI question assist");
+    toggleBtn.title = "AI question assist";
+    toggleBtn.innerHTML = "✨";
+    toggleBtn.addEventListener("click", () => {
+      uiState.aiQuestionAssistOpen[q.id] = !open;
+      renderInspector();
+    });
+
+    wrap.appendChild(sectionTitleRow("AI question assist", [toggleBtn]));
+
+    if (!open) {
+      wrap.appendChild(pEl("Get quick suggestions for help text, error copy, and option ideas.", "inlineHelp"));
+      return wrap;
+    }
+
+    const chat = document.createElement("div");
+    chat.className = "aiQuestionChat";
+
+    const messages = document.createElement("div");
+    messages.className = "aiQuestionMessages";
+
+    if (!aiState?.messages?.length) {
+      messages.appendChild(pEl("Ask for better helper text, error messages, option lists, or explanatory content.", "inlineHelp"));
+    } else {
+      aiState.messages.forEach((msg) => {
+        const bubble = document.createElement("div");
+        bubble.className = `aiQuestionMessage ${msg.role === "user" ? "isUser" : "isAssistant"}`;
+        bubble.textContent = msg.text;
+        messages.appendChild(bubble);
+      });
+    }
+
+    chat.appendChild(messages);
+
+    if (aiState?.lastSuggestion) {
+      const summary = document.createElement("div");
+      summary.className = "aiQuestionSuggestion";
+      summary.textContent = "Suggestion ready to apply.";
+      chat.appendChild(summary);
+    }
+
+    if (aiState?.status) {
+      const status = document.createElement("div");
+      status.className = `aiQuestionStatus ${aiState.loading ? "isLoading" : ""}`;
+      status.textContent = aiState.status;
+      chat.appendChild(status);
+    }
+
+    const inputRow = document.createElement("div");
+    inputRow.className = "aiQuestionInputRow";
+
+    const input = document.createElement("textarea");
+    input.className = "textarea aiQuestionInput";
+    input.rows = 2;
+    input.placeholder = "Ask for error text, option ideas, helper copy…";
+    input.value = aiState?.draft || "";
+    input.disabled = aiState?.loading === true;
+    input.addEventListener("input", () => {
+      if (!aiState) return;
+      aiState.draft = input.value;
+    });
+
+    const sendBtn = document.createElement("button");
+    sendBtn.type = "button";
+    sendBtn.className = "btn small";
+    sendBtn.textContent = aiState?.loading ? "Thinking…" : "Send";
+    sendBtn.disabled = aiState?.loading === true;
+
+    const applyBtn = document.createElement("button");
+    applyBtn.type = "button";
+    applyBtn.className = "btn small primary";
+    applyBtn.textContent = "Apply to question";
+    applyBtn.disabled = !aiState?.lastSuggestion || aiState?.loading === true;
+
+    sendBtn.addEventListener("click", async () => {
+      if (!aiState) return;
+      const promptText = (aiState.draft || "").trim();
+      if (!promptText) {
+        aiState.status = "Add a prompt first.";
+        renderInspector();
+        return;
+      }
+
+      aiState.messages.push({ role: "user", text: promptText });
+      aiState.draft = "";
+      aiState.loading = true;
+      aiState.status = "Thinking...";
+      aiState.lastSuggestion = null;
+      renderInspector();
+
+      try {
+        const { assistantText, suggestion } = await requestAiQuestionAssist(promptText, q);
+        aiState.messages.push({ role: "assistant", text: assistantText || "Suggestion ready." });
+        aiState.lastSuggestion = suggestion;
+        aiState.status = suggestion ? "Suggestion ready to apply." : "Response received.";
+      } catch (e) {
+        aiState.status = e?.message || "AI request failed.";
+      } finally {
+        aiState.loading = false;
+        renderInspector();
+      }
+    });
+
+    applyBtn.addEventListener("click", () => {
+      if (!aiState?.lastSuggestion) return;
+      applyQuestionSuggestion(q, aiState.lastSuggestion);
+      aiState.status = "Applied to question.";
+      saveSchema();
+      isTypingInspector = false;
+      renderAll(true);
+    });
+
+    inputRow.appendChild(input);
+    inputRow.appendChild(sendBtn);
+    inputRow.appendChild(applyBtn);
+    chat.appendChild(inputRow);
+
+    wrap.appendChild(chat);
     return wrap;
   }
 
