@@ -328,8 +328,7 @@ CH 2  Data Models (schemas, types, templates)
     { key: "radio", label: "Radio" },
     { key: "checkboxes", label: "Checkboxes" },
     { key: "yesno", label: "Yes / No" },
-    { key: "display", label: "Display element" },
-  ];
+];
 
   // Display elements (non-input blocks that can be placed inside groups)
   // These render in Preview but do not collect answers.
@@ -2728,13 +2727,28 @@ actions.appendChild(btnGroupOpts);
 
     const sel = document.createElement("select");
     sel.className = "select";
-    options.forEach((opt) => {
+
+    // Support both {value,label} and {key,label} option shapes (plus simple strings)
+    (options || []).forEach((opt) => {
       const o = document.createElement("option");
-      o.value = opt.value;
-      o.textContent = opt.label;
-      if (opt.value === value) o.selected = true;
+      const optValue =
+        (opt && typeof opt === "object" && ("value" in opt) ? opt.value : undefined) ??
+        (opt && typeof opt === "object" && ("key" in opt) ? opt.key : undefined) ??
+        (opt && typeof opt === "object" && ("id" in opt) ? opt.id : undefined) ??
+        opt;
+
+      const optLabel =
+        (opt && typeof opt === "object" && ("label" in opt) ? opt.label : undefined) ??
+        (opt && typeof opt === "object" && ("name" in opt) ? opt.name : undefined) ??
+        String(optValue ?? "");
+
+      o.value = String(optValue ?? "");
+      o.textContent = optLabel;
+
+      if (String(optValue ?? "") === String(value ?? "")) o.selected = true;
       sel.appendChild(o);
     });
+
     sel.addEventListener("change", () => onChange(sel.value));
 
     wrap.appendChild(lab);
