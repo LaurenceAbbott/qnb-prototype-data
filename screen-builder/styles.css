@@ -1266,15 +1266,33 @@ textarea.aiAssistInput {
 ========================================================= */
 
 .displayEl {
-  border: 1px solid rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 14px;
-  padding: 16px;
-  background: rgba(255,255,255,0.03);
+  padding: 16px 18px;
+  background: rgba(255,255,255,0.04);
 }
 
-.displayEl.tone-info { border-color: rgba(130,222,250,0.45); }
-.displayEl.tone-success { border-color: rgba(120,255,170,0.35); }
-.displayEl.tone-warning { border-color: rgba(255,210,120,0.40); }
+.display-info {
+  border-left: 4px solid rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.05);
+}
+
+.display-info.tone-info {
+  border-left-color: rgba(96,165,250,0.9);
+  background: rgba(96,165,250,0.18);
+}
+.display-info.tone-success {
+  border-left-color: rgba(34,197,94,0.9);
+  background: rgba(34,197,94,0.16);
+}
+.display-info.tone-warning {
+  border-left-color: rgba(251,191,36,0.9);
+  background: rgba(251,191,36,0.16);
+}
+.display-info.tone-danger {
+  border-left-color: rgba(248,113,113,0.9);
+  background: rgba(248,113,113,0.16);
+}
 
 .displayTitle {
   font-weight: 780;
@@ -1295,34 +1313,58 @@ textarea.aiAssistInput {
 
 .displayDivider {
   border: 0;
-  border-top: 1px solid rgba(255,255,255,0.12);
+  border-top: 1px solid rgba(255,255,255,0.2);
   margin: 6px 0;
 }
 
 /* Big price variant */
 .display-price {
-  padding: 18px;
+  padding: 24px 22px;
+  text-align: center;
+  background: rgba(255,255,255,0.06);
 }
 
 .displayPriceLine {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
+  justify-content: center;
   gap: 14px;
 }
 
 .displayPriceValue {
-  font-size: 42px;
+  font-size: 48px;
   font-weight: 850;
   letter-spacing: -0.02em;
   line-height: 1.05;
 }
 
+  .display-price .displaySubtitle {
+  font-size: 14px;
+  opacity: 0.75;
+  margin-top: 8px;
+}
+
+.display-price .displayBody {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-top: 10px;
+}
+
 /* Hero variant (optional styling) */
 .display-hero {
-  padding: 20px;
-  background: rgba(15,64,197,0.12);
-  border-color: rgba(130,222,250,0.25);
+    padding: 24px;
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.14);
+}
+
+.display-hero .displayTitle {
+  font-size: 22px;
+}
+
+.display-divider {
+  padding: 8px 0;
+  background: transparent;
+  border: none;
 }
 
 
