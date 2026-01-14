@@ -442,6 +442,90 @@ button, input, select, textarea{ font-family: inherit; }
   color: rgba(255,255,255,0.86);
   margin-top: 4px;
 }
+.sectionTitleRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.sectionTitleActions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.iconBtn{
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.06);
+  color: inherit;
+  border-radius: 10px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+.iconBtn:hover{
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.24);
+}
+.aiQuestionAssist{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.03);
+}
+.aiQuestionChat{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.aiQuestionMessages{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  max-height: 180px;
+  overflow:auto;
+  padding-right: 4px;
+}
+.aiQuestionMessage{
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.25);
+}
+.aiQuestionMessage.isUser{
+  align-self: flex-end;
+  background: rgba(167,139,250,0.18);
+  border-color: rgba(167,139,250,0.32);
+}
+.aiQuestionMessage.isAssistant{
+  align-self: flex-start;
+  background: rgba(96,165,250,0.14);
+  border-color: rgba(96,165,250,0.28);
+}
+.aiQuestionSuggestion{
+  font-size: 12px;
+  color: rgba(167,139,250,0.9);
+}
+.aiQuestionStatus{
+  font-size: 12px;
+  color: var(--muted);
+}
+.aiQuestionStatus.isLoading{
+  color: rgba(96,165,250,0.9);
+}
+.aiQuestionInputRow{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.aiQuestionInputRow .btn{
+  width:100%;
+}
 .inspectorAccordion{
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,0.10);
