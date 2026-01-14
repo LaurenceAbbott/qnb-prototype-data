@@ -2592,8 +2592,9 @@ actions.appendChild(btnGroupOpts);
       inspectorEl.appendChild(divider());
       inspectorEl.appendChild(toggleRow("Required", q.required === true, (on) => {
         q.required = on;
-        saveSchemaDebounced();
-        renderCanvas();
+        if (q.required && !q.errorText) q.errorText = "This field is required.";
+        saveSchema();
+        renderAll(true);
       }));
 
       if (q.required) {
