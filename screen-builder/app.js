@@ -1110,6 +1110,7 @@ CH 4  UI Rendering
         .groupBarLabel{ font-weight:600; opacity:0.85; }
         .groupPills{ display:flex; gap:8px; flex-wrap:wrap; }
         .groupPill{ border:1px solid rgba(255,255,255,0.14); background:rgba(0,0,0,0.15); color:inherit; padding:6px 10px; border-radius:999px; cursor:pointer; font-size:13px; }
+         .groupPill.isTextBlock{ border-style:dashed; color:rgba(255,255,255,0.82); background:rgba(255,255,255,0.04); }
         .groupPill.selected{ border-color: rgba(130,222,250,0.65); box-shadow: 0 0 0 3px rgba(130,222,250,0.12); }
         .groupBarRight{ display:flex; align-items:center; gap:8px; }
         .btn.tiny{ padding:6px 10px; min-width:36px; }
@@ -1722,23 +1723,50 @@ function renderCanvas() {
     const groupPills = document.createElement("div");
     groupPills.className = "groupPills";
 
-    (p.groups || []).forEach((gg) => {
-      const pill = document.createElement("button");
-      pill.type = "button";
-      pill.className = "groupPill" + (selection.groupId === gg.id && selection.blockType === "group" ? " selected" : "");
-      pill.textContent = gg.name || "Group";
-      pill.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        selection.pageId = p.id;
-        selection.blockType = "group";
-        selection.blockId = gg.id;
-        selection.groupId = gg.id;
-        selection.questionId = null;
-        saveSchema();
-        renderAll(true);
-      });
-      groupPills.appendChild(pill);
+       const flowItems = Array.isArray(p.flow) ? p.flow : [];
+    flowItems.forEach((item) => {
+      if (!item || typeof item !== "object") return;
+      if (item.type === "group") {
+        const gg = (p.groups || []).find((g) => g.id === item.id);
+        if (!gg) return;
+        const pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "groupPill" + (selection.blockType === "group" && selection.blockId === gg.id ? " selected" : "");
+        pill.textContent = gg.name || "Group";
+        pill.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          selection.pageId = p.id;
+          selection.blockType = "group";
+          selection.blockId = gg.id;
+          selection.groupId = gg.id;
+          selection.questionId = null;
+          saveSchema();
+          renderAll(true);
+        });
+        groupPills.appendChild(pill);
+        return;
+      }
+
+      if (item.type === "text") {
+        const pill = document.createElement("button");
+        const label = item.title?.trim() || "Text block";
+        pill.type = "button";
+        pill.className = "groupPill isTextBlock" + (selection.blockType === "text" && selection.blockId === item.id ? " selected" : "");
+        pill.textContent = label;
+        pill.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          selection.pageId = p.id;
+          selection.blockType = "text";
+          selection.blockId = item.id;
+          selection.groupId = null;
+          selection.questionId = null;
+          saveSchema();
+          renderAll(true);
+        });
+        groupPills.appendChild(pill);
+      }
     });
 
     groupBarLeft.appendChild(groupBarLabel);
@@ -1802,22 +1830,50 @@ function renderCanvas() {
     groupBar.appendChild(groupBarRight);
     canvasEl.appendChild(groupBar);
 
-    // Phase 1: if a text block is selected, show a simple preview card
+        // Phase 1: if a text block is selected, show an editor card
     if (selection.blockType === "text") {
       const tb = (p.flow || []).find((x) => x.type === "text" && x.id === selection.blockId);
 
       const card = document.createElement("div");
-      card.className = "tip";
+        card.className = "textBlockEditor";
 
-      const level = tb?.level || "h3";
-      const title = tb?.title || "Text block";
-      const body = sanitizeRichHtml(tb?.bodyHtml || "");
+            const header = document.createElement("div");
+      header.className = "textBlockHeader";
+      header.innerHTML = `<div class="textBlockTitle">📝 Text block</div>`;
 
-      card.innerHTML = `
-        <div class="tipTitle">📝 ${escapeHtml(title)}</div>
-        <div class="muted">This is a text block separator. It will be used when we switch Preview to page-by-page mode.</div>
-        <div style="margin-top:10px">${body || "<p class='muted'>No content yet.</p>"}</div>
-      `;
+            const hint = document.createElement("div");
+      hint.className = "muted";
+      hint.textContent = "Edit the rich text content and label below.";
+
+      const titleField = fieldText("Label", tb?.title || "", (val) => {
+        if (!tb) return;
+        tb.title = val;
+        saveSchemaDebounced();
+      });
+
+      const levelField = fieldSelect("Heading level", tb?.level || "h3", [
+        { value: "h1", label: "H1" },
+        { value: "h2", label: "H2" },
+        { value: "h3", label: "H3" },
+        { value: "h4", label: "H4" },
+        { value: "p", label: "Paragraph" },
+      ], (val) => {
+        if (!tb) return;
+        tb.level = val;
+        saveSchemaDebounced();
+      });
+
+      const bodyField = richTextEditor("Body", tb?.bodyHtml || "<p></p>", (html) => {
+        if (!tb) return;
+        tb.bodyHtml = sanitizeRichHtml(html);
+        saveSchemaDebounced();
+      });
+
+      card.appendChild(header);
+      card.appendChild(hint);
+      card.appendChild(titleField);
+      card.appendChild(levelField);
+      card.appendChild(bodyField);
 
       canvasEl.appendChild(card);
       return;
@@ -2231,6 +2287,12 @@ actions.appendChild(btnGroupOpts);
     ]));
 
     inspectorEl.appendChild(divider());
+
+        if (selection.blockType === "text") {
+      inspectorEl.appendChild(sectionTitle("Text block"));
+      inspectorEl.appendChild(pEl("Text blocks are edited directly in the canvas.", "inlineHelp"));
+      return;
+    }
 
     // -------------------------
     // GROUP (shown when a group is selected)
