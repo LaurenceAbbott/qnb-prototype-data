@@ -2282,9 +2282,30 @@ actions.appendChild(btnGroupOpts);
 
     inspectorEl.appendChild(divider());
 
-        if (selection.blockType === "text") {
+            if (selection.blockType === "text") {
+      const tb = (p.flow || []).find((x) => x.type === "text" && x.id === selection.blockId);
       inspectorEl.appendChild(sectionTitle("Text block"));
       inspectorEl.appendChild(pEl("Text blocks are edited directly in the canvas.", "inlineHelp"));
+       inspectorEl.appendChild(buttonRow([
+        { label: "Move text block up", kind: "ghost", onClick: () => {
+            if (!tb) return;
+            moveFlowItem(p.id, tb.id, -1);
+          } 
+        },
+        { label: "Move text block down", kind: "ghost", onClick: () => {
+            if (!tb) return;
+            moveFlowItem(p.id, tb.id, +1);
+          } 
+        },
+      ]));
+      inspectorEl.appendChild(buttonRow([
+        { label: "Delete text block", kind: "danger", onClick: () => {
+            if (!tb) return;
+            if (!confirm("Delete this text block?")) return;
+            deleteFlowItem(p.id, tb.id);
+          } 
+        },
+      ]));
       return;
     }
 
