@@ -2511,15 +2511,17 @@ actions.appendChild(btnGroupOpts);
       return;
     }
 
+        const inspectorTitle = q?.type === "display" ? "Display" : "Question";
+    
     // If no question selected
     if (!q) {
-      inspectorEl.appendChild(sectionTitle("Question"));
+            inspectorEl.appendChild(sectionTitle(inspectorTitle));
       inspectorEl.appendChild(pEl("Select a question in the canvas to edit its settings.", "inlineHelp"));
       return;
     }
 
     // Question inspector (existing behaviour)
-    inspectorEl.appendChild(sectionTitle("Question"));
+        inspectorEl.appendChild(sectionTitle(inspectorTitle));
 
     // Display elements should not show question-only fields
     if (q.type !== "display") {
