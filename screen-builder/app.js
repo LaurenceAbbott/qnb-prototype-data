@@ -4973,26 +4973,30 @@ CH 4.3  Preview / runtime (continued)
           const qBlock = document.createElement("div");
           qBlock.className = "previewQuestion";
 
-          const qTitle = document.createElement("div");
-          qTitle.className = "previewQuestionTitle";
-          qTitle.textContent = qq.title || "Untitled question";
-          qBlock.appendChild(qTitle);
+            if (qq.type !== "display") {
+            const qTitle = document.createElement("div");
+            qTitle.className = "previewQuestionTitle";
+            qTitle.textContent = qq.title || "Untitled question";
+            qBlock.appendChild(qTitle);
 
-          if (qq.content?.enabled) {
-            const c = sanitizeRichHtml(qq.content.html || "");
-            if (c) {
-              const cEl = document.createElement("div");
-              cEl.className = "previewQuestionContent";
-              cEl.innerHTML = c;
-              qBlock.appendChild(cEl);
-            }
+            if (qq.content?.enabled) {
+              const c = sanitizeRichHtml(qq.content.html || "");
+              if (c) {
+                const cEl = document.createElement("div");
+                cEl.className = "previewQuestionContent";
+                cEl.innerHTML = c;
+                qBlock.appendChild(cEl);
+              }
           }
 
-          if (qq.help) {
-            const h = document.createElement("div");
-            h.className = "pHelp";
-            h.textContent = qq.help;
-            qBlock.appendChild(h);
+                      if (qq.help) {
+              const h = document.createElement("div");
+              h.className = "pHelp";
+              h.textContent = qq.help;
+              qBlock.appendChild(h);
+            }
+          } else {
+            qBlock.classList.add("pCardDisplay");
           }
 
           const inputWrap = document.createElement("div");
@@ -5015,16 +5019,18 @@ CH 4.3  Preview / runtime (continued)
 
           qBlock.appendChild(inputWrap);
 
-          // Inline field error (page mode)
-          const fieldErr = preview.pageErrors?.[qq.id] || "";
-          const errEl = document.createElement("div");
-          errEl.className = "pError";
-          errEl.textContent = fieldErr;
-          errEl.style.display = fieldErr ? "block" : "none";
-          qBlock.appendChild(errEl);
+                    if (qq.type !== "display") {
+            // Inline field error (page mode)
+            const fieldErr = preview.pageErrors?.[qq.id] || "";
+            const errEl = document.createElement("div");
+            errEl.className = "pError";
+            errEl.textContent = fieldErr;
+            errEl.style.display = fieldErr ? "block" : "none";
+            qBlock.appendChild(errEl);
+          }
 
           // Follow-up questions (nested under this question)
-          if (followUpMatches(qq, preview.answers)) {
+                    if (qq.type !== "display" && followUpMatches(qq, preview.answers)) {
             const fWrap = document.createElement("div");
             fWrap.className = "previewFollowUp";
             fWrap.style.marginTop = "12px";
