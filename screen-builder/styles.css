@@ -1322,7 +1322,7 @@ textarea.aiAssistInput {
 }
 
 /* Big price variant */
-.display-price {
+.display-bigPrice {
   padding: 24px 22px;
   text-align: center;
   background: rgba(255,255,255,0.06);
