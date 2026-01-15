@@ -3687,45 +3687,63 @@ actions.appendChild(btnGroupOpts);
       return wrap;
     }
 
-    const list = document.createElement("div");
-    list.className = "choiceGrid";
+   const current = new Set(Array.isArray(q.defaultAnswer) ? q.defaultAnswer : []);
 
-    const current = new Set(Array.isArray(q.defaultAnswer) ? q.defaultAnswer : []);
+      const select = document.createElement("select");
+    select.className = "select";
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "— Choose option —";
+    select.appendChild(placeholder);
+
+    const clearOption = document.createElement("option");
+    clearOption.value = "__clear__";
+    clearOption.textContent = "Clear selections";
+    select.appendChild(clearOption);
 
     opts.forEach((opt) => {
-      const row = document.createElement("label");
-  row.className = "choiceBtn choiceCheck" + (current.has(opt) ? " selected" : "");
-
-      const cb = document.createElement("input");
-      cb.type = "checkbox";
-      cb.className = "choiceCheckBox";
-      cb.checked = current.has(opt);
-
-      const text = document.createElement("span");
-            text.className = "choiceCheckText";
-      text.textContent = opt;
-
-      cb.addEventListener("change", () => {
-        const next = new Set(Array.isArray(q.defaultAnswer) ? q.defaultAnswer : []);
-        if (cb.checked) next.add(opt);
-        else next.delete(opt);
-        const nextArr = opts.filter((value) => next.has(value));
-        q.defaultAnswer = nextArr.length ? nextArr : null;
-        q.defaultAnswer = normalizeDefaultAnswerForQuestion(q);
-        saveSchema();
-        row.classList.toggle("selected", cb.checked);
-      });
-
-      row.appendChild(cb);
-      row.appendChild(text);
-      list.appendChild(row);
+      const option = document.createElement("option");
+      option.value = opt;
+      option.textContent = opt;
+      select.appendChild(option);
     });
 
-    wrap.appendChild(list);
-    return wrap;
-  }
+      const selectedSummary = document.createElement("div");
+    selectedSummary.className = "inlineHelp";
 
-  function defaultAnswerEditor(q) {
+    const updateSummary = () => {
+      const ordered = opts.filter((value) => current.has(value));
+      selectedSummary.textContent = ordered.length
+        ? `Selected: ${ordered.join(", ")}`
+        : "No default selections.";
+    };
+
+    updateSummary();
+
+    select.addEventListener("change", () => {
+      const value = select.value;
+      if (value === "__clear__") {
+        current.clear();
+      } else if (value) {
+        if (current.has(value)) current.delete(value);
+        else current.add(value);
+      }
+
+      const nextArr = opts.filter((item) => current.has(item));
+      q.defaultAnswer = nextArr.length ? nextArr : null;
+      q.defaultAnswer = normalizeDefaultAnswerForQuestion(q);
+      saveSchema();
+      updateSummary();
+      select.value = "";
+          });
+
+       wrap.appendChild(select);
+    wrap.appendChild(selectedSummary);
+    return wrap;
+}
+    
+ function defaultAnswerEditor(q) {
     if (q.type === "checkboxes") {
       return defaultCheckboxesEditor(q);
     }
@@ -3743,6 +3761,7 @@ actions.appendChild(btnGroupOpts);
       saveSchema();
     });
   }
+
 
   // -------------------------
   // Follow-up questions (nested array inside a question)
