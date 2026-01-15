@@ -511,6 +511,36 @@ button, input, select, textarea{ font-family: inherit; }
   font-size: 12px;
   color: rgba(167,139,250,0.9);
 }
+.aiQuestionSuggestionCard{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(167,139,250,0.28);
+  background: rgba(167,139,250,0.08);
+  font-size: 12px;
+}
+.aiQuestionSuggestionTitle{
+  font-weight: 700;
+  color: rgba(255,255,255,0.92);
+}
+.aiQuestionSuggestionList{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin: 0;
+  padding-left: 16px;
+}
+.aiQuestionSuggestionList li{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  color: rgba(255,255,255,0.88);
+}
+.aiQuestionSuggestionValue{
+  color: rgba(255,255,255,0.78);
+}
 .aiQuestionStatus{
   font-size: 12px;
   color: var(--muted);
