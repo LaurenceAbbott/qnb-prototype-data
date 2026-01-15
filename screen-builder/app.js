@@ -1374,9 +1374,9 @@ CH 4  UI Rendering
       optionTypes: ["select","radio","checkboxes"],
       questionFields: ["title","help","placeholder","required","errorText","options","content"],
       responseGuidance:
-        "Reply in conversational natural language (no JSON). You can include improved labels, help text, validation advice, alternative phrasing, warnings, or an explanation of why the question exists and how it affects pricing. Structured suggestions should live in the suggestion object only.",
-      responseFormat: {
-        message: "Short reply for the user",
+        "Reply in conversational natural language (no JSON) as an assistant helping improve the question with immediate, actionable advice. You can include improved labels, help text, validation advice, alternative phrasing, warnings, or an explanation of why the question exists and how it affects pricing. Structured suggestions should live in the suggestion object only.",
+              responseFormat: {
+      message: "Short reply for the user",
         suggestion: {
           title: "string",
           help: "string",
@@ -1458,8 +1458,8 @@ CH 4  UI Rendering
     const assistantText =
       (candidateMessage && !isLikelyJsonText(candidateMessage) && String(candidateMessage).trim()) ||
       formattedSummary ||
-      "I’ve drafted a few ideas you can apply to this question.";
-
+      "";
+    
     return { assistantText, suggestion };
   }
 
