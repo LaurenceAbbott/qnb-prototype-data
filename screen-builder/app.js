@@ -3739,11 +3739,16 @@ actions.appendChild(btnGroupOpts);
       aiState.lastSuggestion = null;
       renderInspector();
 
-      try {
+       try {
         const { assistantText, suggestion } = await requestAiQuestionAssist(promptText, q);
-        aiState.messages.push({ role: "assistant", text: assistantText || "Suggestion ready." });
+        const fallbackReply =
+          formatSuggestionSummary(suggestion, promptText) ||
+          "I couldn’t generate a reply. Try rephrasing or adding more detail.";
+        aiState.messages.push({ role: "assistant", text: assistantText || fallbackReply });
         aiState.lastSuggestion = suggestion;
-                aiState.status = suggestion ? "Suggestions ready below." : "Response received.";
+        aiState.status = suggestion
+          ? "Suggestions ready below."
+          : "Response received.";
       } catch (e) {
         aiState.status = e?.message || "AI request failed.";
       } finally {
