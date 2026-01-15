@@ -1075,10 +1075,12 @@ CH 4  UI Rendering
       questionTypes: ["text","textarea","number","currency","percent","email","tel","postcode","date","select","radio","checkboxes","yesno"],
       optionTypes: ["select","radio","checkboxes"],
       questionFields: [
-        "id","type","title","help","placeholder","required","errorText","options","logic","content"
+             "id","type","title","help","placeholder","required","errorText","options","logic","content","defaultAnswer","display","followUp"
       ],
       groupFields: ["id","name","description","logic","questions"],
-      pageFields: ["id","name","groups","flow"],
+            pageFields: ["id","name","groups","flow","template"],
+      textBlockFields: ["type","id","title","level","bodyHtml"],
+      displayVariants: ["hero","bigPrice","info","divider"],
       logicOperators: OPERATORS.map(o => o.key),
       guidance: {
          intent: "Generate a realistic UK insurance quote journey appropriate to the requested line of business and context",
@@ -1101,7 +1103,7 @@ CH 4  UI Rendering
         outputRules: [
           "Use ONLY the provided schema and allowed components (pages, groups, questions, text blocks, and the approved display elements).",
           "Do NOT invent question types, fields, or components that are not supported by the framework.",
-          "Populate everything fully: titles, descriptions, help text, placeholders, required flags, defaults, and validation hints.",
+                  "Populate everything fully: titles, descriptions, help text, placeholders, required flags, defaults (including defaultAnswer), and validation hints.",
           "Structure content exactly as a real quote & buy journey would be structured — not a theoretical or simplified form.",
           "Use conditional logic and progressive disclosure where supported by the schema to keep the journey realistic and efficient.",
           "Never output TODOs, stubs, or placeholders (e.g., 'TBD', 'lorem ipsum', 'add options here')."
@@ -2880,11 +2882,99 @@ actions.appendChild(btnGroupOpts);
         inspectorEl.appendChild(optionsEditor(q));
       }
 
-            if (q.type === "yesno" || isOptionType(q.type)) {
+      if (q.type === "yesno" || isOptionType(q.type)) {
         inspectorEl.appendChild(divider());
         inspectorEl.appendChild(sectionTitle("Default answer"));
         inspectorEl.appendChild(pEl("Choose an option to preselect in Preview.", "inlineHelp"));
         inspectorEl.appendChild(defaultAnswerEditor(q));
+      }
+
+      if (q.type === "yesno" || isOptionType(q.type)) {
+        q.followUp = q.followUp || {
+          enabled: false,
+          triggerValue: "Yes",
+          name: "",
+          questions: [],
+          repeat: { enabled: false, min: 1, max: 5, addLabel: "Add another", itemLabel: "Item" },
+        };
+        q.followUp.repeat = q.followUp.repeat || {
+          enabled: false,
+          min: 1,
+          max: 5,
+          addLabel: "Add another",
+          itemLabel: "Item",
+        };
+
+        inspectorEl.appendChild(divider());
+        inspectorEl.appendChild(sectionTitle("Follow-up questions"));
+        inspectorEl.appendChild(pEl("Add nested questions that appear when this answer is selected.", "inlineHelp"));
+
+        inspectorEl.appendChild(toggleRow("Enable follow-up questions", q.followUp.enabled === true, (on) => {
+          q.followUp.enabled = on;
+          saveSchema();
+          isTypingInspector = false;
+          renderAll(true);
+        }));
+
+        if (q.followUp.enabled) {
+          const triggerOptions = q.type === "yesno" ? ["Yes", "No"] : q.options || [];
+          inspectorEl.appendChild(
+            fieldSelect(
+              "Show when answer is",
+              q.followUp.triggerValue || "",
+              triggerOptions.length
+                ? triggerOptions.map((opt) => ({ value: opt, label: opt }))
+                : [{ value: "", label: "Add options first" }],
+              (val) => {
+                q.followUp.triggerValue = val;
+                saveSchemaDebounced();
+              }
+            )
+          );
+
+          inspectorEl.appendChild(fieldText("Section title", q.followUp.name || "", (val) => {
+            q.followUp.name = val;
+            saveSchemaDebounced();
+          }));
+
+          inspectorEl.appendChild(toggleRow("Allow multiple sets", q.followUp.repeat.enabled === true, (on) => {
+            q.followUp.repeat.enabled = on;
+            saveSchema();
+            isTypingInspector = false;
+            renderAll(true);
+          }));
+
+          if (q.followUp.repeat.enabled) {
+            inspectorEl.appendChild(fieldText("Min items", String(q.followUp.repeat.min ?? 1), (val) => {
+              q.followUp.repeat.min = clamp(Number(val || 0), 0, 50);
+              if (q.followUp.repeat.max < q.followUp.repeat.min) {
+                q.followUp.repeat.max = q.followUp.repeat.min;
+              }
+              saveSchemaDebounced();
+            }));
+
+            inspectorEl.appendChild(fieldText("Max items", String(q.followUp.repeat.max ?? 5), (val) => {
+              q.followUp.repeat.max = clamp(Number(val || 0), 0, 50);
+              if (q.followUp.repeat.max < q.followUp.repeat.min) {
+                q.followUp.repeat.min = q.followUp.repeat.max;
+              }
+              saveSchemaDebounced();
+            }));
+
+            inspectorEl.appendChild(fieldText("Add button label", q.followUp.repeat.addLabel || "Add another", (val) => {
+              q.followUp.repeat.addLabel = val;
+              saveSchemaDebounced();
+            }));
+
+            inspectorEl.appendChild(fieldText("Item label", q.followUp.repeat.itemLabel || "Item", (val) => {
+              q.followUp.repeat.itemLabel = val;
+              saveSchemaDebounced();
+            }));
+          }
+
+          inspectorEl.appendChild(divider());
+          inspectorEl.appendChild(followUpQuestionsEditor(q));
+        }
       }
 
       // Required
