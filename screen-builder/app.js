@@ -579,7 +579,10 @@ CH 1  State (defaults, load/save, migrate)
     if (!schema.meta.version) schema.meta.version = 1;
     if (!schema.meta.createdAt) schema.meta.createdAt = new Date().toISOString();
     schema.meta.updatedAt = new Date().toISOString();
-
+    if (!["page", "question"].includes(schema.meta.previewMode)) {
+      schema.meta.previewMode = "page";
+    }
+    
     if (!Array.isArray(schema.pages)) schema.pages = [];
 
     // --- Ensure fixed checkout pages always exist (and remain at the end)
@@ -742,7 +745,7 @@ CH 1  State (defaults, load/save, migrate)
   // Preview state
   let preview = {
     open: false,
-    mode: "question", // "question" | "page"
+    mode: "page", // "question" | "page"
     steps: [],
     index: 0,
     answers: {}, // qid -> value (shared across modes)
