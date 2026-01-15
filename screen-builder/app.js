@@ -630,6 +630,7 @@ CH 1  State (defaults, load/save, migrate)
             q.followUp = {
               enabled: false,
               triggerValue: "Yes",
+              triggerValues: ["Yes"],
               name: "",
               questions: [],
               repeat: {
@@ -640,9 +641,15 @@ CH 1  State (defaults, load/save, migrate)
                 itemLabel: "Item",
               },
             };
-          }
+                   }
           q.followUp.enabled = q.followUp.enabled === true;
-          q.followUp.triggerValue = String(q.followUp.triggerValue || "Yes");
+          const legacyTriggerValue = String(q.followUp.triggerValue || "Yes");
+          const normalizedTriggers = Array.isArray(q.followUp.triggerValues)
+            ? q.followUp.triggerValues.map((val) => String(val || "").trim()).filter(Boolean)
+            : [];
+          const triggers = normalizedTriggers.length ? normalizedTriggers : [legacyTriggerValue].filter(Boolean);
+          q.followUp.triggerValues = triggers.length ? triggers : ["Yes"];
+          q.followUp.triggerValue = q.followUp.triggerValues[0] || "Yes";
           q.followUp.name = String(q.followUp.name || "");
           q.followUp.questions = Array.isArray(q.followUp.questions) ? q.followUp.questions : [];
           q.followUp.repeat = q.followUp.repeat && typeof q.followUp.repeat === "object" ? q.followUp.repeat : {};
@@ -2943,10 +2950,14 @@ actions.appendChild(btnGroupOpts);
         q.followUp = q.followUp || {
           enabled: false,
           triggerValue: "Yes",
+          triggerValues: ["Yes"],
           name: "",
           questions: [],
           repeat: { enabled: false, min: 1, max: 5, addLabel: "Add another", itemLabel: "Item" },
         };
+        q.followUp.triggerValues = Array.isArray(q.followUp.triggerValues)
+          ? q.followUp.triggerValues
+          : [q.followUp.triggerValue || "Yes"];
         q.followUp.repeat = q.followUp.repeat || {
           enabled: false,
           min: 1,
@@ -2969,14 +2980,15 @@ actions.appendChild(btnGroupOpts);
         if (q.followUp.enabled) {
           const triggerOptions = q.type === "yesno" ? ["Yes", "No"] : q.options || [];
           inspectorEl.appendChild(
-            fieldSelect(
+            fieldMultiSelect(
               "Show when answer is",
-              q.followUp.triggerValue || "",
+              q.followUp.triggerValues || [],
               triggerOptions.length
                 ? triggerOptions.map((opt) => ({ value: opt, label: opt }))
                 : [{ value: "", label: "Add options first" }],
-              (val) => {
-                q.followUp.triggerValue = val;
+              (vals) => {
+                q.followUp.triggerValues = vals;
+                q.followUp.triggerValue = vals[0] || "";
                 saveSchemaDebounced();
               }
             )
@@ -3439,6 +3451,61 @@ actions.appendChild(btnGroupOpts);
     return wrap;
   }
 
+  function fieldMultiSelect(label, values, options, onChange) {
+    const wrap = document.createElement("div");
+    wrap.className = "field";
+
+    const lab = document.createElement("div");
+    lab.className = "label";
+    lab.textContent = label;
+
+    const list = document.createElement("div");
+    list.className = "choiceGrid";
+
+    const currentValues = new Set((Array.isArray(values) ? values : []).map((val) => String(val ?? "")));
+
+    (options || []).forEach((opt) => {
+      const optValue =
+        (opt && typeof opt === "object" && ("value" in opt) ? opt.value : undefined) ??
+        (opt && typeof opt === "object" && ("key" in opt) ? opt.key : undefined) ??
+        (opt && typeof opt === "object" && ("id" in opt) ? opt.id : undefined) ??
+        opt;
+
+      const optLabel =
+        (opt && typeof opt === "object" && ("label" in opt) ? opt.label : undefined) ??
+        (opt && typeof opt === "object" && ("name" in opt) ? opt.name : undefined) ??
+        String(optValue ?? "");
+
+      const valueString = String(optValue ?? "");
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      const isPlaceholder = valueString === "" && optLabel === "Add options first";
+      btn.className = "choiceBtn" + (currentValues.has(valueString) ? " selected" : "");
+      btn.textContent = optLabel;
+      if (isPlaceholder) {
+        btn.disabled = true;
+      }
+      btn.addEventListener("click", () => {
+        const nextValues = new Set(currentValues);
+        if (nextValues.has(valueString)) {
+          nextValues.delete(valueString);
+          btn.classList.remove("selected");
+        } else {
+          nextValues.add(valueString);
+          btn.classList.add("selected");
+        }
+        onChange(Array.from(nextValues));
+      });
+
+      list.appendChild(btn);
+    });
+
+    wrap.appendChild(lab);
+    wrap.appendChild(list);
+    return wrap;
+  }
+
   function toggleRow(label, on, onToggle) {
     const row = document.createElement("div");
     row.className = "toggleRow";
@@ -3871,6 +3938,17 @@ actions.appendChild(btnGroupOpts);
     );
   }
 
+    function getFollowUpTriggerValues(followUp) {
+    if (!followUp || typeof followUp !== "object") return [];
+    if (Array.isArray(followUp.triggerValues) && followUp.triggerValues.length) {
+      return followUp.triggerValues.map((val) => String(val ?? "").trim()).filter(Boolean);
+    }
+    if (followUp.triggerValue != null && String(followUp.triggerValue).trim()) {
+      return [String(followUp.triggerValue).trim()];
+    }
+    return [];
+  }
+
   // ----- Repeatable instances storage (preview-only)
   // We store instance ids inside preview.answers under a reserved key.
   const FU_INSTANCES_KEY = "__fu_instances__";
@@ -3983,8 +4061,13 @@ actions.appendChild(btnGroupOpts);
 
   function followUpMatches(q, answers) {
     if (!followUpIsEnabled(q)) return false;
-    const trig = String(q.followUp.triggerValue || "Yes");
-    return String(answers?.[q.id] || "") === trig;
+     const triggers = getFollowUpTriggerValues(q.followUp);
+    if (!triggers.length) return false;
+    const answer = answers?.[q.id];
+    if (Array.isArray(answer)) {
+      return answer.some((val) => triggers.includes(String(val ?? "")));
+    }
+    return triggers.includes(String(answer ?? ""));
   }
 
   function getActiveFollowUps(q, answers) {
@@ -4044,10 +4127,14 @@ actions.appendChild(btnGroupOpts);
       parentQ.followUp = parentQ.followUp || {
         enabled: false,
         triggerValue: "Yes",
+        triggerValues: ["Yes"],
         name: "",
         questions: [],
         repeat: { enabled: false, min: 1, max: 5, addLabel: "Add another", itemLabel: "Item" },
       };
+      parentQ.followUp.triggerValues = Array.isArray(parentQ.followUp.triggerValues)
+        ? parentQ.followUp.triggerValues
+        : [parentQ.followUp.triggerValue || "Yes"];
       parentQ.followUp.questions = Array.isArray(parentQ.followUp.questions)
         ? parentQ.followUp.questions
         : [];
