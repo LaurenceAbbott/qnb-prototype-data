@@ -743,6 +743,7 @@ CH 1  State (defaults, load/save, migrate)
     lastError: "",
     pageErrors: {}, // page mode: qid -> errorText
         lastCardScrollTop: 0,
+        startPageId: null,
   };
 
   // Small UI-only state (not persisted)
@@ -1618,6 +1619,7 @@ const setButtonLoading = (on) => {
   const btnAddGroup = $("#btnAddGroup");
   const btnAddQuestion = $("#btnAddQuestion");
   const btnPreview = $("#btnPreview");
+  const btnPagePreview = $("#btnPagePreview");
   const btnExport = $("#btnExport");
   const btnImport = $("#btnImport");
   const btnImportPages = $("#btnImportPages");
@@ -5224,11 +5226,17 @@ CH 4.3  Preview / runtime (continued)
   // Preview UI
   // -------------------------
 
-  function openPreview() {
+  function openPreview(options = {}) {
     if (!previewBackdrop) return;
+    const { mode, startPageId } = options;
 
     // Load persisted preview mode if present
-    if (schema?.meta?.previewMode) preview.mode = schema.meta.previewMode;
+   if (mode) {
+      preview.mode = mode;
+    } else if (schema?.meta?.previewMode) {
+      preview.mode = schema.meta.previewMode;
+    }
+    preview.startPageId = startPageId || null;
 
     preview.open = true;
     preview.index = 0;
@@ -5290,6 +5298,11 @@ CH 4.3  Preview / runtime (continued)
 
     // Steps depend on mode
     preview.steps = preview.mode === "page" ? buildPreviewPageSteps() : buildPreviewSteps();
+       if (preview.startPageId && preview.mode === "page") {
+      const targetIndex = preview.steps.findIndex((stepItem) => stepItem.pageId === preview.startPageId);
+      if (targetIndex >= 0) preview.index = targetIndex;
+      preview.startPageId = null;
+    }
     preview.index = clamp(preview.index, 0, Math.max(0, preview.steps.length - 1));
 
     const steps = preview.steps;
@@ -6251,7 +6264,15 @@ CH 8  Event wiring (listeners)
       preview.answers = {};
       openPreview();
     });
-
+    if (btnPagePreview) {
+      btnPagePreview.addEventListener("click", () => {
+        const p = getPage(selection.pageId) || schema.pages[0];
+        if (!p) return;
+        preview.answers = {};
+        openPreview({ mode: "page", startPageId: p.id });
+      });
+    }
+    
     // Preview nav
     btnPrev.addEventListener("click", () => {
       if (!preview.open) return;
