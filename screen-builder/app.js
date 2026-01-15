@@ -803,6 +803,7 @@ CH 4  UI Rendering
   // Endpoint is hard-coded here (so users don't see settings/auth fields).
 
   const AI_JOURNEY_ENDPOINT = "https://screen-builder-ai.laurence-ogi.workers.dev";
+  const AI_CHAT_ENDPOINT = `${AI_JOURNEY_ENDPOINT.replace(/\/$/, "")}/chat`;
   // Expose for quick DevTools checks
   window.AI_JOURNEY_ENDPOINT = AI_JOURNEY_ENDPOINT;
 
@@ -1376,7 +1377,7 @@ CH 4  UI Rendering
   }
 
   async function requestAiQuestionAssist(messages, questionId, question) { 
-   const res = await fetch(AI_JOURNEY_ENDPOINT, {
+   const res = await fetch(AI_CHAT_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
