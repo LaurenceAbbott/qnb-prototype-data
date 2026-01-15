@@ -1447,9 +1447,10 @@ CH 4  UI Rendering
       (typeof candidate === "string" ? candidate : "") ||
       String(rawText || "");
 
+     const formattedSummary = formatSuggestionSummary(suggestion, promptText);
     const assistantText =
       (candidateMessage && !isLikelyJsonText(candidateMessage) && String(candidateMessage).trim()) ||
-      formatSuggestionSummary(suggestion, promptText) ||
+formattedSummary ||
       "I’ve drafted a few ideas you can apply to this question.";
 
     return { assistantText, suggestion };
@@ -3584,6 +3585,9 @@ actions.appendChild(btnGroupOpts);
 
   function questionAssistPanel(q) {
     const aiState = getQuestionAiState(q?.id);
+        if (uiState.aiQuestionAssistOpen?.[q?.id] == null) {
+      uiState.aiQuestionAssistOpen[q.id] = true;
+    }
     const open = uiState.aiQuestionAssistOpen?.[q?.id] === true;
     const wrap = document.createElement("div");
     wrap.className = "aiQuestionAssist";
@@ -3626,10 +3630,61 @@ actions.appendChild(btnGroupOpts);
     chat.appendChild(messages);
 
     if (aiState?.lastSuggestion) {
-      const summary = document.createElement("div");
-      summary.className = "aiQuestionSuggestion";
-      summary.textContent = "Suggestion ready to apply.";
-      chat.appendChild(summary);
+            const suggestionCard = document.createElement("div");
+      suggestionCard.className = "aiQuestionSuggestionCard";
+
+      const suggestionTitle = document.createElement("div");
+      suggestionTitle.className = "aiQuestionSuggestionTitle";
+      suggestionTitle.textContent = "Suggestions";
+      suggestionCard.appendChild(suggestionTitle);
+
+      const suggestionList = document.createElement("ul");
+      suggestionList.className = "aiQuestionSuggestionList";
+
+      const pushItem = (label, value) => {
+        if (!value) return;
+        const item = document.createElement("li");
+        item.innerHTML = `<span>${label}</span><span class="aiQuestionSuggestionValue">${value}</span>`;
+        suggestionList.appendChild(item);
+      };
+
+      const suggestion = aiState.lastSuggestion;
+      pushItem("Label", suggestion.title);
+      pushItem("Help text", suggestion.help);
+      pushItem("Placeholder", suggestion.placeholder);
+      pushItem("Validation copy", suggestion.errorText);
+      if (typeof suggestion.required === "boolean") {
+        pushItem("Required", suggestion.required ? "Yes" : "No");
+      }
+      if (Array.isArray(suggestion.options) && suggestion.options.length) {
+        pushItem("Options", suggestion.options.join(", "));
+      }
+      if (suggestion.contentHtml) {
+        pushItem("Explanatory content", suggestion.contentHtml.replace(/<[^>]+>/g, "").trim());
+      }
+
+      if (!suggestionList.children.length) {
+        const fallbackItem = document.createElement("li");
+        fallbackItem.textContent = "Suggestion ready to apply.";
+        suggestionList.appendChild(fallbackItem);
+      }
+
+      suggestionCard.appendChild(suggestionList);
+
+      const applyBtn = document.createElement("button");
+      applyBtn.type = "button";
+      applyBtn.className = "btn small ghost";
+      applyBtn.textContent = "Apply suggestions";
+      applyBtn.disabled = aiState.loading === true;
+      applyBtn.addEventListener("click", () => {
+        applyQuestionSuggestion(q, aiState.lastSuggestion);
+        aiState.status = "Suggestions applied.";
+        saveSchema();
+        render();
+      });
+
+      suggestionCard.appendChild(applyBtn);
+      chat.appendChild(suggestionCard);
     }
 
     if (aiState?.status) {
@@ -3679,7 +3734,7 @@ actions.appendChild(btnGroupOpts);
         const { assistantText, suggestion } = await requestAiQuestionAssist(promptText, q);
         aiState.messages.push({ role: "assistant", text: assistantText || "Suggestion ready." });
         aiState.lastSuggestion = suggestion;
-        aiState.status = suggestion ? "Suggestion ready to apply." : "Response received.";
+                aiState.status = suggestion ? "Suggestions ready below." : "Response received.";
       } catch (e) {
         aiState.status = e?.message || "AI request failed.";
       } finally {
