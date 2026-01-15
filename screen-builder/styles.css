@@ -307,6 +307,20 @@ button, input, select, textarea{ font-family: inherit; }
   padding: 14px;
   border-bottom: 1px solid var(--stroke);
   background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent);
+   display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.cardHeaderMain{
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.cardHeaderActions{
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .cardTitle{ font-weight: 760; }
 .cardSub{ margin-top:6px; color: var(--muted); font-size: 12px; }
