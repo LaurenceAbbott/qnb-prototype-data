@@ -1081,12 +1081,110 @@ CH 4  UI Rendering
       pageFields: ["id","name","groups","flow"],
       logicOperators: OPERATORS.map(o => o.key),
       guidance: {
-        intent: "Generate a realistic insurance QUICK QUOTE journey, not a full underwriting form",
-        preferredLength: "3–6 pages, ~25–45 questions total",
-        tone: "Broker-friendly, plain English",
-        completeness: "Populate titles, help text, placeholders, required flags and sensible option lists",
-        constraints: "Do not invent unsupported question types or fields"
-      }
+  intent: "Generate a realistic UK insurance quote journey appropriate to the requested line of business and context",
+
+  qualityBar: "Best-in-class, believable, production-grade journey using real UK broker and aggregator patterns (without copying proprietary text)",
+
+  strictness: "Assume this output will be demoed to a UK insurance broker tomorrow. It must look, read, and behave like a real live insurance journey with no placeholder gaps, thin option lists, or vague help text.",
+
+  journeyDepth: {
+    default: "Best-practice market standard",
+    guidance: [
+      "Optimise for speed only when the prompt explicitly implies a quick quote.",
+      "Include full rating, eligibility, and compliance detail when appropriate to the journey.",
+      "Never artificially shorten or simplify the journey unless explicitly instructed."
+    ]
+  },
+
+  tone: "Broker-friendly, plain English, confident and clear (use standard UK insurance terminology where appropriate, but avoid unnecessary jargon)",
+
+  outputRules: [
+    "Use ONLY the provided schema and allowed components (pages, groups, questions, text blocks, and the approved display elements).",
+    "Do NOT invent question types, fields, or components that are not supported by the framework.",
+    "Populate everything fully: titles, descriptions, help text, placeholders, required flags, defaults, and validation hints.",
+    "Structure content exactly as a real quote & buy journey would be structured — not a theoretical or simplified form.",
+    "Use conditional logic and progressive disclosure where supported by the schema to keep the journey realistic and efficient.",
+    "Never output TODOs, stubs, or placeholders (e.g., 'TBD', 'lorem ipsum', 'add options here')."
+  ],
+
+  hallucinationGuard: {
+    rules: [
+      "Do NOT invent regulatory requirements, FCA/ICO wording, or compliance statements. Use neutral, standard phrasing unless the prompt provides specific approved wording.",
+      "Do NOT invent insurer-specific underwriting rules (e.g., 'we do not cover X' or 'must have Y alarm') unless explicitly provided by the prompt or by an allowed rules dataset.",
+      "Do NOT invent pricing logic, premiums, discounts, or rating calculations.",
+      "If something is normally product/insurer-specific (eligibility rules, endorsements, exact declarations, add-on availability), keep it generic and believable."
+    ],
+    safeFallbackStyle: [
+      "Use language like 'This helps us confirm eligibility and calculate your quote' instead of asserting hard rules.",
+      "For declarations, use generic attestations without referencing specific legal clauses."
+    ]
+  },
+
+  realism: {
+    journeyStyle: [
+      "Begin with high-signal eligibility and rating-critical questions.",
+      "Use logical sequencing and progressive disclosure to reduce cognitive load.",
+      "Group questions as real insurer/aggregator journeys do (clear sections, short guidance text, sensible ordering).",
+      "Include realistic friction points: assumptions, disclosures, declarations, and consent at the points they normally appear.",
+      "If the framework supports it, include summary/playback and quote presentation patterns using the provided display elements."
+    ],
+    ukSpecific: [
+      "Use UK address conventions (postcode-first lookup pattern where supported).",
+      "Use UK insurance concepts appropriate to the line of business (terminology, cover options, excesses, common question sets).",
+      "Use UK consent patterns (privacy notice acknowledgement, marketing consent, declarations) in a believable and minimal-friction way."
+    ]
+  },
+
+  completeness: {
+    defaultMode: "Comprehensive (as complete as it needs to be to feel real and best-practice for the LOB)",
+
+    mustInclude: [
+      "Detailed pages and groups with clear headings and short, helpful guidance text.",
+      "Rich help text for non-obvious questions (what it means, why it matters, examples).",
+      "Placeholders that look like real UI copy (e.g., 'e.g., AB12 3CD', 'e.g., 12,000').",
+      "Required flags aligned to realistic rating/eligibility/compliance needs (don’t mark everything as required by default).",
+      "Realistic option lists for selects/radios (include 'Other' only where it’s genuinely common).",
+      "Validation nuance (bounds, formats, date windows, step values) where supported by the schema."
+    ],
+
+    optionLists: {
+      principle: "No shortcuts on lists that materially affect realism.",
+      requirement: [
+        "When a question expects a known industry codelist (e.g., occupation, relationship, licence type, employment status, business type, property type), provide a comprehensive insurer-style list.",
+        "If the framework supports external codelists, reference them properly using the schema method (preferred).",
+        "If codelists must be embedded, include a large, realistic UK list (hundreds of entries where appropriate), not a tiny sample."
+      ]
+    }
+  },
+
+  modeling: "Use UK market patterns as inspiration (comparison sites and major carriers) but write original copy and options. Never copy proprietary wording.",
+
+  assumptions: {
+    whenPromptIsBrief: "Infer a best-practice journey for the requested line of business with all core sections for that LOB, realistic sequencing, and appropriate compliance/consent steps."
+  },
+
+  constraints: [
+    "Do not add unsupported fields, question types, or components.",
+    "Do not remove required compliance steps (consent/declarations) if the journey includes quote/buy.",
+    "Do not over-collect: only ask for detail that is realistic for the journey depth and LOB context — but never simplify to the point it feels fake.",
+    "Do not produce placeholder-only content (e.g., 'Option 1/2/3'). All options and help text must be meaningful and believable."
+  ],
+
+  displayElements: {
+    instruction: "Use the provided display elements intentionally (hero/intro blocks, info boxes, key details summaries, quote/price components, playback blocks) to make screens feel like real insurance journeys, not just forms."
+  },
+
+  selfValidation: {
+    instruction: "Before finalising output, run a self-check and silently fix issues.",
+    checks: [
+      "Schema compliance: every object matches the provided schema; no unknown fields or unsupported question types.",
+      "Realism check: would a UK broker recognise this as a believable journey for the given LOB?",
+      "Completeness check: no thin option lists where a realistic codelist is expected; no vague help text; required flags make sense.",
+      "Flow check: pages/groups are logically ordered; progressive disclosure used where supported; no duplicated or contradictory questions.",
+      "Copy check: original wording only; no proprietary text or brand-specific copy."
+    ],
+    fixPolicy: "If any check fails, revise the journey until all checks pass (without changing the user’s requested LOB or scope)."
+    }
     };
 
     const res = await fetch(AI_JOURNEY_ENDPOINT, {
