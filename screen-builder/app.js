@@ -1375,100 +1375,59 @@ CH 4  UI Rendering
     }
   }
 
-  async function requestAiQuestionAssist(promptText, question) {
-    const AI_QUESTION_CAPABILITIES = {
-      intent: "Question assist",
-      questionTypes: ["text","textarea","number","currency","percent","email","tel","postcode","date","select","radio","checkboxes","yesno"],
-      optionTypes: ["select","radio","checkboxes"],
-      questionFields: ["title","help","placeholder","required","errorText","options","content"],
-      responseGuidance:
-        "Reply in conversational natural language (no JSON) as an assistant helping improve the question with immediate, actionable advice. You can include improved labels, help text, validation advice, alternative phrasing, warnings, or an explanation of why the question exists and how it affects pricing. Structured suggestions should live in the suggestion object only.",
-              responseFormat: {
-      message: "Short reply for the user",
-        suggestion: {
-          title: "string",
-          help: "string",
-          placeholder: "string",
-          required: "boolean",
-          errorText: "string",
-          options: ["string"],
-          contentHtml: "string"
-        }
-      }
-    };
-
-    const res = await fetch(AI_JOURNEY_ENDPOINT, {
+  async function requestAiQuestionAssist(messages, questionId, question) { 
+   const res = await fetch(AI_JOURNEY_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        prompt: String(promptText || "").slice(0, 8000),
-        builderCapabilities: AI_QUESTION_CAPABILITIES,
-        schemaVersion: schema?.meta?.version || 1,
+        threadId: String(questionId || ""),
+        messages: Array.isArray(messages) ? messages : [],
         questionContext: {
-          title: question?.title || "",
+          id: question?.id || questionId || "",
+          label: question?.title || question?.label || "",
           type: question?.type || "text",
-          help: question?.help || "",
-          placeholder: question?.placeholder || "",
-          errorText: question?.errorText || "",
+          required: Boolean(question?.required),
           options: Array.isArray(question?.options) ? question.options : [],
-          content: question?.content?.html || ""
-        }
+        },
       }),
     });
 
     const rawText = await res.text().catch(() => "");
-    if (!res.ok) {
-      console.error("AI HTTP error:", res.status, rawText);
-      throw new Error(rawText || `AI request failed (${res.status})`);
+    const headers = {};
+    res.headers.forEach((value, key) => {
+      headers[key] = value;
+    });
+    console.log("AI question assist response:", {
+      status: res.status,
+      headers,
+      rawText,
+    });
+
+    let data;
+    try {
+      data = rawText ? JSON.parse(rawText) : null;
+    } catch {
+      throw new Error(
+        `AI returned invalid JSON. HTTP ${res.status}. Body: ${String(rawText || "").slice(0, 200)}`
+      );
     }
 
-    let data = rawText;
-    try { data = rawText ? JSON.parse(rawText) : {}; } catch {}
+    if (!data || typeof data !== "object") {
+      throw new Error(
+        `AI returned invalid JSON. HTTP ${res.status}. Body: ${String(rawText || "").slice(0, 200)}`
+      );
+    }
 
-    let candidate = data;
-    if (candidate && typeof candidate === "object") {
-      candidate = candidate.result || candidate.reply || candidate.response || candidate;
+    if (data.ok === false) {
+      const reason = typeof data.error === "string" && data.error.trim() ? data.error.trim() : "Unknown error.";
+      const status = typeof data.status === "number" ? data.status : res.status;
+      throw new Error(`AI error${status ? ` (${status})` : ""}: ${reason}`);
     }
     
-    if (typeof candidate === "string") {
-      try { candidate = JSON.parse(candidate); } catch {}
-    }
-
-    if (candidate && typeof candidate === "object") {
-      if (typeof candidate.result === "string") {
-        try { candidate = JSON.parse(candidate.result); } catch {}
-      } else if (candidate.result && typeof candidate.result === "object") {
-        candidate = candidate.result;
-      }
-    }
-
-    if (typeof candidate === "string") {
-      const extracted = extractJsonFromText(candidate);
-      if (extracted) candidate = extracted;
-    }
-
-    let suggestion = normalizeQuestionSuggestion(candidate);
-       if (!suggestion && data && typeof data === "object") {
-      suggestion = normalizeQuestionSuggestion(data);
-    }
-    if (!suggestion) {
-      const extracted = extractJsonFromText(typeof data === "string" ? data : rawText);
-      suggestion = normalizeQuestionSuggestion(extracted);
-    }
-
-    const candidateMessage =
-      (data && typeof data === "object" && (data.message || data.summary)) ||
-      (candidate && typeof candidate === "object" && (candidate.message || candidate.summary)) ||
-      (typeof candidate === "string" ? candidate : "") ||
-      String(rawText || "");
-
-    const formattedSummary = formatSuggestionSummary(suggestion, promptText);
     const assistantText =
-      (candidateMessage && !isLikelyJsonText(candidateMessage) && String(candidateMessage).trim()) ||
-      formattedSummary ||
-      "";
-    
-    return { assistantText, suggestion };
+            data.ok === true && typeof data.message === "string" ? data.message.trim() : "";
+
+    return { assistantText };
   }
 
   function mountAiAssistUI() {
@@ -3698,7 +3657,7 @@ actions.appendChild(btnGroupOpts);
       aiState.messages.forEach((msg) => {
         const bubble = document.createElement("div");
         bubble.className = `aiQuestionMessage ${msg.role === "user" ? "isUser" : "isAssistant"}`;
-        bubble.textContent = msg.text;
+        bubble.textContent = msg.content ?? msg.text ?? "";
         messages.appendChild(bubble);
       });
     }
@@ -3799,7 +3758,7 @@ actions.appendChild(btnGroupOpts);
         return;
       }
 
-      aiState.messages.push({ role: "user", text: promptText });
+      aiState.messages.push({ role: "user", content: promptText });
       aiState.draft = "";
       aiState.loading = true;
       aiState.status = "Thinking...";
@@ -3807,15 +3766,13 @@ actions.appendChild(btnGroupOpts);
       renderInspector();
 
        try {
-        const { assistantText, suggestion } = await requestAiQuestionAssist(promptText, q);
-        const fallbackReply =
-          formatSuggestionSummary(suggestion, promptText) ||
-          "I couldn’t generate a reply. Try rephrasing or adding more detail.";
-        aiState.messages.push({ role: "assistant", text: assistantText || fallbackReply });
-        aiState.lastSuggestion = suggestion;
-        aiState.status = suggestion
-          ? "Suggestions ready below."
-          : "Response received.";
+        const { assistantText } = await requestAiQuestionAssist(aiState.messages, q?.id, q);
+        if (assistantText) {
+          aiState.messages.push({ role: "assistant", content: assistantText });
+          aiState.status = "Response received.";
+        } else {
+          aiState.status = "AI returned an empty response.";
+        }
       } catch (e) {
         aiState.status = e?.message || "AI request failed.";
       } finally {
