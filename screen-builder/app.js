@@ -5556,7 +5556,17 @@ CH 4.3  Preview / runtime (continued)
           sel.appendChild(op);
         });
         sel.value = getAnswer() ?? "";
-        sel.addEventListener("change", () => setAnswer(sel.value));
+            sel.addEventListener("change", () => {
+          suppressAutoFocusUntil = Date.now() + 300;
+          const prev = getAnswer();
+          const next = sel.value;
+          setAnswer(next);
+          if (prev !== next && step.followUp?.enabled) {
+            clearFollowUpAnswersForQuestion(step, preview.answers);
+            ensureMinFollowUpInstances(step, preview.answers);
+          }
+          rerender();
+        });
         inputWrap.appendChild(sel);
         if (preview.mode === "question") {
           setTimeout(() => {
@@ -5611,12 +5621,14 @@ CH 4.3  Preview / runtime (continued)
           txt.textContent = o;
 
           cb.addEventListener("change", () => {
+                        suppressAutoFocusUntil = Date.now() + 300;
             const next = new Set(Array.isArray(getAnswer()) ? getAnswer() : []);
             if (cb.checked) next.add(o);
             else next.delete(o);
             const arr = Array.from(next);
             setAnswer(arr);
             label.classList.toggle("selected", cb.checked);
+                        rerender();
           });
 
           label.appendChild(cb);
