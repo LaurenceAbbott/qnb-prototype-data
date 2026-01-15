@@ -119,17 +119,6 @@ Patch hooks we’ll use later:
 - [PATCH-HOOK: FIXED_PAGES_APPEND]
 - [PATCH-HOOK: PAGE_TYPE_RENDER_SWITCH]
 ============================================================================= */
-
-// === PASTE ORIGINAL CODE BELOW ===
-
-/* Product-grade Form Builder (vanilla JS)
-   - Pages + groups + questions
-   - Options editor
-   - Conditional logic
-   - Typeform-style preview (one question at a time, progress bar)
-   - Autosave + export/import JSON
-*/
-
 /* =============================================================================
 CH 0  Boot / Globals
 - IIFE boot, storage key, global helpers
