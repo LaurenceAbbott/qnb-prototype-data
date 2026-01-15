@@ -1326,6 +1326,38 @@ CH 4  UI Rendering
     return Object.keys(suggestion).length ? suggestion : null;
   }
 
+    function isLikelyJsonText(text) {
+    const trimmed = String(text || "").trim();
+    return trimmed.startsWith("{") || trimmed.startsWith("[");
+  }
+
+  function formatSuggestionSummary(suggestion, promptText) {
+    if (!suggestion) return "";
+    const parts = [];
+    if (suggestion.title) parts.push(`Improved label: “${suggestion.title}”.`);
+    if (suggestion.help != null && suggestion.help !== "") {
+      parts.push(`Help text: “${suggestion.help}”.`);
+    }
+    if (suggestion.placeholder != null && suggestion.placeholder !== "") {
+      parts.push(`Placeholder: “${suggestion.placeholder}”.`);
+    }
+    if (suggestion.errorText != null && suggestion.errorText !== "") {
+      parts.push(`Validation advice: “${suggestion.errorText}”.`);
+    }
+    if (typeof suggestion.required === "boolean") {
+      parts.push(suggestion.required ? "Marked the question as required." : "Marked the question as optional.");
+    }
+    if (Array.isArray(suggestion.options) && suggestion.options.length) {
+      parts.push(`Option ideas: ${suggestion.options.map((opt) => `“${opt}”`).join(", ")}.`);
+    }
+    if (suggestion.contentHtml) {
+      parts.push("Added explanatory content for builders or brokers.");
+    }
+    if (!parts.length) return "";
+    const intro = promptText ? "Here’s a quick pass based on your prompt: " : "Here’s a quick pass: ";
+    return `${intro}${parts.join(" ")}`;
+  }
+
   function applyQuestionSuggestion(question, suggestion) {
     if (!question || !suggestion) return;
     if (suggestion.title) question.title = suggestion.title;
@@ -1350,6 +1382,8 @@ CH 4  UI Rendering
       questionTypes: ["text","textarea","number","currency","percent","email","tel","postcode","date","select","radio","checkboxes","yesno"],
       optionTypes: ["select","radio","checkboxes"],
       questionFields: ["title","help","placeholder","required","errorText","options","content"],
+            responseGuidance:
+        "Reply in conversational natural language (no JSON). You can include improved labels, help text, validation advice, alternative phrasing, warnings, or an explanation of why the question exists and how it affects pricing. Structured suggestions should live in the suggestion object only.",
       responseFormat: {
         message: "Short reply for the user",
         suggestion: {
@@ -1407,10 +1441,16 @@ CH 4  UI Rendering
       suggestion = normalizeQuestionSuggestion(extracted);
     }
 
-    const assistantText =
+    const candidateMessage =
       (data && typeof data === "object" && (data.message || data.summary)) ||
+      (candidate && typeof candidate === "object" && (candidate.message || candidate.summary)) ||
       (typeof candidate === "string" ? candidate : "") ||
-      String(rawText || "Suggestion ready.");
+      String(rawText || "");
+
+    const assistantText =
+      (candidateMessage && !isLikelyJsonText(candidateMessage) && String(candidateMessage).trim()) ||
+      formatSuggestionSummary(suggestion, promptText) ||
+      "I’ve drafted a few ideas you can apply to this question.";
 
     return { assistantText, suggestion };
   }
