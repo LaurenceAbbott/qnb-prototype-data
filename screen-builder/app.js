@@ -4265,7 +4265,8 @@ actions.appendChild(btnGroupOpts);
     q.logic.rules = Array.isArray(q.logic.rules) ? q.logic.rules : [];
 
     const availableQuestions = getAllQuestionsInOrder(schema);
-
+     const questionsById = Object.fromEntries(availableQuestions.map((question) => [question.id, question]));
+    
     // only allow referencing questions that appear before this question in order
     const thisIndex = availableQuestions.findIndex((x) => x.id === q.id);
     const earlier = thisIndex > 0 ? availableQuestions.slice(0, thisIndex) : [];
@@ -4278,6 +4279,30 @@ actions.appendChild(btnGroupOpts);
 
     wrap.appendChild(hint);
 
+        const matchRow = document.createElement("div");
+    matchRow.className = "toggleRow";
+    matchRow.style.flexDirection = "column";
+    matchRow.style.alignItems = "stretch";
+
+    const matchSelect = document.createElement("select");
+    matchSelect.className = "select";
+    [
+      { value: "all", label: "All" },
+      { value: "any", label: "Any" },
+    ].forEach((option) => {
+      const opt = document.createElement("option");
+      opt.value = option.value;
+      opt.textContent = option.label;
+      matchSelect.appendChild(opt);
+    });
+    matchSelect.addEventListener("change", () => {
+      q.logic.match = matchSelect.value;
+      saveSchema();
+    });
+
+    matchRow.appendChild(wrapField("Rules match", matchSelect));
+    wrap.appendChild(matchRow);
+
     const list = document.createElement("div");
     list.style.display = "flex";
     list.style.flexDirection = "column";
@@ -4286,6 +4311,7 @@ actions.appendChild(btnGroupOpts);
 
     function renderRules() {
       list.innerHTML = "";
+      matchSelect.value = resolveLogicMatch(q.logic, questionsById);
 
       q.logic.rules.forEach((r, idx) => {
         const row = document.createElement("div");
@@ -4425,6 +4451,7 @@ actions.appendChild(btnGroupOpts);
     group.logic.rules = Array.isArray(group.logic.rules) ? group.logic.rules : [];
 
     const availableQuestions = getAllQuestionsInOrder(s);
+    const questionsById = Object.fromEntries(availableQuestions.map((q) => [q.id, q]));
 
     // Determine the earliest question index in this group; if group has no questions, allow referencing any earlier question
     const indices = availableQuestions
@@ -4448,10 +4475,35 @@ actions.appendChild(btnGroupOpts);
     list.style.gap = "10px";
     list.style.marginTop = "10px";
 
-    const byId = Object.fromEntries(availableQuestions.map((q) => [q.id, q]));
+    const byId = questionsById;
+
+    const matchRow = document.createElement("div");
+    matchRow.className = "toggleRow";
+    matchRow.style.flexDirection = "column";
+    matchRow.style.alignItems = "stretch";
+
+    const matchSelect = document.createElement("select");
+    matchSelect.className = "select";
+    [
+      { value: "all", label: "All" },
+      { value: "any", label: "Any" },
+    ].forEach((option) => {
+      const opt = document.createElement("option");
+      opt.value = option.value;
+      opt.textContent = option.label;
+      matchSelect.appendChild(opt);
+    });
+    matchSelect.addEventListener("change", () => {
+      group.logic.match = matchSelect.value;
+      saveSchema();
+    });
+
+    matchRow.appendChild(wrapField("Rules match", matchSelect));
+    wrap.appendChild(matchRow);
 
     function renderRules() {
       list.innerHTML = "";
+      matchSelect.value = resolveLogicMatch(group.logic, questionsById);
 
       group.logic.rules.forEach((r, idx) => {
         const row = document.createElement("div");
@@ -5191,13 +5243,37 @@ CH 6  Logic (validation, conditional display) + Flow building
     return false;
   }
 
+  function getDefaultLogicMatch(rules, allQuestionsById) {
+    if (!Array.isArray(rules) || rules.length === 0) return "all";
+    const byQuestionId = rules.reduce((acc, rule) => {
+      if (rule.operator !== "equals" || !rule.questionId) return acc;
+      acc[rule.questionId] = (acc[rule.questionId] || 0) + 1;
+      return acc;
+    }, {});
+
+    return Object.entries(byQuestionId).some(([questionId, count]) => {
+      if (count < 2) return false;
+      const referenced = allQuestionsById[questionId];
+      // Radios/selects have a single value, so multiple equals rules should match any.
+      return referenced && ["radio", "select"].includes(referenced.type);
+    })
+      ? "any"
+      : "all";
+  }
+
+  function resolveLogicMatch(logic, allQuestionsById) {
+    if (logic?.match === "any" || logic?.match === "all") return logic.match;
+    return getDefaultLogicMatch(logic?.rules || [], allQuestionsById);
+  }
+
   function questionShouldShow(q, allQuestionsById, answers) {
     if (!q.logic?.enabled) return true;
     const rules = q.logic.rules || [];
     if (!rules.length) return true;
 
-    // AND logic (all rules must match) — best practice default.
-    return rules.every((r) => {
+     const match = resolveLogicMatch(q.logic, allQuestionsById);
+    const matcher = match === "any" ? "some" : "every";
+    return rules[matcher]((r) => {
       const refQ = allQuestionsById[r.questionId];
       return evaluateRule(r, answers, refQ);
     });
@@ -5207,7 +5283,9 @@ CH 6  Logic (validation, conditional display) + Flow building
     if (!group?.logic?.enabled) return true;
     const rules = group.logic.rules || [];
     if (!rules.length) return true;
-    return rules.every((r) => {
+    const match = resolveLogicMatch(group.logic, allQuestionsById);
+    const matcher = match === "any" ? "some" : "every";
+    return rules[matcher]((r) => {
       const refQ = allQuestionsById[r.questionId];
       return evaluateRule(r, answers, refQ);
     });
