@@ -74,10 +74,12 @@ function getDisplayCardTitle(display) {
 
 function getItemLabel(item) {
   if (item.type === "display") {
-    const base = DISPLAY_VARIANT_LABELS[item.variant] || "Display";
+     const base = DISPLAY_VARIANT_LABELS[normalizeDisplayVariant(item.variant)] || "Display";
     return item.title ? `${base}: ${item.title}` : base;
   }
-  return getItemLabel(item);
+  const label = String(item?.title || item?.label || item?.name || "").trim();
+  if (label) return label;
+  return item?.type ? `${item.type[0].toUpperCase()}${item.type.slice(1)}` : "Item";
 }
 
 
@@ -1371,7 +1373,7 @@ CH 4  UI Rendering
       questionTypes: ["text","textarea","number","currency","percent","email","tel","postcode","date","select","radio","checkboxes","yesno"],
       optionTypes: ["select","radio","checkboxes"],
       questionFields: ["title","help","placeholder","required","errorText","options","content"],
-            responseGuidance:
+      responseGuidance:
         "Reply in conversational natural language (no JSON). You can include improved labels, help text, validation advice, alternative phrasing, warnings, or an explanation of why the question exists and how it affects pricing. Structured suggestions should live in the suggestion object only.",
       responseFormat: {
         message: "Short reply for the user",
@@ -1419,12 +1421,28 @@ CH 4  UI Rendering
     if (candidate && typeof candidate === "object") {
       candidate = candidate.result || candidate.reply || candidate.response || candidate;
     }
+    
+    if (typeof candidate === "string") {
+      try { candidate = JSON.parse(candidate); } catch {}
+    }
+
+    if (candidate && typeof candidate === "object") {
+      if (typeof candidate.result === "string") {
+        try { candidate = JSON.parse(candidate.result); } catch {}
+      } else if (candidate.result && typeof candidate.result === "object") {
+        candidate = candidate.result;
+      }
+    }
+
     if (typeof candidate === "string") {
       const extracted = extractJsonFromText(candidate);
       if (extracted) candidate = extracted;
     }
 
     let suggestion = normalizeQuestionSuggestion(candidate);
+       if (!suggestion && data && typeof data === "object") {
+      suggestion = normalizeQuestionSuggestion(data);
+    }
     if (!suggestion) {
       const extracted = extractJsonFromText(typeof data === "string" ? data : rawText);
       suggestion = normalizeQuestionSuggestion(extracted);
@@ -1436,10 +1454,10 @@ CH 4  UI Rendering
       (typeof candidate === "string" ? candidate : "") ||
       String(rawText || "");
 
-     const formattedSummary = formatSuggestionSummary(suggestion, promptText);
+    const formattedSummary = formatSuggestionSummary(suggestion, promptText);
     const assistantText =
       (candidateMessage && !isLikelyJsonText(candidateMessage) && String(candidateMessage).trim()) ||
-formattedSummary ||
+      formattedSummary ||
       "I’ve drafted a few ideas you can apply to this question.";
 
     return { assistantText, suggestion };
