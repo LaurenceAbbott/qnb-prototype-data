@@ -3659,12 +3659,6 @@ actions.appendChild(btnGroupOpts);
     sendBtn.textContent = aiState?.loading ? "Thinking…" : "Send";
     sendBtn.disabled = aiState?.loading === true;
 
-    const applyBtn = document.createElement("button");
-    applyBtn.type = "button";
-    applyBtn.className = "btn small primary";
-    applyBtn.textContent = "Apply to question";
-    applyBtn.disabled = !aiState?.lastSuggestion || aiState?.loading === true;
-
     sendBtn.addEventListener("click", async () => {
       if (!aiState) return;
       const promptText = (aiState.draft || "").trim();
@@ -3694,18 +3688,8 @@ actions.appendChild(btnGroupOpts);
       }
     });
 
-    applyBtn.addEventListener("click", () => {
-      if (!aiState?.lastSuggestion) return;
-      applyQuestionSuggestion(q, aiState.lastSuggestion);
-      aiState.status = "Applied to question.";
-      saveSchema();
-      isTypingInspector = false;
-      renderAll(true);
-    });
-
     inputRow.appendChild(input);
     inputRow.appendChild(sendBtn);
-    inputRow.appendChild(applyBtn);
     chat.appendChild(inputRow);
 
     wrap.appendChild(chat);
