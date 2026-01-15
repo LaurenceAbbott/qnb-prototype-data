@@ -3672,7 +3672,7 @@ actions.appendChild(btnGroupOpts);
     return wrap;
   }
 
-    function defaultCheckboxesEditor(q) {
+  function defaultCheckboxesEditor(q) {
     const wrap = document.createElement("div");
     wrap.className = "field";
 
@@ -3688,23 +3688,21 @@ actions.appendChild(btnGroupOpts);
     }
 
     const list = document.createElement("div");
-    list.style.display = "flex";
-    list.style.flexDirection = "column";
-    list.style.gap = "6px";
+    list.className = "choiceGrid";
 
     const current = new Set(Array.isArray(q.defaultAnswer) ? q.defaultAnswer : []);
 
     opts.forEach((opt) => {
       const row = document.createElement("label");
-      row.style.display = "flex";
-      row.style.alignItems = "center";
-      row.style.gap = "8px";
+  row.className = "choiceBtn choiceCheck" + (current.has(opt) ? " selected" : "");
 
       const cb = document.createElement("input");
       cb.type = "checkbox";
+      cb.className = "choiceCheckBox";
       cb.checked = current.has(opt);
 
       const text = document.createElement("span");
+            text.className = "choiceCheckText";
       text.textContent = opt;
 
       cb.addEventListener("change", () => {
@@ -3715,6 +3713,7 @@ actions.appendChild(btnGroupOpts);
         q.defaultAnswer = nextArr.length ? nextArr : null;
         q.defaultAnswer = normalizeDefaultAnswerForQuestion(q);
         saveSchema();
+        row.classList.toggle("selected", cb.checked);
       });
 
       row.appendChild(cb);
