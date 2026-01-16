@@ -1,0 +1,3531 @@
+{
+  "meta": {
+    "version": 1,
+    "createdAt": "2026-01-15T14:00:00Z",
+    "updatedAt": "2026-01-15T14:00:00Z",
+    "questionArrays": [],
+    "previewMode": "page"
+  },
+  "lineOfBusiness": "Car Insurance Quote",
+  "pages": [
+    {
+      "id": "page_10136223e9d64f_ec6d562034",
+      "name": "Start",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_69a73314bbe14c_23525fd7b3",
+          "title": "Get your car insurance quote",
+          "level": "h1",
+          "bodyHtml": "<p>We’ll ask about your car, usage, drivers, claims and convictions.</p>"
+        },
+        {
+          "type": "group",
+          "id": "group_403f60087d3a4d_ac84a663df"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_403f60087d3a4d_ac84a663df",
+          "name": "Quote basics",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_1dab363ba53d49_dc39d6ebe4",
+              "type": "display",
+              "title": "Car insurance quote",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "hero",
+                "tone": "neutral",
+                "title": "Car insurance quote",
+                "subtitle": "UK private motor",
+                "bodyHtml": "<p>Answer a few questions and we’ll generate a quote. You can review details before you continue.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_83b10a746e2b41_ea4b7bdc7e",
+              "type": "display",
+              "title": "Quick tip",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Quick tip",
+                "subtitle": "",
+                "bodyHtml": "<p>Having your registration number can reduce the number of questions.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_5a54256c618243_d87e7a3041",
+              "type": "radio",
+              "title": "What type of cover would you like?",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Comprehensive",
+                "Third party, fire & theft",
+                "Third party only"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_8c4552aaf1cc40_f47faaba88",
+              "type": "date",
+              "title": "When would you like cover to start?",
+              "help": "Start date must be within 60 days.",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_f4938643413f48_3d3c2d7ccd",
+              "type": "radio",
+              "title": "Do you know the registration number?",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_63fb6239eb9746_de9464b41a",
+              "type": "text",
+              "title": "Registration number",
+              "help": "If you don’t have it, we can still quote but you may need it to buy.",
+              "placeholder": "e.g., AB12 CDE",
+              "required": false,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": true,
+                "rules": [
+                  {
+                    "id": "rule_64e015fbddc444_48605923db",
+                    "questionId": "q_f4938643413f48_3d3c2d7ccd",
+                    "operator": "equals",
+                    "value": "Yes"
+                  }
+                ]
+              },
+              "content": {
+                "enabled": true,
+                "html": "We can use your registration to look up vehicle details where available.<p></p>"
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_3ea318279d9a4f_75cfd42516",
+              "type": "text",
+              "title": "Postcode",
+              "help": "",
+              "placeholder": "e.g., AB12 3CD",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page_bf7ae4879cf44f_28cde9bde8",
+      "name": "About you (policyholder)",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_1160c6067a8348_c3306ecfc3",
+          "title": "About you",
+          "level": "h2",
+          "bodyHtml": "<p>Tell us about the main policyholder.</p>"
+        },
+        {
+          "type": "group",
+          "id": "group_de2d924ee43048_6ea35aecfd"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_de2d924ee43048_6ea35aecfd",
+          "name": "Policyholder details",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_c972f46423aa4e_9123c18bed",
+              "type": "display",
+              "title": "About you",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "About you",
+                "subtitle": "",
+                "bodyHtml": "<p>You’ll be the main policyholder and responsible for payments and managing the policy.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_85ad38a728034d_c4419aa79b",
+              "type": "radio",
+              "title": "Title",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Mr",
+                "Mrs",
+                "Miss",
+                "Ms",
+                "Dr",
+                "Mx"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_4b02387029614a_c8b727079f",
+              "type": "text",
+              "title": "First name",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_c4884409e77d4b_b32d6a3939",
+              "type": "text",
+              "title": "Last name",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_c301ad77cb1446_a5105859f5",
+              "type": "date",
+              "title": "Date of birth",
+              "help": "dd/mm/yyyy",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_416532a8dd044a_5b651bc6ea",
+              "type": "email",
+              "title": "Email address",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_0acccf2b74ad41_f4cb7fff09",
+              "type": "tel",
+              "title": "Preferred telephone number",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_f6f4d22c11384b_0272bd9327",
+              "type": "select",
+              "title": "Marital status",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Single",
+                "Married/Civil partnership",
+                "Separated",
+                "Divorced/Dissolved",
+                "Widowed"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_72b2a877268a47_b555b5cc56",
+              "type": "select",
+              "title": "Employment status",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Employed",
+                "Self-employed",
+                "Unemployed",
+                "Retired",
+                "Student",
+                "Homemaker",
+                "Not working due to illness/disability"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_239188d9ac9548_8fd3e707ee",
+              "type": "select",
+              "title": "Occupation",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Accountant",
+                "Administrative assistant",
+                "Architect",
+                "Builder",
+                "Carpenter",
+                "Chef",
+                "Consultant",
+                "Customer service advisor",
+                "Delivery driver",
+                "Electrician",
+                "Engineer",
+                "Graphic designer",
+                "IT professional",
+                "Lecturer/Teacher",
+                "Manager",
+                "Mechanic",
+                "Nurse",
+                "Office worker",
+                "Plumber",
+                "Project manager",
+                "Sales representative",
+                "Self-employed tradesperson",
+                "Student",
+                "Taxi/Private hire driver",
+                "Unemployed",
+                "Other"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page_5fd4024958304a_87b727e996",
+      "name": "Your car",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_fcef7a579fdf45_40b2e00512",
+          "title": "Your car",
+          "level": "h2",
+          "bodyHtml": "<p>Tell us about the vehicle you want to insure.</p>"
+        },
+        {
+          "type": "group",
+          "id": "group_ccaaa28f5de44e_24f3fae975"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_ccaaa28f5de44e_24f3fae975",
+          "name": "Vehicle details",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_65411819fe2a45_b06dc2f5cb",
+              "type": "display",
+              "title": "Your car",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Your car",
+                "subtitle": "",
+                "bodyHtml": "<p>These details help insurers confirm the vehicle and price your policy.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_90042446136e45_ba15647aab",
+              "type": "text",
+              "title": "Vehicle make",
+              "help": "",
+              "placeholder": "e.g., Ford",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_4520c8f60d8b43_1002818f9b",
+              "type": "text",
+              "title": "Vehicle model",
+              "help": "",
+              "placeholder": "e.g., Focus",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_67bbb380441346_6cc3071d11",
+              "type": "select",
+              "title": "Year of manufacture",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "2026",
+                "2025",
+                "2024",
+                "2023",
+                "2022",
+                "2021",
+                "2020",
+                "2019",
+                "2018",
+                "2017",
+                "2016",
+                "2015",
+                "2014",
+                "2013",
+                "2012",
+                "2011",
+                "2010",
+                "2009",
+                "2008",
+                "2007",
+                "2006",
+                "2005",
+                "2004",
+                "2003",
+                "2002",
+                "2001",
+                "2000",
+                "1999 or earlier",
+                "Not sure"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_66588132731240_5c5bcb7af9",
+              "type": "select",
+              "title": "Approximate value of the car",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Up to £2,000",
+                "£2,001–£5,000",
+                "£5,001–£10,000",
+                "£10,001–£20,000",
+                "£20,001–£30,000",
+                "£30,001–£50,000",
+                "Over £50,000",
+                "Not sure"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_e1174c4df03f4c_41a43f920d",
+              "type": "radio",
+              "title": "Are you the registered keeper?",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_42fbfca0a11742_5ccd3560ca",
+              "type": "radio",
+              "title": "Are you the owner of the vehicle?",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_0c271496005045_2525eea9c7",
+              "type": "yesno",
+              "title": "Has this car been modified in any way?",
+              "help": "This includes changes from the manufacturer’s original specification, e.g. alloys, body kits, tow bar.",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": true,
+                "triggerValue": "Yes",
+                "name": "Modifications",
+                "questions": [
+                  {
+                    "id": "fq_5cccbc384b404c_9a2c173f3c",
+                    "type": "select",
+                    "title": "Modification type",
+                    "help": "",
+                    "placeholder": "",
+                    "required": true,
+                    "errorText": "This field is required.",
+                    "options": [
+                      "Alloy wheels",
+                      "Body kit",
+                      "Tow bar",
+                      "Suspension changes",
+                      "Exhaust",
+                      "Engine remap",
+                      "Audio/ICE",
+                      "Other"
+                    ],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  },
+                  {
+                    "id": "fq_24f9bea2541f4f_87090e3324",
+                    "type": "text",
+                    "title": "Brief details (optional)",
+                    "help": "",
+                    "placeholder": "e.g., Tow bar fitted 2024",
+                    "required": false,
+                    "errorText": "This field is required.",
+                    "options": [],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  }
+                ],
+                "repeat": {
+                  "enabled": true,
+                  "min": 1,
+                  "max": 10,
+                  "addLabel": "Add another",
+                  "itemLabel": "Modification"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page_1c8cd9cbd17d48_6e1c804ce4",
+      "name": "Usage",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_40e1b8fa995248_a0f4c234f1",
+          "title": "Usage",
+          "level": "h2",
+          "bodyHtml": "<p>Tell us how the vehicle will be used and where it’s kept.</p>"
+        },
+        {
+          "type": "group",
+          "id": "group_61b7fea087c24c_aea039c223"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_61b7fea087c24c_aea039c223",
+          "name": "Usage details",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_183fb191846b46_c6f9f53176",
+              "type": "display",
+              "title": "How you use the car",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "How you use the car",
+                "subtitle": "",
+                "bodyHtml": "<p>This helps insurers understand your driving risk and usage pattern.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_2d00784b932548_3e826de306",
+              "type": "select",
+              "title": "Estimated annual mileage",
+              "help": "20 miles a day, every day, is about 7,300 miles a year.",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Up to 4,000 miles a year",
+                "Up to 8,000 miles a year",
+                "Up to 12,000 miles a year",
+                "Up to 15,000 miles a year",
+                "Up to 20,000 miles a year",
+                "Over 20,000 miles a year"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_c6041a2c265d45_4238becf04",
+              "type": "select",
+              "title": "What will the car be used for?",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Social, domestic & pleasure",
+                "Social, domestic & pleasure + commuting",
+                "Business use (Class 1)",
+                "Business use (Class 2)",
+                "Business use (Class 3)"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_ce14fc8ac4894c_9660cc92d6",
+              "type": "select",
+              "title": "Where is the car usually kept overnight?",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Driveway",
+                "Garage",
+                "Car park",
+                "On street",
+                "Private property",
+                "Other"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_626a17c0b7744d_4d25465066",
+              "type": "yesno",
+              "title": "Will the car be used on a track day?",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page_f933c83faaf046_76a3348003",
+      "name": "Drivers",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_3098286b267545_bf7b3752f4",
+          "title": "Drivers",
+          "level": "h2",
+          "bodyHtml": "<p>Add any additional drivers.</p>"
+        },
+        {
+          "type": "group",
+          "id": "group_646b2967e09344_f67c00935e"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_646b2967e09344_f67c00935e",
+          "name": "Additional drivers",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_bb7b6400b82649_b8c36eb31d",
+              "type": "display",
+              "title": "Drivers",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Drivers",
+                "subtitle": "",
+                "bodyHtml": "<p>We’ll insure the main policyholder and any additional drivers you add.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_25679094d22b4b_b59c9b7cf6",
+              "type": "yesno",
+              "title": "Do you want to add additional drivers?",
+              "help": "Adding all regular drivers can help avoid issues at claim time.",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": true,
+                "triggerValue": "Yes",
+                "name": "Additional drivers",
+                "questions": [
+                  {
+                    "id": "fq_21457ee24cbb45_730fc9e9dc",
+                    "type": "radio",
+                    "title": "Title",
+                    "help": "",
+                    "placeholder": "",
+                    "required": true,
+                    "errorText": "This field is required.",
+                    "options": [
+                      "Mr",
+                      "Mrs",
+                      "Miss",
+                      "Ms",
+                      "Dr",
+                      "Mx"
+                    ],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  },
+                  {
+                    "id": "fq_69d3514b98a442_28cfbb88ad",
+                    "type": "text",
+                    "title": "First name",
+                    "help": "",
+                    "placeholder": "",
+                    "required": true,
+                    "errorText": "This field is required.",
+                    "options": [],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  },
+                  {
+                    "id": "fq_d610dbf44dca46_2db40f0732",
+                    "type": "text",
+                    "title": "Last name",
+                    "help": "",
+                    "placeholder": "",
+                    "required": true,
+                    "errorText": "This field is required.",
+                    "options": [],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  },
+                  {
+                    "id": "fq_a65d151203824d_b357b60c90",
+                    "type": "date",
+                    "title": "Date of birth",
+                    "help": "dd/mm/yyyy",
+                    "placeholder": "",
+                    "required": true,
+                    "errorText": "This field is required.",
+                    "options": [],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  },
+                  {
+                    "id": "fq_3a91c62e2a3b43_4cd03f80d9",
+                    "type": "select",
+                    "title": "Relationship to policyholder",
+                    "help": "",
+                    "placeholder": "",
+                    "required": true,
+                    "errorText": "This field is required.",
+                    "options": [
+                      "Spouse/partner",
+                      "Parent",
+                      "Child",
+                      "Sibling",
+                      "Friend",
+                      "Other"
+                    ],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  },
+                  {
+                    "id": "fq_a99b916de85642_6f37e85451",
+                    "type": "select",
+                    "title": "Occupation",
+                    "help": "",
+                    "placeholder": "",
+                    "required": true,
+                    "errorText": "This field is required.",
+                    "options": [
+                      "Accountant",
+                      "Administrative assistant",
+                      "Architect",
+                      "Builder",
+                      "Carpenter",
+                      "Chef",
+                      "Consultant",
+                      "Customer service advisor",
+                      "Delivery driver",
+                      "Electrician",
+                      "Engineer",
+                      "Graphic designer",
+                      "IT professional",
+                      "Lecturer/Teacher",
+                      "Manager",
+                      "Mechanic",
+                      "Nurse",
+                      "Office worker",
+                      "Plumber",
+                      "Project manager",
+                      "Sales representative",
+                      "Self-employed tradesperson",
+                      "Student",
+                      "Taxi/Private hire driver",
+                      "Unemployed",
+                      "Other"
+                    ],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  },
+                  {
+                    "id": "fq_db386245e1f944_dbbf4e7033",
+                    "type": "select",
+                    "title": "Licence type",
+                    "help": "",
+                    "placeholder": "",
+                    "required": true,
+                    "errorText": "This field is required.",
+                    "options": [
+                      "Full UK licence",
+                      "Provisional UK licence",
+                      "Full EU licence",
+                      "International licence",
+                      "Other"
+                    ],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  }
+                ],
+                "repeat": {
+                  "enabled": true,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Driver"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page_81877928e3384f_671c3423bd",
+      "name": "Claims",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_4908baeece094d_0f318b1039",
+          "title": "Claims history",
+          "level": "h2",
+          "bodyHtml": "<p>Tell us about any claims or incidents in the last 5 years.</p>"
+        },
+        {
+          "type": "group",
+          "id": "group_5783723b8d454d_bb31d51226"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_5783723b8d454d_bb31d51226",
+          "name": "Claims",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_85370bd6625d4a_286015aefb",
+              "type": "display",
+              "title": "Claims history",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "alert",
+                "tone": "neutral",
+                "title": "Claims history",
+                "subtitle": "",
+                "bodyHtml": "<p>Please include all incidents, even if no payment was made.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_26e5d819eeb541_3f52c394f5",
+              "type": "yesno",
+              "title": "Have you had any motor claims or incidents in the last 5 years?",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": true,
+                "triggerValue": "Yes",
+                "name": "Claims",
+                "questions": [
+                  {
+                    "id": "fq_0b8fd12644b342_ae284b6325",
+                    "type": "select",
+                    "title": "Type",
+                    "help": "",
+                    "placeholder": "",
+                    "required": true,
+                    "errorText": "This field is required.",
+                    "options": [
+                      "Accident (fault)",
+                      "Accident (non-fault)",
+                      "Theft",
+                      "Fire",
+                      "Windscreen",
+                      "Vandalism",
+                      "Storm/Flood",
+                      "Other"
+                    ],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  },
+                  {
+                    "id": "fq_ebd09cff25b443_bc143fa3e8",
+                    "type": "select",
+                    "title": "Year",
+                    "help": "",
+                    "placeholder": "",
+                    "required": true,
+                    "errorText": "This field is required.",
+                    "options": [
+                      "2026",
+                      "2025",
+                      "2024",
+                      "2023",
+                      "2022",
+                      "2021",
+                      "2020"
+                    ],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  },
+                  {
+                    "id": "fq_4c8ece8950e843_30c1af44d1",
+                    "type": "select",
+                    "title": "Fault claim?",
+                    "help": "",
+                    "placeholder": "",
+                    "required": true,
+                    "errorText": "This field is required.",
+                    "options": [
+                      "Yes",
+                      "No",
+                      "Not sure"
+                    ],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  }
+                ],
+                "repeat": {
+                  "enabled": true,
+                  "min": 1,
+                  "max": 10,
+                  "addLabel": "Add another",
+                  "itemLabel": "Claim"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page_b53afa13d5dc41_b9187ab817",
+      "name": "Convictions",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_b51c64c4edd140_86434fcdf3",
+          "title": "Convictions",
+          "level": "h2",
+          "bodyHtml": "<p>Tell us about any motoring convictions or disqualifications.</p>"
+        },
+        {
+          "type": "group",
+          "id": "group_81d427c7cbe44f_f3fab3f452"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_81d427c7cbe44f_f3fab3f452",
+          "name": "Convictions and penalties",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_5f85c35db47f48_c5baf781d5",
+              "type": "display",
+              "title": "Convictions",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "alert",
+                "tone": "neutral",
+                "title": "Convictions",
+                "subtitle": "",
+                "bodyHtml": "<p>Please answer carefully. Not disclosing convictions can affect your policy or a claim.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_b65b501c572040_cc448ffb6d",
+              "type": "yesno",
+              "title": "Do you have any motoring convictions, fixed penalties, or disqualifications in the last 5 years?",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": true,
+                "triggerValue": "Yes",
+                "name": "Convictions",
+                "questions": [
+                  {
+                    "id": "fq_50a6863b65d446_92e5ed19e6",
+                    "type": "select",
+                    "title": "Code",
+                    "help": "",
+                    "placeholder": "",
+                    "required": true,
+                    "errorText": "This field is required.",
+                    "options": [
+                      "SP30 (speeding)",
+                      "SP50 (speeding motorway)",
+                      "DR10 (drink driving)",
+                      "IN10 (no insurance)",
+                      "CD10 (driving without due care)",
+                      "TS10 (traffic signal)",
+                      "Other"
+                    ],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  },
+                  {
+                    "id": "fq_11c7a663a39147_d42b796b5a",
+                    "type": "select",
+                    "title": "Year",
+                    "help": "",
+                    "placeholder": "",
+                    "required": true,
+                    "errorText": "This field is required.",
+                    "options": [
+                      "2026",
+                      "2025",
+                      "2024",
+                      "2023",
+                      "2022",
+                      "2021",
+                      "2020"
+                    ],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  },
+                  {
+                    "id": "fq_ab566e2d679744_e35c2ea2b2",
+                    "type": "select",
+                    "title": "Points",
+                    "help": "",
+                    "placeholder": "",
+                    "required": false,
+                    "errorText": "This field is required.",
+                    "options": [
+                      "0",
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                      "6",
+                      "7",
+                      "8",
+                      "9",
+                      "10+",
+                      "Not applicable"
+                    ],
+                    "logic": {
+                      "enabled": false,
+                      "rules": []
+                    },
+                    "content": {
+                      "enabled": false,
+                      "html": ""
+                    }
+                  }
+                ],
+                "repeat": {
+                  "enabled": true,
+                  "min": 1,
+                  "max": 10,
+                  "addLabel": "Add another",
+                  "itemLabel": "Conviction"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page_9573793a58ec45_4959543545",
+      "name": "Declarations",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_7e44622e9c1146_c8e84cf919",
+          "title": "Declarations and preferences",
+          "level": "h2",
+          "bodyHtml": "<p>Please review and confirm.</p>"
+        },
+        {
+          "type": "group",
+          "id": "group_c82885721e4c4d_e4486db4ae"
+        },
+        {
+          "type": "group",
+          "id": "group_78d743e8002c45_0130cb2493"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_c82885721e4c4d_e4486db4ae",
+          "name": "Declarations",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_7d444f30c1e24a_9eec0633d6",
+              "type": "display",
+              "title": "Declarations",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Declarations",
+                "subtitle": "",
+                "bodyHtml": "<p>These statements help us provide an accurate quote.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_418930aef33b41_db49549fa5",
+              "type": "yesno",
+              "title": "I confirm I have read and understood the privacy notice.",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_39c6ef1428eb43_7aaa7dd48d",
+              "type": "yesno",
+              "title": "I confirm the information I’ve given is true to the best of my knowledge.",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "group_78d743e8002c45_0130cb2493",
+          "name": "Marketing",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_58af1646676a46_6819ab39cc",
+              "type": "display",
+              "title": "Your preferences",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Your preferences",
+                "subtitle": "",
+                "bodyHtml": "<p>You can change your marketing preferences at any time.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_e80a4e5dc36846_5d98d616d3",
+              "type": "radio",
+              "title": "Would you like to receive marketing from us?",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "No",
+                "Yes — email",
+                "Yes — phone",
+                "Yes — SMS",
+                "Yes — post",
+                "Yes — all channels"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page_edd4cbd7710e4b_fd908bbf35",
+      "name": "Summary",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_451aaf7ac13f47_0cab634af6",
+          "title": "Summary",
+          "level": "h2",
+          "bodyHtml": "<p>Review before viewing your quote.</p>"
+        },
+        {
+          "type": "group",
+          "id": "group_175ec2a7c2c948_edac4c9cef"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_175ec2a7c2c948_edac4c9cef",
+          "name": "Review",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_645c9877303643_52509cde7d",
+              "type": "display",
+              "title": "Check your details",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "hero",
+                "tone": "neutral",
+                "title": "Check your details",
+                "subtitle": "Car insurance",
+                "bodyHtml": "<p>Review your answers before viewing your quote.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_637abbb52bfa46_e7194c64d6",
+              "type": "display",
+              "title": "",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "divider",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_b38b8e6bc25049_35176254c2",
+              "type": "display",
+              "title": "Key details",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Key details",
+                "subtitle": "",
+                "bodyHtml": "<p>This page is a playback of what you’ve entered. If something looks wrong, go back and change it.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_ff0108a479564e_bcf96f0470",
+              "type": "display",
+              "title": "Your cover",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Your cover",
+                "subtitle": "",
+                "bodyHtml": "<p><b>Cover:</b> (selected)<br><b>Start date:</b> (selected)<br><b>Excess:</b> (selected)</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_a19e08ded6af49_fc5d2ee11e",
+              "type": "display",
+              "title": "Next step",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "alert",
+                "tone": "neutral",
+                "title": "Next step",
+                "subtitle": "",
+                "bodyHtml": "<p>When you continue, we’ll generate your quote based on the details provided.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page_b8bd3a74e8aa41_50883a963f",
+      "name": "Quote",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_c0c0af00eddd4b_36c64664a3",
+          "title": "Your quote",
+          "level": "h2",
+          "bodyHtml": "<p>Here’s your quote based on the details entered.</p>"
+        },
+        {
+          "type": "group",
+          "id": "group_87f1ed601e324e_ea3c4969de"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_87f1ed601e324e_ea3c4969de",
+          "name": "Quote result",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_738e6e37018e4f_26ec7d2f2b",
+              "type": "display",
+              "title": "Your quote",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "hero",
+                "tone": "neutral",
+                "title": "Your quote",
+                "subtitle": "Car insurance",
+                "bodyHtml": "<p>This is an example quote display. In a live integration, pricing would come from your rating engine.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_34b90a45494b4f_790f3cab24",
+              "type": "radio",
+              "title": "How would you like to pay?",
+              "help": "Monthly payments are typically an instalment plan and may include interest.",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Annual (pay in full)",
+                "Monthly (pay by Direct Debit)"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_34b4e6d474ec4a_85826a4a56",
+              "type": "display",
+              "title": "£612.40",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": true,
+                "rules": [
+                  {
+                    "id": "rule_1bec0eb100c047_1ec19a0509",
+                    "questionId": "q_34b90a45494b4f_790f3cab24",
+                    "operator": "equals",
+                    "value": "Annual (pay in full)"
+                  }
+                ]
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "bigPrice",
+                "tone": "neutral",
+                "title": "£612.40",
+                "subtitle": "per year",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_1e257bc3483a43_ba25ee4ac2",
+              "type": "display",
+              "title": "Annual payment",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": true,
+                "rules": [
+                  {
+                    "id": "rule_bdde4e4ab5f04b_50d7267c76",
+                    "questionId": "q_34b90a45494b4f_790f3cab24",
+                    "operator": "equals",
+                    "value": "Annual (pay in full)"
+                  }
+                ]
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Annual payment",
+                "subtitle": "",
+                "bodyHtml": "<p>Pay the full premium upfront.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_acbbc3558bab41_4e34031563",
+              "type": "display",
+              "title": "£58.90",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": true,
+                "rules": [
+                  {
+                    "id": "rule_f7b7347e36334d_11f93c1445",
+                    "questionId": "q_34b90a45494b4f_790f3cab24",
+                    "operator": "equals",
+                    "value": "Monthly (pay by Direct Debit)"
+                  }
+                ]
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "bigPrice",
+                "tone": "neutral",
+                "title": "£58.90",
+                "subtitle": "per month",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_d84235720e684f_c2b687eb06",
+              "type": "display",
+              "title": "Monthly payments",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": true,
+                "rules": [
+                  {
+                    "id": "rule_9035008112534e_b6640e8fad",
+                    "questionId": "q_34b90a45494b4f_790f3cab24",
+                    "operator": "equals",
+                    "value": "Monthly (pay by Direct Debit)"
+                  }
+                ]
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Monthly payments",
+                "subtitle": "",
+                "bodyHtml": "<p>Example instalments shown for illustration only. Interest may apply depending on the provider.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_5c729971404c47_92b053c405",
+              "type": "display",
+              "title": "",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "divider",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_262286aa29664e_c72f2e3dd5",
+              "type": "display",
+              "title": "What’s included",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "What’s included",
+                "subtitle": "",
+                "bodyHtml": "<p>Cover: (selected)<br>Key assumptions: (selected)</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_1593df70454c4a_a742d87cf8",
+              "type": "display",
+              "title": "Important",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "alert",
+                "tone": "neutral",
+                "title": "Important",
+                "subtitle": "",
+                "bodyHtml": "<p>This quote assumes the information provided is accurate. You can amend answers before you buy.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_c595c2606e634f_1cf26c3b74",
+              "type": "display",
+              "title": "Next steps",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Next steps",
+                "subtitle": "",
+                "bodyHtml": "<p>Continue to choose payment details and complete purchase.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page_bc576287a71346_4fc3c552a4",
+      "name": "Payment",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_a848a86f07714b_2e769dc5f3",
+          "title": "Payment",
+          "level": "h2",
+          "bodyHtml": "<p>Choose how you’d like to pay and enter payment details.</p>"
+        },
+        {
+          "type": "group",
+          "id": "group_b8d9376789f74c_8bc2d58582"
+        },
+        {
+          "type": "group",
+          "id": "group_be720e7c566647_7f585b9463"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_b8d9376789f74c_8bc2d58582",
+          "name": "Payment details",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_9ff36398941c40_5b800fc34d",
+              "type": "display",
+              "title": "Payment for your Car insurance",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "hero",
+                "tone": "neutral",
+                "title": "Payment for your Car insurance",
+                "subtitle": "Choose a payment option",
+                "bodyHtml": "<p>Enter your payment details to proceed. In production, integrate a secure payment provider.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_3c129f56345943_f6bff68a2e",
+              "type": "display",
+              "title": "Payment options",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Payment options",
+                "subtitle": "",
+                "bodyHtml": "<p>Annual: pay in full now.<br>Monthly: pay by instalments (usually Direct Debit).</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_e3b978525b494f_a6d5033f20",
+              "type": "radio",
+              "title": "Payment method",
+              "help": "Monthly instalments are usually collected by Direct Debit.",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Pay by card",
+                "Direct Debit"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_cc8eefbddc0740_9754d4499a",
+              "type": "text",
+              "title": "Name on card",
+              "help": "",
+              "placeholder": "e.g., Sam Taylor",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": true,
+                "rules": [
+                  {
+                    "id": "rule_1e5e583abebe4d_a58946d676",
+                    "questionId": "q_e3b978525b494f_a6d5033f20",
+                    "operator": "equals",
+                    "value": "Pay by card"
+                  }
+                ]
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_7d9cf7a0bd1740_5cecba0015",
+              "type": "text",
+              "title": "Card number",
+              "help": "For demonstration only.",
+              "placeholder": "•••• •••• •••• ••••",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": true,
+                "rules": [
+                  {
+                    "id": "rule_1a3990d8b0c943_2a8690d90b",
+                    "questionId": "q_e3b978525b494f_a6d5033f20",
+                    "operator": "equals",
+                    "value": "Pay by card"
+                  }
+                ]
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_9a33212f12b44d_3f4b3a818f",
+              "type": "text",
+              "title": "Expiry date",
+              "help": "",
+              "placeholder": "MM/YY",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": true,
+                "rules": [
+                  {
+                    "id": "rule_c81f2db5853d4d_aef1b6c304",
+                    "questionId": "q_e3b978525b494f_a6d5033f20",
+                    "operator": "equals",
+                    "value": "Pay by card"
+                  }
+                ]
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_53b321d35eb842_be89fc31ed",
+              "type": "text",
+              "title": "Security code (CVV)",
+              "help": "",
+              "placeholder": "3 digits",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": true,
+                "rules": [
+                  {
+                    "id": "rule_1af92f3b3c2848_e77be3dd3b",
+                    "questionId": "q_e3b978525b494f_a6d5033f20",
+                    "operator": "equals",
+                    "value": "Pay by card"
+                  }
+                ]
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_e3135b65dc8e4e_ed6705522a",
+              "type": "text",
+              "title": "Account holder name",
+              "help": "",
+              "placeholder": "e.g., Sam Taylor",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": true,
+                "rules": [
+                  {
+                    "id": "rule_f897b07faabc49_2e1eaa835b",
+                    "questionId": "q_e3b978525b494f_a6d5033f20",
+                    "operator": "equals",
+                    "value": "Direct Debit"
+                  }
+                ]
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_df4f434553a148_d27f4d8bdd",
+              "type": "text",
+              "title": "Sort code",
+              "help": "6 digits",
+              "placeholder": "12-34-56",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": true,
+                "rules": [
+                  {
+                    "id": "rule_ab8aee90df744e_7df0f51ba0",
+                    "questionId": "q_e3b978525b494f_a6d5033f20",
+                    "operator": "equals",
+                    "value": "Direct Debit"
+                  }
+                ]
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_7ada1d78db724b_728995a502",
+              "type": "text",
+              "title": "Account number",
+              "help": "8 digits",
+              "placeholder": "12345678",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": true,
+                "rules": [
+                  {
+                    "id": "rule_6e24c146ca0849_94f75c4c3c",
+                    "questionId": "q_e3b978525b494f_a6d5033f20",
+                    "operator": "equals",
+                    "value": "Direct Debit"
+                  }
+                ]
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_ddffda143a9848_cf343ec041",
+              "type": "select",
+              "title": "Preferred monthly payment date (optional)",
+              "help": "",
+              "placeholder": "",
+              "required": false,
+              "errorText": "This field is required.",
+              "options": [
+                "1st",
+                "5th",
+                "10th",
+                "15th",
+                "20th",
+                "25th",
+                "28th"
+              ],
+              "logic": {
+                "enabled": true,
+                "rules": [
+                  {
+                    "id": "rule_4d0f92df412e40_8abd477800",
+                    "questionId": "q_e3b978525b494f_a6d5033f20",
+                    "operator": "equals",
+                    "value": "Direct Debit"
+                  }
+                ]
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_ecec920aa06e4d_9530aaa603",
+              "type": "display",
+              "title": "Important",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "alert",
+                "tone": "neutral",
+                "title": "Important",
+                "subtitle": "",
+                "bodyHtml": "<p>Payment fields here are for demonstration only.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "group_be720e7c566647_7f585b9463",
+          "name": "Confirm and proceed",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_ed765a3d9b6a4e_2019bd383c",
+              "type": "display",
+              "title": "",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "divider",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_6d16c41668d844_b81837b395",
+              "type": "display",
+              "title": "Final checks",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Final checks",
+                "subtitle": "",
+                "bodyHtml": "<p>Before completing payment, ensure your details are correct.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_24138a8f234b4c_cf32dd10ed",
+              "type": "radio",
+              "title": "How would you like to receive your documents?",
+              "help": "",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [
+                "Email (recommended)",
+                "Download now",
+                "Both"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_21b397d946c74d_efe6b958fa",
+              "type": "yesno",
+              "title": "I confirm I am authorised to make this payment and the details provided are correct.",
+              "help": "Required to continue.",
+              "placeholder": "",
+              "required": true,
+              "errorText": "This field is required.",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
