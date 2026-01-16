@@ -1,0 +1,705 @@
+{
+  "schemaVersion": "1.0",
+  "settings": {
+    "quote": {
+      "defaultPaymentFrequency": "annual",
+      "allowMonthly": true,
+      "allowAnnual": true
+    },
+    "logic": {
+      "defaultCombinator": "AND",
+      "truthyValues": [
+        true,
+        "true",
+        "yes",
+        "Yes"
+      ]
+    },
+    "ui": {
+      "showProgress": true,
+      "showPageNav": true
+    }
+  },
+  "lob": {
+    "id": "motorbike",
+    "name": "Motorbike Insurance",
+    "journey": "quote-buy",
+    "currency": "GBP",
+    "locale": "en-GB",
+    "version": "2026-01-16"
+  },
+  "pages": [
+    {
+      "id": "start",
+      "title": "Get a motorbike insurance quote",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "start.about",
+          "title": "Before we start",
+          "elements": [
+            {
+              "id": "start.intro",
+              "type": "display",
+              "text": "We’ll ask about you, your bike and where it’s kept."
+            },
+            {
+              "id": "start.coverStart",
+              "type": "date",
+              "label": "When do you want cover to start?",
+              "required": true
+            },
+            {
+              "id": "start.isUKResident",
+              "type": "radio",
+              "label": "Are you a UK resident?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "start.hasValidLicence",
+              "type": "radio",
+              "label": "Do you have a valid UK bike licence?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "policyholder",
+      "title": "About you",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "policyholder.details",
+          "title": "Your details",
+          "elements": [
+            {
+              "id": "person.title",
+              "type": "select",
+              "label": "Title",
+              "options": [
+                "Mr",
+                "Mrs",
+                "Miss",
+                "Ms",
+                "Mx",
+                "Dr"
+              ],
+              "required": true
+            },
+            {
+              "id": "person.firstName",
+              "type": "text",
+              "label": "First name",
+              "required": true
+            },
+            {
+              "id": "person.lastName",
+              "type": "text",
+              "label": "Last name",
+              "required": true
+            },
+            {
+              "id": "person.dob",
+              "type": "date",
+              "label": "Date of birth",
+              "required": true
+            },
+            {
+              "id": "person.email",
+              "type": "text",
+              "label": "Email address",
+              "required": true,
+              "validation": {
+                "format": "email"
+              }
+            },
+            {
+              "id": "person.phone",
+              "type": "text",
+              "label": "Phone number",
+              "required": true
+            },
+            {
+              "id": "address.line1",
+              "type": "text",
+              "label": "Address line 1",
+              "required": true
+            },
+            {
+              "id": "address.line2",
+              "type": "text",
+              "label": "Address line 2",
+              "required": false
+            },
+            {
+              "id": "address.town",
+              "type": "text",
+              "label": "Town/City",
+              "required": true
+            },
+            {
+              "id": "address.postcode",
+              "type": "text",
+              "label": "Postcode",
+              "required": true,
+              "validation": {
+                "pattern": "^[A-Za-z]{1,2}\\d{1,2}[A-Za-z]?\\s?\\d[A-Za-z]{2}$",
+                "message": "Enter a valid UK postcode"
+              }
+            },
+            {
+              "id": "rider.licenceCategory",
+              "type": "select",
+              "label": "Licence category",
+              "options": [
+                "AM",
+                "A1",
+                "A2",
+                "A"
+              ],
+              "required": true
+            },
+            {
+              "id": "rider.yearsRiding",
+              "type": "number",
+              "label": "Years riding experience",
+              "required": true,
+              "min": 0,
+              "max": 70
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bike",
+      "title": "Your bike",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "bike.details",
+          "title": "Bike details",
+          "elements": [
+            {
+              "id": "bike.reg",
+              "type": "text",
+              "label": "Registration number",
+              "required": true
+            },
+            {
+              "id": "bike.make",
+              "type": "text",
+              "label": "Make",
+              "required": true
+            },
+            {
+              "id": "bike.model",
+              "type": "text",
+              "label": "Model",
+              "required": true
+            },
+            {
+              "id": "bike.engine",
+              "type": "number",
+              "label": "Engine size (cc)",
+              "required": true,
+              "min": 49,
+              "max": 2500
+            },
+            {
+              "id": "bike.value",
+              "type": "number",
+              "label": "Estimated value (£)",
+              "required": true,
+              "min": 0
+            },
+            {
+              "id": "bike.type",
+              "type": "select",
+              "label": "Bike type",
+              "options": [
+                "Scooter",
+                "Commuter",
+                "Sports",
+                "Naked",
+                "Adventure",
+                "Cruiser",
+                "Tourer",
+                "Off-road"
+              ],
+              "required": true
+            },
+            {
+              "id": "bike.modified",
+              "type": "radio",
+              "label": "Has the bike been modified?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "bike.modDetails",
+              "type": "text",
+              "label": "Tell us about the modifications",
+              "required": true,
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "bike.modified",
+                    "equals": "Yes"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "storage",
+      "title": "Storage & security",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "storage.where",
+          "title": "Where it’s kept",
+          "elements": [
+            {
+              "id": "storage.keptOvernight",
+              "type": "select",
+              "label": "Where is the bike kept overnight?",
+              "options": [
+                "Garage",
+                "Driveway",
+                "Street",
+                "Shared car park",
+                "Other"
+              ],
+              "required": true
+            },
+            {
+              "id": "storage.security",
+              "type": "checkbox",
+              "label": "Security",
+              "options": [
+                "Factory immobiliser",
+                "Alarm",
+                "Tracker",
+                "Disc lock",
+                "Chain",
+                "Ground anchor",
+                "None"
+              ],
+              "required": false
+            },
+            {
+              "id": "storage.cover",
+              "type": "radio",
+              "label": "Do you want cover for riding abroad?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "usage",
+      "title": "Usage & cover",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "usage.how",
+          "title": "How you ride",
+          "elements": [
+            {
+              "id": "use.usage",
+              "type": "radio",
+              "label": "Main use",
+              "options": [
+                "Social, domestic & pleasure",
+                "Commuting",
+                "Business"
+              ],
+              "required": true
+            },
+            {
+              "id": "use.annualMileage",
+              "type": "number",
+              "label": "Estimated annual mileage",
+              "required": true,
+              "min": 0
+            },
+            {
+              "id": "use.coverLevel",
+              "type": "radio",
+              "label": "Cover level",
+              "options": [
+                "Third party only",
+                "Third party, fire & theft",
+                "Comprehensive"
+              ],
+              "required": true
+            },
+            {
+              "id": "use.pillion",
+              "type": "radio",
+              "label": "Will you carry a pillion passenger?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "use.trackDays",
+              "type": "radio",
+              "label": "Do you do track days?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "use.trackNote",
+              "type": "display",
+              "text": "Track day use is typically excluded unless specifically agreed.",
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "use.trackDays",
+                    "equals": "Yes"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "history",
+      "title": "Riding history",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "history.main",
+          "title": "Claims & convictions",
+          "elements": [
+            {
+              "id": "history.claims",
+              "type": "radio",
+              "label": "Any claims in the last 5 years?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "history.claimList",
+              "type": "repeat",
+              "label": "Claims",
+              "itemLabel": "Claim",
+              "minItems": 1,
+              "maxItems": 10,
+              "itemSchema": [
+                {
+                  "id": "claim.date",
+                  "type": "date",
+                  "label": "When did the claim happen?",
+                  "required": true
+                },
+                {
+                  "id": "claim.type",
+                  "type": "select",
+                  "label": "What type of claim was it?",
+                  "options": [
+                    "Accident",
+                    "Theft",
+                    "Fire",
+                    "Windscreen",
+                    "Malicious damage",
+                    "Other"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "claim.amount",
+                  "type": "number",
+                  "label": "Approximate cost (£)",
+                  "required": false,
+                  "min": 0
+                },
+                {
+                  "id": "claim.atFault",
+                  "type": "radio",
+                  "label": "Were you at fault?",
+                  "options": [
+                    "Yes",
+                    "No",
+                    "Partly"
+                  ],
+                  "required": true
+                }
+              ],
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "history.claims",
+                    "equals": "Yes"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "history.convictions",
+              "type": "radio",
+              "label": "Any motoring convictions in the last 5 years?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "history.convictionList",
+              "type": "repeat",
+              "label": "Convictions",
+              "itemLabel": "Conviction",
+              "minItems": 1,
+              "maxItems": 10,
+              "itemSchema": [
+                {
+                  "id": "conviction.date",
+                  "type": "date",
+                  "label": "Conviction date",
+                  "required": true
+                },
+                {
+                  "id": "conviction.code",
+                  "type": "text",
+                  "label": "Offence code",
+                  "required": false,
+                  "helpText": "e.g. SP30"
+                },
+                {
+                  "id": "conviction.description",
+                  "type": "text",
+                  "label": "Brief description",
+                  "required": true
+                },
+                {
+                  "id": "conviction.points",
+                  "type": "number",
+                  "label": "Points",
+                  "required": false,
+                  "min": 0,
+                  "max": 12
+                },
+                {
+                  "id": "conviction.ban",
+                  "type": "radio",
+                  "label": "Any driving ban?",
+                  "options": [
+                    "Yes",
+                    "No"
+                  ],
+                  "required": true
+                }
+              ],
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "history.convictions",
+                    "equals": "Yes"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "history.ncdYears",
+              "type": "number",
+              "label": "No-claims discount years",
+              "required": true,
+              "min": 0,
+              "max": 20
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quote",
+      "title": "Your quote",
+      "kind": "quote",
+      "groups": [
+        {
+          "id": "quote.options",
+          "title": "Payment options",
+          "elements": [
+            {
+              "id": "quote.banner",
+              "type": "display",
+              "text": "Here’s your indicative quote. Choose annual or monthly payments."
+            },
+            {
+              "id": "quote.paymentFrequency",
+              "type": "radio",
+              "label": "How would you like to pay?",
+              "options": [
+                "annual",
+                "monthly"
+              ],
+              "required": true,
+              "default": "annual"
+            },
+            {
+              "id": "quote.summary",
+              "type": "quote",
+              "mode": "toggle",
+              "paymentFrequencyRef": "quote.paymentFrequency",
+              "pricePlaceholders": {
+                "annual": 389.5,
+                "monthly": {
+                  "deposit": 55.0,
+                  "instalments": 11,
+                  "instalmentAmount": 36.25,
+                  "apr": 19.9
+                }
+              },
+              "breakdown": [
+                {
+                  "label": "Base premium",
+                  "amount": 310.0
+                },
+                {
+                  "label": "Bike value/type",
+                  "amount": 42.5
+                },
+                {
+                  "label": "Security",
+                  "amount": -10.0
+                },
+                {
+                  "label": "Fees & taxes",
+                  "amount": 47.0
+                }
+              ]
+            },
+            {
+              "id": "quote.inclusions",
+              "type": "display",
+              "text": "**What’s included**\n- Helmet & leathers (where selected)\n- EU riding (where selected)\n- Legal cover (optional)"
+            },
+            {
+              "id": "quote.exclusions",
+              "type": "display",
+              "text": "**Common exclusions**\n- Track use\n- Riding without the correct licence\n- Wear and tear"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "summary",
+      "title": "Check your details",
+      "kind": "summary",
+      "groups": [
+        {
+          "id": "summary.playback",
+          "title": "Your answers",
+          "elements": [
+            {
+              "id": "summary.view",
+              "type": "summary",
+              "sections": [
+                {
+                  "title": "About you",
+                  "refs": [
+                    "person.*",
+                    "address.*",
+                    "start.coverStart",
+                    "rider.*"
+                  ]
+                },
+                {
+                  "title": "Your bike",
+                  "refs": [
+                    "bike.*",
+                    "storage.*",
+                    "use.*"
+                  ]
+                },
+                {
+                  "title": "History",
+                  "refs": [
+                    "history.*"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "summary.confirm",
+              "type": "checkbox",
+              "label": "Confirm",
+              "options": [
+                "I confirm the details are correct"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "payment",
+      "title": "Payment",
+      "kind": "payment",
+      "groups": [
+        {
+          "id": "payment.method",
+          "title": "How you’ll pay",
+          "elements": [
+            {
+              "id": "payment.method",
+              "type": "radio",
+              "label": "Payment method",
+              "options": [
+                "Debit card",
+                "Direct Debit"
+              ],
+              "required": true
+            },
+            {
+              "id": "payment.terms",
+              "type": "checkbox",
+              "label": "Agreements",
+              "options": [
+                "I agree to the terms and conditions",
+                "I confirm I have answered all questions honestly"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,538 @@
+{
+  "schemaVersion": "1.0",
+  "settings": {
+    "quote": {
+      "defaultPaymentFrequency": "annual",
+      "allowMonthly": true,
+      "allowAnnual": true
+    },
+    "logic": {
+      "defaultCombinator": "AND",
+      "truthyValues": [
+        true,
+        "true",
+        "yes",
+        "Yes"
+      ]
+    },
+    "ui": {
+      "showProgress": true,
+      "showPageNav": true
+    }
+  },
+  "lob": {
+    "id": "pet",
+    "name": "Pet Insurance",
+    "journey": "quote-buy",
+    "currency": "GBP",
+    "locale": "en-GB",
+    "version": "2026-01-16"
+  },
+  "pages": [
+    {
+      "id": "start",
+      "title": "Get a pet insurance quote",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "start.about",
+          "title": "Before we start",
+          "elements": [
+            {
+              "id": "start.intro",
+              "type": "display",
+              "text": "We’ll ask about you and your pet(s)."
+            },
+            {
+              "id": "start.coverStart",
+              "type": "date",
+              "label": "When do you want cover to start?",
+              "required": true
+            },
+            {
+              "id": "start.isUKResident",
+              "type": "radio",
+              "label": "Are you a UK resident?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "policyholder",
+      "title": "Policyholder",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "policyholder.details",
+          "title": "Your details",
+          "elements": [
+            {
+              "id": "person.title",
+              "type": "select",
+              "label": "Title",
+              "options": [
+                "Mr",
+                "Mrs",
+                "Miss",
+                "Ms",
+                "Mx",
+                "Dr"
+              ],
+              "required": true
+            },
+            {
+              "id": "person.firstName",
+              "type": "text",
+              "label": "First name",
+              "required": true
+            },
+            {
+              "id": "person.lastName",
+              "type": "text",
+              "label": "Last name",
+              "required": true
+            },
+            {
+              "id": "person.dob",
+              "type": "date",
+              "label": "Date of birth",
+              "required": true
+            },
+            {
+              "id": "person.email",
+              "type": "text",
+              "label": "Email address",
+              "required": true,
+              "validation": {
+                "format": "email"
+              }
+            },
+            {
+              "id": "person.phone",
+              "type": "text",
+              "label": "Phone number",
+              "required": true
+            },
+            {
+              "id": "address.line1",
+              "type": "text",
+              "label": "Address line 1",
+              "required": true
+            },
+            {
+              "id": "address.line2",
+              "type": "text",
+              "label": "Address line 2",
+              "required": false
+            },
+            {
+              "id": "address.town",
+              "type": "text",
+              "label": "Town/City",
+              "required": true
+            },
+            {
+              "id": "address.postcode",
+              "type": "text",
+              "label": "Postcode",
+              "required": true,
+              "validation": {
+                "pattern": "^[A-Za-z]{1,2}\\d{1,2}[A-Za-z]?\\s?\\d[A-Za-z]{2}$",
+                "message": "Enter a valid UK postcode"
+              }
+            },
+            {
+              "id": "policyholder.marketing",
+              "type": "checkbox",
+              "label": "Contact preferences",
+              "options": [
+                "Email",
+                "SMS",
+                "Phone",
+                "Post"
+              ],
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pets",
+      "title": "Your pet(s)",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "pets.list",
+          "title": "Add pets",
+          "elements": [
+            {
+              "id": "pets.tip",
+              "type": "display",
+              "text": "You can add more than one pet for multi-pet cover."
+            },
+            {
+              "id": "pets.pets",
+              "type": "repeat",
+              "label": "Pets",
+              "itemLabel": "Pet",
+              "minItems": 1,
+              "maxItems": 6,
+              "itemSchema": [
+                {
+                  "id": "pet.name",
+                  "type": "text",
+                  "label": "Pet name",
+                  "required": true
+                },
+                {
+                  "id": "pet.species",
+                  "type": "radio",
+                  "label": "Species",
+                  "options": [
+                    "Dog",
+                    "Cat"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "pet.breed",
+                  "type": "text",
+                  "label": "Breed",
+                  "required": true
+                },
+                {
+                  "id": "pet.dob",
+                  "type": "date",
+                  "label": "Date of birth",
+                  "required": true
+                },
+                {
+                  "id": "pet.gender",
+                  "type": "radio",
+                  "label": "Sex",
+                  "options": [
+                    "Male",
+                    "Female"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "pet.neutered",
+                  "type": "radio",
+                  "label": "Neutered/spayed?",
+                  "options": [
+                    "Yes",
+                    "No"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "pet.vaccinated",
+                  "type": "radio",
+                  "label": "Up to date with vaccinations?",
+                  "options": [
+                    "Yes",
+                    "No"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "pet.preExisting",
+                  "type": "radio",
+                  "label": "Any pre-existing medical conditions?",
+                  "options": [
+                    "Yes",
+                    "No"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "pet.preExistingDetails",
+                  "type": "text",
+                  "label": "Tell us about the condition(s)",
+                  "required": true,
+                  "showWhen": {
+                    "all": [
+                      {
+                        "fact": "pet.preExisting",
+                        "equals": "Yes"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "pet.microchipped",
+                  "type": "radio",
+                  "label": "Microchipped?",
+                  "options": [
+                    "Yes",
+                    "No"
+                  ],
+                  "required": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "title": "Cover options",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "cover.options",
+          "title": "Choose your cover",
+          "elements": [
+            {
+              "id": "cover.level",
+              "type": "radio",
+              "label": "Cover type",
+              "options": [
+                "Accident only",
+                "Time-limited",
+                "Maximum benefit",
+                "Lifetime"
+              ],
+              "required": true
+            },
+            {
+              "id": "cover.annualLimit",
+              "type": "select",
+              "label": "Annual vet fee limit",
+              "options": [
+                "£1,000",
+                "£2,000",
+                "£4,000",
+                "£7,000",
+                "£10,000"
+              ],
+              "required": true
+            },
+            {
+              "id": "cover.excess",
+              "type": "select",
+              "label": "Excess",
+              "options": [
+                "£60",
+                "£85",
+                "£100",
+                "£150"
+              ],
+              "required": true
+            },
+            {
+              "id": "cover.dental",
+              "type": "radio",
+              "label": "Include dental cover?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "cover.behaviour",
+              "type": "radio",
+              "label": "Include behavioural treatment?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "cover.travel",
+              "type": "radio",
+              "label": "Include travel cover?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "disclosure",
+      "title": "Important information",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "disclosure.main",
+          "title": "",
+          "elements": [
+            {
+              "id": "disclosure.note",
+              "type": "display",
+              "text": "Please review your answers carefully. Pre-existing conditions may be excluded."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quote",
+      "title": "Your quote",
+      "kind": "quote",
+      "groups": [
+        {
+          "id": "quote.options",
+          "title": "Payment options",
+          "elements": [
+            {
+              "id": "quote.banner",
+              "type": "display",
+              "text": "Here’s your indicative quote for your selected cover."
+            },
+            {
+              "id": "quote.paymentFrequency",
+              "type": "radio",
+              "label": "How would you like to pay?",
+              "options": [
+                "annual",
+                "monthly"
+              ],
+              "required": true,
+              "default": "annual"
+            },
+            {
+              "id": "quote.summary",
+              "type": "quote",
+              "mode": "toggle",
+              "paymentFrequencyRef": "quote.paymentFrequency",
+              "pricePlaceholders": {
+                "annual": 278.0,
+                "monthly": {
+                  "deposit": 0.0,
+                  "instalments": 12,
+                  "instalmentAmount": 26.5,
+                  "apr": 0.0
+                }
+              },
+              "breakdown": [
+                {
+                  "label": "Base premium",
+                  "amount": 210.0
+                },
+                {
+                  "label": "Cover level & limit",
+                  "amount": 48.0
+                },
+                {
+                  "label": "Multi-pet discount",
+                  "amount": -15.0
+                },
+                {
+                  "label": "Fees & taxes",
+                  "amount": 35.0
+                }
+              ]
+            },
+            {
+              "id": "quote.inclusions",
+              "type": "display",
+              "text": "**What’s included**\n- Vet fees (up to your limit)\n- Third party liability (dogs)\n- Lost pet & advertising"
+            },
+            {
+              "id": "quote.exclusions",
+              "type": "display",
+              "text": "**Common exclusions**\n- Pre-existing conditions\n- Routine treatments\n- Preventative care unless included"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "summary",
+      "title": "Check your details",
+      "kind": "summary",
+      "groups": [
+        {
+          "id": "summary.playback",
+          "title": "Your answers",
+          "elements": [
+            {
+              "id": "summary.view",
+              "type": "summary",
+              "sections": [
+                {
+                  "title": "Policyholder",
+                  "refs": [
+                    "person.*",
+                    "address.*",
+                    "start.coverStart"
+                  ]
+                },
+                {
+                  "title": "Pets",
+                  "refs": [
+                    "pets.pets"
+                  ]
+                },
+                {
+                  "title": "Cover",
+                  "refs": [
+                    "cover.*"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "summary.confirm",
+              "type": "checkbox",
+              "label": "Confirm",
+              "options": [
+                "I confirm the details are correct"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "payment",
+      "title": "Payment",
+      "kind": "payment",
+      "groups": [
+        {
+          "id": "payment.method",
+          "title": "How you’ll pay",
+          "elements": [
+            {
+              "id": "payment.method",
+              "type": "radio",
+              "label": "Payment method",
+              "options": [
+                "Debit card",
+                "Direct Debit"
+              ],
+              "required": true
+            },
+            {
+              "id": "payment.terms",
+              "type": "checkbox",
+              "label": "Agreements",
+              "options": [
+                "I agree to the terms and conditions",
+                "I confirm I have answered all questions honestly"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

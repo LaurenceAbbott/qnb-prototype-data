@@ -1,0 +1,871 @@
+{
+  "schemaVersion": "1.0",
+  "settings": {
+    "quote": {
+      "defaultPaymentFrequency": "annual",
+      "allowMonthly": true,
+      "allowAnnual": true
+    },
+    "logic": {
+      "defaultCombinator": "AND",
+      "truthyValues": [
+        true,
+        "true",
+        "yes",
+        "Yes"
+      ]
+    },
+    "ui": {
+      "showProgress": true,
+      "showPageNav": true
+    }
+  },
+  "lob": {
+    "id": "van",
+    "name": "Van Insurance",
+    "journey": "quote-buy",
+    "currency": "GBP",
+    "locale": "en-GB",
+    "version": "2026-01-16"
+  },
+  "pages": [
+    {
+      "id": "start",
+      "title": "Get a van insurance quote",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "start.about",
+          "title": "Before we start",
+          "elements": [
+            {
+              "id": "start.intro",
+              "type": "display",
+              "text": "We’ll ask a few questions about you, your van and how it’s used."
+            },
+            {
+              "id": "start.coverStart",
+              "type": "date",
+              "label": "When do you want cover to start?",
+              "required": true,
+              "helpText": "You can choose today or a future date."
+            },
+            {
+              "id": "start.isUKResident",
+              "type": "radio",
+              "label": "Are you a UK resident?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "start.hasValidLicence",
+              "type": "radio",
+              "label": "Do you hold a valid UK driving licence?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            }
+          ],
+          "description": "Quick eligibility check"
+        }
+      ]
+    },
+    {
+      "id": "policyholder",
+      "title": "About you",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "policyholder.details",
+          "title": "Your details",
+          "elements": [
+            {
+              "id": "policyholder.hint",
+              "type": "display",
+              "text": "Use the details of the person who will own the policy."
+            },
+            {
+              "id": "person.title",
+              "type": "select",
+              "label": "Title",
+              "options": [
+                "Mr",
+                "Mrs",
+                "Miss",
+                "Ms",
+                "Mx",
+                "Dr"
+              ],
+              "required": true
+            },
+            {
+              "id": "person.firstName",
+              "type": "text",
+              "label": "First name",
+              "required": true
+            },
+            {
+              "id": "person.lastName",
+              "type": "text",
+              "label": "Last name",
+              "required": true
+            },
+            {
+              "id": "person.dob",
+              "type": "date",
+              "label": "Date of birth",
+              "required": true
+            },
+            {
+              "id": "person.email",
+              "type": "text",
+              "label": "Email address",
+              "required": true,
+              "validation": {
+                "format": "email"
+              }
+            },
+            {
+              "id": "person.phone",
+              "type": "text",
+              "label": "Phone number",
+              "required": true
+            },
+            {
+              "id": "address.line1",
+              "type": "text",
+              "label": "Address line 1",
+              "required": true
+            },
+            {
+              "id": "address.line2",
+              "type": "text",
+              "label": "Address line 2",
+              "required": false
+            },
+            {
+              "id": "address.town",
+              "type": "text",
+              "label": "Town/City",
+              "required": true
+            },
+            {
+              "id": "address.postcode",
+              "type": "text",
+              "label": "Postcode",
+              "required": true,
+              "validation": {
+                "pattern": "^[A-Za-z]{1,2}\\d{1,2}[A-Za-z]?\\s?\\d[A-Za-z]{2}$",
+                "message": "Enter a valid UK postcode"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "van",
+      "title": "Your van",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "van.vehicle",
+          "title": "Vehicle details",
+          "elements": [
+            {
+              "id": "vehicle.reg",
+              "type": "text",
+              "label": "Registration number",
+              "required": true
+            },
+            {
+              "id": "vehicle.make",
+              "type": "text",
+              "label": "Make",
+              "required": true
+            },
+            {
+              "id": "vehicle.model",
+              "type": "text",
+              "label": "Model",
+              "required": true
+            },
+            {
+              "id": "vehicle.year",
+              "type": "number",
+              "label": "Year of manufacture",
+              "required": true,
+              "min": 1980,
+              "max": 2026
+            },
+            {
+              "id": "vehicle.value",
+              "type": "number",
+              "label": "Estimated value (£)",
+              "required": true,
+              "min": 0
+            },
+            {
+              "id": "vehicle.overnightParking",
+              "type": "select",
+              "label": "Where is the van kept overnight?",
+              "options": [
+                "Driveway",
+                "Garage",
+                "Street",
+                "Car park",
+                "Other"
+              ],
+              "required": true
+            },
+            {
+              "id": "vehicle.security",
+              "type": "checkbox",
+              "label": "Security",
+              "options": [
+                "Factory immobiliser",
+                "Aftermarket immobiliser",
+                "Alarm",
+                "Tracker",
+                "Steering lock",
+                "None"
+              ],
+              "required": false
+            },
+            {
+              "id": "vehicle.modified",
+              "type": "radio",
+              "label": "Has the van been modified?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "vehicle.modDetails",
+              "type": "text",
+              "label": "Tell us about the modifications",
+              "required": true,
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "vehicle.modified",
+                    "equals": "Yes"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "usage",
+      "title": "Usage & cover",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "usage.how",
+          "title": "How you use the van",
+          "elements": [
+            {
+              "id": "use.info",
+              "type": "display",
+              "text": "Tell us how the van is used so we can offer the right cover."
+            },
+            {
+              "id": "use.type",
+              "type": "radio",
+              "label": "Main use",
+              "options": [
+                "Social, domestic & pleasure",
+                "Commuting",
+                "Business use"
+              ],
+              "required": true
+            },
+            {
+              "id": "use.businessType",
+              "type": "select",
+              "label": "Type of business use",
+              "options": [
+                "Own goods",
+                "Courier / parcels",
+                "Tools & equipment",
+                "Passengers",
+                "Other"
+              ],
+              "required": true,
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "use.type",
+                    "equals": "Business use"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "use.goodsCarried",
+              "type": "checkbox",
+              "label": "What do you carry?",
+              "options": [
+                "Tools",
+                "Materials",
+                "Parcels",
+                "Food",
+                "Furniture",
+                "Other"
+              ],
+              "required": false,
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "use.type",
+                    "equals": "Business use"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "use.annualMileage",
+              "type": "number",
+              "label": "Estimated annual mileage",
+              "required": true,
+              "min": 0
+            },
+            {
+              "id": "use.coverLevel",
+              "type": "radio",
+              "label": "Cover level",
+              "options": [
+                "Third party only",
+                "Third party, fire & theft",
+                "Comprehensive"
+              ],
+              "required": true
+            },
+            {
+              "id": "use.protectedNCD",
+              "type": "radio",
+              "label": "Do you want to protect your no-claims discount?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "drivers",
+      "title": "Drivers",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "drivers.list",
+          "title": "Add drivers",
+          "elements": [
+            {
+              "id": "drivers.tip",
+              "type": "display",
+              "text": "Add anyone who will drive the van. You can add more than one driver."
+            },
+            {
+              "id": "drivers.drivers",
+              "type": "repeat",
+              "label": "Drivers",
+              "itemLabel": "Driver",
+              "minItems": 1,
+              "maxItems": 6,
+              "itemSchema": [
+                {
+                  "id": "driver.relationship",
+                  "type": "select",
+                  "label": "Relationship to policyholder",
+                  "options": [
+                    "Policyholder",
+                    "Spouse/Partner",
+                    "Employee",
+                    "Friend",
+                    "Other"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "driver.firstName",
+                  "type": "text",
+                  "label": "First name",
+                  "required": true
+                },
+                {
+                  "id": "driver.lastName",
+                  "type": "text",
+                  "label": "Last name",
+                  "required": true
+                },
+                {
+                  "id": "driver.dob",
+                  "type": "date",
+                  "label": "Date of birth",
+                  "required": true
+                },
+                {
+                  "id": "driver.licenceType",
+                  "type": "select",
+                  "label": "Licence type",
+                  "options": [
+                    "Full UK",
+                    "Provisional UK",
+                    "EU",
+                    "International"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "driver.licenceHeldYears",
+                  "type": "number",
+                  "label": "Years licence held",
+                  "required": true,
+                  "min": 0,
+                  "max": 70
+                },
+                {
+                  "id": "driver.occupation",
+                  "type": "text",
+                  "label": "Occupation",
+                  "required": true
+                },
+                {
+                  "id": "driver.claims",
+                  "type": "radio",
+                  "label": "Any claims in the last 5 years?",
+                  "options": [
+                    "Yes",
+                    "No"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "driver.claimList",
+                  "type": "repeat",
+                  "label": "Claims",
+                  "itemLabel": "Claim",
+                  "minItems": 1,
+                  "maxItems": 10,
+                  "itemSchema": [
+                    {
+                      "id": "claim.date",
+                      "type": "date",
+                      "label": "When did the claim happen?",
+                      "required": true
+                    },
+                    {
+                      "id": "claim.type",
+                      "type": "select",
+                      "label": "What type of claim was it?",
+                      "options": [
+                        "Accident",
+                        "Theft",
+                        "Fire",
+                        "Windscreen",
+                        "Malicious damage",
+                        "Other"
+                      ],
+                      "required": true
+                    },
+                    {
+                      "id": "claim.amount",
+                      "type": "number",
+                      "label": "Approximate cost (£)",
+                      "required": false,
+                      "min": 0
+                    },
+                    {
+                      "id": "claim.atFault",
+                      "type": "radio",
+                      "label": "Were you at fault?",
+                      "options": [
+                        "Yes",
+                        "No",
+                        "Partly"
+                      ],
+                      "required": true
+                    }
+                  ],
+                  "showWhen": {
+                    "all": [
+                      {
+                        "fact": "driver.claims",
+                        "equals": "Yes"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "driver.convictions",
+                  "type": "radio",
+                  "label": "Any motoring convictions in the last 5 years?",
+                  "options": [
+                    "Yes",
+                    "No"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "driver.convictionList",
+                  "type": "repeat",
+                  "label": "Convictions",
+                  "itemLabel": "Conviction",
+                  "minItems": 1,
+                  "maxItems": 10,
+                  "itemSchema": [
+                    {
+                      "id": "conviction.date",
+                      "type": "date",
+                      "label": "Conviction date",
+                      "required": true
+                    },
+                    {
+                      "id": "conviction.code",
+                      "type": "text",
+                      "label": "Offence code",
+                      "required": false,
+                      "helpText": "e.g. SP30"
+                    },
+                    {
+                      "id": "conviction.description",
+                      "type": "text",
+                      "label": "Brief description",
+                      "required": true
+                    },
+                    {
+                      "id": "conviction.points",
+                      "type": "number",
+                      "label": "Points",
+                      "required": false,
+                      "min": 0,
+                      "max": 12
+                    },
+                    {
+                      "id": "conviction.ban",
+                      "type": "radio",
+                      "label": "Any driving ban?",
+                      "options": [
+                        "Yes",
+                        "No"
+                      ],
+                      "required": true
+                    }
+                  ],
+                  "showWhen": {
+                    "all": [
+                      {
+                        "fact": "driver.convictions",
+                        "equals": "Yes"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "helpText": "At least one driver is required."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "history",
+      "title": "Insurance history",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "history.ncd",
+          "title": "No claims discount",
+          "elements": [
+            {
+              "id": "history.ncdYears",
+              "type": "number",
+              "label": "No-claims discount years",
+              "required": true,
+              "min": 0,
+              "max": 20
+            },
+            {
+              "id": "history.ncdProof",
+              "type": "radio",
+              "label": "Can you provide proof of NCD?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "history.previous",
+          "title": "Previous insurance",
+          "elements": [
+            {
+              "id": "history.declined",
+              "type": "radio",
+              "label": "Have you ever had insurance declined, cancelled or voided?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "history.declinedDetails",
+              "type": "text",
+              "label": "Please tell us more",
+              "required": true,
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "history.declined",
+                    "equals": "Yes"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quote",
+      "title": "Your quote",
+      "kind": "quote",
+      "groups": [
+        {
+          "id": "quote.options",
+          "title": "Payment options",
+          "elements": [
+            {
+              "id": "quote.banner",
+              "type": "display",
+              "text": "Here’s your indicative quote. You can choose to pay annually or monthly."
+            },
+            {
+              "id": "quote.paymentFrequency",
+              "type": "radio",
+              "label": "How would you like to pay?",
+              "options": [
+                "annual",
+                "monthly"
+              ],
+              "required": true,
+              "default": "annual"
+            },
+            {
+              "id": "quote.summary",
+              "type": "quote",
+              "mode": "toggle",
+              "paymentFrequencyRef": "quote.paymentFrequency",
+              "pricePlaceholders": {
+                "annual": 612.34,
+                "monthly": {
+                  "deposit": 85.0,
+                  "instalments": 11,
+                  "instalmentAmount": 57.25,
+                  "apr": 19.9
+                }
+              },
+              "breakdown": [
+                {
+                  "label": "Base premium",
+                  "amount": 480.0
+                },
+                {
+                  "label": "Van risk factor",
+                  "amount": 62.34
+                },
+                {
+                  "label": "Drivers",
+                  "amount": 40.0
+                },
+                {
+                  "label": "Fees & taxes",
+                  "amount": 30.0
+                }
+              ]
+            },
+            {
+              "id": "quote.inclusions",
+              "type": "display",
+              "text": "**What’s included**\n- New-for-old parts (where applicable)\n- Windscreen cover (comprehensive)\n- Courtesy van (subject to availability)"
+            },
+            {
+              "id": "quote.exclusions",
+              "type": "display",
+              "text": "**What’s not included**\n- Wear and tear\n- Use outside the policy terms\n- Track use"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "summary",
+      "title": "Check your details",
+      "kind": "summary",
+      "groups": [
+        {
+          "id": "summary.playback",
+          "title": "Your answers",
+          "elements": [
+            {
+              "id": "summary.view",
+              "type": "summary",
+              "sections": [
+                {
+                  "title": "About you",
+                  "refs": [
+                    "person.*",
+                    "address.*",
+                    "start.coverStart"
+                  ]
+                },
+                {
+                  "title": "Your van",
+                  "refs": [
+                    "vehicle.*",
+                    "use.*"
+                  ]
+                },
+                {
+                  "title": "Drivers",
+                  "refs": [
+                    "drivers.drivers"
+                  ]
+                },
+                {
+                  "title": "Insurance history",
+                  "refs": [
+                    "history.*"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "summary.confirm",
+              "type": "checkbox",
+              "label": "Confirm",
+              "options": [
+                "I confirm the details are correct"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "payment",
+      "title": "Payment",
+      "kind": "payment",
+      "groups": [
+        {
+          "id": "payment.method",
+          "title": "How you’ll pay",
+          "elements": [
+            {
+              "id": "payment.method",
+              "type": "radio",
+              "label": "Payment method",
+              "options": [
+                "Debit card",
+                "Direct Debit"
+              ],
+              "required": true
+            },
+            {
+              "id": "payment.cardName",
+              "type": "text",
+              "label": "Name on card",
+              "required": true,
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "payment.method",
+                    "equals": "Debit card"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "payment.ddAccountName",
+              "type": "text",
+              "label": "Account holder name",
+              "required": true,
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "payment.method",
+                    "equals": "Direct Debit"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "payment.ddSortCode",
+              "type": "text",
+              "label": "Sort code",
+              "required": true,
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "payment.method",
+                    "equals": "Direct Debit"
+                  }
+                ]
+              },
+              "validation": {
+                "pattern": "^\\d{2}-?\\d{2}-?\\d{2}$",
+                "message": "Enter a valid sort code"
+              }
+            },
+            {
+              "id": "payment.ddAccountNumber",
+              "type": "text",
+              "label": "Account number",
+              "required": true,
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "payment.method",
+                    "equals": "Direct Debit"
+                  }
+                ]
+              },
+              "validation": {
+                "pattern": "^\\d{8}$",
+                "message": "Enter an 8 digit account number"
+              }
+            },
+            {
+              "id": "payment.terms",
+              "type": "checkbox",
+              "label": "Agreements",
+              "options": [
+                "I agree to the terms and conditions",
+                "I confirm I have answered all questions honestly"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

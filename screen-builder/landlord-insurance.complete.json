@@ -1,0 +1,670 @@
+{
+  "schemaVersion": "1.0",
+  "settings": {
+    "quote": {
+      "defaultPaymentFrequency": "annual",
+      "allowMonthly": true,
+      "allowAnnual": true
+    },
+    "logic": {
+      "defaultCombinator": "AND",
+      "truthyValues": [
+        true,
+        "true",
+        "yes",
+        "Yes"
+      ]
+    },
+    "ui": {
+      "showProgress": true,
+      "showPageNav": true
+    }
+  },
+  "lob": {
+    "id": "landlord",
+    "name": "Landlord Insurance",
+    "journey": "quote-buy",
+    "currency": "GBP",
+    "locale": "en-GB",
+    "version": "2026-01-16"
+  },
+  "pages": [
+    {
+      "id": "start",
+      "title": "Get a landlord insurance quote",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "start.about",
+          "title": "Before we start",
+          "elements": [
+            {
+              "id": "start.intro",
+              "type": "display",
+              "text": "We’ll ask about your property, the tenants and the cover you need."
+            },
+            {
+              "id": "start.coverStart",
+              "type": "date",
+              "label": "When do you want cover to start?",
+              "required": true
+            },
+            {
+              "id": "start.isUKResident",
+              "type": "radio",
+              "label": "Are you a UK resident?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "policyholder",
+      "title": "Policyholder",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "policyholder.details",
+          "title": "Your details",
+          "elements": [
+            {
+              "id": "person.title",
+              "type": "select",
+              "label": "Title",
+              "options": [
+                "Mr",
+                "Mrs",
+                "Miss",
+                "Ms",
+                "Mx",
+                "Dr"
+              ],
+              "required": true
+            },
+            {
+              "id": "person.firstName",
+              "type": "text",
+              "label": "First name",
+              "required": true
+            },
+            {
+              "id": "person.lastName",
+              "type": "text",
+              "label": "Last name",
+              "required": true
+            },
+            {
+              "id": "person.dob",
+              "type": "date",
+              "label": "Date of birth",
+              "required": true
+            },
+            {
+              "id": "person.email",
+              "type": "text",
+              "label": "Email address",
+              "required": true,
+              "validation": {
+                "format": "email"
+              }
+            },
+            {
+              "id": "person.phone",
+              "type": "text",
+              "label": "Phone number",
+              "required": true
+            },
+            {
+              "id": "address.line1",
+              "type": "text",
+              "label": "Address line 1",
+              "required": true
+            },
+            {
+              "id": "address.line2",
+              "type": "text",
+              "label": "Address line 2",
+              "required": false
+            },
+            {
+              "id": "address.town",
+              "type": "text",
+              "label": "Town/City",
+              "required": true
+            },
+            {
+              "id": "address.postcode",
+              "type": "text",
+              "label": "Postcode",
+              "required": true,
+              "validation": {
+                "pattern": "^[A-Za-z]{1,2}\\d{1,2}[A-Za-z]?\\s?\\d[A-Za-z]{2}$",
+                "message": "Enter a valid UK postcode"
+              }
+            },
+            {
+              "id": "policyholder.isCompany",
+              "type": "radio",
+              "label": "Is the policyholder a company?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "policyholder.companyName",
+              "type": "text",
+              "label": "Company name",
+              "required": true,
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "policyholder.isCompany",
+                    "equals": "Yes"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "properties",
+      "title": "Property details",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "properties.list",
+          "title": "Add properties",
+          "elements": [
+            {
+              "id": "properties.tip",
+              "type": "display",
+              "text": "If you have multiple rental properties, add each one here."
+            },
+            {
+              "id": "properties.properties",
+              "type": "repeat",
+              "label": "Properties",
+              "itemLabel": "Property",
+              "minItems": 1,
+              "maxItems": 20,
+              "itemSchema": [
+                {
+                  "id": "property.nickname",
+                  "type": "text",
+                  "label": "Property nickname",
+                  "required": false,
+                  "helpText": "e.g. 'High Street Flat'"
+                },
+                {
+                  "id": "property.type",
+                  "type": "select",
+                  "label": "Property type",
+                  "options": [
+                    "House",
+                    "Flat",
+                    "Bungalow",
+                    "Maisonette",
+                    "HMO",
+                    "Other"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "property.bedrooms",
+                  "type": "number",
+                  "label": "Number of bedrooms",
+                  "required": true,
+                  "min": 0,
+                  "max": 20
+                },
+                {
+                  "id": "property.yearBuilt",
+                  "type": "number",
+                  "label": "Year built (approx)",
+                  "required": false,
+                  "min": 1600,
+                  "max": 2026
+                },
+                {
+                  "id": "property.walls",
+                  "type": "select",
+                  "label": "Wall construction",
+                  "options": [
+                    "Brick/stone",
+                    "Timber frame",
+                    "Non-standard"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "property.roof",
+                  "type": "select",
+                  "label": "Roof construction",
+                  "options": [
+                    "Tile/slate",
+                    "Thatched",
+                    "Flat roof",
+                    "Other"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "property.listed",
+                  "type": "radio",
+                  "label": "Is the property listed?",
+                  "options": [
+                    "Yes",
+                    "No"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "property.rebuildCost",
+                  "type": "number",
+                  "label": "Rebuild cost (£)",
+                  "required": true,
+                  "min": 0
+                },
+                {
+                  "id": "property.contentsCover",
+                  "type": "radio",
+                  "label": "Do you need contents cover?",
+                  "options": [
+                    "Yes",
+                    "No"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "property.contentsAmount",
+                  "type": "number",
+                  "label": "Contents sum insured (£)",
+                  "required": true,
+                  "min": 0,
+                  "showWhen": {
+                    "all": [
+                      {
+                        "fact": "property.contentsCover",
+                        "equals": "Yes"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "property.address.line1",
+                  "type": "text",
+                  "label": "Address line 1",
+                  "required": true
+                },
+                {
+                  "id": "property.address.town",
+                  "type": "text",
+                  "label": "Town/City",
+                  "required": true
+                },
+                {
+                  "id": "property.address.postcode",
+                  "type": "text",
+                  "label": "Postcode",
+                  "required": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tenancy",
+      "title": "Tenancy & add-ons",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "tenancy.main",
+          "title": "Tenancy details",
+          "elements": [
+            {
+              "id": "tenancy.tenantType",
+              "type": "select",
+              "label": "Tenant type",
+              "options": [
+                "Single family",
+                "Professional sharers",
+                "Students",
+                "DSS/Universal Credit",
+                "Holiday let",
+                "HMO"
+              ],
+              "required": true
+            },
+            {
+              "id": "tenancy.unoccupied",
+              "type": "radio",
+              "label": "Will the property be unoccupied for more than 30 days?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "tenancy.unoccupiedDays",
+              "type": "number",
+              "label": "How many days (approx)?",
+              "required": true,
+              "min": 31,
+              "max": 365,
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "tenancy.unoccupied",
+                    "equals": "Yes"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "tenancy.annualRent",
+              "type": "number",
+              "label": "Annual rent (£)",
+              "required": true,
+              "min": 0
+            },
+            {
+              "id": "tenancy.rentProtection",
+              "type": "radio",
+              "label": "Add rent protection cover?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "tenancy.legalExpenses",
+              "type": "radio",
+              "label": "Add legal expenses cover?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "history",
+      "title": "Insurance history",
+      "kind": "form",
+      "groups": [
+        {
+          "id": "history.main",
+          "title": "Previous insurance",
+          "elements": [
+            {
+              "id": "history.claims",
+              "type": "radio",
+              "label": "Any property claims in the last 5 years?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "history.claimList",
+              "type": "repeat",
+              "label": "Claims",
+              "itemLabel": "Claim",
+              "minItems": 1,
+              "maxItems": 10,
+              "itemSchema": [
+                {
+                  "id": "claim.date",
+                  "type": "date",
+                  "label": "When did the claim happen?",
+                  "required": true
+                },
+                {
+                  "id": "claim.type",
+                  "type": "select",
+                  "label": "What type of claim was it?",
+                  "options": [
+                    "Accident",
+                    "Theft",
+                    "Fire",
+                    "Windscreen",
+                    "Malicious damage",
+                    "Other"
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "claim.amount",
+                  "type": "number",
+                  "label": "Approximate cost (£)",
+                  "required": false,
+                  "min": 0
+                },
+                {
+                  "id": "claim.atFault",
+                  "type": "radio",
+                  "label": "Were you at fault?",
+                  "options": [
+                    "Yes",
+                    "No",
+                    "Partly"
+                  ],
+                  "required": true
+                }
+              ],
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "history.claims",
+                    "equals": "Yes"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "history.declined",
+              "type": "radio",
+              "label": "Have you ever had insurance declined, cancelled or voided?",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "required": true
+            },
+            {
+              "id": "history.declinedDetails",
+              "type": "text",
+              "label": "Please tell us more",
+              "required": true,
+              "showWhen": {
+                "all": [
+                  {
+                    "fact": "history.declined",
+                    "equals": "Yes"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quote",
+      "title": "Your quote",
+      "kind": "quote",
+      "groups": [
+        {
+          "id": "quote.options",
+          "title": "Payment options",
+          "elements": [
+            {
+              "id": "quote.banner",
+              "type": "display",
+              "text": "Here’s your indicative quote. You can choose annual or monthly payments."
+            },
+            {
+              "id": "quote.paymentFrequency",
+              "type": "radio",
+              "label": "How would you like to pay?",
+              "options": [
+                "annual",
+                "monthly"
+              ],
+              "required": true,
+              "default": "annual"
+            },
+            {
+              "id": "quote.summary",
+              "type": "quote",
+              "mode": "toggle",
+              "paymentFrequencyRef": "quote.paymentFrequency",
+              "pricePlaceholders": {
+                "annual": 523.8,
+                "monthly": {
+                  "deposit": 72.0,
+                  "instalments": 11,
+                  "instalmentAmount": 49.8,
+                  "apr": 19.9
+                }
+              },
+              "breakdown": [
+                {
+                  "label": "Buildings cover",
+                  "amount": 410.0
+                },
+                {
+                  "label": "Contents cover",
+                  "amount": 55.0
+                },
+                {
+                  "label": "Rent protection",
+                  "amount": 38.8
+                },
+                {
+                  "label": "Fees & taxes",
+                  "amount": 20.0
+                }
+              ]
+            },
+            {
+              "id": "quote.inclusions",
+              "type": "display",
+              "text": "**Typical cover**\n- Buildings (sum insured)\n- Landlord liability\n- Loss of rent (where selected)"
+            },
+            {
+              "id": "quote.exclusions",
+              "type": "display",
+              "text": "**Common exclusions**\n- Wear and tear\n- Poor maintenance\n- Unoccupied beyond the allowed period"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "summary",
+      "title": "Check your details",
+      "kind": "summary",
+      "groups": [
+        {
+          "id": "summary.playback",
+          "title": "Your answers",
+          "elements": [
+            {
+              "id": "summary.view",
+              "type": "summary",
+              "sections": [
+                {
+                  "title": "Policyholder",
+                  "refs": [
+                    "person.*",
+                    "address.*",
+                    "start.coverStart",
+                    "policyholder.*"
+                  ]
+                },
+                {
+                  "title": "Properties",
+                  "refs": [
+                    "properties.properties"
+                  ]
+                },
+                {
+                  "title": "Tenancy & add-ons",
+                  "refs": [
+                    "tenancy.*"
+                  ]
+                },
+                {
+                  "title": "History",
+                  "refs": [
+                    "history.*"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "summary.confirm",
+              "type": "checkbox",
+              "label": "Confirm",
+              "options": [
+                "I confirm the details are correct"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "payment",
+      "title": "Payment",
+      "kind": "payment",
+      "groups": [
+        {
+          "id": "payment.method",
+          "title": "How you’ll pay",
+          "elements": [
+            {
+              "id": "payment.method",
+              "type": "radio",
+              "label": "Payment method",
+              "options": [
+                "Debit card",
+                "Direct Debit"
+              ],
+              "required": true
+            },
+            {
+              "id": "payment.terms",
+              "type": "checkbox",
+              "label": "Agreements",
+              "options": [
+                "I agree to the terms and conditions",
+                "I confirm I have answered all questions honestly"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
