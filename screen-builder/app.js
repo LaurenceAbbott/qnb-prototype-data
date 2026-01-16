@@ -6629,6 +6629,7 @@ CH 8  Event wiring (listeners)
   // Auto-create friendly initial values if schema is empty or corrupted
   if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
   if (!Array.isArray(schema.pages)) schema.pages = [];
+    }
 })();
 
 
