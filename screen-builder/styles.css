@@ -678,7 +678,7 @@ button, input, select, textarea{ font-family: inherit; }
   border: 1px solid rgba(255,255,255,0.12);
   margin: 0 auto 16px;
 }
-.emptyState h2{ margin:0; font-weight: 840; }
+.emptyState h2{ margin:0; font-weight: 840; max-width: 830px; }
 .emptyState p{ color: var(--muted); max-width: 520px; }
 .emptyActions{ margin-top: 14px; display:flex; justify-content:center; }
 
