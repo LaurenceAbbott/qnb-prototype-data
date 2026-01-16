@@ -841,7 +841,7 @@ button, input, select, textarea{ font-family: inherit; }
     justify-content: flex-start;
     align-items: center;
 }
-.choiceOption input[type="checkbox"] {
+.choiceOption input[type="checkbox"]:not(.choiceCheckBox) {
     width: 18px;
     height: 18px;
     accent-color: rgba(45,212,191,0.9);
