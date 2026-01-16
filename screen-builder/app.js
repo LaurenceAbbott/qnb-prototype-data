@@ -3481,28 +3481,36 @@ actions.appendChild(btnGroupOpts);
         String(optValue ?? "");
 
       const valueString = String(optValue ?? "");
-
-      const btn = document.createElement("button");
-      btn.type = "button";
+      
       const isPlaceholder = valueString === "" && optLabel === "Add options first";
-      btn.className = "choiceBtn" + (currentValues.has(valueString) ? " selected" : "");
-      btn.textContent = optLabel;
+     const item = document.createElement("label");
+      item.className = "choiceOption" + (currentValues.has(valueString) ? " selected" : "");
       if (isPlaceholder) {
-        btn.disabled = true;
+        item.classList.add("isDisabled");
       }
-      btn.addEventListener("click", () => {
-        const nextValues = new Set(currentValues);
-        if (nextValues.has(valueString)) {
-          nextValues.delete(valueString);
-          btn.classList.remove("selected");
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = currentValues.has(valueString);
+      checkbox.disabled = isPlaceholder;
+
+      const text = document.createElement("span");
+      text.textContent = optLabel;
+
+      checkbox.addEventListener("change", () => {
+        if (checkbox.checked) {
+          currentValues.add(valueString);
+          item.classList.add("selected");
         } else {
-          nextValues.add(valueString);
-          btn.classList.add("selected");
+           currentValues.delete(valueString);
+          item.classList.remove("selected");
         }
-        onChange(Array.from(nextValues));
+        onChange(Array.from(currentValues));
       });
 
-      list.appendChild(btn);
+      item.appendChild(checkbox);
+      item.appendChild(text);
+      list.appendChild(item);
     });
 
     wrap.appendChild(lab);
@@ -3796,7 +3804,9 @@ actions.appendChild(btnGroupOpts);
 
     sendBtn.addEventListener("click", async () => {
       if (!aiState) return;
-      const promptText = (aiState.draft || "").trim();
+      const draftText = input.value || "";
+      const promptText = draftText.trim();
+      aiState.draft = draftText;
       if (!promptText) {
         aiState.status = "Add a prompt first.";
         renderInspector();
