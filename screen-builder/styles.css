@@ -1605,6 +1605,10 @@ p {
 .aiQuestionAssist button.iconBtn {
     display: none;
 }
+.previewFollowUp {
+    display: grid;
+    gap: 24px;
+}
 
 
 @media (max-width: 1400px){
