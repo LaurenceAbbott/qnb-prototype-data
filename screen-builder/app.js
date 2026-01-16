@@ -3490,6 +3490,7 @@ actions.appendChild(btnGroupOpts);
       }
 
       const checkbox = document.createElement("input");
+      checkbox.className = "choiceCheckBox";
       checkbox.type = "checkbox";
       checkbox.checked = currentValues.has(valueString);
       checkbox.disabled = isPlaceholder;
