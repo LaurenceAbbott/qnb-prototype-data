@@ -825,6 +825,25 @@ button, input, select, textarea{ font-family: inherit; }
     flex-direction: row;
     flex-wrap: wrap;
 }
+.choiceGridPlain .choiceOption {
+    padding: 6px 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    min-width: auto;
+}
+.choiceGridPlain .choiceOption:hover {
+    background: transparent;
+    border-color: transparent;
+}
+.choiceGridPlain .choiceOption:active {
+    transform: none;
+}
+.choiceGridPlain .choiceOption.selected {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+}
 .choiceOption {
     text-align: left;
     padding: 12px 14px;
