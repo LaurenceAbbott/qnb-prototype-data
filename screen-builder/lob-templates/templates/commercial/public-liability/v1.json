@@ -1,81 +1,208 @@
 {
-  "schemaVersion": "1.0",
-  "settings": {
-    "quote": {
-      "defaultPaymentFrequency": "annual",
-      "allowMonthly": true,
-      "allowAnnual": true
-    },
-    "logic": {
-      "defaultCombinator": "AND",
-      "truthyValues": [
-        true,
-        "true",
-        "yes",
-        "Yes"
-      ]
-    },
-    "ui": {
-      "showProgress": true,
-      "showPageNav": true
-    }
+  "meta": {
+    "version": 1,
+    "createdAt": "2026-01-16T15:27:37Z",
+    "updatedAt": "2026-01-16T15:27:37Z",
+    "questionArrays": [],
+    "previewMode": "page"
   },
-  "lob": {
-    "id": "public-liability",
-    "name": "Public Liability Insurance",
-    "journey": "quote-buy",
-    "currency": "GBP",
-    "locale": "en-GB",
-    "version": "2026-01-16"
-  },
+  "lineOfBusiness": "Public Liability Insurance Quote",
   "pages": [
     {
-      "id": "start",
-      "title": "Get a public liability quote",
-      "kind": "form",
+      "id": "page_fc75d7dd6b43",
+      "name": "Get a public liability quote",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_549dd587ab03",
+          "title": "Get a public liability quote",
+          "level": "h1",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_5296968fe60c"
+        }
+      ],
       "groups": [
         {
-          "id": "start.about",
-          "title": "Before we start",
-          "elements": [
+          "id": "group_5296968fe60c",
+          "name": "Before we start",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "start.intro",
+              "id": "q_4291d9055fd5",
               "type": "display",
-              "text": "We’ll ask about your business activities and the level of cover you need."
+              "title": "Public Liability Insurance",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "hero",
+                "tone": "neutral",
+                "title": "Public Liability Insurance",
+                "subtitle": "Public Liability Insurance",
+                "bodyHtml": "<p>We\u2019ll ask about your business activities and the level of cover you need.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "start.coverStart",
+              "id": "q_4d6e5c9fadb6",
               "type": "date",
-              "label": "When do you want cover to start?",
-              "required": true
+              "title": "When do you want cover to start?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "start.isUKBusiness",
-              "type": "radio",
-              "label": "Is the business based in the UK?",
+              "id": "q_275562cd6025",
+              "type": "yesno",
+              "title": "Is the business based in the UK?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "business",
-      "title": "Business details",
-      "kind": "form",
+      "id": "page_8afd9989c8c9",
+      "name": "Business details",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_8858649748c6",
+          "title": "Business details",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_07c905919d56"
+        }
+      ],
       "groups": [
         {
-          "id": "business.main",
-          "title": "About the business",
-          "elements": [
+          "id": "group_07c905919d56",
+          "name": "About the business",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "business.legalStatus",
+              "id": "q_77d4bcdffc0e",
               "type": "select",
-              "label": "Legal status",
+              "title": "Legal status",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Sole trader",
                 "Limited company",
@@ -83,18 +210,85 @@
                 "LLP",
                 "Other"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "business.name",
+              "id": "q_89de860e81c5",
               "type": "text",
-              "label": "Business name",
-              "required": true
+              "title": "Business name",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "business.trade",
+              "id": "q_fc62b565e575",
               "type": "select",
-              "label": "Main trade",
+              "title": "Main trade",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Builder",
                 "Electrician",
@@ -106,321 +300,868 @@
                 "IT/Consultancy",
                 "Other"
               ],
-              "required": true
-            },
-            {
-              "id": "business.tradeOther",
-              "type": "text",
-              "label": "Describe your trade",
-              "required": true,
-              "showWhen": {
-                "all": [
-                  {
-                    "fact": "business.trade",
-                    "equals": "Other"
-                  }
-                ]
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
               }
             },
             {
-              "id": "business.turnover",
-              "type": "select",
-              "label": "Annual turnover",
-              "options": [
-                "Up to £50k",
-                "£50k–£100k",
-                "£100k–£250k",
-                "£250k–£500k",
-                "£500k+"
-              ],
-              "required": true
-            },
-            {
-              "id": "business.employees",
-              "type": "number",
-              "label": "Number of employees",
+              "id": "q_82eb537b7cc8",
+              "type": "text",
+              "title": "Describe your trade",
               "required": true,
-              "min": 0,
-              "max": 500
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "business.subcontractors",
-              "type": "radio",
-              "label": "Do you use subcontractors?",
+              "id": "q_e5760bbd4419",
+              "type": "select",
+              "title": "Annual turnover",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Up to \u00a350k",
+                "\u00a350k\u2013\u00a3100k",
+                "\u00a3100k\u2013\u00a3250k",
+                "\u00a3250k\u2013\u00a3500k",
+                "\u00a3500k+"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_86e105c27349",
+              "type": "number",
+              "title": "Number of employees",
+              "required": true,
+              "help": "Min 0, Max 500",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_5b0ddcaf001b",
+              "type": "yesno",
+              "title": "Do you use subcontractors?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
-            },
-            {
-              "id": "business.subcontractorCount",
-              "type": "number",
-              "label": "How many subcontractors?",
-              "required": true,
-              "min": 1,
-              "max": 500,
-              "showWhen": {
-                "all": [
-                  {
-                    "fact": "business.subcontractors",
-                    "equals": "Yes"
-                  }
-                ]
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
               }
             },
             {
-              "id": "business.address.line1",
-              "type": "text",
-              "label": "Trading address line 1",
-              "required": true
+              "id": "q_d0e25df24bb0",
+              "type": "number",
+              "title": "How many subcontractors?",
+              "required": true,
+              "help": "Min 1, Max 500",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "business.address.town",
+              "id": "q_b7ca20a126b4",
               "type": "text",
-              "label": "Town/City",
-              "required": true
+              "title": "Trading address line 1",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "business.address.postcode",
+              "id": "q_b19abcf1b50d",
               "type": "text",
-              "label": "Postcode",
-              "required": true
+              "title": "Town/City",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_bd2691200bd6",
+              "type": "text",
+              "title": "Postcode",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "risk",
-      "title": "Risk questions",
-      "kind": "form",
+      "id": "page_842a491baf98",
+      "name": "Risk questions",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_0e1b22ebcd03",
+          "title": "Risk questions",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_3d1c2a33b245"
+        }
+      ],
       "groups": [
         {
-          "id": "risk.main",
-          "title": "Tell us about the work",
-          "elements": [
+          "id": "group_3d1c2a33b245",
+          "name": "Tell us about the work",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "risk.heightWork",
-              "type": "radio",
-              "label": "Do you work at height above 10 metres?",
-              "options": [
-                "Yes",
-                "No"
-              ],
-              "required": true
-            },
-            {
-              "id": "risk.depthWork",
-              "type": "radio",
-              "label": "Do you work at depth (excavations) below 3 metres?",
-              "options": [
-                "Yes",
-                "No"
-              ],
-              "required": true
-            },
-            {
-              "id": "risk.heatWork",
-              "type": "radio",
-              "label": "Do you use heat away from your own premises?",
-              "options": [
-                "Yes",
-                "No"
-              ],
+              "id": "q_4e4624037ef5",
+              "type": "yesno",
+              "title": "Do you work at height above 10 metres?",
               "required": true,
-              "helpText": "e.g. blowtorches, hot works"
-            },
-            {
-              "id": "risk.hazardous",
-              "type": "radio",
-              "label": "Any hazardous materials or chemicals used?",
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "risk.offshore",
-              "type": "radio",
-              "label": "Any offshore work?",
+              "id": "q_da1bb8acf520",
+              "type": "yesno",
+              "title": "Do you work at depth (excavations) below 3 metres?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "risk.abroad",
-              "type": "radio",
-              "label": "Any work abroad?",
+              "id": "q_988c5627ad0d",
+              "type": "yesno",
+              "title": "Do you use heat away from your own premises?",
+              "required": true,
+              "help": "e.g. blowtorches, hot works",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_86e284d16a75",
+              "type": "yesno",
+              "title": "Any hazardous materials or chemicals used?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_ef3e47771ece",
+              "type": "yesno",
+              "title": "Any offshore work?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_70aebbe4f0da",
+              "type": "yesno",
+              "title": "Any work abroad?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "cover",
-      "title": "Cover options",
-      "kind": "form",
+      "id": "page_0b00cf3c9f26",
+      "name": "Cover options",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_dc5f7546d4b2",
+          "title": "Cover options",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_3cf221053354"
+        }
+      ],
       "groups": [
         {
-          "id": "cover.main",
-          "title": "Choose your cover",
-          "elements": [
+          "id": "group_3cf221053354",
+          "name": "Choose your cover",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "cover.limit",
+              "id": "q_091d2fbff67d",
               "type": "radio",
-              "label": "Public liability limit",
+              "title": "Public liability limit",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
-                "£1m",
-                "£2m",
-                "£5m",
-                "£10m"
+                "\u00a31m",
+                "\u00a32m",
+                "\u00a35m",
+                "\u00a310m"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "cover.products",
-              "type": "radio",
-              "label": "Add products liability?",
+              "id": "q_6498d43dbdbb",
+              "type": "yesno",
+              "title": "Add products liability?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "cover.territorial",
+              "id": "q_af4ca01b5a5c",
               "type": "select",
-              "label": "Territorial limits",
+              "title": "Territorial limits",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "UK only",
                 "UK + EU",
                 "Worldwide (excl. USA/Canada)",
                 "Worldwide (incl. USA/Canada)"
               ],
-              "required": true
-            },
-            {
-              "id": "cover.excess",
-              "type": "select",
-              "label": "Excess",
-              "options": [
-                "£0",
-                "£250",
-                "£500",
-                "£1,000"
-              ],
-              "required": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "history",
-      "title": "Insurance history",
-      "kind": "form",
-      "groups": [
-        {
-          "id": "history.main",
-          "title": "Previous insurance",
-          "elements": [
-            {
-              "id": "history.claims",
-              "type": "radio",
-              "label": "Any liability claims in the last 5 years?",
-              "options": [
-                "Yes",
-                "No"
-              ],
-              "required": true
-            },
-            {
-              "id": "history.claimList",
-              "type": "repeat",
-              "label": "Claims",
-              "itemLabel": "Claim",
-              "minItems": 1,
-              "maxItems": 10,
-              "itemSchema": [
-                {
-                  "id": "claim.date",
-                  "type": "date",
-                  "label": "When did the claim happen?",
-                  "required": true
-                },
-                {
-                  "id": "claim.type",
-                  "type": "select",
-                  "label": "What type of claim was it?",
-                  "options": [
-                    "Accident",
-                    "Theft",
-                    "Fire",
-                    "Windscreen",
-                    "Malicious damage",
-                    "Other"
-                  ],
-                  "required": true
-                },
-                {
-                  "id": "claim.amount",
-                  "type": "number",
-                  "label": "Approximate cost (£)",
-                  "required": false,
-                  "min": 0
-                },
-                {
-                  "id": "claim.atFault",
-                  "type": "radio",
-                  "label": "Were you at fault?",
-                  "options": [
-                    "Yes",
-                    "No",
-                    "Partly"
-                  ],
-                  "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
                 }
-              ],
-              "showWhen": {
-                "all": [
-                  {
-                    "fact": "history.claims",
-                    "equals": "Yes"
-                  }
-                ]
               }
             },
             {
-              "id": "history.declined",
-              "type": "radio",
-              "label": "Have you ever had insurance declined, cancelled or voided?",
-              "options": [
-                "Yes",
-                "No"
-              ],
-              "required": true
-            },
-            {
-              "id": "history.declinedDetails",
-              "type": "text",
-              "label": "Please tell us more",
+              "id": "q_3510ba7981b7",
+              "type": "select",
+              "title": "Excess",
               "required": true,
-              "showWhen": {
-                "all": [
-                  {
-                    "fact": "history.declined",
-                    "equals": "Yes"
-                  }
-                ]
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "\u00a30",
+                "\u00a3250",
+                "\u00a3500",
+                "\u00a31,000"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
               }
             }
           ]
@@ -428,158 +1169,844 @@
       ]
     },
     {
-      "id": "quote",
-      "title": "Your quote",
-      "kind": "quote",
+      "id": "page_056639ccf551",
+      "name": "Insurance history",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_126577000690",
+          "title": "Insurance history",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_7300dd173522"
+        }
+      ],
       "groups": [
         {
-          "id": "quote.options",
-          "title": "Payment options",
-          "elements": [
+          "id": "group_7300dd173522",
+          "name": "Previous insurance",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "quote.banner",
-              "type": "display",
-              "text": "Here’s your indicative quote. Choose annual or monthly payments."
+              "id": "q_373945cd6e72",
+              "type": "yesno",
+              "title": "Any liability claims in the last 5 years?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "quote.paymentFrequency",
+              "id": "q_1e10909a373b",
+              "type": "display",
+              "title": "Claims (prototype)",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Claims",
+                "subtitle": "",
+                "bodyHtml": "<p>This section supports multiple items in a full build. For this prototype we\u2019ll capture one item.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_76f8a001582e",
+              "type": "date",
+              "title": "When did the claim happen?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_583e1b626b89",
+              "type": "select",
+              "title": "What type of claim was it?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Accident",
+                "Theft",
+                "Fire",
+                "Windscreen",
+                "Malicious damage",
+                "Other"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_e30675061331",
+              "type": "number",
+              "title": "Approximate cost (\u00a3)",
+              "required": false,
+              "help": "Min 0",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_4e0dee5d7046",
               "type": "radio",
-              "label": "How would you like to pay?",
+              "title": "Were you at fault?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No",
+                "Partly"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_fc6893374293",
+              "type": "yesno",
+              "title": "Have you ever had insurance declined, cancelled or voided?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_9782971e61a4",
+              "type": "text",
+              "title": "Please tell us more",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page_8ba2b0ddbde9",
+      "name": "Your quote",
+      "template": "quote",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_bdf8c4d47cb1",
+          "title": "Your quote",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_0deaf767601d"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_0deaf767601d",
+          "name": "Payment options",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_8a442dce1fed",
+              "type": "display",
+              "title": "Here\u2019s your indicative quote. Choose annual or monthly payments.",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Here\u2019s your indicative quote. Choose annual or monthly payments.",
+                "subtitle": "",
+                "bodyHtml": "<p>Here\u2019s your indicative quote. Choose annual or monthly payments.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_210d26f40aad",
+              "type": "radio",
+              "title": "How would you like to pay?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "annual",
                 "monthly"
               ],
-              "required": true,
-              "default": "annual"
-            },
-            {
-              "id": "quote.summary",
-              "type": "quote",
-              "mode": "toggle",
-              "paymentFrequencyRef": "quote.paymentFrequency",
-              "pricePlaceholders": {
-                "annual": 214.9,
-                "monthly": {
-                  "deposit": 30.0,
-                  "instalments": 11,
-                  "instalmentAmount": 19.95,
-                  "apr": 19.9
-                }
+              "logic": {
+                "enabled": false,
+                "rules": []
               },
-              "breakdown": [
-                {
-                  "label": "Base premium",
-                  "amount": 165.0
-                },
-                {
-                  "label": "Trade & risk factors",
-                  "amount": 28.9
-                },
-                {
-                  "label": "Products liability",
-                  "amount": 12.0
-                },
-                {
-                  "label": "Fees & taxes",
-                  "amount": 9.0
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
                 }
-              ]
+              }
             },
             {
-              "id": "quote.inclusions",
+              "id": "q_9d2ab2a696bb",
               "type": "display",
-              "text": "**Typical cover**\n- Injury or damage to third parties\n- Legal defence costs\n- Cover at the locations you work"
+              "title": "quote",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "quote",
+                "subtitle": "",
+                "bodyHtml": "<p>[quote]</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "quote.exclusions",
+              "id": "q_1f73d1a7c14e",
               "type": "display",
-              "text": "**Common exclusions**\n- Deliberate acts\n- Contractual liability beyond policy terms\n- Fines and penalties"
+              "title": "**Typical cover**\n- Injury or damage to third parties\n- Legal defence costs\n- Co",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "**Typical cover**\n- Injury or damage to third parties\n- Legal defence costs\n- Co",
+                "subtitle": "",
+                "bodyHtml": "<p><strong>Typical cover</strong></p><ul><li>Injury or damage to third parties</li><li>Legal defence costs</li><li>Cover at the locations you work</li></ul>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_9783166a46e4",
+              "type": "display",
+              "title": "**Common exclusions**\n- Deliberate acts\n- Contractual liability beyond policy te",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "**Common exclusions**\n- Deliberate acts\n- Contractual liability beyond policy te",
+                "subtitle": "",
+                "bodyHtml": "<p><strong>Common exclusions</strong></p><ul><li>Deliberate acts</li><li>Contractual liability beyond policy terms</li><li>Fines and penalties</li></ul>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "summary",
-      "title": "Check your details",
-      "kind": "summary",
+      "id": "page_9a5497469e35",
+      "name": "Check your details",
+      "template": "summary",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_da8a0819df3c",
+          "title": "Check your details",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_9815b3a886ae"
+        }
+      ],
       "groups": [
         {
-          "id": "summary.playback",
-          "title": "Your answers",
-          "elements": [
+          "id": "group_9815b3a886ae",
+          "name": "Your answers",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "summary.view",
-              "type": "summary",
-              "sections": [
-                {
-                  "title": "Business",
-                  "refs": [
-                    "business.*",
-                    "start.coverStart"
-                  ]
-                },
-                {
-                  "title": "Risk",
-                  "refs": [
-                    "risk.*"
-                  ]
-                },
-                {
-                  "title": "Cover",
-                  "refs": [
-                    "cover.*"
-                  ]
-                },
-                {
-                  "title": "History",
-                  "refs": [
-                    "history.*"
-                  ]
+              "id": "q_c1995a3f2696",
+              "type": "display",
+              "title": "summary",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "summary",
+                "subtitle": "",
+                "bodyHtml": "<p>[summary]</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
                 }
-              ]
+              }
             },
             {
-              "id": "summary.confirm",
+              "id": "q_052e89bead88",
               "type": "checkbox",
-              "label": "Confirm",
+              "title": "Confirm",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "I confirm the details are correct"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "payment",
-      "title": "Payment",
-      "kind": "payment",
+      "id": "page_7bae988604f3",
+      "name": "Payment",
+      "template": "payment",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_d4b90a15583e",
+          "title": "Payment",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_170ca75fc95f"
+        }
+      ],
       "groups": [
         {
-          "id": "payment.method",
-          "title": "How you’ll pay",
-          "elements": [
+          "id": "group_170ca75fc95f",
+          "name": "How you\u2019ll pay",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "payment.method",
+              "id": "q_2ba644ece363",
               "type": "radio",
-              "label": "Payment method",
+              "title": "Payment method",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Debit card",
                 "Direct Debit"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "payment.terms",
+              "id": "q_ecbfee755952",
               "type": "checkbox",
-              "label": "Agreements",
+              "title": "Agreements",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "I agree to the terms and conditions",
                 "I confirm I have answered all questions honestly"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
