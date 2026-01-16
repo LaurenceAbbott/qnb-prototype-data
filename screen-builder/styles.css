@@ -660,7 +660,6 @@ button, input, select, textarea{ font-family: inherit; }
 .muted{ color: var(--muted); }
 
 .emptyState{
-  position:absolute;
   inset: 0;
   display:none;
   place-items:center;
