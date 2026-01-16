@@ -825,25 +825,6 @@ button, input, select, textarea{ font-family: inherit; }
     flex-direction: row;
     flex-wrap: wrap;
 }
-.choiceGridPlain .choiceOption {
-    padding: 6px 0;
-    border: none;
-    background: transparent;
-    box-shadow: none;
-    min-width: auto;
-}
-.choiceGridPlain .choiceOption:hover {
-    background: transparent;
-    border-color: transparent;
-}
-.choiceGridPlain .choiceOption:active {
-    transform: none;
-}
-.choiceGridPlain .choiceOption.selected {
-    border-color: transparent;
-    background: transparent;
-    box-shadow: none;
-}
 .choiceOption {
     text-align: left;
     padding: 12px 14px;
@@ -963,6 +944,8 @@ ul {
 .previewTextBlock {
     padding-top: 40px;
 }
+  
+}
 .previewTextBlockTitle {
   
 }
@@ -999,6 +982,7 @@ ul {
 }
 
 /* Checkbox styling */
+}
 .choiceCheck {
     gap: 10px;
     display: flex;
@@ -1124,7 +1108,7 @@ select::-ms-expand {
   opacity: 1;
 }
 /* =========================================================
-   Flatpickr — OGI Glass Dark (single clean block)
+   Flatpickr â€” OGI Glass Dark (single clean block)
    Fixes:
    - Anchors dropdown to the date input (when appendTo is .pInputWrap)
    - Correct z-index (always above)
@@ -1170,11 +1154,11 @@ select::-ms-expand {
   /* always above everything */
   z-index: 2147483647 !important;
 
-  /* kill any previous “nudge” rules */
+  /* kill any previous â€œnudgeâ€ rules */
   margin-top: 0 !important;
 }
 
-/* Anchor positioning ONLY when it’s inside the input wrapper (appendTo) */
+/* Anchor positioning ONLY when itâ€™s inside the input wrapper (appendTo) */
 .pInputWrap .flatpickr-calendar{
   position: absolute !important;
   top: calc(100% + 10px) !important;
@@ -1246,7 +1230,7 @@ span.flatpickr-weekday{
   justify-content: center !important;
 }
 
-/* Days grid — don’t force widths, just ensure centering is consistent */
+/* Days grid â€” donâ€™t force widths, just ensure centering is consistent */
 .flatpickr-rContainer,
 .dayContainer{
   width: auto !important;
