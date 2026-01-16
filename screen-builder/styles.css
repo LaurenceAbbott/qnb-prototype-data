@@ -1678,6 +1678,7 @@ p {
     font-weight: 840;
     font-size: 110px;
     line-height: 97%;
+    max-width: 830px;
 }
 .emptyState.show {
     display: grid;
