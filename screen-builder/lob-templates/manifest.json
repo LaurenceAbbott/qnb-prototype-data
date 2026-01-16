@@ -61,6 +61,59 @@
       ]
     },
     {
+      "key": "landlord-insurance",
+      "name": "Landlord Insurance Quote",
+      "category": "commercial",
+      "path": "templates/commercial/landlord-insurance/v1.json",
+      "keywords": [
+        "landlord",
+        "Landlord Insurance",
+      ]
+    },
+     {
+      "key": "motorbike-insurance",
+      "name": "Motorbike Insurance Quote",
+      "category": "personal",
+      "path": "templates/personal/motorbike-insurance/v1.json",
+      "keywords": [
+        "motorbike",
+        "Motorbike Insurance",
+      ]
+    },
+      {
+      "key": "pet-insurance",
+      "name": "Pet Insurance Quote",
+      "category": "personal",
+      "path": "templates/personal/pet-insurance/v1.json",
+      "keywords": [
+        "dog",
+        "cat",
+        "pet",
+        "Pet Insurance",
+      ]
+    },
+    {
+      "key": "van-insurance",
+      "name": "Van Insurance Quote",
+      "category": "personal",
+      "path": "templates/personal/van-insurance/v1.json",
+      "keywords": [
+        "van",
+        "truck",
+        "Van Insurance",
+      ]
+    },
+     {
+      "key": "public-liability-insurance",
+      "name": "Public Liability Insurance Quote",
+      "category": "commercial",
+      "path": "templates/commercial/public-liability-insurance/v1.json",
+      "keywords": [
+        "Public Liability Insurance",
+        "public-liability",
+      ]
+    },
+    {
       "key": "professional-indemnity",
       "name": "Professional Indemnity Quote",
       "category": "commercial",
