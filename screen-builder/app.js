@@ -804,6 +804,7 @@ CH 4  UI Rendering
 
   const AI_JOURNEY_ENDPOINT = "https://screen-builder-ai.laurence-ogi.workers.dev";
   const AI_CHAT_ENDPOINT = `${AI_JOURNEY_ENDPOINT.replace(/\/$/, "")}/chat`;
+  const AI_LOB_TEMPLATE_ENDPOINT = `${AI_JOURNEY_ENDPOINT.replace(/\/$/, "")}/lob`;
   // Expose for quick DevTools checks
   window.AI_JOURNEY_ENDPOINT = AI_JOURNEY_ENDPOINT;
 
@@ -1067,6 +1068,40 @@ CH 4  UI Rendering
     };
 
     return out.pages.length ? out : newDefaultSchema();
+  }
+
+    async function fetchTemplateJourney(promptText) {
+    try {
+      const res = await fetch(AI_LOB_TEMPLATE_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: String(promptText || "").slice(0, 8000) }),
+      });
+
+      const rawText = await res.text().catch(() => "");
+
+      if (!res.ok) {
+        console.warn("AI template HTTP error:", res.status, rawText);
+        return { matched: false };
+      }
+
+      let data = null;
+      try {
+        data = rawText ? JSON.parse(rawText) : null;
+      } catch (e) {
+        console.warn("AI template parse error:", e);
+        return { matched: false };
+      }
+
+      if (data && typeof data === "object" && data.mode === "template" && data.journey) {
+        return { matched: true, journey: data.journey };
+      }
+
+      return { matched: false };
+    } catch (e) {
+      console.warn("AI template fetch failed:", e);
+      return { matched: false };
+    }
   }
 
   async function requestAiTemplate(promptText) {
@@ -1547,6 +1582,15 @@ const setButtonLoading = (on) => {
         setButtonLoading(true);
         setStatus("");
 
+        const templateResult = await fetchTemplateJourney(promptText);
+        if (templateResult.matched) {
+          console.log("AI Assist: template used");
+          importJsonPayload(templateResult.journey);
+          setStatus("Template applied.");
+          return;
+        }
+
+        console.log("AI Assist: no template, using AI");
         const nextSchema = await requestAiTemplate(promptText);
         importJourneyTemplate(nextSchema);
 
@@ -6323,21 +6367,25 @@ function exportJson() {
   function importJsonFile(file) {
     const reader = new FileReader();
     reader.onload = () => {
-      try {
-        const parsed = JSON.parse(String(reader.result || ""));
-        if (!parsed || !Array.isArray(parsed.pages)) throw new Error("Invalid schema format.");
-        schema = parsed;
-        saveSchema();
-        ensureSelection();
-        renderAll();
-        alert("Imported successfully.");
-      } catch (e) {
-        alert("Import failed: " + (e?.message || "Unknown error"));
-      }
+      importJsonPayload(reader.result);
     };
     reader.readAsText(file);
   }
 
+  function importJsonPayload(rawJson) {
+    try {
+      const parsed = typeof rawJson === "string" ? JSON.parse(String(rawJson || "")) : rawJson;
+      if (!parsed || !Array.isArray(parsed.pages)) throw new Error("Invalid schema format.");
+      schema = parsed;
+      saveSchema();
+      ensureSelection();
+      renderAll();
+      alert("Imported successfully.");
+    } catch (e) {
+      alert("Import failed: " + (e?.message || "Unknown error"));
+    }
+  }
+  
   /* =============================================================================
 CH 8  Event wiring (listeners)
 ============================================================================= */
