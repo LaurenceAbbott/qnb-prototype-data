@@ -963,8 +963,6 @@ ul {
 .previewTextBlock {
     padding-top: 40px;
 }
-  
-}
 .previewTextBlockTitle {
   
 }
@@ -1001,7 +999,6 @@ ul {
 }
 
 /* Checkbox styling */
-}
 .choiceCheck {
     gap: 10px;
     display: flex;
