@@ -3464,7 +3464,7 @@ actions.appendChild(btnGroupOpts);
     lab.textContent = label;
 
     const list = document.createElement("div");
-    list.className = "choiceGrid choiceGridPlain";
+    list.className = "choiceGrid";
 
     const currentValues = new Set((Array.isArray(values) ? values : []).map((val) => String(val ?? "")));
 
@@ -3491,7 +3491,6 @@ actions.appendChild(btnGroupOpts);
 
       const checkbox = document.createElement("input");
       checkbox.className = "choiceCheckBox";
-      checkbox.type = "checkbox";
       checkbox.checked = currentValues.has(valueString);
       checkbox.disabled = isPlaceholder;
 
@@ -3675,10 +3674,24 @@ actions.appendChild(btnGroupOpts);
   function questionAssistPanel(q) {
     const aiState = getQuestionAiState(q?.id);
         if (uiState.aiQuestionAssistOpen?.[q?.id] == null) {
-      const open = true;
+      uiState.aiQuestionAssistOpen[q.id] = true;
+    }
+    const open = uiState.aiQuestionAssistOpen?.[q?.id] === true;
     const wrap = document.createElement("div");
     wrap.className = "aiQuestionAssist";
-    wrap.appendChild(sectionTitle("AI Question Assist"));
+
+    const toggleBtn = document.createElement("button");
+    toggleBtn.type = "button";
+    toggleBtn.className = "iconBtn";
+    toggleBtn.setAttribute("aria-label", open ? "Close AI question assist" : "Open AI question assist");
+    toggleBtn.title = "AI Question Assist";
+    toggleBtn.innerHTML = "✨";
+    toggleBtn.addEventListener("click", () => {
+      uiState.aiQuestionAssistOpen[q.id] = !open;
+      renderInspector();
+    });
+
+    wrap.appendChild(sectionTitleRow("AI question assist", [toggleBtn]));
 
     if (!open) {
       wrap.appendChild(pEl("Get quick suggestions for help text, error copy, and option ideas.", "inlineHelp"));
@@ -6630,7 +6643,6 @@ CH 8  Event wiring (listeners)
   // Auto-create friendly initial values if schema is empty or corrupted
   if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
   if (!Array.isArray(schema.pages)) schema.pages = [];
-    }
 })();
 
 
