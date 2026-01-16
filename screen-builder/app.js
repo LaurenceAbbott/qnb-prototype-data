@@ -3684,7 +3684,7 @@ actions.appendChild(btnGroupOpts);
     toggleBtn.type = "button";
     toggleBtn.className = "iconBtn";
     toggleBtn.setAttribute("aria-label", open ? "Close AI question assist" : "Open AI question assist");
-    toggleBtn.title = "AI question assist";
+    toggleBtn.title = "AI Question Assist";
     toggleBtn.innerHTML = "✨";
     toggleBtn.addEventListener("click", () => {
       uiState.aiQuestionAssistOpen[q.id] = !open;
