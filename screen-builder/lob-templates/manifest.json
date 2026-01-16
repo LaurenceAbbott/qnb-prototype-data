@@ -61,30 +61,30 @@
       ]
     },
     {
-      "key": "landlord-insurance",
+      "key": "landlord",
       "name": "Landlord Insurance Quote",
       "category": "commercial",
-      "path": "templates/commercial/landlord-insurance/v1.json",
+      "path": "templates/commercial/landlord/v1.json",
       "keywords": [
         "landlord",
         "Landlord Insurance"
       ]
     },
      {
-      "key": "motorbike-insurance",
+      "key": "motorbike",
       "name": "Motorbike Insurance Quote",
       "category": "personal",
-      "path": "templates/personal/motorbike-insurance/v1.json",
+      "path": "templates/personal/motorbike/v1.json",
       "keywords": [
         "motorbike",
         "Motorbike Insurance"
       ]
     },
       {
-      "key": "pet-insurance",
+      "key": "pet",
       "name": "Pet Insurance Quote",
       "category": "personal",
-      "path": "templates/personal/pet-insurance/v1.json",
+      "path": "templates/personal/pet/v1.json",
       "keywords": [
         "dog",
         "cat",
@@ -93,10 +93,10 @@
       ]
     },
     {
-      "key": "van-insurance",
+      "key": "van",
       "name": "Van Insurance Quote",
       "category": "personal",
-      "path": "templates/personal/van-insurance/v1.json",
+      "path": "templates/personal/van/v1.json",
       "keywords": [
         "van",
         "truck",
@@ -104,10 +104,10 @@
       ]
     },
      {
-      "key": "public-liability-insurance",
+      "key": "public-liability",
       "name": "Public Liability Insurance Quote",
       "category": "commercial",
-      "path": "templates/commercial/public-liability-insurance/v1.json",
+      "path": "templates/commercial/public-liability/v1.json",
       "keywords": [
         "Public Liability Insurance",
         "public-liability"
