@@ -1,91 +1,251 @@
 {
-  "schemaVersion": "1.0",
-  "settings": {
-    "quote": {
-      "defaultPaymentFrequency": "annual",
-      "allowMonthly": true,
-      "allowAnnual": true
-    },
-    "logic": {
-      "defaultCombinator": "AND",
-      "truthyValues": [
-        true,
-        "true",
-        "yes",
-        "Yes"
-      ]
-    },
-    "ui": {
-      "showProgress": true,
-      "showPageNav": true
-    }
+  "meta": {
+    "version": 1,
+    "createdAt": "2026-01-16T15:27:37Z",
+    "updatedAt": "2026-01-16T15:27:37Z",
+    "questionArrays": [],
+    "previewMode": "page"
   },
-  "lob": {
-    "id": "motorbike",
-    "name": "Motorbike Insurance",
-    "journey": "quote-buy",
-    "currency": "GBP",
-    "locale": "en-GB",
-    "version": "2026-01-16"
-  },
+  "lineOfBusiness": "Motorbike Insurance Quote",
   "pages": [
     {
-      "id": "start",
-      "title": "Get a motorbike insurance quote",
-      "kind": "form",
+      "id": "page_77dfaa6b9aa5",
+      "name": "Get a motorbike insurance quote",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_b3b4747b270e",
+          "title": "Get a motorbike insurance quote",
+          "level": "h1",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_73afc6310a03"
+        }
+      ],
       "groups": [
         {
-          "id": "start.about",
-          "title": "Before we start",
-          "elements": [
+          "id": "group_73afc6310a03",
+          "name": "Before we start",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "start.intro",
+              "id": "q_39826cff89ed",
               "type": "display",
-              "text": "We’ll ask about you, your bike and where it’s kept."
+              "title": "Motorbike Insurance",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "hero",
+                "tone": "neutral",
+                "title": "Motorbike Insurance",
+                "subtitle": "Motorbike Insurance",
+                "bodyHtml": "<p>We\u2019ll ask about you, your bike and where it\u2019s kept.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "start.coverStart",
+              "id": "q_eb4106626746",
               "type": "date",
-              "label": "When do you want cover to start?",
-              "required": true
+              "title": "When do you want cover to start?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "start.isUKResident",
-              "type": "radio",
-              "label": "Are you a UK resident?",
+              "id": "q_3c58d6ee7bd9",
+              "type": "yesno",
+              "title": "Are you a UK resident?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "start.hasValidLicence",
-              "type": "radio",
-              "label": "Do you have a valid UK bike licence?",
+              "id": "q_2c689920a4c0",
+              "type": "yesno",
+              "title": "Do you have a valid UK bike licence?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "policyholder",
-      "title": "About you",
-      "kind": "form",
+      "id": "page_9257f3f16c45",
+      "name": "About you",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_3399b8e5ab2f",
+          "title": "About you",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_78142c585a4b"
+        }
+      ],
       "groups": [
         {
-          "id": "policyholder.details",
-          "title": "Your details",
-          "elements": [
+          "id": "group_78142c585a4b",
+          "name": "Your details",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "person.title",
+              "id": "q_6bcb05b071b3",
               "type": "select",
-              "label": "Title",
+              "title": "Title",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Mr",
                 "Mrs",
@@ -94,139 +254,724 @@
                 "Mx",
                 "Dr"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "person.firstName",
+              "id": "q_abd644ec3eef",
               "type": "text",
-              "label": "First name",
-              "required": true
+              "title": "First name",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "person.lastName",
+              "id": "q_1e72c2d34560",
               "type": "text",
-              "label": "Last name",
-              "required": true
+              "title": "Last name",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "person.dob",
+              "id": "q_ecb65f97c545",
               "type": "date",
-              "label": "Date of birth",
-              "required": true
-            },
-            {
-              "id": "person.email",
-              "type": "text",
-              "label": "Email address",
+              "title": "Date of birth",
               "required": true,
-              "validation": {
-                "format": "email"
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
               }
             },
             {
-              "id": "person.phone",
-              "type": "text",
-              "label": "Phone number",
-              "required": true
-            },
-            {
-              "id": "address.line1",
-              "type": "text",
-              "label": "Address line 1",
-              "required": true
-            },
-            {
-              "id": "address.line2",
-              "type": "text",
-              "label": "Address line 2",
-              "required": false
-            },
-            {
-              "id": "address.town",
-              "type": "text",
-              "label": "Town/City",
-              "required": true
-            },
-            {
-              "id": "address.postcode",
-              "type": "text",
-              "label": "Postcode",
+              "id": "q_0eca07921d98",
+              "type": "email",
+              "title": "Email address",
               "required": true,
-              "validation": {
-                "pattern": "^[A-Za-z]{1,2}\\d{1,2}[A-Za-z]?\\s?\\d[A-Za-z]{2}$",
-                "message": "Enter a valid UK postcode"
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
               }
             },
             {
-              "id": "rider.licenceCategory",
+              "id": "q_3a456fea8432",
+              "type": "tel",
+              "title": "Phone number",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_9f3cc2c1c2da",
+              "type": "text",
+              "title": "Address line 1",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_91106b21cf5d",
+              "type": "text",
+              "title": "Address line 2",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_1e4a8bd15123",
+              "type": "text",
+              "title": "Town/City",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_81cd8382210b",
+              "type": "text",
+              "title": "Postcode",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_e51d456c6f17",
               "type": "select",
-              "label": "Licence category",
+              "title": "Licence category",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "AM",
                 "A1",
                 "A2",
                 "A"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "rider.yearsRiding",
+              "id": "q_5ab3f2879091",
               "type": "number",
-              "label": "Years riding experience",
+              "title": "Years riding experience",
               "required": true,
-              "min": 0,
-              "max": 70
+              "help": "Min 0, Max 70",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "bike",
-      "title": "Your bike",
-      "kind": "form",
+      "id": "page_b568315d3acd",
+      "name": "Your bike",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_edae45e87575",
+          "title": "Your bike",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_73d7c6755f72"
+        }
+      ],
       "groups": [
         {
-          "id": "bike.details",
-          "title": "Bike details",
-          "elements": [
+          "id": "group_73d7c6755f72",
+          "name": "Bike details",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "bike.reg",
+              "id": "q_316a09f4db9f",
               "type": "text",
-              "label": "Registration number",
-              "required": true
-            },
-            {
-              "id": "bike.make",
-              "type": "text",
-              "label": "Make",
-              "required": true
-            },
-            {
-              "id": "bike.model",
-              "type": "text",
-              "label": "Model",
-              "required": true
-            },
-            {
-              "id": "bike.engine",
-              "type": "number",
-              "label": "Engine size (cc)",
+              "title": "Registration number",
               "required": true,
-              "min": 49,
-              "max": 2500
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "bike.value",
-              "type": "number",
-              "label": "Estimated value (£)",
+              "id": "q_2560cdb8c103",
+              "type": "text",
+              "title": "Make",
               "required": true,
-              "min": 0
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "bike.type",
+              "id": "q_b141719aee41",
+              "type": "text",
+              "title": "Model",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_9fe4b4127784",
+              "type": "number",
+              "title": "Engine size (cc)",
+              "required": true,
+              "help": "Min 49, Max 2500",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_5eb481ed79ce",
+              "type": "number",
+              "title": "Estimated value (\u00a3)",
+              "required": true,
+              "help": "Min 0",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_5b324be0f63a",
               "type": "select",
-              "label": "Bike type",
+              "title": "Bike type",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Scooter",
                 "Commuter",
@@ -237,30 +982,118 @@
                 "Tourer",
                 "Off-road"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "bike.modified",
-              "type": "radio",
-              "label": "Has the bike been modified?",
+              "id": "q_5d15c30f21c5",
+              "type": "yesno",
+              "title": "Has the bike been modified?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "bike.modDetails",
+              "id": "q_222d736add0f",
               "type": "text",
-              "label": "Tell us about the modifications",
+              "title": "Tell us about the modifications",
               "required": true,
-              "showWhen": {
-                "all": [
-                  {
-                    "fact": "bike.modified",
-                    "equals": "Yes"
-                  }
-                ]
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
               }
             }
           ]
@@ -268,18 +1101,43 @@
       ]
     },
     {
-      "id": "storage",
-      "title": "Storage & security",
-      "kind": "form",
+      "id": "page_0dcb75f3046a",
+      "name": "Storage & security",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_060a60d3f85d",
+          "title": "Storage & security",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_18c5bb149795"
+        }
+      ],
       "groups": [
         {
-          "id": "storage.where",
-          "title": "Where it’s kept",
-          "elements": [
+          "id": "group_18c5bb149795",
+          "name": "Where it\u2019s kept",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "storage.keptOvernight",
+              "id": "q_ef0d84ea52ce",
               "type": "select",
-              "label": "Where is the bike kept overnight?",
+              "title": "Where is the bike kept overnight?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Garage",
                 "Driveway",
@@ -287,12 +1145,45 @@
                 "Shared car park",
                 "Other"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "storage.security",
+              "id": "q_8dc8bedceb18",
               "type": "checkbox",
-              "label": "Security",
+              "title": "Security",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Factory immobiliser",
                 "Alarm",
@@ -302,400 +1193,1454 @@
                 "Ground anchor",
                 "None"
               ],
-              "required": false
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "storage.cover",
-              "type": "radio",
-              "label": "Do you want cover for riding abroad?",
+              "id": "q_3a45522f8ca7",
+              "type": "yesno",
+              "title": "Do you want cover for riding abroad?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "usage",
-      "title": "Usage & cover",
-      "kind": "form",
+      "id": "page_2b6f355faa17",
+      "name": "Usage & cover",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_373d5ad62d92",
+          "title": "Usage & cover",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_4da7ac2748e0"
+        }
+      ],
       "groups": [
         {
-          "id": "usage.how",
-          "title": "How you ride",
-          "elements": [
+          "id": "group_4da7ac2748e0",
+          "name": "How you ride",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "use.usage",
+              "id": "q_c9f97b86d200",
               "type": "radio",
-              "label": "Main use",
+              "title": "Main use",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Social, domestic & pleasure",
                 "Commuting",
                 "Business"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "use.annualMileage",
+              "id": "q_b207e79bb341",
               "type": "number",
-              "label": "Estimated annual mileage",
+              "title": "Estimated annual mileage",
               "required": true,
-              "min": 0
+              "help": "Min 0",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "use.coverLevel",
+              "id": "q_2e121ced436f",
               "type": "radio",
-              "label": "Cover level",
+              "title": "Cover level",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Third party only",
                 "Third party, fire & theft",
                 "Comprehensive"
               ],
-              "required": true
-            },
-            {
-              "id": "use.pillion",
-              "type": "radio",
-              "label": "Will you carry a pillion passenger?",
-              "options": [
-                "Yes",
-                "No"
-              ],
-              "required": true
-            },
-            {
-              "id": "use.trackDays",
-              "type": "radio",
-              "label": "Do you do track days?",
-              "options": [
-                "Yes",
-                "No"
-              ],
-              "required": true
-            },
-            {
-              "id": "use.trackNote",
-              "type": "display",
-              "text": "Track day use is typically excluded unless specifically agreed.",
-              "showWhen": {
-                "all": [
-                  {
-                    "fact": "use.trackDays",
-                    "equals": "Yes"
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "history",
-      "title": "Riding history",
-      "kind": "form",
-      "groups": [
-        {
-          "id": "history.main",
-          "title": "Claims & convictions",
-          "elements": [
-            {
-              "id": "history.claims",
-              "type": "radio",
-              "label": "Any claims in the last 5 years?",
-              "options": [
-                "Yes",
-                "No"
-              ],
-              "required": true
-            },
-            {
-              "id": "history.claimList",
-              "type": "repeat",
-              "label": "Claims",
-              "itemLabel": "Claim",
-              "minItems": 1,
-              "maxItems": 10,
-              "itemSchema": [
-                {
-                  "id": "claim.date",
-                  "type": "date",
-                  "label": "When did the claim happen?",
-                  "required": true
-                },
-                {
-                  "id": "claim.type",
-                  "type": "select",
-                  "label": "What type of claim was it?",
-                  "options": [
-                    "Accident",
-                    "Theft",
-                    "Fire",
-                    "Windscreen",
-                    "Malicious damage",
-                    "Other"
-                  ],
-                  "required": true
-                },
-                {
-                  "id": "claim.amount",
-                  "type": "number",
-                  "label": "Approximate cost (£)",
-                  "required": false,
-                  "min": 0
-                },
-                {
-                  "id": "claim.atFault",
-                  "type": "radio",
-                  "label": "Were you at fault?",
-                  "options": [
-                    "Yes",
-                    "No",
-                    "Partly"
-                  ],
-                  "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
                 }
-              ],
-              "showWhen": {
-                "all": [
-                  {
-                    "fact": "history.claims",
-                    "equals": "Yes"
-                  }
-                ]
               }
             },
             {
-              "id": "history.convictions",
-              "type": "radio",
-              "label": "Any motoring convictions in the last 5 years?",
-              "options": [
-                "Yes",
-                "No"
-              ],
-              "required": true
-            },
-            {
-              "id": "history.convictionList",
-              "type": "repeat",
-              "label": "Convictions",
-              "itemLabel": "Conviction",
-              "minItems": 1,
-              "maxItems": 10,
-              "itemSchema": [
-                {
-                  "id": "conviction.date",
-                  "type": "date",
-                  "label": "Conviction date",
-                  "required": true
-                },
-                {
-                  "id": "conviction.code",
-                  "type": "text",
-                  "label": "Offence code",
-                  "required": false,
-                  "helpText": "e.g. SP30"
-                },
-                {
-                  "id": "conviction.description",
-                  "type": "text",
-                  "label": "Brief description",
-                  "required": true
-                },
-                {
-                  "id": "conviction.points",
-                  "type": "number",
-                  "label": "Points",
-                  "required": false,
-                  "min": 0,
-                  "max": 12
-                },
-                {
-                  "id": "conviction.ban",
-                  "type": "radio",
-                  "label": "Any driving ban?",
-                  "options": [
-                    "Yes",
-                    "No"
-                  ],
-                  "required": true
-                }
-              ],
-              "showWhen": {
-                "all": [
-                  {
-                    "fact": "history.convictions",
-                    "equals": "Yes"
-                  }
-                ]
-              }
-            },
-            {
-              "id": "history.ncdYears",
-              "type": "number",
-              "label": "No-claims discount years",
+              "id": "q_b88c41af708b",
+              "type": "yesno",
+              "title": "Will you carry a pillion passenger?",
               "required": true,
-              "min": 0,
-              "max": 20
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_f44114866a3d",
+              "type": "yesno",
+              "title": "Do you do track days?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_d232112a9f50",
+              "type": "display",
+              "title": "Track day use is typically excluded unless specifically agreed.",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Track day use is typically excluded unless specifically agreed.",
+                "subtitle": "",
+                "bodyHtml": "<p>Track day use is typically excluded unless specifically agreed.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "quote",
-      "title": "Your quote",
-      "kind": "quote",
+      "id": "page_83387223ab84",
+      "name": "Riding history",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_77775be397f7",
+          "title": "Riding history",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_850d1198ac09"
+        }
+      ],
       "groups": [
         {
-          "id": "quote.options",
-          "title": "Payment options",
-          "elements": [
+          "id": "group_850d1198ac09",
+          "name": "Claims & convictions",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "quote.banner",
-              "type": "display",
-              "text": "Here’s your indicative quote. Choose annual or monthly payments."
+              "id": "q_e1b829876798",
+              "type": "yesno",
+              "title": "Any claims in the last 5 years?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "quote.paymentFrequency",
+              "id": "q_168c6bf75c39",
+              "type": "display",
+              "title": "Claims (prototype)",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Claims",
+                "subtitle": "",
+                "bodyHtml": "<p>This section supports multiple items in a full build. For this prototype we\u2019ll capture one item.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_1f62891c7a43",
+              "type": "date",
+              "title": "When did the claim happen?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_f7097f976f92",
+              "type": "select",
+              "title": "What type of claim was it?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Accident",
+                "Theft",
+                "Fire",
+                "Windscreen",
+                "Malicious damage",
+                "Other"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_2036517c836e",
+              "type": "number",
+              "title": "Approximate cost (\u00a3)",
+              "required": false,
+              "help": "Min 0",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_7abf29e57c8f",
               "type": "radio",
-              "label": "How would you like to pay?",
+              "title": "Were you at fault?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No",
+                "Partly"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_ddc58a584cf6",
+              "type": "yesno",
+              "title": "Any motoring convictions in the last 5 years?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_590b23c8bfd8",
+              "type": "display",
+              "title": "Convictions (prototype)",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Convictions",
+                "subtitle": "",
+                "bodyHtml": "<p>This section supports multiple items in a full build. For this prototype we\u2019ll capture one item.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_0e81fd632040",
+              "type": "date",
+              "title": "Conviction date",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_b4de0ee1989a",
+              "type": "text",
+              "title": "Offence code",
+              "required": false,
+              "help": "e.g. SP30",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_7a1602c51fc1",
+              "type": "text",
+              "title": "Brief description",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_7497764329a6",
+              "type": "number",
+              "title": "Points",
+              "required": false,
+              "help": "Min 0, Max 12",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_cce935772cba",
+              "type": "yesno",
+              "title": "Any driving ban?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_4443064959c9",
+              "type": "number",
+              "title": "No-claims discount years",
+              "required": true,
+              "help": "Min 0, Max 20",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page_f097f93d9db3",
+      "name": "Your quote",
+      "template": "quote",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_925bb51d2486",
+          "title": "Your quote",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_1516069681ce"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_1516069681ce",
+          "name": "Payment options",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_79fd89d55d68",
+              "type": "display",
+              "title": "Here\u2019s your indicative quote. Choose annual or monthly payments.",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Here\u2019s your indicative quote. Choose annual or monthly payments.",
+                "subtitle": "",
+                "bodyHtml": "<p>Here\u2019s your indicative quote. Choose annual or monthly payments.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_a6af95370baa",
+              "type": "radio",
+              "title": "How would you like to pay?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "annual",
                 "monthly"
               ],
-              "required": true,
-              "default": "annual"
-            },
-            {
-              "id": "quote.summary",
-              "type": "quote",
-              "mode": "toggle",
-              "paymentFrequencyRef": "quote.paymentFrequency",
-              "pricePlaceholders": {
-                "annual": 389.5,
-                "monthly": {
-                  "deposit": 55.0,
-                  "instalments": 11,
-                  "instalmentAmount": 36.25,
-                  "apr": 19.9
-                }
+              "logic": {
+                "enabled": false,
+                "rules": []
               },
-              "breakdown": [
-                {
-                  "label": "Base premium",
-                  "amount": 310.0
-                },
-                {
-                  "label": "Bike value/type",
-                  "amount": 42.5
-                },
-                {
-                  "label": "Security",
-                  "amount": -10.0
-                },
-                {
-                  "label": "Fees & taxes",
-                  "amount": 47.0
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
                 }
-              ]
+              }
             },
             {
-              "id": "quote.inclusions",
+              "id": "q_131b050002dd",
               "type": "display",
-              "text": "**What’s included**\n- Helmet & leathers (where selected)\n- EU riding (where selected)\n- Legal cover (optional)"
+              "title": "quote",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "quote",
+                "subtitle": "",
+                "bodyHtml": "<p>[quote]</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "quote.exclusions",
+              "id": "q_b3bdd8db0cb2",
               "type": "display",
-              "text": "**Common exclusions**\n- Track use\n- Riding without the correct licence\n- Wear and tear"
+              "title": "**What\u2019s included**\n- Helmet & leathers (where selected)\n- EU riding (where sele",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "**What\u2019s included**\n- Helmet & leathers (where selected)\n- EU riding (where sele",
+                "subtitle": "",
+                "bodyHtml": "<p><strong>What\u2019s included</strong></p><ul><li>Helmet & leathers (where selected)</li><li>EU riding (where selected)</li><li>Legal cover (optional)</li></ul>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_541eddf9c034",
+              "type": "display",
+              "title": "**Common exclusions**\n- Track use\n- Riding without the correct licence\n- Wear an",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "**Common exclusions**\n- Track use\n- Riding without the correct licence\n- Wear an",
+                "subtitle": "",
+                "bodyHtml": "<p><strong>Common exclusions</strong></p><ul><li>Track use</li><li>Riding without the correct licence</li><li>Wear and tear</li></ul>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "summary",
-      "title": "Check your details",
-      "kind": "summary",
+      "id": "page_99bfb985a2f3",
+      "name": "Check your details",
+      "template": "summary",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_25205e55988f",
+          "title": "Check your details",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_1f6eb9065047"
+        }
+      ],
       "groups": [
         {
-          "id": "summary.playback",
-          "title": "Your answers",
-          "elements": [
+          "id": "group_1f6eb9065047",
+          "name": "Your answers",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "summary.view",
-              "type": "summary",
-              "sections": [
-                {
-                  "title": "About you",
-                  "refs": [
-                    "person.*",
-                    "address.*",
-                    "start.coverStart",
-                    "rider.*"
-                  ]
-                },
-                {
-                  "title": "Your bike",
-                  "refs": [
-                    "bike.*",
-                    "storage.*",
-                    "use.*"
-                  ]
-                },
-                {
-                  "title": "History",
-                  "refs": [
-                    "history.*"
-                  ]
+              "id": "q_39b2f8390c7b",
+              "type": "display",
+              "title": "summary",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "summary",
+                "subtitle": "",
+                "bodyHtml": "<p>[summary]</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
                 }
-              ]
+              }
             },
             {
-              "id": "summary.confirm",
+              "id": "q_5ad882f5bd0a",
               "type": "checkbox",
-              "label": "Confirm",
+              "title": "Confirm",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "I confirm the details are correct"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "payment",
-      "title": "Payment",
-      "kind": "payment",
+      "id": "page_aa052affbf25",
+      "name": "Payment",
+      "template": "payment",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_e98e31d8d3fc",
+          "title": "Payment",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_929166c9b40e"
+        }
+      ],
       "groups": [
         {
-          "id": "payment.method",
-          "title": "How you’ll pay",
-          "elements": [
+          "id": "group_929166c9b40e",
+          "name": "How you\u2019ll pay",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "payment.method",
+              "id": "q_7d85defce16a",
               "type": "radio",
-              "label": "Payment method",
+              "title": "Payment method",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Debit card",
                 "Direct Debit"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "payment.terms",
+              "id": "q_396d42676c23",
               "type": "checkbox",
-              "label": "Agreements",
+              "title": "Agreements",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "I agree to the terms and conditions",
                 "I confirm I have answered all questions honestly"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
