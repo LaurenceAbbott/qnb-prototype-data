@@ -67,7 +67,7 @@
       "path": "templates/commercial/landlord-insurance/v1.json",
       "keywords": [
         "landlord",
-        "Landlord Insurance",
+        "Landlord Insurance"
       ]
     },
      {
@@ -77,7 +77,7 @@
       "path": "templates/personal/motorbike-insurance/v1.json",
       "keywords": [
         "motorbike",
-        "Motorbike Insurance",
+        "Motorbike Insurance"
       ]
     },
       {
@@ -89,7 +89,7 @@
         "dog",
         "cat",
         "pet",
-        "Pet Insurance",
+        "Pet Insurance"
       ]
     },
     {
@@ -100,7 +100,7 @@
       "keywords": [
         "van",
         "truck",
-        "Van Insurance",
+        "Van Insurance"
       ]
     },
      {
@@ -110,7 +110,7 @@
       "path": "templates/commercial/public-liability-insurance/v1.json",
       "keywords": [
         "Public Liability Insurance",
-        "public-liability",
+        "public-liability"
       ]
     },
     {
