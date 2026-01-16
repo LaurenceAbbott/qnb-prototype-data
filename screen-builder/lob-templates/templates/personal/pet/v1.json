@@ -1,81 +1,208 @@
 {
-  "schemaVersion": "1.0",
-  "settings": {
-    "quote": {
-      "defaultPaymentFrequency": "annual",
-      "allowMonthly": true,
-      "allowAnnual": true
-    },
-    "logic": {
-      "defaultCombinator": "AND",
-      "truthyValues": [
-        true,
-        "true",
-        "yes",
-        "Yes"
-      ]
-    },
-    "ui": {
-      "showProgress": true,
-      "showPageNav": true
-    }
+  "meta": {
+    "version": 1,
+    "createdAt": "2026-01-16T15:27:37Z",
+    "updatedAt": "2026-01-16T15:27:37Z",
+    "questionArrays": [],
+    "previewMode": "page"
   },
-  "lob": {
-    "id": "pet",
-    "name": "Pet Insurance",
-    "journey": "quote-buy",
-    "currency": "GBP",
-    "locale": "en-GB",
-    "version": "2026-01-16"
-  },
+  "lineOfBusiness": "Pet Insurance Quote",
   "pages": [
     {
-      "id": "start",
-      "title": "Get a pet insurance quote",
-      "kind": "form",
+      "id": "page_6f4d3e486d02",
+      "name": "Get a pet insurance quote",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_d8a3b7d1d51b",
+          "title": "Get a pet insurance quote",
+          "level": "h1",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_5d1ec83f022d"
+        }
+      ],
       "groups": [
         {
-          "id": "start.about",
-          "title": "Before we start",
-          "elements": [
+          "id": "group_5d1ec83f022d",
+          "name": "Before we start",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "start.intro",
+              "id": "q_358b34816033",
               "type": "display",
-              "text": "We’ll ask about you and your pet(s)."
+              "title": "Pet Insurance",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "hero",
+                "tone": "neutral",
+                "title": "Pet Insurance",
+                "subtitle": "Pet Insurance",
+                "bodyHtml": "<p>We\u2019ll ask about you and your pet(s).</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "start.coverStart",
+              "id": "q_6bec8bb90f5b",
               "type": "date",
-              "label": "When do you want cover to start?",
-              "required": true
+              "title": "When do you want cover to start?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "start.isUKResident",
-              "type": "radio",
-              "label": "Are you a UK resident?",
+              "id": "q_9facd3e24daa",
+              "type": "yesno",
+              "title": "Are you a UK resident?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "policyholder",
-      "title": "Policyholder",
-      "kind": "form",
+      "id": "page_c32f1d093ef6",
+      "name": "Policyholder",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_a920a68391c3",
+          "title": "Policyholder",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_bcb82afb292c"
+        }
+      ],
       "groups": [
         {
-          "id": "policyholder.details",
-          "title": "Your details",
-          "elements": [
+          "id": "group_bcb82afb292c",
+          "name": "Your details",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "person.title",
+              "id": "q_51f347df14e4",
               "type": "select",
-              "label": "Title",
+              "title": "Title",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Mr",
                 "Mrs",
@@ -84,451 +211,1819 @@
                 "Mx",
                 "Dr"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "person.firstName",
+              "id": "q_131acdeff08f",
               "type": "text",
-              "label": "First name",
-              "required": true
+              "title": "First name",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "person.lastName",
+              "id": "q_3cb03974b539",
               "type": "text",
-              "label": "Last name",
-              "required": true
+              "title": "Last name",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "person.dob",
+              "id": "q_3f95d31e253f",
               "type": "date",
-              "label": "Date of birth",
-              "required": true
-            },
-            {
-              "id": "person.email",
-              "type": "text",
-              "label": "Email address",
+              "title": "Date of birth",
               "required": true,
-              "validation": {
-                "format": "email"
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
               }
             },
             {
-              "id": "person.phone",
-              "type": "text",
-              "label": "Phone number",
-              "required": true
-            },
-            {
-              "id": "address.line1",
-              "type": "text",
-              "label": "Address line 1",
-              "required": true
-            },
-            {
-              "id": "address.line2",
-              "type": "text",
-              "label": "Address line 2",
-              "required": false
-            },
-            {
-              "id": "address.town",
-              "type": "text",
-              "label": "Town/City",
-              "required": true
-            },
-            {
-              "id": "address.postcode",
-              "type": "text",
-              "label": "Postcode",
+              "id": "q_1a8ca29b826d",
+              "type": "email",
+              "title": "Email address",
               "required": true,
-              "validation": {
-                "pattern": "^[A-Za-z]{1,2}\\d{1,2}[A-Za-z]?\\s?\\d[A-Za-z]{2}$",
-                "message": "Enter a valid UK postcode"
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
               }
             },
             {
-              "id": "policyholder.marketing",
+              "id": "q_d46093e55f6b",
+              "type": "tel",
+              "title": "Phone number",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_6f83f54cf81a",
+              "type": "text",
+              "title": "Address line 1",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_df408df6fce2",
+              "type": "text",
+              "title": "Address line 2",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_428de77ff61d",
+              "type": "text",
+              "title": "Town/City",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_7274a4367811",
+              "type": "text",
+              "title": "Postcode",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_18a5e323e984",
               "type": "checkbox",
-              "label": "Contact preferences",
+              "title": "Contact preferences",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Email",
                 "SMS",
                 "Phone",
                 "Post"
               ],
-              "required": false
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "pets",
-      "title": "Your pet(s)",
-      "kind": "form",
+      "id": "page_862680aa2dce",
+      "name": "Your pet(s)",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_2721932744e4",
+          "title": "Your pet(s)",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_9c0525d9d2a2"
+        }
+      ],
       "groups": [
         {
-          "id": "pets.list",
-          "title": "Add pets",
-          "elements": [
+          "id": "group_9c0525d9d2a2",
+          "name": "Add pets",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "pets.tip",
+              "id": "q_c35204ebf1d5",
               "type": "display",
-              "text": "You can add more than one pet for multi-pet cover."
+              "title": "You can add more than one pet for multi-pet cover.",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "You can add more than one pet for multi-pet cover.",
+                "subtitle": "",
+                "bodyHtml": "<p>You can add more than one pet for multi-pet cover.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "pets.pets",
-              "type": "repeat",
-              "label": "Pets",
-              "itemLabel": "Pet",
-              "minItems": 1,
-              "maxItems": 6,
-              "itemSchema": [
-                {
-                  "id": "pet.name",
-                  "type": "text",
-                  "label": "Pet name",
-                  "required": true
-                },
-                {
-                  "id": "pet.species",
-                  "type": "radio",
-                  "label": "Species",
-                  "options": [
-                    "Dog",
-                    "Cat"
-                  ],
-                  "required": true
-                },
-                {
-                  "id": "pet.breed",
-                  "type": "text",
-                  "label": "Breed",
-                  "required": true
-                },
-                {
-                  "id": "pet.dob",
-                  "type": "date",
-                  "label": "Date of birth",
-                  "required": true
-                },
-                {
-                  "id": "pet.gender",
-                  "type": "radio",
-                  "label": "Sex",
-                  "options": [
-                    "Male",
-                    "Female"
-                  ],
-                  "required": true
-                },
-                {
-                  "id": "pet.neutered",
-                  "type": "radio",
-                  "label": "Neutered/spayed?",
-                  "options": [
-                    "Yes",
-                    "No"
-                  ],
-                  "required": true
-                },
-                {
-                  "id": "pet.vaccinated",
-                  "type": "radio",
-                  "label": "Up to date with vaccinations?",
-                  "options": [
-                    "Yes",
-                    "No"
-                  ],
-                  "required": true
-                },
-                {
-                  "id": "pet.preExisting",
-                  "type": "radio",
-                  "label": "Any pre-existing medical conditions?",
-                  "options": [
-                    "Yes",
-                    "No"
-                  ],
-                  "required": true
-                },
-                {
-                  "id": "pet.preExistingDetails",
-                  "type": "text",
-                  "label": "Tell us about the condition(s)",
-                  "required": true,
-                  "showWhen": {
-                    "all": [
-                      {
-                        "fact": "pet.preExisting",
-                        "equals": "Yes"
-                      }
-                    ]
-                  }
-                },
-                {
-                  "id": "pet.microchipped",
-                  "type": "radio",
-                  "label": "Microchipped?",
-                  "options": [
-                    "Yes",
-                    "No"
-                  ],
-                  "required": true
+              "id": "q_1fad75931132",
+              "type": "display",
+              "title": "Pets (prototype)",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Pets",
+                "subtitle": "",
+                "bodyHtml": "<p>This section supports multiple items in a full build. For this prototype we\u2019ll capture one item.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
                 }
-              ]
+              }
+            },
+            {
+              "id": "q_9626e899b4f9",
+              "type": "text",
+              "title": "Pet name",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_8dbfb9f80657",
+              "type": "radio",
+              "title": "Species",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Dog",
+                "Cat"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_ffda329c0741",
+              "type": "text",
+              "title": "Breed",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_a91b30c37b8e",
+              "type": "date",
+              "title": "Date of birth",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_2b7d09862f8d",
+              "type": "radio",
+              "title": "Sex",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Male",
+                "Female"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_820bb1291ff1",
+              "type": "yesno",
+              "title": "Neutered/spayed?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_353761633059",
+              "type": "yesno",
+              "title": "Up to date with vaccinations?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_58665d07cf7c",
+              "type": "yesno",
+              "title": "Any pre-existing medical conditions?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_4f89b9cc905b",
+              "type": "text",
+              "title": "Tell us about the condition(s)",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_3dbd29bf05be",
+              "type": "yesno",
+              "title": "Microchipped?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "cover",
-      "title": "Cover options",
-      "kind": "form",
+      "id": "page_76017788f3d8",
+      "name": "Cover options",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_eea88cfdd84e",
+          "title": "Cover options",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_8d4154f194a4"
+        }
+      ],
       "groups": [
         {
-          "id": "cover.options",
-          "title": "Choose your cover",
-          "elements": [
+          "id": "group_8d4154f194a4",
+          "name": "Choose your cover",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "cover.level",
+              "id": "q_57fe7f148c2a",
               "type": "radio",
-              "label": "Cover type",
+              "title": "Cover type",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Accident only",
                 "Time-limited",
                 "Maximum benefit",
                 "Lifetime"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "cover.annualLimit",
+              "id": "q_b040fcfb6e4f",
               "type": "select",
-              "label": "Annual vet fee limit",
+              "title": "Annual vet fee limit",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
-                "£1,000",
-                "£2,000",
-                "£4,000",
-                "£7,000",
-                "£10,000"
+                "\u00a31,000",
+                "\u00a32,000",
+                "\u00a34,000",
+                "\u00a37,000",
+                "\u00a310,000"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "cover.excess",
+              "id": "q_080b30b9b71a",
               "type": "select",
-              "label": "Excess",
+              "title": "Excess",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
-                "£60",
-                "£85",
-                "£100",
-                "£150"
+                "\u00a360",
+                "\u00a385",
+                "\u00a3100",
+                "\u00a3150"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "cover.dental",
-              "type": "radio",
-              "label": "Include dental cover?",
+              "id": "q_858f25499f9d",
+              "type": "yesno",
+              "title": "Include dental cover?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "cover.behaviour",
-              "type": "radio",
-              "label": "Include behavioural treatment?",
+              "id": "q_e08aa11b6fe1",
+              "type": "yesno",
+              "title": "Include behavioural treatment?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "cover.travel",
-              "type": "radio",
-              "label": "Include travel cover?",
+              "id": "q_7b1cab70c5f6",
+              "type": "yesno",
+              "title": "Include travel cover?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "disclosure",
-      "title": "Important information",
-      "kind": "form",
+      "id": "page_9cb62a51d146",
+      "name": "Important information",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_af9d8fdf5b53",
+          "title": "Important information",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_e91c131e28b3"
+        }
+      ],
       "groups": [
         {
-          "id": "disclosure.main",
-          "title": "",
-          "elements": [
+          "id": "group_e91c131e28b3",
+          "name": "",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "disclosure.note",
+              "id": "q_5617690cd0a7",
               "type": "display",
-              "text": "Please review your answers carefully. Pre-existing conditions may be excluded."
+              "title": "Please review your answers carefully. Pre-existing conditions may be excluded.",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Please review your answers carefully. Pre-existing conditions may be excluded.",
+                "subtitle": "",
+                "bodyHtml": "<p>Please review your answers carefully. Pre-existing conditions may be excluded.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "quote",
-      "title": "Your quote",
-      "kind": "quote",
+      "id": "page_d847b2279912",
+      "name": "Your quote",
+      "template": "quote",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_f21724986ae8",
+          "title": "Your quote",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_1a0658bedef9"
+        }
+      ],
       "groups": [
         {
-          "id": "quote.options",
-          "title": "Payment options",
-          "elements": [
+          "id": "group_1a0658bedef9",
+          "name": "Payment options",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "quote.banner",
+              "id": "q_b3f5c1da2f7c",
               "type": "display",
-              "text": "Here’s your indicative quote for your selected cover."
+              "title": "Here\u2019s your indicative quote for your selected cover.",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Here\u2019s your indicative quote for your selected cover.",
+                "subtitle": "",
+                "bodyHtml": "<p>Here\u2019s your indicative quote for your selected cover.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "quote.paymentFrequency",
+              "id": "q_dd5fcb8be183",
               "type": "radio",
-              "label": "How would you like to pay?",
+              "title": "How would you like to pay?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "annual",
                 "monthly"
               ],
-              "required": true,
-              "default": "annual"
-            },
-            {
-              "id": "quote.summary",
-              "type": "quote",
-              "mode": "toggle",
-              "paymentFrequencyRef": "quote.paymentFrequency",
-              "pricePlaceholders": {
-                "annual": 278.0,
-                "monthly": {
-                  "deposit": 0.0,
-                  "instalments": 12,
-                  "instalmentAmount": 26.5,
-                  "apr": 0.0
-                }
+              "logic": {
+                "enabled": false,
+                "rules": []
               },
-              "breakdown": [
-                {
-                  "label": "Base premium",
-                  "amount": 210.0
-                },
-                {
-                  "label": "Cover level & limit",
-                  "amount": 48.0
-                },
-                {
-                  "label": "Multi-pet discount",
-                  "amount": -15.0
-                },
-                {
-                  "label": "Fees & taxes",
-                  "amount": 35.0
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
                 }
-              ]
+              }
             },
             {
-              "id": "quote.inclusions",
+              "id": "q_bd180da7aa48",
               "type": "display",
-              "text": "**What’s included**\n- Vet fees (up to your limit)\n- Third party liability (dogs)\n- Lost pet & advertising"
+              "title": "quote",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "quote",
+                "subtitle": "",
+                "bodyHtml": "<p>[quote]</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "quote.exclusions",
+              "id": "q_5df4b13fc69b",
               "type": "display",
-              "text": "**Common exclusions**\n- Pre-existing conditions\n- Routine treatments\n- Preventative care unless included"
+              "title": "**What\u2019s included**\n- Vet fees (up to your limit)\n- Third party liability (dogs)",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "**What\u2019s included**\n- Vet fees (up to your limit)\n- Third party liability (dogs)",
+                "subtitle": "",
+                "bodyHtml": "<p><strong>What\u2019s included</strong></p><ul><li>Vet fees (up to your limit)</li><li>Third party liability (dogs)</li><li>Lost pet & advertising</li></ul>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_ce277043e942",
+              "type": "display",
+              "title": "**Common exclusions**\n- Pre-existing conditions\n- Routine treatments\n- Preventat",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "**Common exclusions**\n- Pre-existing conditions\n- Routine treatments\n- Preventat",
+                "subtitle": "",
+                "bodyHtml": "<p><strong>Common exclusions</strong></p><ul><li>Pre-existing conditions</li><li>Routine treatments</li><li>Preventative care unless included</li></ul>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "summary",
-      "title": "Check your details",
-      "kind": "summary",
+      "id": "page_e48794d330a7",
+      "name": "Check your details",
+      "template": "summary",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_297787034124",
+          "title": "Check your details",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_c3f32f1eb0f6"
+        }
+      ],
       "groups": [
         {
-          "id": "summary.playback",
-          "title": "Your answers",
-          "elements": [
+          "id": "group_c3f32f1eb0f6",
+          "name": "Your answers",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "summary.view",
-              "type": "summary",
-              "sections": [
-                {
-                  "title": "Policyholder",
-                  "refs": [
-                    "person.*",
-                    "address.*",
-                    "start.coverStart"
-                  ]
-                },
-                {
-                  "title": "Pets",
-                  "refs": [
-                    "pets.pets"
-                  ]
-                },
-                {
-                  "title": "Cover",
-                  "refs": [
-                    "cover.*"
-                  ]
+              "id": "q_53a54c1e16e3",
+              "type": "display",
+              "title": "summary",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "summary",
+                "subtitle": "",
+                "bodyHtml": "<p>[summary]</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
                 }
-              ]
+              }
             },
             {
-              "id": "summary.confirm",
+              "id": "q_fe242156267c",
               "type": "checkbox",
-              "label": "Confirm",
+              "title": "Confirm",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "I confirm the details are correct"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "payment",
-      "title": "Payment",
-      "kind": "payment",
+      "id": "page_f23739db2580",
+      "name": "Payment",
+      "template": "payment",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_8a170743c21f",
+          "title": "Payment",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_daf4df05d883"
+        }
+      ],
       "groups": [
         {
-          "id": "payment.method",
-          "title": "How you’ll pay",
-          "elements": [
+          "id": "group_daf4df05d883",
+          "name": "How you\u2019ll pay",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "payment.method",
+              "id": "q_26d021ef8df7",
               "type": "radio",
-              "label": "Payment method",
+              "title": "Payment method",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Debit card",
                 "Direct Debit"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "payment.terms",
+              "id": "q_713201be1418",
               "type": "checkbox",
-              "label": "Agreements",
+              "title": "Agreements",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "I agree to the terms and conditions",
                 "I confirm I have answered all questions honestly"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
