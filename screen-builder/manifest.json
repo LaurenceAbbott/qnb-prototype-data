@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "description": "Canonical Line of Business templates for Screen Builder",
+  "templates": [
+    {
+      "key": "home",
+      "name": "Home Insurance Quote",
+      "category": "personal",
+      "path": "templates/personal/home/v1.json",
+      "keywords": [
+        "home",
+        "house",
+        "buildings",
+        "contents",
+        "property insurance",
+        "homeowners",
+        "landlord home"
+      ]
+    },
+    {
+      "key": "motor-car",
+      "name": "Car Insurance Quote",
+      "category": "personal",
+      "path": "templates/personal/motor-car/v1.json",
+      "keywords": [
+        "car",
+        "motor",
+        "vehicle",
+        "auto",
+        "private motor",
+        "car insurance"
+      ]
+    },
+    {
+      "key": "travel",
+      "name": "Travel Insurance Quote",
+      "category": "personal",
+      "path": "templates/personal/travel/v1.json",
+      "keywords": [
+        "travel",
+        "holiday",
+        "trip",
+        "abroad",
+        "single trip",
+        "annual multi trip"
+      ]
+    },
+    {
+      "key": "commercial-property",
+      "name": "Commercial Property Quote",
+      "category": "commercial",
+      "path": "templates/commercial/commercial-property/v1.json",
+      "keywords": [
+        "commercial property",
+        "business premises",
+        "shop",
+        "office",
+        "warehouse",
+        "factory",
+        "commercial buildings"
+      ]
+    },
+    {
+      "key": "professional-indemnity",
+      "name": "Professional Indemnity Quote",
+      "category": "commercial",
+      "path": "templates/commercial/professional-indemnity/v1.json",
+      "keywords": [
+        "professional indemnity",
+        "pi",
+        "errors and omissions",
+        "e&o",
+        "consultancy",
+        "negligence",
+        "professional services"
+      ]
+    }
+  ]
+}
