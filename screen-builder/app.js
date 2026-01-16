@@ -3483,20 +3483,20 @@ actions.appendChild(btnGroupOpts);
       const valueString = String(optValue ?? "");
       
       const isPlaceholder = valueString === "" && optLabel === "Add options first";
-     const item = document.createElement("label");
-      item.className = "choiceOption" + (currentValues.has(valueString) ? " selected" : "");
+           const item = document.createElement("label");
+      item.className = "choiceOption choiceCheck" + (currentValues.has(valueString) ? " selected" : "");
       if (isPlaceholder) {
         item.classList.add("isDisabled");
       }
 
       const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
+      checkbox.className = "choiceCheckBox";
       checkbox.checked = currentValues.has(valueString);
       checkbox.disabled = isPlaceholder;
 
       const text = document.createElement("span");
       text.textContent = optLabel;
-
+      text.className = "choiceCheckText";
       checkbox.addEventListener("change", () => {
         if (checkbox.checked) {
           currentValues.add(valueString);
