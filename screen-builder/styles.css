@@ -1674,7 +1674,55 @@ p {
     display: grid;
     gap: 24px;
 }
+.emptyState h2 {
+    margin: 0;
+    font-weight: 840;
+    font-size: 110px;
+    line-height: 97%;
+}
+.emptyState.show {
+    display: grid;
+    gap: 40px;
+}
+.emptyIcon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
 
+    background: linear-gradient(
+        135deg,
+        rgba(167, 139, 250, 0.85),
+        rgba(96, 165, 250, 0.85),
+        rgba(167, 139, 250, 0.85)
+    );
+    background-size: 300% 300%;
+    animation: aiFillGradient 6s ease infinite;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    margin: 0 auto 16px;
+    font-size: 32px;
+    margin-top: 40px;
+}
+@keyframes aiFillGradient {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+.emptyState {
+    /* position: absolute; */
+    inset: 0;
+    display: none;
+    place-items: center;
+    padding: 40px;
+    text-align: center;
+}
+button#emptyAddPage {
+    padding: 16px 24px;
+    font-size: 18px;
+    min-height: 56px;
+}
 
 @media (max-width: 1400px){
   .layout{ grid-template-columns: 320px 1fr; }
