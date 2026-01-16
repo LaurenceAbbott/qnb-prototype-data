@@ -1,81 +1,208 @@
 {
-  "schemaVersion": "1.0",
-  "settings": {
-    "quote": {
-      "defaultPaymentFrequency": "annual",
-      "allowMonthly": true,
-      "allowAnnual": true
-    },
-    "logic": {
-      "defaultCombinator": "AND",
-      "truthyValues": [
-        true,
-        "true",
-        "yes",
-        "Yes"
-      ]
-    },
-    "ui": {
-      "showProgress": true,
-      "showPageNav": true
-    }
+  "meta": {
+    "version": 1,
+    "createdAt": "2026-01-16T15:27:37Z",
+    "updatedAt": "2026-01-16T15:27:37Z",
+    "questionArrays": [],
+    "previewMode": "page"
   },
-  "lob": {
-    "id": "landlord",
-    "name": "Landlord Insurance",
-    "journey": "quote-buy",
-    "currency": "GBP",
-    "locale": "en-GB",
-    "version": "2026-01-16"
-  },
+  "lineOfBusiness": "Landlord Insurance Quote",
   "pages": [
     {
-      "id": "start",
-      "title": "Get a landlord insurance quote",
-      "kind": "form",
+      "id": "page_e410d5e30daa",
+      "name": "Get a landlord insurance quote",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_e4c0cb328bf9",
+          "title": "Get a landlord insurance quote",
+          "level": "h1",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_b7c9cb1a8b02"
+        }
+      ],
       "groups": [
         {
-          "id": "start.about",
-          "title": "Before we start",
-          "elements": [
+          "id": "group_b7c9cb1a8b02",
+          "name": "Before we start",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "start.intro",
+              "id": "q_f6de9f8340fe",
               "type": "display",
-              "text": "We’ll ask about your property, the tenants and the cover you need."
+              "title": "Landlord Insurance",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "hero",
+                "tone": "neutral",
+                "title": "Landlord Insurance",
+                "subtitle": "Landlord Insurance",
+                "bodyHtml": "<p>We\u2019ll ask about your property, the tenants and the cover you need.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "start.coverStart",
+              "id": "q_7a1433fd6698",
               "type": "date",
-              "label": "When do you want cover to start?",
-              "required": true
+              "title": "When do you want cover to start?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "start.isUKResident",
-              "type": "radio",
-              "label": "Are you a UK resident?",
+              "id": "q_1f4a6afc1896",
+              "type": "yesno",
+              "title": "Are you a UK resident?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "policyholder",
-      "title": "Policyholder",
-      "kind": "form",
+      "id": "page_5e15502e34f7",
+      "name": "Policyholder",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_8de054e48913",
+          "title": "Policyholder",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_8170e0e98885"
+        }
+      ],
       "groups": [
         {
-          "id": "policyholder.details",
-          "title": "Your details",
-          "elements": [
+          "id": "group_8170e0e98885",
+          "name": "Your details",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "person.title",
+              "id": "q_c99f41067ed7",
               "type": "select",
-              "label": "Title",
+              "title": "Title",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Mr",
                 "Mrs",
@@ -84,91 +211,478 @@
                 "Mx",
                 "Dr"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "person.firstName",
+              "id": "q_e6283239c74a",
               "type": "text",
-              "label": "First name",
-              "required": true
+              "title": "First name",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "person.lastName",
+              "id": "q_f25dd2468d0b",
               "type": "text",
-              "label": "Last name",
-              "required": true
+              "title": "Last name",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "person.dob",
+              "id": "q_75441b63c1c4",
               "type": "date",
-              "label": "Date of birth",
-              "required": true
-            },
-            {
-              "id": "person.email",
-              "type": "text",
-              "label": "Email address",
+              "title": "Date of birth",
               "required": true,
-              "validation": {
-                "format": "email"
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
               }
             },
             {
-              "id": "person.phone",
-              "type": "text",
-              "label": "Phone number",
-              "required": true
-            },
-            {
-              "id": "address.line1",
-              "type": "text",
-              "label": "Address line 1",
-              "required": true
-            },
-            {
-              "id": "address.line2",
-              "type": "text",
-              "label": "Address line 2",
-              "required": false
-            },
-            {
-              "id": "address.town",
-              "type": "text",
-              "label": "Town/City",
-              "required": true
-            },
-            {
-              "id": "address.postcode",
-              "type": "text",
-              "label": "Postcode",
+              "id": "q_5b7cc586faa3",
+              "type": "email",
+              "title": "Email address",
               "required": true,
-              "validation": {
-                "pattern": "^[A-Za-z]{1,2}\\d{1,2}[A-Za-z]?\\s?\\d[A-Za-z]{2}$",
-                "message": "Enter a valid UK postcode"
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
               }
             },
             {
-              "id": "policyholder.isCompany",
-              "type": "radio",
-              "label": "Is the policyholder a company?",
+              "id": "q_40efce8b8fc8",
+              "type": "tel",
+              "title": "Phone number",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_dc461e0abf50",
+              "type": "text",
+              "title": "Address line 1",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_e3704bd82b03",
+              "type": "text",
+              "title": "Address line 2",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_e5fbb81d8acf",
+              "type": "text",
+              "title": "Town/City",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_5d935d988c65",
+              "type": "text",
+              "title": "Postcode",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_341075844430",
+              "type": "yesno",
+              "title": "Is the policyholder a company?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "policyholder.companyName",
+              "id": "q_3ede89f04d55",
               "type": "text",
-              "label": "Company name",
+              "title": "Company name",
               "required": true,
-              "showWhen": {
-                "all": [
-                  {
-                    "fact": "policyholder.isCompany",
-                    "equals": "Yes"
-                  }
-                ]
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
               }
             }
           ]
@@ -176,166 +690,699 @@
       ]
     },
     {
-      "id": "properties",
-      "title": "Property details",
-      "kind": "form",
+      "id": "page_95da71cac5eb",
+      "name": "Property details",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_04ad521d78fe",
+          "title": "Property details",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_e1ecd910fee9"
+        }
+      ],
       "groups": [
         {
-          "id": "properties.list",
-          "title": "Add properties",
-          "elements": [
+          "id": "group_e1ecd910fee9",
+          "name": "Add properties",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "properties.tip",
+              "id": "q_80bba77f8c8e",
               "type": "display",
-              "text": "If you have multiple rental properties, add each one here."
+              "title": "If you have multiple rental properties, add each one here.",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "If you have multiple rental properties, add each one here.",
+                "subtitle": "",
+                "bodyHtml": "<p>If you have multiple rental properties, add each one here.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "properties.properties",
-              "type": "repeat",
-              "label": "Properties",
-              "itemLabel": "Property",
-              "minItems": 1,
-              "maxItems": 20,
-              "itemSchema": [
-                {
-                  "id": "property.nickname",
-                  "type": "text",
-                  "label": "Property nickname",
-                  "required": false,
-                  "helpText": "e.g. 'High Street Flat'"
-                },
-                {
-                  "id": "property.type",
-                  "type": "select",
-                  "label": "Property type",
-                  "options": [
-                    "House",
-                    "Flat",
-                    "Bungalow",
-                    "Maisonette",
-                    "HMO",
-                    "Other"
-                  ],
-                  "required": true
-                },
-                {
-                  "id": "property.bedrooms",
-                  "type": "number",
-                  "label": "Number of bedrooms",
-                  "required": true,
-                  "min": 0,
-                  "max": 20
-                },
-                {
-                  "id": "property.yearBuilt",
-                  "type": "number",
-                  "label": "Year built (approx)",
-                  "required": false,
-                  "min": 1600,
-                  "max": 2026
-                },
-                {
-                  "id": "property.walls",
-                  "type": "select",
-                  "label": "Wall construction",
-                  "options": [
-                    "Brick/stone",
-                    "Timber frame",
-                    "Non-standard"
-                  ],
-                  "required": true
-                },
-                {
-                  "id": "property.roof",
-                  "type": "select",
-                  "label": "Roof construction",
-                  "options": [
-                    "Tile/slate",
-                    "Thatched",
-                    "Flat roof",
-                    "Other"
-                  ],
-                  "required": true
-                },
-                {
-                  "id": "property.listed",
-                  "type": "radio",
-                  "label": "Is the property listed?",
-                  "options": [
-                    "Yes",
-                    "No"
-                  ],
-                  "required": true
-                },
-                {
-                  "id": "property.rebuildCost",
-                  "type": "number",
-                  "label": "Rebuild cost (£)",
-                  "required": true,
-                  "min": 0
-                },
-                {
-                  "id": "property.contentsCover",
-                  "type": "radio",
-                  "label": "Do you need contents cover?",
-                  "options": [
-                    "Yes",
-                    "No"
-                  ],
-                  "required": true
-                },
-                {
-                  "id": "property.contentsAmount",
-                  "type": "number",
-                  "label": "Contents sum insured (£)",
-                  "required": true,
-                  "min": 0,
-                  "showWhen": {
-                    "all": [
-                      {
-                        "fact": "property.contentsCover",
-                        "equals": "Yes"
-                      }
-                    ]
-                  }
-                },
-                {
-                  "id": "property.address.line1",
-                  "type": "text",
-                  "label": "Address line 1",
-                  "required": true
-                },
-                {
-                  "id": "property.address.town",
-                  "type": "text",
-                  "label": "Town/City",
-                  "required": true
-                },
-                {
-                  "id": "property.address.postcode",
-                  "type": "text",
-                  "label": "Postcode",
-                  "required": true
+              "id": "q_8079170a4b86",
+              "type": "display",
+              "title": "Properties (prototype)",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Properties",
+                "subtitle": "",
+                "bodyHtml": "<p>This section supports multiple items in a full build. For this prototype we\u2019ll capture one item.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
                 }
-              ]
+              }
+            },
+            {
+              "id": "q_f6d641a8cd72",
+              "type": "text",
+              "title": "Property nickname",
+              "required": false,
+              "help": "e.g. 'High Street Flat'",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_84d44c560255",
+              "type": "select",
+              "title": "Property type",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "House",
+                "Flat",
+                "Bungalow",
+                "Maisonette",
+                "HMO",
+                "Other"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_a7ceb05a6a0d",
+              "type": "number",
+              "title": "Number of bedrooms",
+              "required": true,
+              "help": "Min 0, Max 20",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_5634ed12760d",
+              "type": "number",
+              "title": "Year built (approx)",
+              "required": false,
+              "help": "Min 1600, Max 2026",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_a3b0552492a3",
+              "type": "select",
+              "title": "Wall construction",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Brick/stone",
+                "Timber frame",
+                "Non-standard"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_e945b2ec905f",
+              "type": "select",
+              "title": "Roof construction",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Tile/slate",
+                "Thatched",
+                "Flat roof",
+                "Other"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_55e3ecab43d9",
+              "type": "yesno",
+              "title": "Is the property listed?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_21054d9a0ee4",
+              "type": "number",
+              "title": "Rebuild cost (\u00a3)",
+              "required": true,
+              "help": "Min 0",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_3383ee664eda",
+              "type": "yesno",
+              "title": "Do you need contents cover?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_6add7b94131b",
+              "type": "number",
+              "title": "Contents sum insured (\u00a3)",
+              "required": true,
+              "help": "Min 0",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_ad66c3b88f34",
+              "type": "text",
+              "title": "Address line 1",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_310aff94d2b9",
+              "type": "text",
+              "title": "Town/City",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_79f53277949f",
+              "type": "text",
+              "title": "Postcode",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "tenancy",
-      "title": "Tenancy & add-ons",
-      "kind": "form",
+      "id": "page_d9360298ba48",
+      "name": "Tenancy & add-ons",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_dde8665b6b70",
+          "title": "Tenancy & add-ons",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_e64933bed5a7"
+        }
+      ],
       "groups": [
         {
-          "id": "tenancy.main",
-          "title": "Tenancy details",
-          "elements": [
+          "id": "group_e64933bed5a7",
+          "name": "Tenancy details",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "tenancy.tenantType",
+              "id": "q_e1b66d6e0018",
               "type": "select",
-              "label": "Tenant type",
+              "title": "Tenant type",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Single family",
                 "Professional sharers",
@@ -344,162 +1391,244 @@
                 "Holiday let",
                 "HMO"
               ],
-              "required": true
-            },
-            {
-              "id": "tenancy.unoccupied",
-              "type": "radio",
-              "label": "Will the property be unoccupied for more than 30 days?",
-              "options": [
-                "Yes",
-                "No"
-              ],
-              "required": true
-            },
-            {
-              "id": "tenancy.unoccupiedDays",
-              "type": "number",
-              "label": "How many days (approx)?",
-              "required": true,
-              "min": 31,
-              "max": 365,
-              "showWhen": {
-                "all": [
-                  {
-                    "fact": "tenancy.unoccupied",
-                    "equals": "Yes"
-                  }
-                ]
-              }
-            },
-            {
-              "id": "tenancy.annualRent",
-              "type": "number",
-              "label": "Annual rent (£)",
-              "required": true,
-              "min": 0
-            },
-            {
-              "id": "tenancy.rentProtection",
-              "type": "radio",
-              "label": "Add rent protection cover?",
-              "options": [
-                "Yes",
-                "No"
-              ],
-              "required": true
-            },
-            {
-              "id": "tenancy.legalExpenses",
-              "type": "radio",
-              "label": "Add legal expenses cover?",
-              "options": [
-                "Yes",
-                "No"
-              ],
-              "required": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "history",
-      "title": "Insurance history",
-      "kind": "form",
-      "groups": [
-        {
-          "id": "history.main",
-          "title": "Previous insurance",
-          "elements": [
-            {
-              "id": "history.claims",
-              "type": "radio",
-              "label": "Any property claims in the last 5 years?",
-              "options": [
-                "Yes",
-                "No"
-              ],
-              "required": true
-            },
-            {
-              "id": "history.claimList",
-              "type": "repeat",
-              "label": "Claims",
-              "itemLabel": "Claim",
-              "minItems": 1,
-              "maxItems": 10,
-              "itemSchema": [
-                {
-                  "id": "claim.date",
-                  "type": "date",
-                  "label": "When did the claim happen?",
-                  "required": true
-                },
-                {
-                  "id": "claim.type",
-                  "type": "select",
-                  "label": "What type of claim was it?",
-                  "options": [
-                    "Accident",
-                    "Theft",
-                    "Fire",
-                    "Windscreen",
-                    "Malicious damage",
-                    "Other"
-                  ],
-                  "required": true
-                },
-                {
-                  "id": "claim.amount",
-                  "type": "number",
-                  "label": "Approximate cost (£)",
-                  "required": false,
-                  "min": 0
-                },
-                {
-                  "id": "claim.atFault",
-                  "type": "radio",
-                  "label": "Were you at fault?",
-                  "options": [
-                    "Yes",
-                    "No",
-                    "Partly"
-                  ],
-                  "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
                 }
-              ],
-              "showWhen": {
-                "all": [
-                  {
-                    "fact": "history.claims",
-                    "equals": "Yes"
-                  }
-                ]
               }
             },
             {
-              "id": "history.declined",
-              "type": "radio",
-              "label": "Have you ever had insurance declined, cancelled or voided?",
+              "id": "q_0f989647c23f",
+              "type": "yesno",
+              "title": "Will the property be unoccupied for more than 30 days?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Yes",
                 "No"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "history.declinedDetails",
-              "type": "text",
-              "label": "Please tell us more",
+              "id": "q_ddcb9c5892c0",
+              "type": "number",
+              "title": "How many days (approx)?",
               "required": true,
-              "showWhen": {
-                "all": [
-                  {
-                    "fact": "history.declined",
-                    "equals": "Yes"
-                  }
-                ]
+              "help": "Min 31, Max 365",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_4a6edc50714a",
+              "type": "number",
+              "title": "Annual rent (\u00a3)",
+              "required": true,
+              "help": "Min 0",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_a1b115a61afb",
+              "type": "yesno",
+              "title": "Add rent protection cover?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_3448cabfaec1",
+              "type": "yesno",
+              "title": "Add legal expenses cover?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
               }
             }
           ]
@@ -507,160 +1636,844 @@
       ]
     },
     {
-      "id": "quote",
-      "title": "Your quote",
-      "kind": "quote",
+      "id": "page_542231a1d131",
+      "name": "Insurance history",
+      "template": "form",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_36c873ca5849",
+          "title": "Insurance history",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_8652dbbf8e4d"
+        }
+      ],
       "groups": [
         {
-          "id": "quote.options",
-          "title": "Payment options",
-          "elements": [
+          "id": "group_8652dbbf8e4d",
+          "name": "Previous insurance",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "quote.banner",
-              "type": "display",
-              "text": "Here’s your indicative quote. You can choose annual or monthly payments."
+              "id": "q_f781ed732360",
+              "type": "yesno",
+              "title": "Any property claims in the last 5 years?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "quote.paymentFrequency",
+              "id": "q_203612d07220",
+              "type": "display",
+              "title": "Claims (prototype)",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Claims",
+                "subtitle": "",
+                "bodyHtml": "<p>This section supports multiple items in a full build. For this prototype we\u2019ll capture one item.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_55d7c3908a82",
+              "type": "date",
+              "title": "When did the claim happen?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_ac4e08ab3fcc",
+              "type": "select",
+              "title": "What type of claim was it?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Accident",
+                "Theft",
+                "Fire",
+                "Windscreen",
+                "Malicious damage",
+                "Other"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_ae7439848519",
+              "type": "number",
+              "title": "Approximate cost (\u00a3)",
+              "required": false,
+              "help": "Min 0",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_d9897e620fab",
               "type": "radio",
-              "label": "How would you like to pay?",
+              "title": "Were you at fault?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No",
+                "Partly"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_760d1bf62854",
+              "type": "yesno",
+              "title": "Have you ever had insurance declined, cancelled or voided?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [
+                "Yes",
+                "No"
+              ],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_706709ca8c01",
+              "type": "text",
+              "title": "Please tell us more",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "page_f749176129f4",
+      "name": "Your quote",
+      "template": "quote",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_96f76292c818",
+          "title": "Your quote",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_55d689fa78bf"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_55d689fa78bf",
+          "name": "Payment options",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
+            {
+              "id": "q_e7bfdbf5c815",
+              "type": "display",
+              "title": "Here\u2019s your indicative quote. You can choose annual or monthly payments.",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "Here\u2019s your indicative quote. You can choose annual or monthly payments.",
+                "subtitle": "",
+                "bodyHtml": "<p>Here\u2019s your indicative quote. You can choose annual or monthly payments.</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_f1ad9ad6573f",
+              "type": "radio",
+              "title": "How would you like to pay?",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "annual",
                 "monthly"
               ],
-              "required": true,
-              "default": "annual"
-            },
-            {
-              "id": "quote.summary",
-              "type": "quote",
-              "mode": "toggle",
-              "paymentFrequencyRef": "quote.paymentFrequency",
-              "pricePlaceholders": {
-                "annual": 523.8,
-                "monthly": {
-                  "deposit": 72.0,
-                  "instalments": 11,
-                  "instalmentAmount": 49.8,
-                  "apr": 19.9
-                }
+              "logic": {
+                "enabled": false,
+                "rules": []
               },
-              "breakdown": [
-                {
-                  "label": "Buildings cover",
-                  "amount": 410.0
-                },
-                {
-                  "label": "Contents cover",
-                  "amount": 55.0
-                },
-                {
-                  "label": "Rent protection",
-                  "amount": 38.8
-                },
-                {
-                  "label": "Fees & taxes",
-                  "amount": 20.0
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
                 }
-              ]
+              }
             },
             {
-              "id": "quote.inclusions",
+              "id": "q_2cba771ab87d",
               "type": "display",
-              "text": "**Typical cover**\n- Buildings (sum insured)\n- Landlord liability\n- Loss of rent (where selected)"
+              "title": "quote",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "quote",
+                "subtitle": "",
+                "bodyHtml": "<p>[quote]</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "quote.exclusions",
+              "id": "q_67e470bf28cb",
               "type": "display",
-              "text": "**Common exclusions**\n- Wear and tear\n- Poor maintenance\n- Unoccupied beyond the allowed period"
+              "title": "**Typical cover**\n- Buildings (sum insured)\n- Landlord liability\n- Loss of rent ",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "**Typical cover**\n- Buildings (sum insured)\n- Landlord liability\n- Loss of rent ",
+                "subtitle": "",
+                "bodyHtml": "<p><strong>Typical cover</strong></p><ul><li>Buildings (sum insured)</li><li>Landlord liability</li><li>Loss of rent (where selected)</li></ul>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
+            },
+            {
+              "id": "q_c5b224677c5d",
+              "type": "display",
+              "title": "**Common exclusions**\n- Wear and tear\n- Poor maintenance\n- Unoccupied beyond the",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "**Common exclusions**\n- Wear and tear\n- Poor maintenance\n- Unoccupied beyond the",
+                "subtitle": "",
+                "bodyHtml": "<p><strong>Common exclusions</strong></p><ul><li>Wear and tear</li><li>Poor maintenance</li><li>Unoccupied beyond the allowed period</li></ul>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "summary",
-      "title": "Check your details",
-      "kind": "summary",
+      "id": "page_e3a6f1794613",
+      "name": "Check your details",
+      "template": "summary",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_9c00675b71b5",
+          "title": "Check your details",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_a584a274aa2c"
+        }
+      ],
       "groups": [
         {
-          "id": "summary.playback",
-          "title": "Your answers",
-          "elements": [
+          "id": "group_a584a274aa2c",
+          "name": "Your answers",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "summary.view",
-              "type": "summary",
-              "sections": [
-                {
-                  "title": "Policyholder",
-                  "refs": [
-                    "person.*",
-                    "address.*",
-                    "start.coverStart",
-                    "policyholder.*"
-                  ]
-                },
-                {
-                  "title": "Properties",
-                  "refs": [
-                    "properties.properties"
-                  ]
-                },
-                {
-                  "title": "Tenancy & add-ons",
-                  "refs": [
-                    "tenancy.*"
-                  ]
-                },
-                {
-                  "title": "History",
-                  "refs": [
-                    "history.*"
-                  ]
+              "id": "q_ab6be85e26f8",
+              "type": "display",
+              "title": "summary",
+              "required": false,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
+              "options": [],
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "summary",
+                "subtitle": "",
+                "bodyHtml": "<p>[summary]</p>",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
                 }
-              ]
+              }
             },
             {
-              "id": "summary.confirm",
+              "id": "q_eb346c1a8781",
               "type": "checkbox",
-              "label": "Confirm",
+              "title": "Confirm",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "I confirm the details are correct"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      "id": "payment",
-      "title": "Payment",
-      "kind": "payment",
+      "id": "page_300f069da7dc",
+      "name": "Payment",
+      "template": "payment",
+      "flow": [
+        {
+          "type": "text",
+          "id": "txt_6608c8c660f7",
+          "title": "Payment",
+          "level": "h2",
+          "bodyHtml": ""
+        },
+        {
+          "type": "group",
+          "id": "group_2213bde5147b"
+        }
+      ],
       "groups": [
         {
-          "id": "payment.method",
-          "title": "How you’ll pay",
-          "elements": [
+          "id": "group_2213bde5147b",
+          "name": "How you\u2019ll pay",
+          "description": {
+            "enabled": false,
+            "html": "<p></p>"
+          },
+          "logic": {
+            "enabled": false,
+            "rules": []
+          },
+          "questions": [
             {
-              "id": "payment.method",
+              "id": "q_3f3e9a8e766d",
               "type": "radio",
-              "label": "Payment method",
+              "title": "Payment method",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "Debit card",
                 "Direct Debit"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             },
             {
-              "id": "payment.terms",
+              "id": "q_9691035a152e",
               "type": "checkbox",
-              "label": "Agreements",
+              "title": "Agreements",
+              "required": true,
+              "help": "",
+              "placeholder": "",
+              "errorText": "",
               "options": [
                 "I agree to the terms and conditions",
                 "I confirm I have answered all questions honestly"
               ],
-              "required": true
+              "logic": {
+                "enabled": false,
+                "rules": []
+              },
+              "content": {
+                "enabled": false,
+                "html": ""
+              },
+              "display": {
+                "variant": "info",
+                "tone": "neutral",
+                "title": "",
+                "subtitle": "",
+                "bodyHtml": "",
+                "prefix": "",
+                "suffix": ""
+              },
+              "followUp": {
+                "enabled": false,
+                "triggerValue": "Yes",
+                "name": "",
+                "questions": [],
+                "repeat": {
+                  "enabled": false,
+                  "min": 1,
+                  "max": 5,
+                  "addLabel": "Add another",
+                  "itemLabel": "Item"
+                }
+              }
             }
           ]
         }
