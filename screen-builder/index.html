@@ -37,9 +37,11 @@
 
         <section class="docHeader" aria-label="Document header">
       <div class="lobBlock lobBlock--doc">
-        <div class="lobLabel">Form title</div>
-         <div class="lobHeaderRow">
-          <div class="lobTitle" id="lobTitle" role="textbox" aria-label="Form title" contenteditable="true" spellcheck="false"></div>
+        <div class="lobHeaderRow">
+          <div class="lobInput">
+            <span class="lobIcon" aria-hidden="true">✎</span>
+            <div class="lobTitle" id="lobTitle" role="textbox" aria-label="Form title" data-placeholder="Form title" contenteditable="true" spellcheck="false"></div>
+          </div>
           <button class="btn danger ghost" id="btnClearForm" type="button">Clear form</button>
         </div>
         <div class="lobHint">Click to edit. This is the headline users see.</div>
