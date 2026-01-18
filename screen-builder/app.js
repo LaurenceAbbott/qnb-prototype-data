@@ -3867,7 +3867,7 @@ actions.appendChild(btnGroupOpts);
     const sendBtn = document.createElement("button");
     sendBtn.type = "button";
     sendBtn.className = "btn small";
-    sendBtn.textContent = aiState?.loading ? "Thinking…" : "Send";
+    sendBtn.textContent = aiState?.loading ? "Thinking…" : "Ask";
     sendBtn.disabled = aiState?.loading === true;
 
     sendBtn.addEventListener("click", async () => {
