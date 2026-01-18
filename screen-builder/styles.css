@@ -1963,6 +1963,9 @@ button#btnClearForm {
   }
   .topbar{ flex-direction:column; align-items:flex-start; gap:10px; }
   .topActions{ width:100%; justify-content:flex-end; }
+  }
+  .brandName { display:none; }
+
 }
 
 }
