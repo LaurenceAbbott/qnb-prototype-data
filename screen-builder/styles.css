@@ -98,7 +98,7 @@ button, input, select, textarea{ font-family: inherit; }
 .layout{
   flex:1;
   display:grid;
-  grid-template-columns: 320px minmax(520px, 1fr) 320px;
+  grid-template-columns: 280px minmax(520px, 1fr) 360px;
   gap: 14px;
   padding: 14px;
   min-height:0;
@@ -113,6 +113,44 @@ button, input, select, textarea{ font-family: inherit; }
   overflow:hidden;
   display:flex;
   flex-direction:column;
+}
+.panelRail{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  padding: 12px 6px;
+  border-bottom: 1px solid var(--stroke);
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent);
+}
+.panelContent{
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  flex:1;
+}
+.railBtn{
+  width: 44px;
+  min-height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.18);
+  color: var(--text);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor:pointer;
+}
+.railBtn:hover{
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.22);
+}
+.railIcon{
+  font-size: 16px;
 }
 
 .panelHeader{
@@ -1086,6 +1124,20 @@ ul {
 .canvasHeader {
     display: none;
 }
+.mobileToolbar{
+  display:none;
+  gap:8px;
+  align-items:center;
+}
+.drawerBackdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 900;
+}
 /* Shared select styling (inspector + preview) */
 .select,
 .pSelect {
@@ -1724,19 +1776,61 @@ button#emptyAddPage {
     min-height: 56px;
 }
 
-@media (max-width: 1600px){
-  .layout{ grid-template-columns: 320px 1fr; }
-  .panelRight{ display:none; }
+@media (min-width: 1400px){
+  .layout{ grid-template-columns: 280px minmax(520px, 1fr) 360px; }
+  .panelRail{ display:none; }
+  .panelContent{ display:flex; }
+  .editorGrid{ grid-template-columns: minmax(520px, 1fr) 420px; }
 }
 
-@media (max-width: 1180px){
-  .layout{ grid-template-columns: 320px 1fr; }
-  .panelRight{ display:none; }
+@media (min-width: 768px) and (max-width: 1399px){
+  .layout{ grid-template-columns: 56px minmax(0, 1fr) 56px; }
+  .panelRail{ display:flex; }
+  .panelLeft .panelContent,
+  .panelRight .panelContent{ display:none; }
+  .app.left-expanded .layout{ grid-template-columns: 280px minmax(0, 1fr) 56px; }
+  .app.right-expanded .layout{ grid-template-columns: 56px minmax(0, 1fr) 360px; }
+  .app.left-expanded .panelLeft .panelContent{ display:flex; }
+  .app.right-expanded .panelRight .panelContent{ display:flex; }
   .editorGrid{ grid-template-columns: 1fr; }
 }
-@media (max-width: 860px){
+
+@media (max-width: 767px){
   .layout{ grid-template-columns: 1fr; }
-  .panelLeft{ display:none; }
+    .panelRail{ display:none; }
+  .panelLeft,
+  .panelRight{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    height: 100vh;
+    max-height: 100vh;
+    z-index: 950;
+    transition: transform 0.24s ease;
+  }
+  .panelLeft{
+    left: 0;
+    width: min(86vw, 280px);
+    transform: translateX(-100%);
+  }
+  .panelRight{
+    right: 0;
+    width: min(92vw, 360px);
+    transform: translateX(100%);
+  }
+  .app.left-drawer-open .panelLeft{ transform: translateX(0); }
+  .app.right-drawer-open .panelRight{ transform: translateX(0); }
+  .app.left-drawer-open .drawerBackdrop,
+  .app.right-drawer-open .drawerBackdrop{
+    opacity: 1;
+    pointer-events: auto;
+  }
+  body:has(.app.left-drawer-open),
+  body:has(.app.right-drawer-open){
+    overflow: hidden;
+  }
+  .mobileToolbar{ display:flex; }
+  .editorGrid{ grid-template-columns: 1fr; }
   .topbar{ flex-direction:column; align-items:flex-start; gap:10px; }
   .topActions{ width:100%; justify-content:flex-end; }
 }
