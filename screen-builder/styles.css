@@ -1604,7 +1604,7 @@ textarea.aiAssistInput {
     color: var(--text);
     padding: 10px 12px;
     outline: none;
-    min-height: 120px;
+    min-height: 48px;
     resize: vertical;
 }
 .aiAssistActions {
@@ -1824,6 +1824,8 @@ p {
 .emptyState.show {
     display: grid;
     gap: 24px;
+  overflow-y: auto;
+  margin-bottom: 16px;
 }
 .emptyIcon {
     width: 48px;
