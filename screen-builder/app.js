@@ -1637,12 +1637,11 @@ const setButtonLoading = (on) => {
   const btnImportPages = $("#btnImportPages");
   const btnMobileStructure = $("#btnMobileStructure");
   const btnMobileInspector = $("#btnMobileInspector");
-  const drawerBackdrop = $("#drawerBackdrop");
   const fileInput = $("#fileInput");
   const emptyAddPage = $("#emptyAddPage");
 
-  const leftRailButtons = document.querySelectorAll('[data-panel="left"]');
-  const rightRailButtons = document.querySelectorAll('[data-panel="right"]');
+  const structureRailButtons = document.querySelectorAll('[data-panel="structure"]');
+  const inspectorRailButtons = document.querySelectorAll('[data-panel="inspector"]');
 
   // Preview modal DOM
   const previewBackdrop = $("#previewBackdrop");
@@ -1686,75 +1685,47 @@ const setButtonLoading = (on) => {
   // Responsive layout helpers
   // -------------------------
   const isDesktop = () => window.matchMedia("(min-width: 1400px)").matches;
-  const isLaptop = () => window.matchMedia("(min-width: 768px) and (max-width: 1399px)").matches;
-  const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
 
   function setRailAriaState() {
     if (!appEl) return;
-    const leftOpen = appEl.classList.contains("left-expanded") || appEl.classList.contains("left-drawer-open");
-    const rightOpen = appEl.classList.contains("right-expanded") || appEl.classList.contains("right-drawer-open");
+      const structureOpen = appEl.classList.contains("sb-structure-open");
+    const inspectorOpen = appEl.classList.contains("sb-inspector-open");
 
-    leftRailButtons.forEach((btn) => btn.setAttribute("aria-expanded", leftOpen ? "true" : "false"));
-    rightRailButtons.forEach((btn) => btn.setAttribute("aria-expanded", rightOpen ? "true" : "false"));
+structureRailButtons.forEach((btn) => btn.setAttribute("aria-expanded", structureOpen ? "true" : "false"));
+    inspectorRailButtons.forEach((btn) => btn.setAttribute("aria-expanded", inspectorOpen ? "true" : "false"));
 
-    if (btnMobileStructure) btnMobileStructure.setAttribute("aria-expanded", leftOpen ? "true" : "false");
-    if (btnMobileInspector) btnMobileInspector.setAttribute("aria-expanded", rightOpen ? "true" : "false");
+    if (btnMobileStructure) btnMobileStructure.setAttribute("aria-expanded", structureOpen ? "true" : "false");
+    if (btnMobileInspector) btnMobileInspector.setAttribute("aria-expanded", inspectorOpen ? "true" : "false");
   }
 
-  function closeExpandedPanels() {
+  function closePanels() {
     if (!appEl) return;
-    appEl.classList.remove("left-expanded", "right-expanded");
+    appEl.classList.remove("sb-structure-open", "sb-inspector-open");
     setRailAriaState();
   }
 
-  function closeDrawers() {
+  function toggleStructure() {
     if (!appEl) return;
-    appEl.classList.remove("left-drawer-open", "right-drawer-open");
+    if (isDesktop()) return;
+    const isOpen = appEl.classList.contains("sb-structure-open");
+    appEl.classList.toggle("sb-structure-open", !isOpen);
+    if (!isOpen) appEl.classList.remove("sb-inspector-open");
     setRailAriaState();
   }
 
-  function toggleLeftPanel() {
+    function toggleInspector() {
     if (!appEl) return;
-    if (isMobile()) {
-      const isOpen = appEl.classList.contains("left-drawer-open");
-      appEl.classList.toggle("left-drawer-open", !isOpen);
-      appEl.classList.remove("right-drawer-open");
-      setRailAriaState();
-      return;
-    }
-    if (isLaptop()) {
-      const isOpen = appEl.classList.contains("left-expanded");
-      appEl.classList.toggle("left-expanded", !isOpen);
-      appEl.classList.remove("right-expanded");
-      setRailAriaState();
-    }
-  }
-
-  function toggleRightPanel() {
-    if (!appEl) return;
-    if (isMobile()) {
-      const isOpen = appEl.classList.contains("right-drawer-open");
-      appEl.classList.toggle("right-drawer-open", !isOpen);
-      appEl.classList.remove("left-drawer-open");
-      setRailAriaState();
-      return;
-    }
-    if (isLaptop()) {
-      const isOpen = appEl.classList.contains("right-expanded");
-      appEl.classList.toggle("right-expanded", !isOpen);
-      appEl.classList.remove("left-expanded");
-      setRailAriaState();
-    }
+    if (isDesktop()) return;
+    const isOpen = appEl.classList.contains("sb-inspector-open");
+    appEl.classList.toggle("sb-inspector-open", !isOpen);
+    if (!isOpen) appEl.classList.remove("sb-structure-open");
+    setRailAriaState();
   }
 
   function syncLayoutState() {
     if (!appEl) return;
     if (isDesktop()) {
-      appEl.classList.remove("left-expanded", "right-expanded", "left-drawer-open", "right-drawer-open");
-    } else if (isMobile()) {
-      appEl.classList.remove("left-expanded", "right-expanded");
-    } else {
-      appEl.classList.remove("left-drawer-open", "right-drawer-open");
+      appEl.classList.remove("sb-structure-open", "sb-inspector-open");
     }
     setRailAriaState();
   }
@@ -6489,11 +6460,10 @@ CH 8  Event wiring (listeners)
   // Event wiring
   // -------------------------
   function wire() {
-      leftRailButtons.forEach((btn) => btn.addEventListener("click", toggleLeftPanel));
-    rightRailButtons.forEach((btn) => btn.addEventListener("click", toggleRightPanel));
-    if (btnMobileStructure) btnMobileStructure.addEventListener("click", toggleLeftPanel);
-    if (btnMobileInspector) btnMobileInspector.addEventListener("click", toggleRightPanel);
-    if (drawerBackdrop) drawerBackdrop.addEventListener("click", closeDrawers);
+          structureRailButtons.forEach((btn) => btn.addEventListener("click", toggleStructure));
+    inspectorRailButtons.forEach((btn) => btn.addEventListener("click", toggleInspector));
+    if (btnMobileStructure) btnMobileStructure.addEventListener("click", toggleStructure);
+    if (btnMobileInspector) btnMobileInspector.addEventListener("click", toggleInspector);
     window.addEventListener("resize", debounce(syncLayoutState, 120));
 
     // Track inspector focus to prevent rebuild while typing (fixes 1-letter issue)
@@ -6715,12 +6685,8 @@ CH 8  Event wiring (listeners)
         closePreview();
         return;
       }
-      if (appEl?.classList.contains("left-drawer-open") || appEl?.classList.contains("right-drawer-open")) {
-        closeDrawers();
-        return;
-      }
-      if (appEl?.classList.contains("left-expanded") || appEl?.classList.contains("right-expanded")) {
-        closeExpandedPanels();
+      if (appEl?.classList.contains("sb-structure-open") || appEl?.classList.contains("sb-inspector-open")) {
+        closePanels();
       }
     });
   }
