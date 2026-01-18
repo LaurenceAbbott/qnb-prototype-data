@@ -1618,7 +1618,10 @@ const setButtonLoading = (on) => {
   const pageNameDisplayEl = $("#pageNameDisplay");
   const groupNameDisplayEl = $("#groupNameDisplay");
   const miniStatsEl = $("#miniStats");
-
+  const drawerSlot = $("#drawerSlot");
+  const structurePanel = $("#structurePanel");
+  const inspectorCard = $("#inspectorCard");
+  
   // Page header controls (injected next to #pageNameDisplay)
   let pageHeaderControlsEl = null;
   let pageNameInputEl = null;
@@ -1642,7 +1645,8 @@ const setButtonLoading = (on) => {
 
   const structureRailButtons = document.querySelectorAll('[data-panel="structure"]');
   const inspectorRailButtons = document.querySelectorAll('[data-panel="inspector"]');
-
+  const drawerCloseButtons = document.querySelectorAll("[data-drawer-close]");
+  
   // Preview modal DOM
   const previewBackdrop = $("#previewBackdrop");
   const btnClosePreview = $("#btnClosePreview");
@@ -1685,48 +1689,86 @@ const setButtonLoading = (on) => {
   // Responsive layout helpers
   // -------------------------
   const isDesktop = () => window.matchMedia("(min-width: 1400px)").matches;
+const structurePanelHome = structurePanel?.parentElement || null;
+  const structurePanelHomeNext = structurePanel?.nextElementSibling || null;
+  const inspectorCardHome = inspectorCard?.parentElement || null;
+  const inspectorCardHomeNext = inspectorCard?.nextElementSibling || null;
 
+  function moveDrawerContentToSlot() {
+    if (!drawerSlot) return;
+    if (structurePanel && structurePanel.parentElement !== drawerSlot) {
+      drawerSlot.appendChild(structurePanel);
+    }
+    if (inspectorCard && inspectorCard.parentElement !== drawerSlot) {
+      drawerSlot.appendChild(inspectorCard);
+    }
+  }
+
+  function restoreDrawerContent() {
+    if (structurePanel && structurePanelHome && structurePanel.parentElement !== structurePanelHome) {
+      structurePanelHome.insertBefore(structurePanel, structurePanelHomeNext);
+    }
+    if (inspectorCard && inspectorCardHome && inspectorCard.parentElement !== inspectorCardHome) {
+      inspectorCardHome.insertBefore(inspectorCard, inspectorCardHomeNext);
+    }
+  }
+
+  function syncDrawerPlacement() {
+    if (isDesktop()) {
+      restoreDrawerContent();
+      return;
+    }
+    moveDrawerContentToSlot();
+  }
+  
   function setRailAriaState() {
     if (!appEl) return;
-      const structureOpen = appEl.classList.contains("sb-structure-open");
-    const inspectorOpen = appEl.classList.contains("sb-inspector-open");
+        const structureOpen = appEl.classList.contains("sb-drawer-structure-open");
+    const inspectorOpen = appEl.classList.contains("sb-drawer-inspector-open");
 
-structureRailButtons.forEach((btn) => btn.setAttribute("aria-expanded", structureOpen ? "true" : "false"));
-    inspectorRailButtons.forEach((btn) => btn.setAttribute("aria-expanded", inspectorOpen ? "true" : "false"));
-
+  structureRailButtons.forEach((btn) => {
+      btn.setAttribute("aria-expanded", structureOpen ? "true" : "false");
+      btn.classList.toggle("is-active", structureOpen);
+    });
+    inspectorRailButtons.forEach((btn) => {
+      btn.setAttribute("aria-expanded", inspectorOpen ? "true" : "false");
+      btn.classList.toggle("is-active", inspectorOpen);
+    });
+    
     if (btnMobileStructure) btnMobileStructure.setAttribute("aria-expanded", structureOpen ? "true" : "false");
     if (btnMobileInspector) btnMobileInspector.setAttribute("aria-expanded", inspectorOpen ? "true" : "false");
   }
 
   function closePanels() {
     if (!appEl) return;
-    appEl.classList.remove("sb-structure-open", "sb-inspector-open");
+    appEl.classList.remove("sb-drawer-structure-open", "sb-drawer-inspector-open");
     setRailAriaState();
   }
 
   function toggleStructure() {
     if (!appEl) return;
     if (isDesktop()) return;
-    const isOpen = appEl.classList.contains("sb-structure-open");
-    appEl.classList.toggle("sb-structure-open", !isOpen);
-    if (!isOpen) appEl.classList.remove("sb-inspector-open");
+     const isOpen = appEl.classList.contains("sb-drawer-structure-open");
+    appEl.classList.toggle("sb-drawer-structure-open", !isOpen);
+    if (!isOpen) appEl.classList.remove("sb-drawer-inspector-open");
     setRailAriaState();
   }
 
     function toggleInspector() {
     if (!appEl) return;
     if (isDesktop()) return;
-    const isOpen = appEl.classList.contains("sb-inspector-open");
-    appEl.classList.toggle("sb-inspector-open", !isOpen);
-    if (!isOpen) appEl.classList.remove("sb-structure-open");
+    const isOpen = appEl.classList.contains("sb-drawer-inspector-open");
+    appEl.classList.toggle("sb-drawer-inspector-open", !isOpen);
+    if (!isOpen) appEl.classList.remove("sb-drawer-structure-open");
     setRailAriaState();
   }
 
   function syncLayoutState() {
     if (!appEl) return;
     if (isDesktop()) {
-      appEl.classList.remove("sb-structure-open", "sb-inspector-open");
+      appEl.classList.remove("sb-drawer-structure-open", "sb-drawer-inspector-open");
     }
+    syncDrawerPlacement();
     setRailAriaState();
   }
 
@@ -6464,6 +6506,7 @@ CH 8  Event wiring (listeners)
     inspectorRailButtons.forEach((btn) => btn.addEventListener("click", toggleInspector));
     if (btnMobileStructure) btnMobileStructure.addEventListener("click", toggleStructure);
     if (btnMobileInspector) btnMobileInspector.addEventListener("click", toggleInspector);
+    drawerCloseButtons.forEach((btn) => btn.addEventListener("click", closePanels));
     window.addEventListener("resize", debounce(syncLayoutState, 120));
 
     // Track inspector focus to prevent rebuild while typing (fixes 1-letter issue)
@@ -6685,7 +6728,7 @@ CH 8  Event wiring (listeners)
         closePreview();
         return;
       }
-      if (appEl?.classList.contains("sb-structure-open") || appEl?.classList.contains("sb-inspector-open")) {
+      if (appEl?.classList.contains("sb-drawer-structure-open") || appEl?.classList.contains("sb-drawer-inspector-open")) {
         closePanels();
       }
     });
