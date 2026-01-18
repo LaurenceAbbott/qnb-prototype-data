@@ -56,9 +56,6 @@ button, input, select, textarea{ font-family: inherit; }
   align-items:center;
   justify-content:space-between;
   padding: 16px 18px;
-  border-bottom: 1px solid var(--stroke);
-  background: rgba(0,0,0,0.25);
-  backdrop-filter: blur(14px);
 }
 
 .brand{
@@ -250,9 +247,7 @@ button, input, select, textarea{ font-family: inherit; }
   border-bottom: 1px solid var(--stroke);
 }
 .docHeader{
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--stroke);
-  background: rgba(0,0,0,0.22);
+  padding: 0px 14px;
 }
 .lobBlock--doc{
   padding: 12px 16px;
