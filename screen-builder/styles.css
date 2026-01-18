@@ -1676,8 +1676,8 @@ p {
 .emptyState h2 {
     margin: 0;
     font-weight: 840;
-    font-size: 110px;
-    line-height: 97%;
+    font-size: 64px;
+    line-height: 100%;
     max-width: 830px;
 }
 .emptyState.show {
@@ -1724,7 +1724,7 @@ button#emptyAddPage {
     min-height: 56px;
 }
 
-@media (max-width: 1400px){
+@media (max-width: 1600px){
   .layout{ grid-template-columns: 320px 1fr; }
   .panelRight{ display:none; }
 }
