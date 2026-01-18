@@ -300,7 +300,7 @@ button, input, select, textarea{ font-family: inherit; }
 }
 
 .pagesActions{
-  padding: 0 10px 12px;
+  padding: 12px;
 }
 .pagesActions .btn{
   width: 100%;
@@ -1861,6 +1861,15 @@ button#emptyAddPage {
     padding: 16px 24px;
     font-size: 18px;
     min-height: 56px;
+}
+
+.groupBarRight {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-end;
 }
 
 @media (min-width: 1400px){
