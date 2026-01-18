@@ -264,7 +264,24 @@ button, input, select, textarea{ font-family: inherit; }
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 10px;
+  }
+.lobInput{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.lobInput:focus-within{
+  border-color: rgba(167,139,250,0.50);
+  box-shadow: 0 0 0 3px rgba(167,139,250,0.18);
+}
+.lobIcon{
+  color: var(--muted);
+  font-size: 16px;
 }
 .lobHeaderRow .lobTitle{
   margin-top: 0;
@@ -282,19 +299,22 @@ button, input, select, textarea{ font-family: inherit; }
   letter-spacing: 0.3px;
 }
 .lobTitle{
-  margin-top: 10px;
   font-size: 22px;
   font-weight: 600;
   line-height: 1.15;
   outline: none;
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+}
+.lobTitle:empty::before{
+  content: attr(data-placeholder);
+  color: var(--muted2);
+  font-weight: 500;
 }
 .lobTitle:focus{
-  border-color: rgba(167,139,250,0.50);
-  box-shadow: 0 0 0 3px rgba(167,139,250,0.18);
+  outline: none;
 }
 .lobHint{
   margin-top:8px;
