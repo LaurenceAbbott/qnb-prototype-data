@@ -1900,6 +1900,10 @@ button#emptyAddPage {
     display: none;
 }
 
+button#btnClearForm {
+    min-height: 50px;
+}
+
 @media (min-width: 1400px){
   .panelRail{ display:none; }
   .panelContent{ display:flex; }
