@@ -2138,7 +2138,7 @@ function ensurePageHeaderControls() {
         renderAll();
       });
 
-      const delBtn = iconButton("✕", "Delete page");
+      const delBtn = iconButton("✕", "Delete page", "btn danger");
       delBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         if (!confirm(`Delete "${p.name}"?`)) return;
@@ -2534,7 +2534,7 @@ actions.appendChild(btnGroupOpts);
 
     const btnGDel = document.createElement("button");
     btnGDel.type = "button";
-    btnGDel.className = "btn ghost";
+    btnGDel.className = "btn danger";
     btnGDel.textContent = "Delete group";
     btnGDel.addEventListener("click", () => {
       if (!confirm(`Delete group "${g.name}"?`)) return;
@@ -2711,7 +2711,7 @@ actions.appendChild(btnGroupOpts);
         renderAll();
       });
 
-      const delBtn = iconButton("✕", "Delete");
+      const delBtn = iconButton("✕", "Delete", "btn danger");
       delBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         if (!confirm("Delete this question?")) return;
@@ -3629,7 +3629,11 @@ actions.appendChild(btnGroupOpts);
     btns.forEach((b) => {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "btn " + (b.kind === "primary" ? "primary" : "ghost");
+      const kindClass =
+        b.kind === "primary" ? "primary" :
+        b.kind === "danger" ? "danger" :
+        "ghost";
+      btn.className = `btn ${kindClass}`;
       btn.textContent = b.label;
       btn.addEventListener("click", b.onClick);
       wrap.appendChild(btn);
@@ -3684,7 +3688,7 @@ actions.appendChild(btnGroupOpts);
           render();
         });
 
-        const del = iconButton("✕", "Delete option");
+        const del = iconButton("✕", "Delete option", "btn danger");
         del.addEventListener("click", () => {
           q.options.splice(idx, 1);
                     q.defaultAnswer = normalizeDefaultAnswerForQuestion(q);
@@ -4329,7 +4333,7 @@ actions.appendChild(btnGroupOpts);
 
         const del = document.createElement("button");
         del.type = "button";
-        del.className = "btn ghost";
+        del.className = "btn danger";
         del.textContent = "Delete";
         del.addEventListener("click", () => {
           parentQ.followUp.questions.splice(idx, 1);
@@ -4513,7 +4517,7 @@ actions.appendChild(btnGroupOpts);
 
         const del = document.createElement("button");
         del.type = "button";
-        del.className = "btn ghost";
+        del.className = "btn danger";
         del.textContent = "Delete rule";
         del.addEventListener("click", (e) => {
           e.preventDefault();
@@ -4703,7 +4707,7 @@ actions.appendChild(btnGroupOpts);
 
         const del = document.createElement("button");
         del.type = "button";
-        del.className = "btn ghost";
+        del.className = "btn danger";
         del.textContent = "Delete rule";
         del.addEventListener("click", (e) => {
           e.preventDefault();
@@ -4777,10 +4781,10 @@ actions.appendChild(btnGroupOpts);
     return sel;
   }
 
-  function iconButton(text, title) {
+  function iconButton(text, title, extraClass) {
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "iconBtn";
+    b.className = ["iconBtn", extraClass].filter(Boolean).join(" ");
     b.title = title || "";
     b.textContent = text;
     // disable styling
@@ -6160,7 +6164,7 @@ CH 4.3  Preview / runtime (continued)
                 const min = clamp(Number(qq.followUp?.repeat?.min ?? 1), 0, 50);
                 const removeBtn = document.createElement("button");
                 removeBtn.type = "button";
-                removeBtn.className = "btn ghost";
+                removeBtn.className = "btn danger";
                 removeBtn.textContent = "Remove";
                 removeBtn.disabled = getFollowUpInstanceIds(qq, preview.answers).length <= min;
                 removeBtn.addEventListener("click", () => {
