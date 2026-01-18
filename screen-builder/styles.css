@@ -1818,13 +1818,13 @@ p {
 .emptyState h2 {
     margin: 0;
     font-weight: 840;
-    font-size: 64px;
-    line-height: 100%;
-    max-width: 830px;
+    font-size: 48px;
+    line-height: 105%;
+    max-width: 800px;
 }
 .emptyState.show {
     display: grid;
-    gap: 40px;
+    gap: 24px;
 }
 .emptyIcon {
     width: 56px;
@@ -1857,7 +1857,7 @@ p {
     inset: 0;
     display: none;
     place-items: center;
-    padding: 40px;
+    padding: 24px;
     text-align: center;
 }
 button#emptyAddPage {
