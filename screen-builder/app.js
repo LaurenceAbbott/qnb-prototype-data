@@ -472,12 +472,7 @@ function setTemplateContext(template) {
   // Page templates are now imported/exported as JSON at page level.
   // The designer no longer contains built-in page presets or generators.
 
-function newDefaultSchema() {
-    const pageId = uid("page");
-    const groupId = uid("group");
-    const q1 = uid("q");
-
-    // Base starter journey + ALWAYS appended fixed checkout pages
+function newDefaultSchema() {  
     return {
       meta: {
         version: 1,
@@ -485,40 +480,8 @@ function newDefaultSchema() {
         updatedAt: new Date().toISOString(),
         questionArrays: [],
       },
-      lineOfBusiness: "Motor Insurance",
-      pages: [
-        {
-          id: pageId,
-          name: "About you",
-          template: "form",
-          // Phase 1: allow text blocks between groups via a page-level flow list
-          // Backwards compatible: groups remain the source of truth for questions.
-          flow: [{ type: "group", id: groupId }],
-          groups: [
-            {
-              id: groupId,
-              name: "Basics",
-              description: { enabled: false, html: "" },
-              logic: { enabled: false, rules: [] },
-              questions: [
-                {
-                  id: q1,
-                  type: "text",
-                  title: "What is your full name?",
-                  help: "Use your legal name as it appears on official documents.",
-                  placeholder: "e.g. Alex Taylor",
-                  required: true,
-                  errorText: "This field is required.",
-                  options: [],
-                                 defaultAnswer: null,
-                  logic: { enabled: false, rules: [] },
-                  content: { enabled: false, html: "" },
-                },
-              ],
-            },
-          ],
-        },
-      ]
+       lineOfBusiness: "",
+      pages: [],
     };
   }
 
@@ -573,6 +536,7 @@ CH 1  State (defaults, load/save, migrate)
     if (!["page", "question"].includes(schema.meta.previewMode)) {
       schema.meta.previewMode = "page";
     }
+    if (schema.lineOfBusiness == null) schema.lineOfBusiness = "";
     
     if (!Array.isArray(schema.pages)) schema.pages = [];
 
@@ -1063,7 +1027,7 @@ CH 4  UI Rendering
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
-      lineOfBusiness: String(s.lineOfBusiness || s.name || s.title || "New Journey").trim() || "New Journey",
+       lineOfBusiness: String(s.lineOfBusiness || s.name || s.title || "").trim(),
       pages,
     };
 
@@ -1298,7 +1262,7 @@ CH 4  UI Rendering
     if (!schema.meta.version) schema.meta.version = 1;
     if (!schema.meta.createdAt) schema.meta.createdAt = new Date().toISOString();
     schema.meta.updatedAt = new Date().toISOString();
-    if (!schema.lineOfBusiness) schema.lineOfBusiness = "New Journey";
+    if (schema.lineOfBusiness == null) schema.lineOfBusiness = "";
 
     normaliseSchemaForFlow();
     ensureSelection();
@@ -1637,6 +1601,7 @@ const setButtonLoading = (on) => {
   const btnExport = $("#btnExport");
   const btnImport = $("#btnImport");
   const btnImportPages = $("#btnImportPages");
+  const btnClearForm = $("#btnClearForm");
   const btnMobileStructure = $("#btnMobileStructure");
   const btnMobileInspector = $("#btnMobileInspector");
   const fileInput = $("#fileInput");
@@ -1857,7 +1822,7 @@ const structurePanelHome = structurePanel?.parentElement || null;
 
     // LoB title (avoid cursor jumps)
     if (lobTitleEl && safeText(lobTitleEl) !== schema.lineOfBusiness) {
-      lobTitleEl.textContent = schema.lineOfBusiness || "Line of Business";
+      lobTitleEl.textContent = schema.lineOfBusiness || "";
     }
 
     renderPagesList();
@@ -5022,6 +4987,30 @@ CH 5  Actions (add/rename/delete/duplicate/move)
     saveSchema();
     renderAll(true);
   }
+  
+  function resetBuilderState() {
+    schema = newDefaultSchema();
+    selection = { pageId: null, blockType: "group", blockId: null, groupId: null, questionId: null };
+    uiState = {
+      selectedArrayId: null,
+      newArrayName: "",
+      groupOptionsOpen: false,
+      aiQuestionAssistOpen: {},
+      aiQuestionAssistChats: {},
+    };
+    inspectorAccordionState = { page: false, group: false };
+    isTypingInspector = false;
+    if (preview?.open) closePreview();
+    preview.steps = [];
+    preview.index = 0;
+    preview.answers = {};
+    preview.pageErrors = {};
+    preview.lastError = "";
+    preview.startPageId = null;
+    closePanels();
+    saveSchema();
+    renderAll(true);
+  }
   function addPage() {
     const pid = uid("page");
     const gid = uid("group");
@@ -6530,14 +6519,22 @@ CH 8  Event wiring (listeners)
     });
     // LOB inline title
     lobTitleEl.addEventListener("input", () => {
-      schema.lineOfBusiness = safeText(lobTitleEl) || "Line of Business";
+      schema.lineOfBusiness = safeText(lobTitleEl) || "";
       saveSchemaDebounced();
     });
     lobTitleEl.addEventListener("blur", () => {
-      schema.lineOfBusiness = safeText(lobTitleEl) || "Line of Business";
+      schema.lineOfBusiness = safeText(lobTitleEl) || "";
       saveSchema();
       renderAll();
     });
+
+       if (btnClearForm) {
+      btnClearForm.addEventListener("click", () => {
+        const ok = confirm("Clear form? This will remove all pages, groups and questions.");
+        if (!ok) return;
+        resetBuilderState();
+      });
+    }
 
     btnAddPage.addEventListener("click", addPage);
     emptyAddPage.addEventListener("click", addPage);
