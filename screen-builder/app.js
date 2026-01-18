@@ -1479,8 +1479,7 @@ CH 4  UI Rendering
 
     wrap.innerHTML = `
       <div class="aiAssistTitle">Ask AI to generate a template</div>
-      <div class="aiAssistHelp">Describe the journey you want. We'll generate a starter template you can edit.</div>
-      <textarea class="aiAssistInput" rows="3" placeholder="e.g. Travel insurance quick quote: destination, policy type, email, dates, medical declaration, add-ons. Keep it short and broker-friendly."></textarea>
+      <textarea class="aiAssistInput" rows="3" placeholder="e.g. Travel insurance quick quote"></textarea>
       <div class="aiAssistActions" style="margin-top:10px; display:flex; gap:10px; align-items:center;">
         <button type="button" class="btn ghost aiAssistBtn">Generate template</button>
         <div class="aiAssistStatus muted" style="margin-left:auto; display:none;"></div>
