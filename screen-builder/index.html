@@ -29,33 +29,37 @@
       </div>
     </header>
 
+        <section class="docHeader" aria-label="Document header">
+      <div class="lobBlock lobBlock--doc">
+        <div class="lobLabel">Document title</div>
+        <div class="lobTitle" id="lobTitle" role="textbox" aria-label="Line of business title" contenteditable="true" spellcheck="false"></div>
+        <div class="lobHint">Click to edit. This is the headline users see.</div>
+      </div>
+    </section>
+
     <main class="layout">
       <!-- LEFT: Structure -->
       <aside class="panel panelLeft" aria-label="Structure">
         <div class="panelRail panelRailLeft">
-          <button class="railBtn" type="button" data-panel="left" aria-label="Toggle structure panel" aria-expanded="false">
+          <button class="railBtn" type="button" data-panel="structure" aria-label="Toggle structure panel" aria-expanded="false">            
             <span class="railIcon" aria-hidden="true">≡</span>
             <span class="railLabel">Structure</span>
           </button>
-          <button class="railBtn" type="button" data-panel="left" aria-label="Toggle AI template panel" aria-expanded="false">
-            <span class="railIcon" aria-hidden="true">✦</span>
-            <span class="railLabel">AI</span>
+          <button class="railBtn" type="button" data-panel="inspector" aria-label="Toggle inspector panel" aria-expanded="false">
+            <span class="railIcon" aria-hidden="true">◈</span>
+            <span class="railLabel">Inspector</span>
           </button>
         </div>
-        <div class="panelContent panelContentLeft">
-          <div class="panelHeader">
+ <div class="panelContent panelContentLeft structurePanel">
+   <div class="panelHeader">
             <div class="panelTitle">Structure</div>
             <button class="btn small" id="btnAddPage" type="button">+ Page</button>
           </div>
           
-          <div class="lobBlock">
-            <div class="lobLabel">Line of Business</div>
-            <div class="lobTitle" id="lobTitle" role="textbox" aria-label="Line of business title" contenteditable="true" spellcheck="false"></div>
-            <div class="lobHint">Click to edit. This is the headline users see.</div>
+                    <div class="structureBody" id="structureBody">
+            <div class="pages" id="pagesList" aria-label="Pages list"></div>
           </div>
-
-          <div class="pages" id="pagesList" aria-label="Pages list"></div>
-          <div class="pagesActions">
+<div class="pagesActions structureFooter">
             <button class="btn ghost" id="btnImportPages" type="button">Import pages</button>
           </div>
         </div>
@@ -121,16 +125,6 @@
 
       <!-- RIGHT: Mini Preview / Tips -->
       <aside class="panel panelRight" aria-label="Tips">
- <div class="panelRail panelRailRight">
-          <button class="railBtn" type="button" data-panel="right" aria-label="Toggle inspector panel" aria-expanded="false">
-            <span class="railIcon" aria-hidden="true">◈</span>
-            <span class="railLabel">Inspector</span>
-          </button>
-          <button class="railBtn" type="button" data-panel="right" aria-label="Toggle AI assist panel" aria-expanded="false">
-            <span class="railIcon" aria-hidden="true">✚</span>
-            <span class="railLabel">AI</span>
-          </button>
-        </div>
       <div class="panelContent panelContentRight">
           <div class="panelHeader">
             <div class="panelTitle">Quality checklist</div>
