@@ -1881,7 +1881,6 @@ button#emptyAddPage {
 }
 
 @media (min-width: 1400px){
-  .layout{ grid-template-columns: 280px minmax(520px, 1fr); }
   .panelRail{ display:none; }
   .panelContent{ display:flex; }
   .editorGrid{ grid-template-columns: minmax(520px, 1fr) 420px; }
