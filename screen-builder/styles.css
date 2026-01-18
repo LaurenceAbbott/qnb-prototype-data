@@ -1826,8 +1826,8 @@ p {
     gap: 24px;
 }
 .emptyIcon {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
     border-radius: 18px;
     display: grid;
     place-items: center;
@@ -1844,7 +1844,7 @@ p {
     border: 1px solid rgba(255, 255, 255, 0.12);
     margin: 0 auto 16px;
     font-size: 32px;
-    margin-top: 40px;
+    margin-top: 24px;
 }
 @keyframes aiFillGradient {
     0%   { background-position: 0% 50%; }
@@ -1856,7 +1856,7 @@ p {
     inset: 0;
     display: none;
     place-items: center;
-    padding: 24px;
+    padding: 16px;
     text-align: center;
 }
 button#emptyAddPage {
