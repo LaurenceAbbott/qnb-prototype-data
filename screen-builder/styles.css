@@ -25,7 +25,7 @@
   --pad: 14px;
   --pad2: 18px;
 
-  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  --font: "proxima-soft", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
   --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
@@ -81,7 +81,7 @@ button, input, select, textarea{ font-family: inherit; }
     translate: 1px -2px; 
 }
 .brandName{ font-weight: 760; letter-spacing: 0.2px; }
-.brandTag{ color: var(--muted); font-size: 12px; margin-top:2px; }
+.brandTag{ color: var(--muted); font-size: 12px; margin-top:2px; display: none; }
 
 .topActions{
   display:flex;
@@ -1902,6 +1902,10 @@ button#emptyAddPage {
 
 button#btnClearForm {
     min-height: 50px;
+}
+
+.emptyState section.panel.panelCenter .panelHeader {
+    display: none;
 }
 
 @media (min-width: 1400px){
