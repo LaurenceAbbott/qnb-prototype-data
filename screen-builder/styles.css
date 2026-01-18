@@ -1945,6 +1945,7 @@ button#btnClearForm {
   .app.sb-drawer-inspector-open .layout{ grid-template-columns: 56px 320px minmax(0, 1fr); }
   .panelRail{ display:flex; }
   .panelRight{ display:none; }
+  .brandName { display:none; }
   .panelLeft .panelContent{ display:none; }
   .panelDrawer{
     display:flex;
@@ -1961,7 +1962,7 @@ button#btnClearForm {
   .app.sb-drawer-inspector-open .panelDrawer #inspectorCard{
     display:flex;
   }
-  .topbar{ flex-direction:column; align-items:flex-start; gap:10px; }
+  .topbar{ flex-direction:row; align-items:flex-start; gap:10px; }
   .topActions{ width:100%; justify-content:flex-end; }
   }
 
