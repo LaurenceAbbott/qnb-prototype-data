@@ -1578,6 +1578,7 @@ const setButtonLoading = (on) => {
   const editorTitleEl = $("#editorTitle");
   const emptyStateEl = $("#emptyState");
   const editorEl = $("#editor");
+  const panelCenterEl = $(".panelCenter");
   const pageNameDisplayEl = $("#pageNameDisplay");
   const groupNameDisplayEl = $("#groupNameDisplay");
   const miniStatsEl = $("#miniStats");
@@ -1819,6 +1820,7 @@ const structurePanelHome = structurePanel?.parentElement || null;
     const hasAnything = schema.pages.length > 0;
     emptyStateEl.classList.toggle("show", !hasAnything);
     editorEl.style.display = hasAnything ? "block" : "none";
+    panelCenterEl?.classList.toggle("is-empty", !hasAnything);
 
     // LoB title (avoid cursor jumps)
     if (lobTitleEl && safeText(lobTitleEl) !== schema.lineOfBusiness) {
