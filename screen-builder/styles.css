@@ -178,6 +178,7 @@ button, input, select, textarea{ font-family: inherit; }
 }
 .railIcon{
   font-size: 24px;
+  line-height: 24px;
 }
 .railLabel{
   display: none;
