@@ -50,10 +50,13 @@
             <span class="railLabel">Inspector</span>
           </button>
         </div>
- <div class="panelContent panelContentLeft structurePanel">
-   <div class="panelHeader">
+ <div class="panelContent panelContentLeft structurePanel" id="structurePanel">
+          <div class="panelHeader drawerPanelHeader">
             <div class="panelTitle">Structure</div>
-            <button class="btn small" id="btnAddPage" type="button">+ Page</button>
+            <div class="panelHeaderActions">
+              <button class="btn small" id="btnAddPage" type="button">+ Page</button>
+              <button class="btn small ghost drawerClose" type="button" data-drawer-close="structure" aria-label="Close structure panel">Close</button>
+            </div>
           </div>
           
                     <div class="structureBody" id="structureBody">
@@ -63,6 +66,10 @@
             <button class="btn ghost" id="btnImportPages" type="button">Import pages</button>
           </div>
         </div>
+      </aside>
+
+            <aside class="panel panelDrawer" aria-label="Drawer">
+        <div class="drawerSlot" id="drawerSlot"></div>
       </aside>
 
       <!-- CENTER: Editor -->
@@ -112,9 +119,12 @@
             </div>
 
             <div class="card" id="inspectorCard" aria-label="Inspector">
-              <div class="cardHeader">
-                <div class="cardTitle">Inspector</div>
-                <div class="cardSub" id="inspectorSub">Select something to edit</div>
+              <div class="cardHeader drawerPanelHeader">
+                <div class="cardHeaderMain">
+                  <div class="cardTitle">Inspector</div>
+                  <div class="cardSub" id="inspectorSub">Select something to edit</div>
+                </div>
+                <button class="btn small ghost drawerClose" type="button" data-drawer-close="inspector" aria-label="Close inspector panel">Close</button>
               </div>
 
               <div class="inspector" id="inspector"></div>
