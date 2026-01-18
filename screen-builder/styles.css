@@ -107,7 +107,6 @@ button, input, select, textarea{ font-family: inherit; }
 
 .panel{
   background: var(--panel);
-  border: 1px solid var(--stroke);
   border-radius: var(--r-xl);
   box-shadow: var(--shadow2);
   min-height:0;
@@ -180,6 +179,9 @@ button, input, select, textarea{ font-family: inherit; }
 }
 .railIcon{
   font-size: 24px;
+}
+.railLabel{
+  display: none;
 }
 
 .panelHeader{
@@ -301,6 +303,7 @@ button, input, select, textarea{ font-family: inherit; }
 
 .pagesActions{
   padding: 12px;
+  margin-top: 12px;
 }
 .pagesActions .btn{
   width: 100%;
@@ -1873,7 +1876,7 @@ button#emptyAddPage {
 }
 
 @media (min-width: 1400px){
-  .layout{ grid-template-columns: 280px minmax(520px, 1fr) 360px; }
+  .layout{ grid-template-columns: 280px minmax(520px, 1fr); }
   .panelRail{ display:none; }
   .panelContent{ display:flex; }
   .editorGrid{ grid-template-columns: minmax(520px, 1fr) 420px; }
