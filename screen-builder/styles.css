@@ -67,18 +67,10 @@ button, input, select, textarea{ font-family: inherit; }
   gap:12px;
 }
 .logo{
-  width:38px;height:38px;
-  border-radius: 999px;
-  display:grid;
-  place-items:center;
-  background: linear-gradient(135deg, rgba(167,139,250,0.9), rgba(96,165,250,0.9));
-  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-  color: rgba(0,0,0,0.85);
-  font-weight: 900;
-}
-.logo span {
-    /* translate: x-axis y-axis; */
-    translate: 1px -2px; 
+  width: 48px;
+  height: 48px;
+  display:block;
+  object-fit: contain;
 }
 .brandName{ font-weight: 760; letter-spacing: 0.2px; }
 .brandTag{ color: var(--muted); font-size: 12px; margin-top:2px; display: none; }
@@ -1905,8 +1897,8 @@ button#btnClearForm {
     min-height: 50px;
 }
 
-.emptyState section.panel.panelCenter .panelHeader {
-    display: none;
+.panelCenter.is-empty .panelHeader {
+  display: none;
 }
 
 @media (min-width: 1400px){
