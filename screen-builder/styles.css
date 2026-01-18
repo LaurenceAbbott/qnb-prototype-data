@@ -796,7 +796,7 @@ button, input, select, textarea{ font-family: inherit; }
   margin: 0 auto 16px;
 }
 .emptyState h2{ margin:0; font-weight: 840; max-width: 830px; }
-.emptyState p{ color: var(--muted); max-width: 520px; }
+.emptyState p{ color: var(--muted);}
 .emptyActions{ margin-top: 14px; display:flex; justify-content:center; }
 
 .tips{
@@ -1817,9 +1817,8 @@ p {
 .emptyState h2 {
     margin: 0;
     font-weight: 840;
-    font-size: 48px;
+    font-size: 32px;
     line-height: 105%;
-    max-width: 800px;
 }
 .emptyState.show {
     display: grid;
