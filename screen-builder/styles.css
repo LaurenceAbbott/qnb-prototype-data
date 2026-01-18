@@ -1875,6 +1875,11 @@ button#emptyAddPage {
     justify-content: flex-end;
 }
 
+.lobBlock--doc .lobHint {
+    margin-top: 6px;
+    display: none;
+}
+
 @media (min-width: 1400px){
   .layout{ grid-template-columns: 280px minmax(520px, 1fr); }
   .panelRail{ display:none; }
