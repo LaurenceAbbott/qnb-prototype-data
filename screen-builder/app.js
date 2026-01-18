@@ -1606,6 +1606,7 @@ const setButtonLoading = (on) => {
 
   const $ = (sel) => document.querySelector(sel);
 
+    const appEl = $("#app");
   const lobTitleEl = $("#lobTitle");
   const pagesListEl = $("#pagesList");
   const canvasEl = $("#canvas");
@@ -1634,8 +1635,14 @@ const setButtonLoading = (on) => {
   const btnExport = $("#btnExport");
   const btnImport = $("#btnImport");
   const btnImportPages = $("#btnImportPages");
+  const btnMobileStructure = $("#btnMobileStructure");
+  const btnMobileInspector = $("#btnMobileInspector");
+  const drawerBackdrop = $("#drawerBackdrop");
   const fileInput = $("#fileInput");
   const emptyAddPage = $("#emptyAddPage");
+
+  const leftRailButtons = document.querySelectorAll('[data-panel="left"]');
+  const rightRailButtons = document.querySelectorAll('[data-panel="right"]');
 
   // Preview modal DOM
   const previewBackdrop = $("#previewBackdrop");
@@ -1673,6 +1680,83 @@ const setButtonLoading = (on) => {
     } catch {
       return null;
     }
+  }
+
+    // -------------------------
+  // Responsive layout helpers
+  // -------------------------
+  const isDesktop = () => window.matchMedia("(min-width: 1400px)").matches;
+  const isLaptop = () => window.matchMedia("(min-width: 768px) and (max-width: 1399px)").matches;
+  const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
+
+  function setRailAriaState() {
+    if (!appEl) return;
+    const leftOpen = appEl.classList.contains("left-expanded") || appEl.classList.contains("left-drawer-open");
+    const rightOpen = appEl.classList.contains("right-expanded") || appEl.classList.contains("right-drawer-open");
+
+    leftRailButtons.forEach((btn) => btn.setAttribute("aria-expanded", leftOpen ? "true" : "false"));
+    rightRailButtons.forEach((btn) => btn.setAttribute("aria-expanded", rightOpen ? "true" : "false"));
+
+    if (btnMobileStructure) btnMobileStructure.setAttribute("aria-expanded", leftOpen ? "true" : "false");
+    if (btnMobileInspector) btnMobileInspector.setAttribute("aria-expanded", rightOpen ? "true" : "false");
+  }
+
+  function closeExpandedPanels() {
+    if (!appEl) return;
+    appEl.classList.remove("left-expanded", "right-expanded");
+    setRailAriaState();
+  }
+
+  function closeDrawers() {
+    if (!appEl) return;
+    appEl.classList.remove("left-drawer-open", "right-drawer-open");
+    setRailAriaState();
+  }
+
+  function toggleLeftPanel() {
+    if (!appEl) return;
+    if (isMobile()) {
+      const isOpen = appEl.classList.contains("left-drawer-open");
+      appEl.classList.toggle("left-drawer-open", !isOpen);
+      appEl.classList.remove("right-drawer-open");
+      setRailAriaState();
+      return;
+    }
+    if (isLaptop()) {
+      const isOpen = appEl.classList.contains("left-expanded");
+      appEl.classList.toggle("left-expanded", !isOpen);
+      appEl.classList.remove("right-expanded");
+      setRailAriaState();
+    }
+  }
+
+  function toggleRightPanel() {
+    if (!appEl) return;
+    if (isMobile()) {
+      const isOpen = appEl.classList.contains("right-drawer-open");
+      appEl.classList.toggle("right-drawer-open", !isOpen);
+      appEl.classList.remove("left-drawer-open");
+      setRailAriaState();
+      return;
+    }
+    if (isLaptop()) {
+      const isOpen = appEl.classList.contains("right-expanded");
+      appEl.classList.toggle("right-expanded", !isOpen);
+      appEl.classList.remove("left-expanded");
+      setRailAriaState();
+    }
+  }
+
+  function syncLayoutState() {
+    if (!appEl) return;
+    if (isDesktop()) {
+      appEl.classList.remove("left-expanded", "right-expanded", "left-drawer-open", "right-drawer-open");
+    } else if (isMobile()) {
+      appEl.classList.remove("left-expanded", "right-expanded");
+    } else {
+      appEl.classList.remove("left-drawer-open", "right-drawer-open");
+    }
+    setRailAriaState();
   }
 
   // -------------------------
@@ -6405,6 +6489,13 @@ CH 8  Event wiring (listeners)
   // Event wiring
   // -------------------------
   function wire() {
+      leftRailButtons.forEach((btn) => btn.addEventListener("click", toggleLeftPanel));
+    rightRailButtons.forEach((btn) => btn.addEventListener("click", toggleRightPanel));
+    if (btnMobileStructure) btnMobileStructure.addEventListener("click", toggleLeftPanel);
+    if (btnMobileInspector) btnMobileInspector.addEventListener("click", toggleRightPanel);
+    if (drawerBackdrop) drawerBackdrop.addEventListener("click", closeDrawers);
+    window.addEventListener("resize", debounce(syncLayoutState, 120));
+
     // Track inspector focus to prevent rebuild while typing (fixes 1-letter issue)
     document.addEventListener("focusin", (e) => {
       if (!e.target.closest("#inspector")) return;
@@ -6617,9 +6708,20 @@ CH 8  Event wiring (listeners)
       });
     }
 
-    // ESC closes preview
+    // ESC closes preview or any open rail/drawer panel
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && previewBackdrop.classList.contains("isOpen")) closePreview();
+   if (e.key !== "Escape") return;
+      if (previewBackdrop.classList.contains("isOpen")) {
+        closePreview();
+        return;
+      }
+      if (appEl?.classList.contains("left-drawer-open") || appEl?.classList.contains("right-drawer-open")) {
+        closeDrawers();
+        return;
+      }
+      if (appEl?.classList.contains("left-expanded") || appEl?.classList.contains("right-expanded")) {
+        closeExpandedPanels();
+      }
     });
   }
 
@@ -6637,6 +6739,7 @@ CH 8  Event wiring (listeners)
   }
 
   wire();
+    syncLayoutState();
   // Builder-only AI Assist (safe even if CSS/DOM doesn't have specific hooks)
   try { mountAiAssistUI(); } catch { /* no-op */ }
   renderAll();
