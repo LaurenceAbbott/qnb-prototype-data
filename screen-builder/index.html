@@ -32,20 +32,32 @@
     <main class="layout">
       <!-- LEFT: Structure -->
       <aside class="panel panelLeft" aria-label="Structure">
-        <div class="panelHeader">
-          <div class="panelTitle">Structure</div>
-          <button class="btn small" id="btnAddPage" type="button">+ Page</button>
+        <div class="panelRail panelRailLeft">
+          <button class="railBtn" type="button" data-panel="left" aria-label="Toggle structure panel" aria-expanded="false">
+            <span class="railIcon" aria-hidden="true">≡</span>
+            <span class="railLabel">Structure</span>
+          </button>
+          <button class="railBtn" type="button" data-panel="left" aria-label="Toggle AI template panel" aria-expanded="false">
+            <span class="railIcon" aria-hidden="true">✦</span>
+            <span class="railLabel">AI</span>
+          </button>
         </div>
+        <div class="panelContent panelContentLeft">
+          <div class="panelHeader">
+            <div class="panelTitle">Structure</div>
+            <button class="btn small" id="btnAddPage" type="button">+ Page</button>
+          </div>
+          
+          <div class="lobBlock">
+            <div class="lobLabel">Line of Business</div>
+            <div class="lobTitle" id="lobTitle" role="textbox" aria-label="Line of business title" contenteditable="true" spellcheck="false"></div>
+            <div class="lobHint">Click to edit. This is the headline users see.</div>
+          </div>
 
-        <div class="lobBlock">
-          <div class="lobLabel">Line of Business</div>
-          <div class="lobTitle" id="lobTitle" role="textbox" aria-label="Line of business title" contenteditable="true" spellcheck="false"></div>
-          <div class="lobHint">Click to edit. This is the headline users see.</div>
-        </div>
-
-        <div class="pages" id="pagesList" aria-label="Pages list"></div>
-                <div class="pagesActions">
-          <button class="btn ghost" id="btnImportPages" type="button">Import pages</button>
+          <div class="pages" id="pagesList" aria-label="Pages list"></div>
+          <div class="pagesActions">
+            <button class="btn ghost" id="btnImportPages" type="button">Import pages</button>
+          </div>
         </div>
       </aside>
 
@@ -55,6 +67,10 @@
           <div class="panelTitle" id="editorTitle">Editor</div>
 
           <div class="panelHeaderActions">
+                        <div class="mobileToolbar">
+              <button class="btn small ghost" id="btnMobileStructure" type="button" aria-label="Open structure panel" aria-expanded="false">Structure</button>
+              <button class="btn small ghost" id="btnMobileInspector" type="button" aria-label="Open inspector panel" aria-expanded="false">Inspector</button>
+            </div>
             <button class="btn small ghost" id="btnAddGroup" type="button" title="Add group to selected page">+ Group</button>
             <button class="btn small" id="btnAddQuestion" type="button" title="Add a question to selected group">+ Question</button>
           </div>
@@ -105,40 +121,53 @@
 
       <!-- RIGHT: Mini Preview / Tips -->
       <aside class="panel panelRight" aria-label="Tips">
-        <div class="panelHeader">
-          <div class="panelTitle">Quality checklist</div>
+ <div class="panelRail panelRailRight">
+          <button class="railBtn" type="button" data-panel="right" aria-label="Toggle inspector panel" aria-expanded="false">
+            <span class="railIcon" aria-hidden="true">◈</span>
+            <span class="railLabel">Inspector</span>
+          </button>
+          <button class="railBtn" type="button" data-panel="right" aria-label="Toggle AI assist panel" aria-expanded="false">
+            <span class="railIcon" aria-hidden="true">✚</span>
+            <span class="railLabel">AI</span>
+          </button>
         </div>
-
-        <div class="tips">
-          <div class="tip">
-            <div class="tipTitle">Best practices baked in</div>
-            <ul>
-              <li>Required-field validation in preview</li>
-              <li>Accessible focus and keyboard UX</li>
-              <li>Conditional logic + clean schema</li>
-            </ul>
+      <div class="panelContent panelContentRight">
+          <div class="panelHeader">
+            <div class="panelTitle">Quality checklist</div>
           </div>
 
-          <div class="tip">
-            <div class="tipTitle">Preview controls</div>
-            <ul>
-              <li><b>Enter</b> to continue</li>
-              <li><b>Shift+Enter</b> for new line (long text)</li>
-              <li><b>Back</b> button to go previous</li>
-            </ul>
-          </div>
+           <div class="tips">
+            <div class="tip">
+              <div class="tipTitle">Best practices baked in</div>
+              <ul>
+                <li>Required-field validation in preview</li>
+                <li>Accessible focus and keyboard UX</li>
+                <li>Conditional logic + clean schema</li>
+              </ul>
+            </div>
+             
+            <div class="tip">
+              <div class="tipTitle">Preview controls</div>
+              <ul>
+                <li><b>Enter</b> to continue</li>
+                <li><b>Shift+Enter</b> for new line (long text)</li>
+                <li><b>Back</b> button to go previous</li>
+              </ul>
+            </div>
 
-          <div class="tip">
-            <div class="tipTitle">Export/Import</div>
-            <p>Use Export to commit schemas in Git. Import to restore instantly.</p>
-          </div>
+                    <div class="tip">
+              <div class="tipTitle">Export/Import</div>
+              <p>Use Export to commit schemas in Git. Import to restore instantly.</p>
+            </div>
 
-          <div class="miniStats" id="miniStats"></div>
+            <div class="miniStats" id="miniStats"></div>
+          </div>
         </div>
       </aside>
     </main>
   </div>
-
+  <div class="drawerBackdrop" id="drawerBackdrop" aria-hidden="true"></div>
+  
   <!-- Preview Modal -->
   <div class="modalBackdrop" id="previewBackdrop">
     <div class="modal" role="dialog" aria-modal="true" aria-label="Preview">
